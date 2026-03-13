@@ -1,0 +1,14 @@
+{
+  "required": "Este campo es obligatorio.",
+  "email": "Ingresa un correo electrónico válido.",
+  "minLength": "Mínimo {{min}} caracteres.",
+  "maxLength": "Máximo {{max}} caracteres.",
+  "passwordMatch": "Las contraseñas no coinciden.",
+  "phone": "Ingresa un número de teléfono válido.",
+  "cardNumber": "Número de tarjeta inválido.",
+  "expiry": "Fecha de vencimiento inválida.",
+  "cvv": "CVV inválido.",
+  "positiveNumber": "Debe ser un número positivo.",
+  "futureDate": "La fecha debe ser en el futuro.",
+  "promoCode": "Código de descuento inválido."
+}

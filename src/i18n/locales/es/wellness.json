@@ -1,0 +1,35 @@
+{
+  "page": {
+    "title": "Wellness Kitchen",
+    "subtitle": "Complementos seleccionados para potenciar tu práctica y tu bienestar diario.",
+    "badge": "Wellness Kitchen"
+  },
+  "filters": {
+    "all": "Todo",
+    "empty": "No hay productos en esta categoría.",
+    "smoothie": "Smoothies",
+    "snack": "Snacks",
+    "supplement": "Suplementos",
+    "plan": "Planes nutricionales",
+    "addon": "Add-ons",
+    "other": "Otros"
+  },
+  "card": {
+    "addOnly": "Solo como complemento",
+    "add": "Agregar",
+    "addToClass": "Agregar a mi clase",
+    "buyAlone": "Comprar solo"
+  },
+  "types": {
+    "smoothie": "Smoothie",
+    "snack": "Snack saludable",
+    "supplement": "Suplemento",
+    "plan": "Plan nutricional",
+    "addon": "Add-on",
+    "other": "Otro"
+  },
+  "info": {
+    "title": "¿Qué es Wellness Kitchen?",
+    "description": "Son complementos de bienestar diseñados para acompañar tu práctica de yoga. Puedes agregarlos al reservar una clase, comprarlos junto con tu membresía, o adquirirlos por separado cuando quieras."
+  }
+}

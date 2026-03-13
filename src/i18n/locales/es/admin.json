@@ -1,0 +1,272 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "leads": "Leads",
+    "customers": "Clientes",
+    "classes": "Clases",
+    "sessions": "Sesiones",
+    "memberships": "Membresías",
+    "packages": "Paquetes",
+    "products": "Productos",
+    "orders": "Órdenes",
+    "bookings": "Reservas",
+    "content": "Contenido",
+    "settings": "Configuración"
+  },
+  "dashboard": {
+    "title": "Panel de control",
+    "subtitle": "Resumen del negocio de hoy.",
+    "metrics": {
+      "salesToday": "Ventas hoy",
+      "bookingsToday": "Reservas hoy",
+      "newCustomers": "Clientes nuevos",
+      "activeMemberships": "Membresías activas",
+      "revenue": "Ingresos del mes",
+      "revenueToday": "Ingresos hoy",
+      "totalBookings": "Total reservas"
+    },
+    "recentOrders": "Órdenes recientes",
+    "recentLeads": "Leads recientes",
+    "recentBookings": "Reservas recientes",
+    "upcomingSessions": "Sesiones próximas",
+    "quickActions": "Acciones rápidas",
+    "viewAll": "Ver todo"
+  },
+  "leads": {
+    "title": "Leads",
+    "subtitle": "Prospectos interesados en Omzone.",
+    "new": "Nuevo lead",
+    "status": {
+      "new": "Nuevo",
+      "contacted": "Contactado",
+      "qualified": "Calificado",
+      "won": "Ganado",
+      "lost": "Perdido"
+    },
+    "interest": {
+      "class": "Clase",
+      "membership": "Membresía",
+      "package": "Paquete",
+      "product": "Producto"
+    },
+    "fields": {
+      "name": "Nombre",
+      "email": "Correo",
+      "phone": "Teléfono",
+      "interest": "Interés",
+      "notes": "Notas",
+      "status": "Estado",
+      "date": "Fecha"
+    }
+  },
+  "customers": {
+    "title": "Clientes",
+    "tabs": {
+      "all": "Todos",
+      "active": "Con membresía",
+      "purchased": "Con compra",
+      "registered": "Registrados"
+    },
+    "fields": {
+      "name": "Nombre",
+      "email": "Correo",
+      "phone": "Teléfono",
+      "status": "Estado",
+      "membership": "Membresía",
+      "orders": "Pedidos",
+      "joined": "Fecha registro"
+    }
+  },
+  "classes": {
+    "title": "Clases",
+    "new": "Nueva clase",
+    "edit": "Editar clase",
+    "fields": {
+      "title": "Título",
+      "type": "Tipo",
+      "instructor": "Instructor",
+      "difficulty": "Nivel",
+      "duration": "Duración (min)",
+      "price": "Precio base",
+      "featured": "Destacada",
+      "enabled": "Habilitada"
+    }
+  },
+  "sessions": {
+    "title": "Sesiones",
+    "new": "Nueva sesión",
+    "edit": "Editar sesión",
+    "fields": {
+      "class": "Clase",
+      "date": "Fecha y hora",
+      "endDate": "Fin",
+      "capacity": "Cupo total",
+      "taken": "Reservados",
+      "available": "Disponibles",
+      "price": "Precio (si difiere)",
+      "location": "Ubicación",
+      "status": "Estado",
+      "enabled": "Habilitada"
+    },
+    "status": {
+      "scheduled": "Programada",
+      "full": "Llena",
+      "cancelled": "Cancelada",
+      "completed": "Completada"
+    }
+  },
+  "orders": {
+    "title": "Órdenes",
+    "fields": {
+      "orderNo": "Orden #",
+      "customer": "Cliente",
+      "total": "Total",
+      "paymentStatus": "Pago",
+      "fulfillment": "Estado",
+      "date": "Fecha"
+    },
+    "paymentStatus": {
+      "pending": "Pendiente",
+      "paid": "Pagado",
+      "failed": "Fallido",
+      "refunded": "Reembolsado"
+    },
+    "fulfillment": {
+      "pending": "Pendiente",
+      "confirmed": "Confirmado",
+      "cancelled": "Cancelado",
+      "completed": "Completado"
+    }
+  },
+  "memberships": {
+    "title": "Membresías",
+    "subtitle": "Planes de suscripción disponibles.",
+    "new": "Nuevo plan",
+    "edit": "Editar plan",
+    "fields": {
+      "name": "Nombre del plan",
+      "price": "Precio mensual",
+      "classes": "Clases por ciclo",
+      "unlimited": "Ilimitado",
+      "featured": "Destacado",
+      "enabled": "Habilitado",
+      "includes": "Incluye"
+    }
+  },
+  "packages": {
+    "title": "Paquetes",
+    "subtitle": "Combinaciones de servicios.",
+    "new": "Nuevo paquete",
+    "fields": {
+      "name": "Nombre",
+      "price": "Precio",
+      "items": "Incluye",
+      "featured": "Destacado",
+      "enabled": "Habilitado"
+    }
+  },
+  "products": {
+    "title": "Wellness Kitchen",
+    "subtitle": "Productos y extras del menú wellness.",
+    "new": "Nuevo producto",
+    "types": {
+      "smoothie": "Smoothie",
+      "snack": "Snack",
+      "supplement": "Suplemento",
+      "plan": "Plan",
+      "addon": "Add-on",
+      "other": "Otro",
+      "all": "Todos"
+    },
+    "fields": {
+      "name": "Nombre",
+      "type": "Tipo",
+      "price": "Precio",
+      "addonOnly": "Solo como complemento",
+      "featured": "Destacado",
+      "enabled": "Habilitado"
+    }
+  },
+  "bookings": {
+    "title": "Reservas",
+    "subtitle": "Reservas de clases de todos los clientes.",
+    "fields": {
+      "code": "Código",
+      "customer": "Cliente",
+      "session": "Sesión",
+      "class": "Clase",
+      "date": "Fecha",
+      "status": "Estado",
+      "extras": "Complementos",
+      "total": "Total"
+    },
+    "status": {
+      "confirmed": "Confirmada",
+      "completed": "Completada",
+      "cancelled": "Cancelada"
+    }
+  },
+  "content": {
+    "title": "Contenido",
+    "subtitle": "Edita los textos y bloques del sitio.",
+    "hero": "Hero principal",
+    "faqs": "Preguntas frecuentes",
+    "testimonials": "Testimonios",
+    "save": "Guardar cambios",
+    "saving": "Guardando...",
+    "saved": "Cambios guardados",
+    "fields": {
+      "headline": "Titular",
+      "subheadline": "Subtítulo",
+      "cta": "Texto CTA",
+      "question": "Pregunta",
+      "answer": "Respuesta",
+      "author": "Autor",
+      "role": "Rol",
+      "quote": "Testimonio"
+    }
+  },
+  "settings": {
+    "title": "Configuración",
+    "studio": "Datos del estudio",
+    "branding": "Identidad visual",
+    "localization": "Idioma y zona horaria",
+    "save": "Guardar cambios",
+    "saving": "Guardando...",
+    "saved": "Configuración guardada",
+    "fields": {
+      "studioName": "Nombre del estudio",
+      "address": "Dirección",
+      "phone": "Teléfono de contacto",
+      "email": "Correo de contacto",
+      "instagram": "Instagram",
+      "website": "Sitio web",
+      "timezone": "Zona horaria",
+      "currency": "Moneda",
+      "defaultLang": "Idioma principal"
+    }
+  },
+  "common": {
+    "search": "Buscar...",
+    "filter": "Filtrar",
+    "export": "Exportar",
+    "total": "Total",
+    "actions": "Acciones",
+    "confirmDelete": "¿Seguro que deseas eliminar este elemento?",
+    "noData": "Sin datos",
+    "rowsPerPage": "Filas por página",
+    "enabled": "Habilitado",
+    "disabled": "Deshabilitado",
+    "featured": "Destacado",
+    "cancel": "Cancelar",
+    "confirm": "Confirmar",
+    "save": "Guardar",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "toggle": "Activar/desactivar",
+    "cancelAction": "¿Cancelar?",
+    "cancelConfirm": "¿Confirmas la cancelación?",
+    "yes": "Sí",
+    "no": "No"
+  }
+}

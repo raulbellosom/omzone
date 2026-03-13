@@ -1,0 +1,16 @@
+{
+  "title": "Book a class",
+  "steps": {
+    "schedule": "Schedule",
+    "extras": "Extras",
+    "info": "Your info",
+    "payment": "Payment",
+    "confirmation": "Confirmation"
+  },
+  "step1": { "title": "Choose your session", "subtitle": "Select the session that best fits your schedule.", "noSessions": "No sessions available." },
+  "step2": { "title": "Optional extras", "subtitle": "Enhance your practice with Wellness Kitchen add-ons.", "skip": "Skip for now", "selected": "Selected", "add": "Add" },
+  "step3": { "title": "Your details", "subtitle": "We need a few details to confirm your booking.", "firstName": "First name", "lastName": "Last name", "email": "Email address", "phone": "Phone (optional)", "loginPrompt": "Already have an account?", "loginLink": "Sign in" },
+  "step4": { "title": "Confirm your booking", "subtitle": "Review the details before proceeding to payment.", "proceedToPayment": "Proceed to payment", "editSession": "Change session", "editExtras": "Edit extras", "editInfo": "Edit info" },
+  "step5": { "title": "Booking confirmed!", "subtitle": "We sent the details to your email.", "bookingCode": "Booking code", "goToDashboard": "View my bookings", "bookAnother": "Book another class" },
+  "summary": { "title": "Summary", "class": "Class", "session": "Session", "extras": "Extras", "subtotal": "Subtotal", "discount": "Discount", "tax": "Tax", "total": "Total", "currency": "MXN" }
+}

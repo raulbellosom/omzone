@@ -1,0 +1,136 @@
+{
+  "brand": {
+    "name": "Omzone",
+    "tagline": "Yoga & Wellness Kitchen"
+  },
+  "nav": {
+    "classes": "Clases",
+    "memberships": "Membresías",
+    "packages": "Paquetes",
+    "wellness": "Wellness Kitchen",
+    "login": "Iniciar sesión",
+    "register": "Registrarse",
+    "myAccount": "Mi cuenta",
+    "logout": "Cerrar sesión",
+    "adminPanel": "Panel admin"
+  },
+  "lang": {
+    "es": "Español",
+    "en": "English",
+    "switch": "Cambiar idioma"
+  },
+  "footer": {
+    "tagline": "Bienestar integral para tu vida diaria.",
+    "madeWith": "Hecho con",
+    "forWellness": "para tu bienestar",
+    "links": {
+      "title": "Plataforma",
+      "classes": "Clases",
+      "memberships": "Membresías",
+      "packages": "Paquetes",
+      "wellness": "Wellness Kitchen"
+    },
+    "account": {
+      "title": "Mi cuenta",
+      "dashboard": "Mi dashboard",
+      "bookings": "Mis reservas",
+      "orders": "Mis pedidos",
+      "profile": "Mi perfil"
+    },
+    "legal": {
+      "title": "Legal",
+      "privacy": "Privacidad",
+      "terms": "Términos de uso",
+      "cookies": "Cookies"
+    },
+    "copyright": "© {{year}} Omzone. Todos los derechos reservados."
+  },
+  "actions": {
+    "bookClass": "Reservar clase",
+    "explorePlans": "Explorar planes",
+    "viewPackages": "Ver paquetes",
+    "viewDetails": "Ver detalle",
+    "addToCart": "Agregar",
+    "checkout": "Ir al pago",
+    "subscribe": "Suscribirme",
+    "learnMore": "Saber más",
+    "back": "Regresar",
+    "next": "Continuar",
+    "confirm": "Confirmar",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "archive": "Archivar",
+    "create": "Crear",
+    "search": "Buscar",
+    "filter": "Filtrar",
+    "clearFilters": "Limpiar filtros",
+    "viewAll": "Ver todos",
+    "close": "Cerrar",
+    "loading": "Cargando...",
+    "retry": "Intentar de nuevo"
+  },
+  "badges": {
+    "featured": "Destacado",
+    "popular": "Popular",
+    "new": "Nuevo",
+    "limited": "Lugares limitados",
+    "soldOut": "Agotado",
+    "active": "Activo",
+    "inactive": "Inactivo",
+    "pending": "Pendiente",
+    "confirmed": "Confirmado",
+    "cancelled": "Cancelado",
+    "completed": "Completado",
+    "expired": "Expirado"
+  },
+  "difficulty": {
+    "beginner": "Principiante",
+    "intermediate": "Intermedio",
+    "advanced": "Avanzado",
+    "all_levels": "Todos los niveles"
+  },
+  "errors": {
+    "generic": "Algo salió mal. Intenta de nuevo.",
+    "notFound": "Página no encontrada.",
+    "unauthorized": "No tienes acceso a esta sección.",
+    "networkError": "Error de conexión. Revisa tu internet."
+  },
+  "empty": {
+    "noResults": "Sin resultados",
+    "noResultsDesc": "Intenta con otros filtros o términos de búsqueda.",
+    "noData": "Sin datos disponibles"
+  },
+  "auth": {
+    "login": {
+      "title": "Bienvenida de vuelta",
+      "subtitle": "Ingresa a tu cuenta para continuar",
+      "email": "Correo electrónico",
+      "password": "Contraseña",
+      "submit": "Entrar",
+      "submitting": "Entrando...",
+      "noAccount": "¿No tienes cuenta?",
+      "createAccount": "Regístrate",
+      "forgotPassword": "¿Olvidaste tu contraseña?",
+      "error": "Correo o contraseña incorrectos. Intenta de nuevo.",
+      "demoHint": "Demo: usa valeria@example.com"
+    },
+    "register": {
+      "title": "Crea tu cuenta",
+      "subtitle": "Únete a la comunidad Omzone",
+      "firstName": "Nombre",
+      "lastName": "Apellido",
+      "email": "Correo electrónico",
+      "password": "Contraseña",
+      "confirmPassword": "Confirmar contraseña",
+      "phone": "Teléfono (opcional)",
+      "submit": "Crear cuenta",
+      "submitting": "Creando cuenta...",
+      "hasAccount": "¿Ya tienes cuenta?",
+      "signIn": "Inicia sesión",
+      "terms": "Al registrarte aceptas nuestros términos de uso y política de privacidad.",
+      "success": "¡Cuenta creada con éxito! Ahora puedes iniciar sesión."
+    }
+  }
+}

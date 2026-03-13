@@ -1,0 +1,272 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "leads": "Leads",
+    "customers": "Customers",
+    "classes": "Classes",
+    "sessions": "Sessions",
+    "memberships": "Memberships",
+    "packages": "Packages",
+    "products": "Products",
+    "orders": "Orders",
+    "bookings": "Bookings",
+    "content": "Content",
+    "settings": "Settings"
+  },
+  "dashboard": {
+    "title": "Control panel",
+    "subtitle": "Today's business summary.",
+    "metrics": {
+      "salesToday": "Sales today",
+      "bookingsToday": "Bookings today",
+      "newCustomers": "New customers",
+      "activeMemberships": "Active memberships",
+      "revenue": "Monthly revenue",
+      "revenueToday": "Revenue today",
+      "totalBookings": "Total bookings"
+    },
+    "recentOrders": "Recent orders",
+    "recentLeads": "Recent leads",
+    "recentBookings": "Recent bookings",
+    "upcomingSessions": "Upcoming sessions",
+    "quickActions": "Quick actions",
+    "viewAll": "View all"
+  },
+  "leads": {
+    "title": "Leads",
+    "subtitle": "Prospective customers interested in Omzone.",
+    "new": "New lead",
+    "status": {
+      "new": "New",
+      "contacted": "Contacted",
+      "qualified": "Qualified",
+      "won": "Won",
+      "lost": "Lost"
+    },
+    "interest": {
+      "class": "Class",
+      "membership": "Membership",
+      "package": "Package",
+      "product": "Product"
+    },
+    "fields": {
+      "name": "Name",
+      "email": "Email",
+      "phone": "Phone",
+      "interest": "Interest",
+      "notes": "Notes",
+      "status": "Status",
+      "date": "Date"
+    }
+  },
+  "customers": {
+    "title": "Customers",
+    "tabs": {
+      "all": "All",
+      "active": "With membership",
+      "purchased": "With purchase",
+      "registered": "Registered"
+    },
+    "fields": {
+      "name": "Name",
+      "email": "Email",
+      "phone": "Phone",
+      "status": "Status",
+      "membership": "Membership",
+      "orders": "Orders",
+      "joined": "Joined"
+    }
+  },
+  "classes": {
+    "title": "Classes",
+    "new": "New class",
+    "edit": "Edit class",
+    "fields": {
+      "title": "Title",
+      "type": "Type",
+      "instructor": "Instructor",
+      "difficulty": "Level",
+      "duration": "Duration (min)",
+      "price": "Base price",
+      "featured": "Featured",
+      "enabled": "Enabled"
+    }
+  },
+  "sessions": {
+    "title": "Sessions",
+    "new": "New session",
+    "edit": "Edit session",
+    "fields": {
+      "class": "Class",
+      "date": "Date & time",
+      "endDate": "End",
+      "capacity": "Total capacity",
+      "taken": "Booked",
+      "available": "Available",
+      "price": "Price (if different)",
+      "location": "Location",
+      "status": "Status",
+      "enabled": "Enabled"
+    },
+    "status": {
+      "scheduled": "Scheduled",
+      "full": "Full",
+      "cancelled": "Cancelled",
+      "completed": "Completed"
+    }
+  },
+  "memberships": {
+    "title": "Memberships",
+    "subtitle": "Available subscription plans.",
+    "new": "New plan",
+    "edit": "Edit plan",
+    "fields": {
+      "name": "Plan name",
+      "price": "Monthly price",
+      "classes": "Classes per cycle",
+      "unlimited": "Unlimited",
+      "featured": "Featured",
+      "enabled": "Enabled",
+      "includes": "Includes"
+    }
+  },
+  "packages": {
+    "title": "Packages",
+    "subtitle": "Bundled service combinations.",
+    "new": "New package",
+    "fields": {
+      "name": "Name",
+      "price": "Price",
+      "items": "Includes",
+      "featured": "Featured",
+      "enabled": "Enabled"
+    }
+  },
+  "products": {
+    "title": "Wellness Kitchen",
+    "subtitle": "Products and extras from the wellness menu.",
+    "new": "New product",
+    "types": {
+      "smoothie": "Smoothie",
+      "snack": "Snack",
+      "supplement": "Supplement",
+      "plan": "Plan",
+      "addon": "Add-on",
+      "other": "Other",
+      "all": "All"
+    },
+    "fields": {
+      "name": "Name",
+      "type": "Type",
+      "price": "Price",
+      "addonOnly": "Add-on only",
+      "featured": "Featured",
+      "enabled": "Enabled"
+    }
+  },
+  "bookings": {
+    "title": "Bookings",
+    "subtitle": "Class bookings from all customers.",
+    "fields": {
+      "code": "Code",
+      "customer": "Customer",
+      "session": "Session",
+      "class": "Class",
+      "date": "Date",
+      "status": "Status",
+      "extras": "Extras",
+      "total": "Total"
+    },
+    "status": {
+      "confirmed": "Confirmed",
+      "completed": "Completed",
+      "cancelled": "Cancelled"
+    }
+  },
+  "orders": {
+    "title": "Orders",
+    "fields": {
+      "orderNo": "Order #",
+      "customer": "Customer",
+      "total": "Total",
+      "paymentStatus": "Payment",
+      "fulfillment": "Status",
+      "date": "Date"
+    },
+    "paymentStatus": {
+      "pending": "Pending",
+      "paid": "Paid",
+      "failed": "Failed",
+      "refunded": "Refunded"
+    },
+    "fulfillment": {
+      "pending": "Pending",
+      "confirmed": "Confirmed",
+      "cancelled": "Cancelled",
+      "completed": "Completed"
+    }
+  },
+  "content": {
+    "title": "Content",
+    "subtitle": "Edit the site's texts and blocks.",
+    "hero": "Main hero",
+    "faqs": "Frequently asked questions",
+    "testimonials": "Testimonials",
+    "save": "Save changes",
+    "saving": "Saving...",
+    "saved": "Changes saved",
+    "fields": {
+      "headline": "Headline",
+      "subheadline": "Subheadline",
+      "cta": "CTA text",
+      "question": "Question",
+      "answer": "Answer",
+      "author": "Author",
+      "role": "Role",
+      "quote": "Quote"
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "studio": "Studio info",
+    "branding": "Visual identity",
+    "localization": "Language & timezone",
+    "save": "Save changes",
+    "saving": "Saving...",
+    "saved": "Settings saved",
+    "fields": {
+      "studioName": "Studio name",
+      "address": "Address",
+      "phone": "Contact phone",
+      "email": "Contact email",
+      "instagram": "Instagram",
+      "website": "Website",
+      "timezone": "Timezone",
+      "currency": "Currency",
+      "defaultLang": "Default language"
+    }
+  },
+  "common": {
+    "search": "Search...",
+    "filter": "Filter",
+    "export": "Export",
+    "total": "Total",
+    "actions": "Actions",
+    "confirmDelete": "Are you sure you want to delete this item?",
+    "noData": "No data",
+    "rowsPerPage": "Rows per page",
+    "enabled": "Enabled",
+    "disabled": "Disabled",
+    "featured": "Featured",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "save": "Save",
+    "edit": "Edit",
+    "delete": "Delete",
+    "toggle": "Toggle",
+    "cancelAction": "Cancel?",
+    "cancelConfirm": "Confirm cancellation?",
+    "yes": "Yes",
+    "no": "No"
+  }
+}

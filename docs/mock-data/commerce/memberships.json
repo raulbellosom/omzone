@@ -1,0 +1,16 @@
+[
+  {
+    "$id": "mship_001",
+    "customer_user_id": "user_cust_001",
+    "plan_id": "plan_8",
+    "order_id": "ord_002",
+    "status": "active",
+    "started_at": "2026-03-01T00:00:00-06:00",
+    "ends_at": "2026-03-31T23:59:59-06:00",
+    "renewal_at": "2026-04-01T00:00:00-06:00",
+    "classes_used": 3,
+    "classes_allowed": 8,
+    "is_unlimited": false,
+    "cancel_reason": ""
+  }
+]

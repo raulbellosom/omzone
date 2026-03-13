@@ -1,0 +1,21 @@
+User-agent: *
+Allow: /
+Allow: /classes
+Allow: /classes/
+Allow: /memberships
+Allow: /packages
+Allow: /wellness
+
+# Áreas privadas — no indexar
+Disallow: /account/
+Disallow: /app/
+Disallow: /checkout
+Disallow: /booking/
+Disallow: /login
+Disallow: /register
+
+# Archivos internos
+Disallow: /api/
+Disallow: /*.json$
+
+Sitemap: https://omzone.mx/sitemap.xml

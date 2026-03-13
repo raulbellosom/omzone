@@ -1,0 +1,13 @@
+[
+  {
+    "$id": "item_001",
+    "order_id": "ord_001",
+    "item_type": "class_session",
+    "reference_id": "sess_001",
+    "title_snapshot": "Morning Flow - 20 Mar 2026 08:00",
+    "quantity": 1,
+    "unit_price": 180,
+    "line_total": 180,
+    "meta_json": {}
+  }
+]

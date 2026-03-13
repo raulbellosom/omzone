@@ -1,0 +1,66 @@
+{
+  "catalog": {
+    "title": "Clases de yoga",
+    "subtitle": "Encuentra la clase perfecta para tu nivel, tu horario y tu intención.",
+    "searchPlaceholder": "Buscar clases...",
+    "resultsCount": "{{count}} clase encontrada",
+    "resultsCount_plural": "{{count}} clases encontradas"
+  },
+  "filters": {
+    "title": "Filtros",
+    "level": "Nivel",
+    "type": "Tipo de clase",
+    "duration": "Duración",
+    "availability": "Disponibilidad",
+    "schedule": "Horario",
+    "allLevels": "Todos los niveles",
+    "allTypes": "Todos los tipos",
+    "allDurations": "Cualquier duración",
+    "onlyAvailable": "Solo con lugares disponibles",
+    "morning": "Mañana (6–12h)",
+    "afternoon": "Tarde (12–18h)",
+    "evening": "Noche (18–22h)",
+    "duration30": "Hasta 30 min",
+    "duration60": "30–60 min",
+    "duration90": "60–90 min"
+  },
+  "card": {
+    "spots": "{{count}} lugar disponible",
+    "spots_plural": "{{count}} lugares disponibles",
+    "noSpots": "Sin lugares",
+    "fullClass": "Clase llena",
+    "duration": "{{minutes}} min",
+    "by": "con {{name}}",
+    "book": "Reservar",
+    "seeDetail": "Ver detalle"
+  },
+  "detail": {
+    "about": "Acerca de esta clase",
+    "instructor": "Tu instructor",
+    "schedule": "Horarios disponibles",
+    "selectSession": "Seleccionar horario",
+    "difficulty": "Nivel",
+    "duration": "Duración",
+    "spotsLeft": "Lugares disponibles",
+    "basePrice": "Precio por clase",
+    "extras": "Complementos opcionales",
+    "extrasDesc": "Agrega un toque wellness a tu práctica",
+    "bookNow": "Reservar ahora",
+    "addExtras": "Agregar complementos",
+    "shareClass": "Compartir",
+    "noSessions": "No hay sesiones disponibles próximamente.",
+    "sessionFull": "Esta sesión está llena",
+    "total": "Total",
+    "extrasCount": "Extras ({{count}})",
+    "noFees": "Sin cargos adicionales · Cancela con 4h de antelación"
+  },
+  "types": {
+    "vinyasa": "Vinyasa",
+    "hatha": "Hatha",
+    "restorative": "Restaurativo",
+    "yin": "Yin Yoga",
+    "power": "Power Yoga",
+    "meditation": "Meditación",
+    "breathwork": "Respiración"
+  }
+}

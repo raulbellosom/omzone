@@ -1,0 +1,38 @@
+[
+  {
+    "$id": "class_morning_flow",
+    "slug": "morning-flow",
+    "title_es": "Morning Flow",
+    "title_en": "Morning Flow",
+    "summary_es": "Activa tu mañana con una práctica fluida y energizante.",
+    "summary_en": "Start your day with an energizing flow.",
+    "description_es": "Clase ideal para despertar el cuerpo, respirar mejor y comenzar con enfoque.",
+    "description_en": "Ideal class to wake up your body and mind.",
+    "class_type_id": "ctype_vinyasa",
+    "instructor_id": "instr_mario",
+    "difficulty": "beginner",
+    "duration_min": 60,
+    "base_price": 180,
+    "cover_image_id": "img_class_morning",
+    "is_featured": true,
+    "enabled": true
+  },
+  {
+    "$id": "class_night_reset",
+    "slug": "night-reset",
+    "title_es": "Night Reset",
+    "title_en": "Night Reset",
+    "summary_es": "Relaja el sistema nervioso y termina el día con suavidad.",
+    "summary_en": "Slow down and reset before sleep.",
+    "description_es": "Sesión de yoga restaurativo con respiración y estiramientos suaves.",
+    "description_en": "Restorative session with breathwork and gentle stretches.",
+    "class_type_id": "ctype_restorative",
+    "instructor_id": "instr_ana",
+    "difficulty": "all_levels",
+    "duration_min": 50,
+    "base_price": 160,
+    "cover_image_id": "img_class_reset",
+    "is_featured": true,
+    "enabled": true
+  }
+]

@@ -1,0 +1,51 @@
+{
+  "title": "Checkout",
+  "orderSummary": "Resumen del pedido",
+  "yourOrder": "Tu pedido",
+  "class": "Clase",
+  "plan": "Plan",
+  "package": "Paquete",
+  "extras": "Extras",
+  "subtotal": "Subtotal",
+  "discount": "Descuento",
+  "tax": "IVA (incluido)",
+  "total": "Total a pagar",
+  "currency": "MXN",
+  "promoCode": {
+    "label": "Código de descuento",
+    "placeholder": "Ej. WELLNESS20",
+    "apply": "Aplicar",
+    "applied": "Código aplicado ✓",
+    "invalid": "Código inválido o expirado"
+  },
+  "payment": {
+    "title": "Información de pago",
+    "cardNumber": "Número de tarjeta",
+    "expiry": "MM / AA",
+    "cvv": "CVV",
+    "cardHolder": "Nombre del titular",
+    "secure": "Pago seguro y encriptado",
+    "methods": "Aceptamos Visa, Mastercard y American Express"
+  },
+  "billing": {
+    "title": "Datos de facturación",
+    "email": "Correo electrónico",
+    "firstName": "Nombre",
+    "lastName": "Apellido",
+    "phone": "Teléfono"
+  },
+  "trust": {
+    "secure": "Pago 100% seguro",
+    "privacy": "Tus datos están protegidos",
+    "support": "Soporte disponible"
+  },
+  "submit": "Confirmar y pagar",
+  "processing": "Procesando tu pago...",
+  "confirmation": {
+    "title": "¡Pago confirmado!",
+    "subtitle": "Tu pedido ha sido procesado exitosamente.",
+    "orderNumber": "Número de orden",
+    "email": "Recibirás un correo de confirmación en",
+    "cta": "Ver mis compras"
+  }
+}

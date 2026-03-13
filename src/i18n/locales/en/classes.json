@@ -1,0 +1,66 @@
+{
+  "catalog": {
+    "title": "Yoga classes",
+    "subtitle": "Find the perfect class for your level, schedule and intention.",
+    "searchPlaceholder": "Search classes...",
+    "resultsCount": "{{count}} class found",
+    "resultsCount_plural": "{{count}} classes found"
+  },
+  "filters": {
+    "title": "Filters",
+    "level": "Level",
+    "type": "Class type",
+    "duration": "Duration",
+    "availability": "Availability",
+    "schedule": "Schedule",
+    "allLevels": "All levels",
+    "allTypes": "All types",
+    "allDurations": "Any duration",
+    "onlyAvailable": "Only available spots",
+    "morning": "Morning (6–12h)",
+    "afternoon": "Afternoon (12–18h)",
+    "evening": "Evening (18–22h)",
+    "duration30": "Up to 30 min",
+    "duration60": "30–60 min",
+    "duration90": "60–90 min"
+  },
+  "card": {
+    "spots": "{{count}} spot available",
+    "spots_plural": "{{count}} spots available",
+    "noSpots": "No spots left",
+    "fullClass": "Class full",
+    "duration": "{{minutes}} min",
+    "by": "with {{name}}",
+    "book": "Book",
+    "seeDetail": "View details"
+  },
+  "detail": {
+    "about": "About this class",
+    "instructor": "Your instructor",
+    "schedule": "Available sessions",
+    "selectSession": "Select a session",
+    "difficulty": "Level",
+    "duration": "Duration",
+    "spotsLeft": "Spots available",
+    "basePrice": "Price per class",
+    "extras": "Optional add-ons",
+    "extrasDesc": "Add a wellness touch to your practice",
+    "bookNow": "Book now",
+    "addExtras": "Add extras",
+    "shareClass": "Share",
+    "noSessions": "No upcoming sessions available.",
+    "sessionFull": "This session is full",
+    "total": "Total",
+    "extrasCount": "Extras ({{count}})",
+    "noFees": "No extra fees · Cancel up to 4h before"
+  },
+  "types": {
+    "vinyasa": "Vinyasa",
+    "hatha": "Hatha",
+    "restorative": "Restorative",
+    "yin": "Yin Yoga",
+    "power": "Power Yoga",
+    "meditation": "Meditation",
+    "breathwork": "Breathwork"
+  }
+}

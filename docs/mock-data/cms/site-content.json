@@ -1,0 +1,26 @@
+[
+  {
+    "$id": "content_hero_es",
+    "content_key": "landing.hero",
+    "locale": "es",
+    "title": "Respira, muévete y aliméntate mejor",
+    "body": "Una experiencia integral de yoga y wellness kitchen para tu rutina.",
+    "meta_json": {
+      "primaryCta": "Reservar clase",
+      "secondaryCta": "Explorar planes"
+    },
+    "enabled": true
+  },
+  {
+    "$id": "content_hero_en",
+    "content_key": "landing.hero",
+    "locale": "en",
+    "title": "Breathe, move and nourish better",
+    "body": "An integrated yoga and wellness kitchen experience.",
+    "meta_json": {
+      "primaryCta": "Book a class",
+      "secondaryCta": "Explore plans"
+    },
+    "enabled": true
+  }
+]

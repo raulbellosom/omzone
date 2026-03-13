@@ -1,0 +1,13 @@
+[
+  {
+    "$id": "book_001",
+    "customer_user_id": "user_cust_001",
+    "session_id": "sess_001",
+    "order_id": "ord_001",
+    "booking_code": "BKG-001",
+    "status": "confirmed",
+    "unit_price": 180,
+    "extras_json": [],
+    "reserved_at": "2026-03-10T10:05:00-06:00"
+  }
+]

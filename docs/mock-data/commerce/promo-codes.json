@@ -1,0 +1,13 @@
+[
+  {
+    "$id": "promo_welcome10",
+    "code": "WELCOME10",
+    "discount_type": "percent",
+    "discount_value": 10,
+    "starts_at": "2026-03-01T00:00:00-06:00",
+    "ends_at": "2026-04-30T23:59:59-06:00",
+    "usage_limit": 500,
+    "used_count": 0,
+    "enabled": true
+  }
+]

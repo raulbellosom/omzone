@@ -1,0 +1,9 @@
+{
+  "page": { "title": "Wellness packages", "subtitle": "Curated bundles designed to give you more value. Yoga, nutrition and wellness together.", "badge": "Best value" },
+  "card": { "includes": "Includes", "buy": "Get package", "savings": "Save {{amount}}" },
+  "cta": {
+    "title": "Can't find what you're looking for?",
+    "description": "We can build a custom package for you. Contact us and we'll design a wellness experience tailored to your goals."
+  },
+  "items": { "membership": "Membership", "product": "Add-on", "class": "Class" }
+}

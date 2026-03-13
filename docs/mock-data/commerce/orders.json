@@ -1,0 +1,18 @@
+[
+  {
+    "$id": "ord_001",
+    "order_no": "YWK-0001",
+    "customer_user_id": "user_cust_001",
+    "customer_email": "cliente@example.com",
+    "currency": "MXN",
+    "subtotal": 180,
+    "discount_total": 0,
+    "tax_total": 0,
+    "grand_total": 180,
+    "payment_status": "paid",
+    "fulfillment_state": "confirmed",
+    "promo_code": null,
+    "notes": "",
+    "paid_at": "2026-03-10T10:05:00-06:00"
+  }
+]

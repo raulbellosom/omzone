@@ -1,0 +1,111 @@
+{
+  "hero": {
+    "headline": "Tu bienestar,\ntu ritmo.",
+    "subheadline": "Clases de yoga, membresías y complementos wellness en un solo lugar. Reserva, practica y vive mejor.",
+    "ctaMain": "Reservar clase",
+    "ctaSecondary": "Explorar planes",
+    "badge": "Yoga + Wellness Kitchen"
+  },
+  "benefits": {
+    "title": "Todo lo que necesitas para transformar tu bienestar",
+    "subtitle": "Una plataforma diseñada para que el bienestar sea simple, accesible y placentero.",
+    "items": [
+      {
+        "icon": "calendar",
+        "title": "Reservas en segundos",
+        "description": "Elige tu clase, tu horario y confirma en menos de dos minutos."
+      },
+      {
+        "icon": "leaf",
+        "title": "Wellness Kitchen integrado",
+        "description": "Complementa tu práctica con smoothies, planes nutricionales y suplementos seleccionados."
+      },
+      {
+        "icon": "star",
+        "title": "Instructores certificados",
+        "description": "Clases guiadas por profesionales con experiencia real en yoga y bienestar."
+      },
+      {
+        "icon": "shield",
+        "title": "Flexibilidad total",
+        "description": "Asiste a clases sueltas o elige una membresía que se adapte a tu ritmo."
+      }
+    ]
+  },
+  "classes": {
+    "title": "Clases destacadas",
+    "subtitle": "Explora nuestra selección de clases diseñadas para todos los niveles y momentos del día.",
+    "cta": "Ver todas las clases"
+  },
+  "memberships": {
+    "title": "El plan perfecto para ti",
+    "subtitle": "Desde clases individuales hasta membresías ilimitadas. Elige cómo quieres practicar.",
+    "cta": "Ver todos los planes"
+  },
+  "wellness": {
+    "title": "Wellness Kitchen",
+    "subtitle": "Complementos pensados para potenciar tu práctica y tu bienestar diario.",
+    "cta": "Explorar extras"
+  },
+  "instructors": {
+    "title": "Conoce a nuestros instructores",
+    "subtitle": "Profesionales apasionados por el yoga y el bienestar integral."
+  },
+  "testimonials": {
+    "title": "Lo que dicen nuestros practicantes",
+    "subtitle": "Experiencias reales de personas que transformaron su bienestar con Omzone.",
+    "items": [
+      {
+        "name": "Valeria M.",
+        "role": "Miembro desde 2024",
+        "text": "Llevo 6 meses con la membresía ilimitada y ha cambiado completamente mi rutina. Las clases son increíbles y reservar es muy fácil."
+      },
+      {
+        "name": "Carlos R.",
+        "role": "Paquete Yoga + Nutrición",
+        "text": "Empecé con una clase suelta y ya no puedo vivir sin mi plan mensual. El smoothie de bienvenida es el detalle perfecto."
+      },
+      {
+        "name": "Sofía L.",
+        "role": "Miembro Premium",
+        "text": "La combinación de yoga con el plan nutricional fue lo que me hizo decidirme. Resultados reales en pocas semanas."
+      }
+    ]
+  },
+  "faq": {
+    "title": "Preguntas frecuentes",
+    "subtitle": "Todo lo que necesitas saber antes de comenzar.",
+    "items": [
+      {
+        "question": "¿Cómo reservo una clase?",
+        "answer": "Explora el catálogo, elige la clase y el horario que más te convenga, y confirma tu reserva en pocos pasos. Si es tu primera vez, te pediremos crear una cuenta gratuita."
+      },
+      {
+        "question": "¿Puedo cancelar o reprogramar mi reserva?",
+        "answer": "Sí. Puedes gestionar tus reservas desde tu dashboard personal. Las cancelaciones están permitidas con al menos 4 horas de anticipación."
+      },
+      {
+        "question": "¿Qué incluye la Wellness Kitchen?",
+        "answer": "Son complementos opcionales que puedes agregar a tu clase o comprar por separado: smoothies funcionales, planes nutricionales, suplementos y asesorías de bienestar."
+      },
+      {
+        "question": "¿Las membresías se renuevan automáticamente?",
+        "answer": "Sí, las membresías tienen renovación mensual automática. Puedes cancelar en cualquier momento desde tu cuenta antes de la fecha de renovación."
+      },
+      {
+        "question": "¿Cuántos lugares hay por clase?",
+        "answer": "El cupo varía por clase y nivel. Puedes ver los lugares disponibles en tiempo real en el catálogo. Te recomendamos reservar con anticipación."
+      },
+      {
+        "question": "¿Puedo comprar extras sin estar suscrito?",
+        "answer": "Sí. Los productos de Wellness Kitchen y complementos están disponibles para cualquier cliente, con o sin membresía activa."
+      }
+    ]
+  },
+  "cta_section": {
+    "title": "Empieza hoy tu transformación",
+    "subtitle": "Tu primera clase o tu primera membresía están a un clic de distancia.",
+    "ctaMain": "Reservar mi primera clase",
+    "ctaSecondary": "Ver membresías"
+  }
+}

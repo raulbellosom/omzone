@@ -1,0 +1,58 @@
+{
+  "title": "Reservar clase",
+  "steps": {
+    "schedule": "Horario",
+    "extras": "Complementos",
+    "info": "Tus datos",
+    "payment": "Pago",
+    "confirmation": "Confirmación"
+  },
+  "step1": {
+    "title": "Elige tu horario",
+    "subtitle": "Selecciona la sesión que mejor se adapte a tu agenda.",
+    "noSessions": "No hay sesiones disponibles."
+  },
+  "step2": {
+    "title": "Complementos opcionales",
+    "subtitle": "Potencia tu práctica con extras de Wellness Kitchen.",
+    "skip": "Omitir por ahora",
+    "selected": "Seleccionado",
+    "add": "Agregar"
+  },
+  "step3": {
+    "title": "Tus datos",
+    "subtitle": "Necesitamos algunos datos para confirmar tu reserva.",
+    "firstName": "Nombre",
+    "lastName": "Apellido",
+    "email": "Correo electrónico",
+    "phone": "Teléfono (opcional)",
+    "loginPrompt": "¿Ya tienes cuenta?",
+    "loginLink": "Inicia sesión"
+  },
+  "step4": {
+    "title": "Confirma tu reserva",
+    "subtitle": "Revisa los detalles antes de continuar al pago.",
+    "proceedToPayment": "Continuar al pago",
+    "editSession": "Cambiar sesión",
+    "editExtras": "Editar complementos",
+    "editInfo": "Editar datos"
+  },
+  "step5": {
+    "title": "¡Reserva confirmada!",
+    "subtitle": "Te enviamos los detalles a tu correo.",
+    "bookingCode": "Código de reserva",
+    "goToDashboard": "Ver mis reservas",
+    "bookAnother": "Reservar otra clase"
+  },
+  "summary": {
+    "title": "Resumen",
+    "class": "Clase",
+    "session": "Sesión",
+    "extras": "Complementos",
+    "subtotal": "Subtotal",
+    "discount": "Descuento",
+    "tax": "IVA",
+    "total": "Total",
+    "currency": "MXN"
+  }
+}

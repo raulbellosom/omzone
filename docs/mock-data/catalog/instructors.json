@@ -1,0 +1,28 @@
+[
+  {
+    "$id": "instr_ana",
+    "slug": "ana-luz",
+    "full_name": "Ana Luz",
+    "short_bio": "Instructora enfocada en yoga suave y respiración consciente.",
+    "photo_id": "img_instr_ana",
+    "specialties": [
+      "yin",
+      "breathwork"
+    ],
+    "display_order": 1,
+    "enabled": true
+  },
+  {
+    "$id": "instr_mario",
+    "slug": "mario-zen",
+    "full_name": "Mario Zen",
+    "short_bio": "Clases dinámicas para fuerza, movilidad y enfoque.",
+    "photo_id": "img_instr_mario",
+    "specialties": [
+      "vinyasa",
+      "mobility"
+    ],
+    "display_order": 2,
+    "enabled": true
+  }
+]

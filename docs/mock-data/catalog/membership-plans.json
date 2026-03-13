@@ -1,0 +1,37 @@
+[
+  {
+    "$id": "plan_unlimited",
+    "slug": "monthly-unlimited",
+    "name_es": "Yoga ilimitado mensual",
+    "name_en": "Monthly Unlimited Yoga",
+    "description_es": "Acceso ilimitado a clases regulares.",
+    "description_en": "Unlimited access to regular classes.",
+    "billing_period": "monthly",
+    "price": 1490,
+    "classes_per_cycle": null,
+    "is_unlimited": true,
+    "includes_json": [
+      "Acceso ilimitado",
+      "Reserva desde dashboard"
+    ],
+    "enabled": true,
+    "is_featured": true
+  },
+  {
+    "$id": "plan_8",
+    "slug": "eight-classes",
+    "name_es": "8 clases por mes",
+    "name_en": "8 classes per month",
+    "description_es": "Ideal para práctica constante con límite mensual.",
+    "description_en": "Ideal for consistent practice.",
+    "billing_period": "monthly",
+    "price": 990,
+    "classes_per_cycle": 8,
+    "is_unlimited": false,
+    "includes_json": [
+      "8 reservas mensuales"
+    ],
+    "enabled": true,
+    "is_featured": false
+  }
+]

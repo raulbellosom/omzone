@@ -1,0 +1,30 @@
+[
+  {
+    "$id": "prod_smoothie_green",
+    "slug": "green-balance-smoothie",
+    "name_es": "Smoothie Green Balance",
+    "name_en": "Green Balance Smoothie",
+    "description_es": "Smoothie funcional para complementar tu práctica.",
+    "description_en": "Functional smoothie to complement your practice.",
+    "product_type": "smoothie",
+    "price": 95,
+    "cover_image_id": "img_prod_smoothie",
+    "is_addon_only": false,
+    "enabled": true,
+    "is_featured": true
+  },
+  {
+    "$id": "prod_nutrition_plan",
+    "slug": "nutrition-mini-plan",
+    "name_es": "Mini plan nutricional",
+    "name_en": "Nutrition mini plan",
+    "description_es": "Guía corta de alimentación consciente.",
+    "description_en": "Short mindful nutrition guide.",
+    "product_type": "plan",
+    "price": 290,
+    "cover_image_id": "img_prod_plan",
+    "is_addon_only": true,
+    "enabled": true,
+    "is_featured": true
+  }
+]

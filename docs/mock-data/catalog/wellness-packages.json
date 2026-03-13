@@ -1,0 +1,23 @@
+[
+  {
+    "$id": "pkg_yoga_nutrition",
+    "slug": "yoga-nutrition",
+    "name_es": "Yoga + Nutrición",
+    "name_en": "Yoga + Nutrition",
+    "description_es": "Incluye clases y guía nutricional básica.",
+    "description_en": "Includes classes and basic nutrition guide.",
+    "price": 1690,
+    "items_json": [
+      {
+        "type": "membership",
+        "ref": "plan_8"
+      },
+      {
+        "type": "product",
+        "ref": "prod_nutrition_plan"
+      }
+    ],
+    "enabled": true,
+    "is_featured": true
+  }
+]

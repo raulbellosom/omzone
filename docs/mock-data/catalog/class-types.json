@@ -1,0 +1,18 @@
+[
+  {
+    "$id": "ctype_vinyasa",
+    "slug": "vinyasa",
+    "name_es": "Vinyasa",
+    "name_en": "Vinyasa",
+    "description": "Flujo dinámico",
+    "enabled": true
+  },
+  {
+    "$id": "ctype_restorative",
+    "slug": "restaurativo",
+    "name_es": "Restaurativo",
+    "name_en": "Restorative",
+    "description": "Práctica suave",
+    "enabled": true
+  }
+]

@@ -1,0 +1,41 @@
+[
+  {
+    "$id": "profile_root_001",
+    "user_id": "user_root_001",
+    "role_key": "root",
+    "first_name": "Root",
+    "last_name": "System",
+    "email": "root@example.com",
+    "phone": "",
+    "avatar_id": "",
+    "status": "active",
+    "locale": "es-MX",
+    "enabled": true
+  },
+  {
+    "$id": "profile_admin_001",
+    "user_id": "user_admin_001",
+    "role_key": "admin",
+    "first_name": "Admin",
+    "last_name": "Business",
+    "email": "admin@example.com",
+    "phone": "3221111111",
+    "avatar_id": "",
+    "status": "active",
+    "locale": "es-MX",
+    "enabled": true
+  },
+  {
+    "$id": "profile_cust_001",
+    "user_id": "user_cust_001",
+    "role_key": "customer",
+    "first_name": "Lucía",
+    "last_name": "Rivera",
+    "email": "cliente@example.com",
+    "phone": "3222222222",
+    "avatar_id": "",
+    "status": "active",
+    "locale": "es-MX",
+    "enabled": true
+  }
+]

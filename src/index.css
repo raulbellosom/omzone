@@ -1,0 +1,225 @@
+@import "tailwindcss";
+
+/* ── DESIGN TOKENS ─────────────────────────────────────────────────────────── */
+@theme {
+  /* Tipografía */
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Playfair Display', ui-serif, Georgia, serif;
+
+  /* Paleta wellness */
+  --color-cream: #FAF8F5;
+  --color-cream-dark: #F2EDE6;
+  --color-sand: #E8DFD0;
+  --color-sand-dark: #D4C4A8;
+  --color-sand-light: #F0EAE0;
+
+  --color-sage: #7A9E7E;
+  --color-sage-dark: #5D8563;
+  --color-sage-darker: #4A7055;
+  --color-sage-light: #A8C5AB;
+  --color-sage-muted: #C5D9C7;
+
+  --color-olive: #8B9D6A;
+  --color-olive-dark: #6E7D52;
+  --color-olive-light: #B4C490;
+
+  --color-warm-white: #FFFFFF;
+  --color-warm-gray: #F0EDE8;
+  --color-warm-gray-dark: #E2DDD8;
+
+  --color-charcoal: #2C2C2C;
+  --color-charcoal-light: #4A4A4A;
+  --color-charcoal-muted: #6B6B6B;
+  --color-charcoal-subtle: #9A9A9A;
+
+  --color-surface: #FAF8F5;
+  --color-surface-raised: #FFFFFF;
+  --color-surface-overlay: rgba(44, 44, 44, 0.04);
+
+  /* Radios */
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.25rem;
+  --radius-2xl: 1.5rem;
+  --radius-full: 9999px;
+
+  /* Sombras */
+  --shadow-card: 0 1px 3px rgba(44,44,44,0.06), 0 4px 12px rgba(44,44,44,0.04);
+  --shadow-card-hover: 0 4px 16px rgba(44,44,44,0.10), 0 1px 4px rgba(44,44,44,0.06);
+  --shadow-modal: 0 8px 40px rgba(44,44,44,0.14);
+  --shadow-nav: 0 1px 0 rgba(44,44,44,0.08);
+}
+
+/* ── BASE ────────────────────────────────────────────────────────────────────  */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background-color: var(--color-cream);
+  color: var(--color-charcoal);
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── TIPOGRAFÍA DISPLAY ───────────────────────────────────────────────────── */
+.font-display {
+  font-family: var(--font-display);
+}
+
+/* ── UTILIDADES CUSTOM ────────────────────────────────────────────────────── */
+.text-balance {
+  text-wrap: balance;
+}
+
+.text-pretty {
+  text-wrap: pretty;
+}
+
+/* Transición estándar */
+.transition-base {
+  transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Foco accesible */
+.focus-ring {
+  outline: 2px solid var(--color-sage);
+  outline-offset: 2px;
+}
+
+/* Scroll suave en contenedores */
+.scroll-smooth {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ── MOTION TOKENS ───────────────────────────────────────────────────────── */
+@theme {
+  /* Duraciones */
+  --duration-fast:   120ms;
+  --duration-base:   200ms;
+  --duration-slow:   350ms;
+
+  /* Easings */
+  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-out:    cubic-bezier(0, 0, 0.2, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-in:     cubic-bezier(0.4, 0, 1, 1);
+
+  /* Accordion */
+  --animate-accordion-down: accordion-down 220ms cubic-bezier(0, 0, 0.2, 1);
+  --animate-accordion-up:   accordion-up   180ms cubic-bezier(0.4, 0, 1, 1);
+
+  /* Sheet (drawer) */
+  --animate-sheet-in-right:  sheet-in-right  280ms cubic-bezier(0, 0, 0.2, 1);
+  --animate-sheet-out-right: sheet-out-right 200ms cubic-bezier(0.4, 0, 1, 1);
+  --animate-sheet-in-left:   sheet-in-left   280ms cubic-bezier(0, 0, 0.2, 1);
+  --animate-sheet-out-left:  sheet-out-left  200ms cubic-bezier(0.4, 0, 1, 1);
+  --animate-sheet-in-bottom:  sheet-in-bottom  260ms cubic-bezier(0, 0, 0.2, 1);
+  --animate-sheet-out-bottom: sheet-out-bottom 200ms cubic-bezier(0.4, 0, 1, 1);
+
+  /* Overlay */
+  --animate-overlay-in:  overlay-in  200ms ease;
+  --animate-overlay-out: overlay-out 180ms ease;
+
+  /* Dialog */
+  --animate-dialog-in:  dialog-in  220ms cubic-bezier(0, 0, 0.2, 1);
+  --animate-dialog-out: dialog-out 160ms cubic-bezier(0.4, 0, 1, 1);
+}
+
+/* ── ANIMACIONES ─────────────────────────────────────────────────────────── */
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slide-in-right {
+  from { opacity: 0; transform: translateX(16px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+.animate-fade-in     { animation: fade-in 0.3s ease forwards; }
+.animate-fade-in-up  { animation: fade-in-up 0.4s ease forwards; }
+.animate-slide-right { animation: slide-in-right 0.3s ease forwards; }
+.animate-pulse-soft  { animation: pulse-soft 2s ease infinite; }
+
+/* Acordeón */
+@keyframes accordion-down {
+  from { height: 0; }
+  to   { height: var(--radix-accordion-content-height); }
+}
+@keyframes accordion-up {
+  from { height: var(--radix-accordion-content-height); }
+  to   { height: 0; }
+}
+
+/* Sheet (side drawer) */
+@keyframes sheet-in-right  { from { transform: translateX(100%); } to { transform: translateX(0); } }
+@keyframes sheet-out-right { from { transform: translateX(0); }    to { transform: translateX(100%); } }
+@keyframes sheet-in-left   { from { transform: translateX(-100%); } to { transform: translateX(0); } }
+@keyframes sheet-out-left  { from { transform: translateX(0); }    to { transform: translateX(-100%); } }
+@keyframes sheet-in-bottom  { from { transform: translateY(100%); } to { transform: translateY(0); } }
+@keyframes sheet-out-bottom { from { transform: translateY(0); }    to { transform: translateY(100%); } }
+
+/* Overlay / Backdrop */
+@keyframes overlay-in  { from { opacity: 0; } to { opacity: 1; } }
+@keyframes overlay-out { from { opacity: 1; } to { opacity: 0; } }
+
+/* Dialog */
+@keyframes dialog-in  { from { opacity: 0; transform: scale(0.96) translateY(4px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+@keyframes dialog-out { from { opacity: 1; transform: scale(1) translateY(0); }       to { opacity: 0; transform: scale(0.96) translateY(4px); } }
+
+/* ── ACCESIBILIDAD — reduced motion ──────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ── SKELETON ────────────────────────────────────────────────────────────── */
+@keyframes shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--color-warm-gray) 25%,
+    var(--color-sand-light) 50%,
+    var(--color-warm-gray) 75%
+  );
+  background-size: 800px 100%;
+  animation: shimmer 1.4s ease infinite;
+  border-radius: var(--radius-md);
+}
+
+/* ── SCROLLBAR CUSTOM ─────────────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track  { background: transparent; }
+::-webkit-scrollbar-thumb  { background: var(--color-sand-dark); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-sage-muted); }

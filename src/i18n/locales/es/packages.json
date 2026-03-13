@@ -1,0 +1,21 @@
+{
+  "page": {
+    "title": "Paquetes wellness",
+    "subtitle": "Combinaciones diseñadas para darte más por tu inversión. Yoga, nutrición y bienestar juntos.",
+    "badge": "Mejor valor"
+  },
+  "card": {
+    "includes": "Incluye",
+    "buy": "Obtener paquete",
+    "savings": "Ahorras {{amount}}"
+  },
+  "cta": {
+    "title": "¿No encuentras lo que buscas?",
+    "description": "Podemos armar un paquete personalizado para ti. Contáctanos y diseñamos una experiencia wellness a la medida de tus objetivos."
+  },
+  "items": {
+    "membership": "Membresía",
+    "product": "Complemento",
+    "class": "Clase"
+  }
+}

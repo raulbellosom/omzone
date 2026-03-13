@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+
+  <!-- Landing principal -->
+  <url>
+    <loc>https://omzone.mx/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://omzone.mx/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://omzone.mx/en/" />
+  </url>
+
+  <!-- Catálogo de clases -->
+  <url>
+    <loc>https://omzone.mx/classes</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://omzone.mx/classes" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://omzone.mx/en/classes" />
+  </url>
+
+  <!-- Clases individuales (se generan dinámicamente en producción) -->
+  <url>
+    <loc>https://omzone.mx/classes/morning-flow</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://omzone.mx/classes/night-reset</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Membresías y planes -->
+  <url>
+    <loc>https://omzone.mx/memberships</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://omzone.mx/memberships" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://omzone.mx/en/memberships" />
+  </url>
+
+  <!-- Paquetes -->
+  <url>
+    <loc>https://omzone.mx/packages</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://omzone.mx/packages" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://omzone.mx/en/packages" />
+  </url>
+
+  <!-- Wellness Kitchen -->
+  <url>
+    <loc>https://omzone.mx/wellness</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="es" href="https://omzone.mx/wellness" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://omzone.mx/en/wellness" />
+  </url>
+
+</urlset>

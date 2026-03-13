@@ -1,0 +1,17 @@
+{
+  "page": { "title": "Memberships & plans", "subtitle": "Choose the plan that fits your rhythm. No long-term commitments.", "badge": "Flexible plans" },
+  "billing": { "monthly": "monthly", "quarterly": "quarterly", "perMonth": "/month", "perQuarter": "/quarter" },
+  "plan": { "unlimited": "Unlimited", "classesPerCycle": "{{count}} class/month", "classesPerCycle_plural": "{{count}} classes/month", "includes": "Includes", "subscribe": "Subscribe now", "mostPopular": "Most popular", "featured": "Recommended" },
+  "comparison": { "title": "Compare plans", "feature": "Feature", "individual": "Individual", "limited": "Limited", "unlimited": "Unlimited" },
+  "trust": [
+    { "title": "No commitments", "desc": "Cancel anytime from your account." },
+    { "title": "Auto-renewal", "desc": "Convenient and transparent, no hidden charges." },
+    { "title": "Human support", "desc": "We help you with any questions about your plan." }
+  ],
+  "faq": {
+    "title": "Membership FAQ",
+    "cancel": { "q": "Can I cancel my membership anytime?", "a": "Yes. Cancel from your dashboard before the renewal date and you won't be charged for the next cycle." },
+    "pause": { "q": "Can I pause my membership?", "a": "Yes, you can pause for up to 30 days from your account. Unused classes are preserved until you reactivate." },
+    "upgrade": { "q": "Can I change my plan?", "a": "Absolutely. Upgrade or downgrade from your profile at any time." }
+  }
+}

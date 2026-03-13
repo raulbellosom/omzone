@@ -1,0 +1,136 @@
+{
+  "brand": {
+    "name": "Omzone",
+    "tagline": "Yoga & Wellness Kitchen"
+  },
+  "nav": {
+    "classes": "Classes",
+    "memberships": "Memberships",
+    "packages": "Packages",
+    "wellness": "Wellness Kitchen",
+    "login": "Sign in",
+    "register": "Sign up",
+    "myAccount": "My account",
+    "logout": "Sign out",
+    "adminPanel": "Admin panel"
+  },
+  "lang": {
+    "es": "Español",
+    "en": "English",
+    "switch": "Change language"
+  },
+  "footer": {
+    "tagline": "Holistic wellness for your everyday life.",
+    "madeWith": "Made with",
+    "forWellness": "for your wellbeing",
+    "links": {
+      "title": "Platform",
+      "classes": "Classes",
+      "memberships": "Memberships",
+      "packages": "Packages",
+      "wellness": "Wellness Kitchen"
+    },
+    "account": {
+      "title": "My account",
+      "dashboard": "My dashboard",
+      "bookings": "My bookings",
+      "orders": "My orders",
+      "profile": "My profile"
+    },
+    "legal": {
+      "title": "Legal",
+      "privacy": "Privacy",
+      "terms": "Terms of use",
+      "cookies": "Cookies"
+    },
+    "copyright": "© {{year}} Omzone. All rights reserved."
+  },
+  "actions": {
+    "bookClass": "Book a class",
+    "explorePlans": "Explore plans",
+    "viewPackages": "View packages",
+    "viewDetails": "View details",
+    "addToCart": "Add",
+    "checkout": "Checkout",
+    "subscribe": "Subscribe",
+    "learnMore": "Learn more",
+    "back": "Back",
+    "next": "Continue",
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "save": "Save",
+    "edit": "Edit",
+    "delete": "Delete",
+    "archive": "Archive",
+    "create": "Create",
+    "search": "Search",
+    "filter": "Filter",
+    "clearFilters": "Clear filters",
+    "viewAll": "View all",
+    "close": "Close",
+    "loading": "Loading...",
+    "retry": "Try again"
+  },
+  "badges": {
+    "featured": "Featured",
+    "popular": "Popular",
+    "new": "New",
+    "limited": "Limited spots",
+    "soldOut": "Sold out",
+    "active": "Active",
+    "inactive": "Inactive",
+    "pending": "Pending",
+    "confirmed": "Confirmed",
+    "cancelled": "Cancelled",
+    "completed": "Completed",
+    "expired": "Expired"
+  },
+  "difficulty": {
+    "beginner": "Beginner",
+    "intermediate": "Intermediate",
+    "advanced": "Advanced",
+    "all_levels": "All levels"
+  },
+  "errors": {
+    "generic": "Something went wrong. Please try again.",
+    "notFound": "Page not found.",
+    "unauthorized": "You don't have access to this section.",
+    "networkError": "Connection error. Check your internet."
+  },
+  "empty": {
+    "noResults": "No results",
+    "noResultsDesc": "Try different filters or search terms.",
+    "noData": "No data available"
+  },
+  "auth": {
+    "login": {
+      "title": "Welcome back",
+      "subtitle": "Sign in to your account to continue",
+      "email": "Email address",
+      "password": "Password",
+      "submit": "Sign in",
+      "submitting": "Signing in...",
+      "noAccount": "Don't have an account?",
+      "createAccount": "Sign up",
+      "forgotPassword": "Forgot your password?",
+      "error": "Wrong email or password. Please try again.",
+      "demoHint": "Demo: use valeria@example.com"
+    },
+    "register": {
+      "title": "Create your account",
+      "subtitle": "Join the Omzone community",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "email": "Email address",
+      "password": "Password",
+      "confirmPassword": "Confirm password",
+      "phone": "Phone (optional)",
+      "submit": "Create account",
+      "submitting": "Creating account...",
+      "hasAccount": "Already have an account?",
+      "signIn": "Sign in",
+      "terms": "By signing up you agree to our terms of use and privacy policy.",
+      "success": "Account created successfully! You can now sign in."
+    }
+  }
+}

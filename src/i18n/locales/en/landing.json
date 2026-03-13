@@ -1,0 +1,111 @@
+{
+  "hero": {
+    "headline": "Your wellness,\nyour pace.",
+    "subheadline": "Yoga classes, memberships and wellness extras in one place. Book, practice and live better.",
+    "ctaMain": "Book a class",
+    "ctaSecondary": "Explore plans",
+    "badge": "Yoga + Wellness Kitchen"
+  },
+  "benefits": {
+    "title": "Everything you need to transform your wellbeing",
+    "subtitle": "A platform designed to make wellness simple, accessible and enjoyable.",
+    "items": [
+      {
+        "icon": "calendar",
+        "title": "Book in seconds",
+        "description": "Choose your class, your schedule and confirm in under two minutes."
+      },
+      {
+        "icon": "leaf",
+        "title": "Integrated Wellness Kitchen",
+        "description": "Complement your practice with smoothies, nutrition plans and curated supplements."
+      },
+      {
+        "icon": "star",
+        "title": "Certified instructors",
+        "description": "Classes led by professionals with real expertise in yoga and wellness."
+      },
+      {
+        "icon": "shield",
+        "title": "Total flexibility",
+        "description": "Drop in for a single class or choose a membership that fits your rhythm."
+      }
+    ]
+  },
+  "classes": {
+    "title": "Featured classes",
+    "subtitle": "Explore our curated selection of classes designed for all levels and times of day.",
+    "cta": "View all classes"
+  },
+  "memberships": {
+    "title": "The perfect plan for you",
+    "subtitle": "From single classes to unlimited memberships. Choose how you want to practice.",
+    "cta": "View all plans"
+  },
+  "wellness": {
+    "title": "Wellness Kitchen",
+    "subtitle": "Extras designed to boost your practice and your daily wellbeing.",
+    "cta": "Explore extras"
+  },
+  "instructors": {
+    "title": "Meet our instructors",
+    "subtitle": "Passionate professionals dedicated to yoga and holistic wellbeing."
+  },
+  "testimonials": {
+    "title": "What our members say",
+    "subtitle": "Real stories from people who transformed their wellness with Omzone.",
+    "items": [
+      {
+        "name": "Valeria M.",
+        "role": "Member since 2024",
+        "text": "I've had the unlimited membership for 6 months and it completely changed my routine. The classes are incredible and booking is effortless."
+      },
+      {
+        "name": "Carlos R.",
+        "role": "Yoga + Nutrition Package",
+        "text": "Started with a single class and now I can't live without my monthly plan. The welcome smoothie is a wonderful touch."
+      },
+      {
+        "name": "Sofía L.",
+        "role": "Premium Member",
+        "text": "The combination of yoga and the nutrition plan is what convinced me. Real results in just a few weeks."
+      }
+    ]
+  },
+  "faq": {
+    "title": "Frequently asked questions",
+    "subtitle": "Everything you need to know before getting started.",
+    "items": [
+      {
+        "question": "How do I book a class?",
+        "answer": "Browse the catalog, choose a class and time that works for you, and confirm your booking in a few steps. If it's your first time, we'll ask you to create a free account."
+      },
+      {
+        "question": "Can I cancel or reschedule my booking?",
+        "answer": "Yes. You can manage your bookings from your personal dashboard. Cancellations are allowed at least 4 hours before the class."
+      },
+      {
+        "question": "What's included in the Wellness Kitchen?",
+        "answer": "These are optional add-ons you can attach to your class booking or buy separately: functional smoothies, nutrition plans, supplements and wellness consultations."
+      },
+      {
+        "question": "Do memberships renew automatically?",
+        "answer": "Yes, memberships renew monthly automatically. You can cancel anytime from your account before the renewal date."
+      },
+      {
+        "question": "How many spots are available per class?",
+        "answer": "Capacity varies by class and level. You can see real-time availability in the catalog. We recommend booking in advance."
+      },
+      {
+        "question": "Can I buy extras without a membership?",
+        "answer": "Yes. Wellness Kitchen products and add-ons are available to any customer, with or without an active membership."
+      }
+    ]
+  },
+  "cta_section": {
+    "title": "Start your transformation today",
+    "subtitle": "Your first class or membership is just one click away.",
+    "ctaMain": "Book my first class",
+    "ctaSecondary": "View memberships"
+  }
+}

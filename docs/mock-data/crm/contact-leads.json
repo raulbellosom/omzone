@@ -1,0 +1,11 @@
+[
+  {
+    "$id": "lead_001",
+    "full_name": "María López",
+    "email": "maria@example.com",
+    "phone": "3220000000",
+    "interest_type": "membership",
+    "notes": "Quiere plan mensual y asesoría nutricional.",
+    "status": "new"
+  }
+]
