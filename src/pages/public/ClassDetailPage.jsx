@@ -19,7 +19,7 @@ import ROUTES from '@/constants/routes'
 import { cn } from '@/lib/utils'
 import { buildClassStructuredData } from '@/lib/seo'
 
-const BASE_URL = import.meta.env.VITE_APP_BASE_URL ?? 'https://omzone.mx'
+const BASE_URL = import.meta.env.VITE_APP_BASE_URL ?? 'https://omzone.com'
 
 const TYPE_GRADIENTS = {
   vinyasa:    'from-sage-muted to-sage-light',

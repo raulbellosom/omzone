@@ -25,7 +25,7 @@ const users = [
     role_key: 'admin',
     first_name: 'Admin',
     last_name: 'Omzone',
-    email: 'admin@omzone.mx',
+    email: 'admin@omzone.com',
     phone: '+52 55 9876 5432',
     avatar_id: null,
     status: 'active',

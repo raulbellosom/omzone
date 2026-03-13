@@ -6,7 +6,9 @@
       "Bash(node:*)",
       "Bash(npm run:*)",
       "Bash(sed:*)",
-      "Bash(find /d/RacoonDevs/omzone/src/pages/customer -type f -name *.jsx -o -name *.js)"
+      "Bash(find /d/RacoonDevs/omzone/src/pages/customer -type f -name *.jsx -o -name *.js)",
+      "Bash(powershell -Command \"$files = @\\(''index.html'', ''public/robots.txt'', ''public/sitemap.xml'', ''src/components/seo/PageMeta.jsx'', ''src/lib/seo.js'', ''src/pages/admin/AdminSettingsPage.jsx'', ''src/pages/public/ClassDetailPage.jsx'', ''src/pages/public/ClassesPage.jsx'', ''src/pages/public/LandingPage.jsx'', ''src/pages/public/MembershipsPage.jsx'', ''src/pages/public/PackagesPage.jsx'', ''src/pages/public/WellnessPage.jsx'', ''src/services/mocks/userService.mock.js''\\); foreach \\($f in $files\\) { $content = Get-Content $f -Raw; $content = $content -replace ''omzone\\\\.mx'', ''omzone.com''; Set-Content $f $content -NoNewline }\")",
+      "Bash(python -c \":*)"
     ]
   }
 }

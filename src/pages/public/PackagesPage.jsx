@@ -6,7 +6,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { useWellnessPackages } from '@/hooks/useWellness'
 import { resolveField } from '@/lib/i18n-data'
 
-const BASE_URL = import.meta.env.VITE_APP_BASE_URL ?? 'https://omzone.mx'
+const BASE_URL = import.meta.env.VITE_APP_BASE_URL ?? 'https://omzone.com'
 
 export default function PackagesPage() {
   const { t } = useTranslation('packages')

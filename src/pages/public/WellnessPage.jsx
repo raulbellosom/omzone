@@ -8,7 +8,7 @@ import { useWellnessProducts } from '@/hooks/useWellness'
 import { resolveField } from '@/lib/i18n-data'
 import { cn } from '@/lib/utils'
 
-const BASE_URL = import.meta.env.VITE_APP_BASE_URL ?? 'https://omzone.mx'
+const BASE_URL = import.meta.env.VITE_APP_BASE_URL ?? 'https://omzone.com'
 
 const PRODUCT_TYPES = ['smoothie', 'snack', 'supplement', 'plan', 'addon', 'other']
 

@@ -12,7 +12,7 @@ import {
 import { useMembershipPlans } from '@/hooks/useMemberships'
 import { resolveField } from '@/lib/i18n-data'
 
-const BASE_URL = import.meta.env.VITE_APP_BASE_URL ?? 'https://omzone.mx'
+const BASE_URL = import.meta.env.VITE_APP_BASE_URL ?? 'https://omzone.com'
 
 export default function MembershipsPage() {
   const { t } = useTranslation('memberships')

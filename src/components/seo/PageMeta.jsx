@@ -7,7 +7,7 @@ import { Helmet } from 'react-helmet-async'
  *   <PageMeta
  *     title="Morning Flow"
  *     description="Clase de yoga para despertar el cuerpo..."
- *     canonical="https://omzone.mx/classes/morning-flow"
+ *     canonical="https://omzone.com/classes/morning-flow"
  *   />
  *
  * Props directas (alternativa al helper buildPageMeta):
@@ -23,7 +23,7 @@ export default function PageMeta({
   children,
 }) {
   const siteName = 'Omzone'
-  const baseUrl = import.meta.env.VITE_APP_BASE_URL ?? 'https://omzone.mx'
+  const baseUrl = import.meta.env.VITE_APP_BASE_URL ?? 'https://omzone.com'
   const defaultOgImage = `${baseUrl}/og-image.jpg`
 
   const fullTitle = title
