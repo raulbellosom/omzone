@@ -103,9 +103,16 @@
     "noData": "No data available"
   },
   "auth": {
+    "sidePanel": {
+      "quoteLogin": "The body is your temple. Keep it pure and clean for the soul to reside in.",
+      "authorLogin": "B.K.S. Iyengar",
+      "quoteRegister": "Yoga is the journey of the self, through the self, to the self.",
+      "authorRegister": "Bhagavad Gita"
+    },
     "login": {
       "title": "Welcome back",
-      "subtitle": "Sign in to your account to continue",
+      "subtitle": "Sign in to continue your wellness journey",
+      "welcomeBack": "Your peace space awaits",
       "email": "Email address",
       "password": "Password",
       "submit": "Sign in",
@@ -114,11 +121,13 @@
       "createAccount": "Sign up",
       "forgotPassword": "Forgot your password?",
       "error": "Wrong email or password. Please try again.",
-      "demoHint": "Demo: use valeria@example.com"
+      "demoHint": "Demo: use valeria@example.com",
+      "orContinueWith": "or continue with",
+      "google": "Google"
     },
     "register": {
-      "title": "Create your account",
-      "subtitle": "Join the Omzone community",
+      "title": "Begin your journey",
+      "subtitle": "Join the Omzone community and transform your wellbeing",
       "firstName": "First name",
       "lastName": "Last name",
       "email": "Email address",

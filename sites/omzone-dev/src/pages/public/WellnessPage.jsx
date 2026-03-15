@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
+import { Leaf } from 'lucide-react'
 import PageMeta from '@/components/seo/PageMeta'
 import StructuredData from '@/components/seo/StructuredData'
 import ProductCard from '@/features/wellness/ProductCard'
@@ -98,7 +99,7 @@ export default function WellnessPage() {
           </div>
         ) : (
           <div className="text-center py-20">
-            <span className="text-4xl mb-3 block" aria-hidden="true">🌿</span>
+            <Leaf className="w-10 h-10 mb-3 mx-auto text-charcoal-subtle" aria-hidden="true" />
             <p className="text-charcoal-muted">{t('filters.empty')}</p>
           </div>
         )}

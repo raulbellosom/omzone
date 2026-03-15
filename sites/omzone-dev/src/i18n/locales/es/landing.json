@@ -3,7 +3,7 @@
     "headline": "Tu bienestar,\ntu ritmo.",
     "subheadline": "Clases de yoga, membresías y complementos wellness en un solo lugar. Reserva, practica y vive mejor.",
     "ctaMain": "Reservar clase",
-    "ctaSecondary": "Explorar planes",
+    "ctaSecondary": "Ver paquetes",
     "badge": "Yoga + Wellness Kitchen"
   },
   "benefits": {
@@ -37,15 +37,27 @@
     "subtitle": "Explora nuestra selección de clases diseñadas para todos los niveles y momentos del día.",
     "cta": "Ver todas las clases"
   },
-  "memberships": {
-    "title": "El plan perfecto para ti",
-    "subtitle": "Desde clases individuales hasta membresías ilimitadas. Elige cómo quieres practicar.",
-    "cta": "Ver todos los planes"
+  "packages": {
+    "eyebrow": "Paquetes prepagados",
+    "title": "El paquete perfecto para ti",
+    "subtitle": "Clases, productos wellness y combinaciones a tu medida. Sin suscripciones, sin cargos recurrentes.",
+    "cta": "Ver todos los paquetes"
   },
   "wellness": {
     "title": "Wellness Kitchen",
     "subtitle": "Complementos pensados para potenciar tu práctica y tu bienestar diario.",
     "cta": "Explorar extras"
+  },
+  "studio": {
+    "eyebrow": "El espacio",
+    "title": "Un lugar diseñado para tu bienestar",
+    "description": "Nuestro estudio combina espacios cuidadosamente diseñados con instructores dedicados y una comunidad que te impulsa a crecer.",
+    "features": [
+      "Sala de yoga climatizada y con iluminación natural",
+      "Wellness Kitchen integrada con productos frescos",
+      "Duchas, lockers y áreas de descanso",
+      "Acceso QR personalizado para cada miembro"
+    ]
   },
   "instructors": {
     "title": "Conoce a nuestros instructores",
@@ -89,8 +101,8 @@
         "answer": "Son complementos opcionales que puedes agregar a tu clase o comprar por separado: smoothies funcionales, planes nutricionales, suplementos y asesorías de bienestar."
       },
       {
-        "question": "¿Las membresías se renuevan automáticamente?",
-        "answer": "Sí, las membresías tienen renovación mensual automática. Puedes cancelar en cualquier momento desde tu cuenta antes de la fecha de renovación."
+        "question": "¿Los paquetes tienen vencimiento?",
+        "answer": "Sí, los paquetes prepagados tienen una fecha de expiración a partir de su compra. Puedes ver tu saldo de créditos y la fecha de vencimiento en cualquier momento desde tu cuenta."
       },
       {
         "question": "¿Cuántos lugares hay por clase?",
@@ -106,6 +118,6 @@
     "title": "Empieza hoy tu transformación",
     "subtitle": "Tu primera clase o tu primera membresía están a un clic de distancia.",
     "ctaMain": "Reservar mi primera clase",
-    "ctaSecondary": "Ver membresías"
+    "ctaSecondary": "Ver paquetes"
   }
 }

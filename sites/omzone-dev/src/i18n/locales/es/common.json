@@ -103,9 +103,16 @@
     "noData": "Sin datos disponibles"
   },
   "auth": {
+    "sidePanel": {
+      "quoteLogin": "El cuerpo es tu templo. Mantenlo puro y limpio para que el alma pueda habitar en él.",
+      "authorLogin": "B.K.S. Iyengar",
+      "quoteRegister": "Yoga es el viaje del ser, a través del ser, hacia el ser.",
+      "authorRegister": "Bhagavad Gita"
+    },
     "login": {
       "title": "Bienvenida de vuelta",
-      "subtitle": "Ingresa a tu cuenta para continuar",
+      "subtitle": "Ingresa a tu cuenta para continuar tu camino de bienestar",
+      "welcomeBack": "Tu espacio de paz te espera",
       "email": "Correo electrónico",
       "password": "Contraseña",
       "submit": "Entrar",
@@ -114,11 +121,13 @@
       "createAccount": "Regístrate",
       "forgotPassword": "¿Olvidaste tu contraseña?",
       "error": "Correo o contraseña incorrectos. Intenta de nuevo.",
-      "demoHint": "Demo: usa valeria@example.com"
+      "demoHint": "Demo: usa valeria@example.com",
+      "orContinueWith": "o continúa con",
+      "google": "Google"
     },
     "register": {
-      "title": "Crea tu cuenta",
-      "subtitle": "Únete a la comunidad Omzone",
+      "title": "Comienza tu viaje",
+      "subtitle": "Únete a la comunidad Omzone y transforma tu bienestar",
       "firstName": "Nombre",
       "lastName": "Apellido",
       "email": "Correo electrónico",

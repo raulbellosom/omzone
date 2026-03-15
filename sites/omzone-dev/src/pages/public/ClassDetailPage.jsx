@@ -1,6 +1,6 @@
 import { useParams, Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { Clock, Users, ArrowRight, MapPin, Calendar, ChevronLeft, Plus, Check } from 'lucide-react'
+import { Clock, Users, ArrowRight, MapPin, Calendar, ChevronLeft, Plus, Check, Waves, Heart, Zap, Moon, Sun, Sparkles, Activity } from 'lucide-react'
 import { useState } from 'react'
 import PageMeta from '@/components/seo/PageMeta'
 import StructuredData from '@/components/seo/StructuredData'
@@ -29,8 +29,8 @@ const TYPE_GRADIENTS = {
   hatha:      'from-sand-dark to-sand',
   meditation: 'from-sage-light to-cream',
 }
-const TYPE_SYMBOL = {
-  vinyasa:'◎', restorative:'❋', power:'△', yin:'◐', hatha:'○', meditation:'✦',
+const TYPE_ICON = {
+  vinyasa: Waves, restorative: Heart, power: Zap, yin: Moon, hatha: Sun, meditation: Sparkles,
 }
 
 export default function ClassDetailPage() {
@@ -52,7 +52,7 @@ export default function ClassDetailPage() {
   const description = resolveField(cls, 'description')
   const typeSlug    = cls.class_type?.slug ?? 'default'
   const gradient    = TYPE_GRADIENTS[typeSlug] ?? 'from-warm-gray to-sand'
-  const symbol      = TYPE_SYMBOL[typeSlug] ?? '◌'
+  const TypeIcon    = TYPE_ICON[typeSlug] ?? Activity
   const typeLabel   = resolveField(cls.class_type, 'name')
 
   const activeSession = selectedSession ?? sessions?.[0]
@@ -107,13 +107,10 @@ export default function ClassDetailPage() {
               'relative h-64 md:h-80 rounded-2xl overflow-hidden mb-6 bg-gradient-to-br',
               gradient
             )}>
-              <span
-                className="absolute inset-0 flex items-center justify-center text-white/20 font-display select-none"
-                style={{ fontSize: '8rem' }}
+              <TypeIcon
+                className="absolute inset-0 m-auto w-32 h-32 text-white/20"
                 aria-hidden="true"
-              >
-                {symbol}
-              </span>
+              />
               <div className="absolute top-4 left-4 flex gap-2">
                 <Badge variant="charcoal" className="text-xs uppercase tracking-wider">
                   {typeLabel}
@@ -372,7 +369,7 @@ function NotFound() {
   const { t } = useTranslation('common')
   return (
     <main className="max-w-lg mx-auto px-4 py-24 text-center">
-      <span className="text-5xl mb-4 block" aria-hidden="true">🧘</span>
+      <Activity className="w-12 h-12 mb-4 mx-auto text-charcoal-subtle" aria-hidden="true" />
       <h1 className="text-2xl font-semibold text-charcoal mb-2">{t('errors.notFound')}</h1>
       <p className="text-charcoal-muted mb-6">{t('errors.generic')}</p>
       <Button asChild variant="outline">

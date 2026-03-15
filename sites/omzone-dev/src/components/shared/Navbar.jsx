@@ -21,7 +21,6 @@ import { cn } from '@/lib/utils'
 
 const navLinks = [
   { key: 'nav.classes', href: ROUTES.CLASSES },
-  { key: 'nav.memberships', href: ROUTES.MEMBERSHIPS },
   { key: 'nav.packages', href: ROUTES.PACKAGES },
   { key: 'nav.wellness', href: ROUTES.WELLNESS },
 ]

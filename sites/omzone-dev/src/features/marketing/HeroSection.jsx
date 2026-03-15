@@ -1,130 +1,251 @@
-import { Link } from 'react-router-dom'
-import { useTranslation } from 'react-i18next'
-import { ArrowRight, Sparkles } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import ROUTES from '@/constants/routes'
+import { useState, useEffect, useCallback } from "react";
+import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import {
+  ArrowRight,
+  Sparkles,
+  ChevronDown,
+  Waves,
+  GlassWater,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import ROUTES from "@/constants/routes";
+
+// Hero carousel images — beach + yoga in Puerto Vallarta vibes
+const HERO_IMAGES = [
+  // 1. Playa tranquila atardecer
+  "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1920&h=1080&fit=crop&crop=center&q=80",
+  // 2. Yoga grupal en la playa
+  "https://images.unsplash.com/photo-1588286840104-8957b019727f?w=1920&h=1080&fit=crop&crop=center&q=80",
+  // 3. Meditación playa al amanecer
+  "https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=1920&h=1080&fit=crop&crop=center&q=80",
+  // 4. Yoga pose frente al mar
+  "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=1920&h=1080&fit=crop&crop=center&q=80",
+];
+
+const SLIDE_INTERVAL = 6000;
 
 export default function HeroSection() {
-  const { t } = useTranslation('landing')
+  const { t } = useTranslation("landing");
+
+  const [current, setCurrent] = useState(0);
+
+  const advance = useCallback(() => {
+    setCurrent((prev) => (prev + 1) % HERO_IMAGES.length);
+  }, []);
+
+  useEffect(() => {
+    const id = setInterval(advance, SLIDE_INTERVAL);
+    return () => clearInterval(id);
+  }, [advance]);
 
   return (
     <section
       aria-label="Bienvenida a Omzone"
-      className="relative overflow-hidden bg-cream min-h-[88vh] md:min-h-[80vh] flex items-center"
+      className="relative flex flex-col overflow-hidden"
+      style={{ minHeight: "calc(100dvh - 4rem)" }}
     >
-      {/* Blobs decorativos de fondo */}
-      <div aria-hidden="true" className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-sage-muted/40 blur-3xl" />
-        <div className="absolute top-1/2 -translate-y-1/2 -left-32 w-80 h-80 rounded-full bg-sand/60 blur-3xl" />
-        <div className="absolute bottom-0 right-1/4 w-64 h-64 rounded-full bg-olive-light/20 blur-3xl" />
+      {/* ── Background carousel ──────────────────────────────────── */}
+      <div className="absolute inset-0">
+        {HERO_IMAGES.map((src, i) => (
+          <img
+            key={i}
+            src={src}
+            alt=""
+            aria-hidden="true"
+            className="absolute inset-0 w-full h-full object-cover object-center transition-opacity duration-[1800ms] ease-in-out"
+            style={{ opacity: i === current ? 1 : 0 }}
+            loading={i === 0 ? "eager" : "lazy"}
+            fetchpriority={i === 0 ? "high" : undefined}
+          />
+        ))}
+        {/* Ken Burns subtle zoom on active slide */}
+        <div
+          className="absolute inset-0 animate-hero-zoom pointer-events-none"
+          key={current}
+          aria-hidden="true"
+        />
+        {/* Left-to-right gradient: text is readable on left, image shows on right */}
+        <div className="absolute inset-0 bg-linear-to-r from-charcoal/92 via-charcoal/65 to-charcoal/15" />
+        {/* Bottom fade for scroll indicator */}
+        <div className="absolute inset-0 bg-linear-to-t from-charcoal/50 via-transparent to-transparent" />
+        {/* Subtle sage tint on the top-right */}
+        <div
+          className="absolute -top-32 right-0 w-150 h-150 rounded-full bg-sage/10 blur-3xl"
+          aria-hidden="true"
+        />
       </div>
 
-      <div className="relative max-w-6xl mx-auto px-4 py-20 md:py-28 w-full">
-        <div className="grid md:grid-cols-12 gap-12 items-center">
-
-          {/* ── Columna texto ──────────────────────────────────────────── */}
-          <div className="md:col-span-7 animate-fade-in-up">
+      {/* ── Main content ─────────────────────────────────────────── */}
+      <div className="relative flex-1 flex items-center">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-16 md:py-20">
+          <div className="max-w-2xl animate-fade-in-up">
             {/* Badge */}
-            <div className="inline-flex items-center gap-2 bg-sage-muted/60 text-sage-darker text-sm font-medium px-4 py-2 rounded-full mb-6">
-              <Sparkles className="w-4 h-4" aria-hidden="true" />
-              {t('hero.badge')}
+            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 text-white/90 text-sm font-medium px-4 py-2 rounded-full mb-8">
+              <Sparkles
+                className="w-4 h-4 text-sage-light shrink-0"
+                aria-hidden="true"
+              />
+              {t("hero.badge")}
             </div>
 
-            {/* H1 — máxima prioridad SEO */}
-            <h1 className="font-display text-5xl sm:text-6xl md:text-7xl text-charcoal font-semibold leading-[1.05] tracking-tight text-balance mb-6">
-              {t('hero.headline').split('\n').map((line, i) => (
-                <span key={i} className={i > 0 ? 'block text-sage' : 'block'}>
-                  {line}
-                </span>
-              ))}
+            {/* H1 */}
+            <h1 className="font-display text-6xl sm:text-7xl md:text-8xl text-white font-semibold leading-[0.92] tracking-tight mb-6">
+              {t("hero.headline")
+                .split("\n")
+                .map((line, i) => (
+                  <span
+                    key={i}
+                    className={i > 0 ? "block text-sage-light" : "block"}
+                  >
+                    {line}
+                  </span>
+                ))}
             </h1>
 
-            <p className="text-lg text-charcoal-muted leading-relaxed max-w-lg mb-8 text-pretty">
-              {t('hero.subheadline')}
+            <p className="text-white/65 text-lg sm:text-xl leading-relaxed max-w-lg mb-10">
+              {t("hero.subheadline")}
             </p>
 
             {/* CTAs */}
             <div className="flex flex-col sm:flex-row gap-3">
-              <Button asChild size="xl" className="group">
+              <Button
+                asChild
+                size="xl"
+                className="group shadow-lg shadow-sage/30"
+              >
                 <Link to={ROUTES.CLASSES}>
-                  {t('hero.ctaMain')}
-                  <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" aria-hidden="true" />
+                  {t("hero.ctaMain")}
+                  <ArrowRight
+                    className="w-4 h-4 transition-transform group-hover:translate-x-1"
+                    aria-hidden="true"
+                  />
                 </Link>
               </Button>
-              <Button asChild size="xl" variant="outline">
-                <Link to={ROUTES.MEMBERSHIPS}>
-                  {t('hero.ctaSecondary')}
-                </Link>
+              <Button
+                asChild
+                size="xl"
+                variant="outline"
+                className="border-white/25 text-white hover:bg-white/10 backdrop-blur-sm"
+              >
+                <Link to={ROUTES.PACKAGES}>{t("hero.ctaSecondary")}</Link>
               </Button>
             </div>
 
-            {/* Social proof */}
-            <div className="flex items-center gap-6 mt-10 pt-8 border-t border-warm-gray-dark/60">
-              <Stat value="+200" label="alumnos activos" />
-              <div className="w-px h-8 bg-warm-gray-dark/60" aria-hidden="true" />
-              <Stat value="4.9★" label="valoración media" />
-              <div className="w-px h-8 bg-warm-gray-dark/60" aria-hidden="true" />
-              <Stat value="6" label="tipos de clase" />
-            </div>
-          </div>
-
-          {/* ── Columna visual ─────────────────────────────────────────── */}
-          <div className="md:col-span-5 hidden md:flex flex-col gap-4 animate-fade-in">
-            {/* Card flotante principal */}
-            <div className="bg-white rounded-2xl p-5 shadow-card border border-warm-gray-dark/30">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-sage-muted to-sage-light flex items-center justify-center text-xl">
-                  ◎
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-charcoal">Morning Flow</p>
-                  <p className="text-xs text-charcoal-muted">con Mario Zen · 60 min</p>
-                </div>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-xs text-charcoal-muted bg-warm-gray px-2.5 py-1 rounded-full">Mañana · 7:00 AM</span>
-                <span className="text-sm font-bold text-sage">$180</span>
-              </div>
-              <div className="mt-3 h-1.5 rounded-full bg-warm-gray overflow-hidden">
-                <div className="h-full w-7/12 bg-sage rounded-full" />
-              </div>
-              <p className="text-xs text-charcoal-subtle mt-1">7 de 12 lugares ocupados</p>
-            </div>
-
-            {/* Card membresía */}
-            <div className="bg-sage rounded-2xl p-5 text-white self-end w-5/6">
-              <p className="text-xs font-medium text-sage-light mb-2 uppercase tracking-wider">Membresía activa</p>
-              <p className="text-base font-semibold">Yoga ilimitado mensual</p>
-              <p className="text-xs text-sage-light/80 mt-1">Renueva en 18 días</p>
-              <div className="mt-3 flex items-center gap-1">
-                {[...Array(5)].map((_, i) => (
-                  <div key={i} className="w-6 h-6 rounded-full bg-white/20 border-2 border-white/40" aria-hidden="true" />
-                ))}
-                <span className="text-xs text-sage-light ml-1">+12 este mes</span>
-              </div>
-            </div>
-
-            {/* Card producto wellness */}
-            <div className="bg-white rounded-2xl p-4 shadow-card border border-warm-gray-dark/30 flex items-center gap-3">
-              <span className="text-2xl" role="img" aria-label="Smoothie">🥤</span>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-charcoal truncate">Smoothie Green Balance</p>
-                <p className="text-xs text-charcoal-muted">Wellness Kitchen</p>
-              </div>
-              <span className="text-sm font-bold text-sage shrink-0">$95</span>
+            {/* Stats */}
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-3 mt-12 pt-8 border-t border-white/12">
+              <HeroStat value="+200" label="alumnos activos" />
+              <div
+                className="w-px h-8 bg-white/12 hidden sm:block"
+                aria-hidden="true"
+              />
+              <HeroStat value="4.9★" label="valoración media" />
+              <div
+                className="w-px h-8 bg-white/12 hidden sm:block"
+                aria-hidden="true"
+              />
+              <HeroStat value="6" label="tipos de clase" />
             </div>
           </div>
         </div>
+
+        {/* Floating visual card — desktop only */}
+        <div className="absolute right-8 lg:right-16 xl:right-24 top-1/2 -translate-y-1/2 hidden lg:flex flex-col gap-4 w-64 animate-fade-in">
+          {/* Class card */}
+          <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 shadow-xl">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-9 h-9 rounded-xl bg-sage/80 flex items-center justify-center shrink-0">
+                <Waves className="w-4 h-4 text-white" aria-hidden="true" />
+              </div>
+              <div className="min-w-0">
+                <p className="text-sm font-semibold text-white truncate">
+                  Morning Flow
+                </p>
+                <p className="text-xs text-white/55">Mario Zen · 60 min</p>
+              </div>
+            </div>
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs text-white/50 bg-white/10 px-2.5 py-1 rounded-full">
+                7:00 AM
+              </span>
+              <span className="text-sm font-bold text-sage-light">$180</span>
+            </div>
+            <div className="h-1.5 rounded-full bg-white/15 overflow-hidden">
+              <div className="h-full w-7/12 bg-sage-light rounded-full" />
+            </div>
+            <p className="text-xs text-white/40 mt-1">7 / 12 lugares</p>
+          </div>
+
+          {/* Membership card */}
+          <div className="bg-sage/80 backdrop-blur-md border border-sage-light/30 rounded-2xl p-4 shadow-xl ml-6">
+            <p className="text-xs font-medium text-sage-light/80 uppercase tracking-wider mb-1">
+              Membresía activa
+            </p>
+            <p className="text-sm font-semibold text-white">Yoga ilimitado</p>
+            <p className="text-xs text-white/55 mt-0.5">Renueva en 18 días</p>
+            <div className="flex gap-1 mt-3">
+              {[...Array(4)].map((_, i) => (
+                <div
+                  key={i}
+                  className="w-5 h-5 rounded-full bg-white/20 border border-white/30"
+                  aria-hidden="true"
+                />
+              ))}
+              <span className="text-xs text-white/50 ml-1 self-center">
+                +12
+              </span>
+            </div>
+          </div>
+
+          {/* Wellness card */}
+          <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-3 shadow-xl flex items-center gap-3 -ml-2">
+            <GlassWater
+              className="w-5 h-5 text-white/60 shrink-0"
+              aria-hidden="true"
+            />
+            <div className="min-w-0 flex-1">
+              <p className="text-xs font-medium text-white truncate">
+                Green Balance
+              </p>
+              <p className="text-xs text-white/45">Wellness Kitchen</p>
+            </div>
+            <span className="text-sm font-bold text-sage-light shrink-0">
+              $95
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Scroll indicator + slide dots ────────────────────────── */}
+      <div
+        className="relative flex flex-col items-center gap-3 pb-8"
+        aria-hidden="true"
+      >
+        <div className="flex gap-2">
+          {HERO_IMAGES.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setCurrent(i)}
+              className={`h-1 rounded-full transition-all duration-500 ${
+                i === current
+                  ? "w-8 bg-white/80"
+                  : "w-2 bg-white/30 hover:bg-white/50"
+              }`}
+              aria-label={`Imagen ${i + 1}`}
+            />
+          ))}
+        </div>
+        <ChevronDown className="w-5 h-5 text-white/35 animate-bounce" />
       </div>
     </section>
-  )
+  );
 }
 
-function Stat({ value, label }) {
+function HeroStat({ value, label }) {
   return (
     <div>
-      <p className="text-lg font-bold text-charcoal leading-none">{value}</p>
-      <p className="text-xs text-charcoal-muted mt-0.5">{label}</p>
+      <p className="text-xl font-bold text-white leading-none">{value}</p>
+      <p className="text-xs text-white/45 mt-0.5">{label}</p>
     </div>
-  )
+  );
 }

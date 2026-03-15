@@ -53,7 +53,7 @@ export default function CustomerMembershipPage() {
                 : 'Access unlimited classes, book in advance, and enjoy exclusive benefits.'}
             </p>
             <Button asChild>
-              <Link to={ROUTES.MEMBERSHIPS}>{t('membership.noMembershipCta')}</Link>
+              <Link to={ROUTES.PACKAGES}>{t('membership.noMembershipCta')}</Link>
             </Button>
           </CardContent>
         </Card>
@@ -173,7 +173,7 @@ export default function CustomerMembershipPage() {
           <h3 className="font-semibold text-charcoal mb-4">{t('membership.billing')}</h3>
           <div className="flex flex-col sm:flex-row gap-3">
             <Button asChild variant="outline" className="flex-1">
-              <Link to={ROUTES.MEMBERSHIPS}>{t('membership.upgrade')}</Link>
+              <Link to={ROUTES.PACKAGES}>{t('membership.upgrade')}</Link>
             </Button>
             <Button
               variant="ghost"

@@ -32,7 +32,6 @@ export default function Footer() {
             <ul className="space-y-2 text-sm">
               {[
                 [t('footer.links.classes'), ROUTES.CLASSES],
-                [t('footer.links.memberships'), ROUTES.MEMBERSHIPS],
                 [t('footer.links.packages'), ROUTES.PACKAGES],
                 [t('footer.links.wellness'), ROUTES.WELLNESS],
               ].map(([label, href]) => (

@@ -4,7 +4,7 @@
  */
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { CalendarCheck, ShoppingBag, Award, ArrowRight, BookOpen, Leaf } from 'lucide-react'
+import { CalendarCheck, ShoppingBag, Award, ArrowRight, BookOpen, Leaf, GlassWater } from 'lucide-react'
 import { format, differenceInDays } from 'date-fns'
 import { es, enUS } from 'date-fns/locale'
 import { Button } from '@/components/ui/button'
@@ -201,7 +201,7 @@ export default function CustomerDashboardPage() {
                       <Award className="w-6 h-6 text-charcoal-subtle shrink-0" />
                       <div className="flex-1">
                         <p className="text-sm text-charcoal-muted mb-2">{t('dashboard.noMembership')}</p>
-                        <Link to={ROUTES.MEMBERSHIPS} className="text-xs text-sage font-medium hover:underline">
+                        <Link to={ROUTES.PACKAGES} className="text-xs text-sage font-medium hover:underline">
                           {t('dashboard.explorePlans')}
                         </Link>
                       </div>
@@ -262,7 +262,7 @@ export default function CustomerDashboardPage() {
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           {[
             { label: t('common:actions.bookClass'), to: ROUTES.CLASSES, icon: CalendarCheck },
-            { label: t('common:actions.explorePlans'), to: ROUTES.MEMBERSHIPS, icon: Award },
+            { label: t('common:actions.explorePlans'), to: ROUTES.PACKAGES, icon: Award },
             { label: 'Wellness Kitchen', to: ROUTES.WELLNESS, icon: Leaf },
           ].map(({ label, to, icon: Icon }) => (
             <Link
@@ -284,8 +284,8 @@ export default function CustomerDashboardPage() {
           <Card className="group hover:-translate-y-0.5 hover:shadow-card-hover transition-all duration-200 overflow-hidden">
             <div className="h-1 bg-linear-to-r from-olive-light to-sage-muted" aria-hidden="true" />
             <CardContent className="p-5 flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-linear-to-br from-sage-muted to-olive-light flex items-center justify-center shrink-0 text-xl select-none">
-                🥤
+              <div className="w-12 h-12 rounded-xl bg-linear-to-br from-sage-muted to-olive-light flex items-center justify-center shrink-0">
+                <GlassWater className="w-5 h-5 text-sage-darker" aria-hidden="true" />
               </div>
               <div className="flex-1">
                 <p className="font-medium text-charcoal text-sm">Smoothie Green Balance</p>

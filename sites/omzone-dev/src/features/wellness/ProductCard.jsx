@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { ShoppingCart } from 'lucide-react'
+import { ShoppingCart, GlassWater, Cookie, Pill, FileText, Sparkles, Leaf } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -10,12 +10,12 @@ import ROUTES from '@/constants/routes'
 import { cn } from '@/lib/utils'
 
 const TYPE_VISUALS = {
-  smoothie:   { gradient: 'from-sage-muted to-sage-light',   emoji: '🥤', label: 'Smoothie' },
-  snack:      { gradient: 'from-sand to-sand-light',          emoji: '🍫', label: 'Snack' },
-  supplement: { gradient: 'from-olive-light to-sage-muted',   emoji: '💊', label: 'Suplemento' },
-  plan:       { gradient: 'from-cream-dark to-sand-light',    emoji: '📋', label: 'Plan' },
-  addon:      { gradient: 'from-warm-gray to-sand',           emoji: '✨', label: 'Add-on' },
-  other:      { gradient: 'from-warm-gray to-cream',          emoji: '🌿', label: 'Wellness' },
+  smoothie:   { gradient: 'from-sage-muted to-sage-light',   Icon: GlassWater, label: 'Smoothie' },
+  snack:      { gradient: 'from-sand to-sand-light',          Icon: Cookie,     label: 'Snack' },
+  supplement: { gradient: 'from-olive-light to-sage-muted',   Icon: Pill,       label: 'Suplemento' },
+  plan:       { gradient: 'from-cream-dark to-sand-light',    Icon: FileText,   label: 'Plan' },
+  addon:      { gradient: 'from-warm-gray to-sand',           Icon: Sparkles,   label: 'Add-on' },
+  other:      { gradient: 'from-warm-gray to-cream',          Icon: Leaf,       label: 'Wellness' },
 }
 
 export default function ProductCard({ product, compact = false }) {
@@ -39,15 +39,13 @@ export default function ProductCard({ product, compact = false }) {
         `bg-gradient-to-br ${visual.gradient}`,
         compact ? 'w-24 h-full' : 'h-36'
       )}>
-        <span className={cn(
-          'transition-transform duration-300 group-hover:scale-110 select-none',
-          compact ? 'text-2xl' : 'text-4xl'
-        )}
-          role="img"
-          aria-label={t(`types.${product.product_type}`)}
-        >
-          {visual.emoji}
-        </span>
+        <visual.Icon
+          className={cn(
+            'transition-transform duration-300 group-hover:scale-110 text-charcoal/40',
+            compact ? 'w-7 h-7' : 'w-10 h-10'
+          )}
+          aria-hidden="true"
+        />
         {product.is_addon_only && !compact && (
           <div className="absolute top-2 right-2">
             <Badge variant="warm" className="text-[10px]">

@@ -7,7 +7,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, useLocation, useNavigate, Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { ArrowLeft, ArrowRight, MapPin, Clock, Users, Check, ShoppingCart } from 'lucide-react'
+import { ArrowLeft, ArrowRight, MapPin, Clock, Users, Check, ShoppingCart, Activity } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -133,7 +133,7 @@ function Step1({ session, cls, allSessions, selectedSession, onSelect, t }) {
       {/* Info de la clase */}
       <div className="flex items-center gap-3 p-3 bg-sage-muted/30 rounded-xl text-sm">
         <div className="w-10 h-10 rounded-xl bg-sage-muted flex items-center justify-center shrink-0">
-          <span className="text-sage text-lg" aria-hidden="true">◎</span>
+          <Activity className="w-5 h-5 text-sage" aria-hidden="true" />
         </div>
         <div>
           <p className="font-semibold text-charcoal">{resolveField(cls, 'title')}</p>

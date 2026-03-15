@@ -3,9 +3,10 @@ import StructuredData from '@/components/seo/StructuredData'
 import HeroSection from '@/features/marketing/HeroSection'
 import BenefitsSection from '@/features/marketing/BenefitsSection'
 import FeaturedClassesSection from '@/features/marketing/FeaturedClassesSection'
-import MembershipsPreviewSection from '@/features/marketing/MembershipsPreviewSection'
+import PackagesPreviewSection from '@/features/marketing/PackagesPreviewSection'
 import WellnessPreviewSection from '@/features/marketing/WellnessPreviewSection'
 import TestimonialsSection from '@/features/marketing/TestimonialsSection'
+import StudioSection from '@/features/marketing/StudioSection'
 import FaqSection from '@/features/marketing/FaqSection'
 import CtaSection from '@/features/marketing/CtaSection'
 
@@ -54,8 +55,9 @@ export default function LandingPage() {
       <main>
         <HeroSection />
         <BenefitsSection />
+        <StudioSection />
         <FeaturedClassesSection />
-        <MembershipsPreviewSection />
+        <PackagesPreviewSection />
         <WellnessPreviewSection />
         <TestimonialsSection />
         <FaqSection />

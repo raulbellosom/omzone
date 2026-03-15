@@ -3,7 +3,7 @@
     "headline": "Your wellness,\nyour pace.",
     "subheadline": "Yoga classes, memberships and wellness extras in one place. Book, practice and live better.",
     "ctaMain": "Book a class",
-    "ctaSecondary": "Explore plans",
+    "ctaSecondary": "View packages",
     "badge": "Yoga + Wellness Kitchen"
   },
   "benefits": {
@@ -37,15 +37,27 @@
     "subtitle": "Explore our curated selection of classes designed for all levels and times of day.",
     "cta": "View all classes"
   },
-  "memberships": {
-    "title": "The perfect plan for you",
-    "subtitle": "From single classes to unlimited memberships. Choose how you want to practice.",
-    "cta": "View all plans"
+  "packages": {
+    "eyebrow": "Prepaid packages",
+    "title": "The perfect package for you",
+    "subtitle": "Classes, wellness products and tailored combos. No subscriptions, no recurring charges.",
+    "cta": "View all packages"
   },
   "wellness": {
     "title": "Wellness Kitchen",
     "subtitle": "Extras designed to boost your practice and your daily wellbeing.",
     "cta": "Explore extras"
+  },
+  "studio": {
+    "eyebrow": "The space",
+    "title": "A place designed for your wellbeing",
+    "description": "Our studio combines carefully designed spaces with dedicated instructors and a community that pushes you to grow.",
+    "features": [
+      "Air-conditioned yoga studio with natural light",
+      "Integrated Wellness Kitchen with fresh products",
+      "Showers, lockers and rest areas",
+      "Personalized QR access for every member"
+    ]
   },
   "instructors": {
     "title": "Meet our instructors",
@@ -89,8 +101,8 @@
         "answer": "These are optional add-ons you can attach to your class booking or buy separately: functional smoothies, nutrition plans, supplements and wellness consultations."
       },
       {
-        "question": "Do memberships renew automatically?",
-        "answer": "Yes, memberships renew monthly automatically. You can cancel anytime from your account before the renewal date."
+        "question": "Do packages expire?",
+        "answer": "Yes, prepaid packages have an expiration date from the moment of purchase. You can check your credit balance and expiry date at any time from your account."
       },
       {
         "question": "How many spots are available per class?",
@@ -106,6 +118,6 @@
     "title": "Start your transformation today",
     "subtitle": "Your first class or membership is just one click away.",
     "ctaMain": "Book my first class",
-    "ctaSecondary": "View memberships"
+    "ctaSecondary": "View packages"
   }
 }

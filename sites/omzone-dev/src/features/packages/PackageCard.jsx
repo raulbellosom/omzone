@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { Package, ArrowRight } from 'lucide-react'
+import { Package, ArrowRight, CreditCard, Leaf, Calendar } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -8,7 +8,7 @@ import { formatMXN } from '@/lib/currency'
 import { resolveField } from '@/lib/i18n-data'
 import ROUTES from '@/constants/routes'
 
-const TYPE_ICON = { membership: '🧘', product: '🌿', class: '📅' }
+const TYPE_ICON = { membership: CreditCard, product: Leaf, class: Calendar }
 const TYPE_COLORS = {
   membership: 'bg-sage-muted text-sage-darker',
   product:    'bg-sand text-charcoal',
@@ -26,7 +26,7 @@ export default function PackageCard({ pkg }) {
   return (
     <Card className="group flex flex-col overflow-hidden hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-300">
       {/* Header visual */}
-      <div className="h-3 bg-gradient-to-r from-sage to-olive" aria-hidden="true" />
+      <div className="h-3 bg-linear-to-r from-sage to-olive" aria-hidden="true" />
 
       <CardContent className="flex flex-col flex-1 p-6">
         <div className="flex items-start gap-3 mb-4">
@@ -45,14 +45,20 @@ export default function PackageCard({ pkg }) {
             {t('card.includes')}
           </p>
           <ul className="flex flex-col gap-1.5">
-            {items.map((item, i) => (
-              <li key={i} className="flex items-center gap-2 text-sm text-charcoal">
-                <span className="text-base" aria-hidden="true">{TYPE_ICON[item.type] ?? '•'}</span>
-                <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${TYPE_COLORS[item.type] ?? 'bg-warm-gray text-charcoal'}`}>
-                  {item.label_es ?? t(`items.${item.type}`)}
-                </span>
-              </li>
-            ))}
+            {items.map((item, i) => {
+              const ItemIcon = TYPE_ICON[item.type]
+              return (
+                <li key={i} className="flex items-center gap-2 text-sm text-charcoal">
+                  {ItemIcon
+                    ? <ItemIcon className="w-3.5 h-3.5 text-charcoal-muted shrink-0" aria-hidden="true" />
+                    : <span className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+                  }
+                  <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${TYPE_COLORS[item.type] ?? 'bg-warm-gray text-charcoal'}`}>
+                    {item.label_es ?? t(`items.${item.type}`)}
+                  </span>
+                </li>
+              )
+            })}
           </ul>
         </div>
 

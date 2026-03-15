@@ -1,10 +1,12 @@
 ---
-name: react-component
-description: "Create or extend React UI components using shadcn/ui + Radix primitives + CVA + Tailwind CSS 4.1 + Lucide/Phosphor icons. USE FOR: building new UI primitives, extending existing shadcn/ui components, creating shared components, designing mobile-first responsive layouts, adding motion/animation. DO NOT USE FOR: full page creation (use feature-page), admin CRUD tables (use admin-crud)."
-argument-hint: "Describe the component: name, variants, behavior, responsive needs"
+description: Crear componentes UI con shadcn/ui + CVA + Tailwind CSS 4.1
 ---
 
 # React Component — OMZONE
+
+Crea o extiende el componente descrito a continuación siguiendo las convenciones del proyecto.
+
+**Solicitud:** $ARGUMENTS
 
 ## When to Use
 
@@ -22,9 +24,7 @@ argument-hint: "Describe the component: name, variants, behavior, responsive nee
 - **Lucide React** + **Phosphor Icons** — icon sets
 - **clsx** + **tailwind-merge** via `cn()` from `@/lib/utils`
 
-## Project Conventions
-
-### File placement
+## File Placement
 
 | Type                   | Path                                          |
 | ---------------------- | --------------------------------------------- |
@@ -33,7 +33,7 @@ argument-hint: "Describe the component: name, variants, behavior, responsive nee
 | Feature-specific       | `src/features/<domain>/components/<Name>.jsx` |
 | SEO wrappers           | `src/components/seo/<Name>.jsx`               |
 
-### Code patterns
+## Code Patterns
 
 ```jsx
 // UI primitive with CVA
@@ -42,7 +42,7 @@ import { cva } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const myVariants = cva(
-  "base-classes rounded-xl transition-all duration-200", // base
+  "base-classes rounded-xl transition-all duration-200",
   {
     variants: {
       variant: {
@@ -88,7 +88,7 @@ export default function PriceTag({ amount, currency = "MXN", className }) {
 }
 ```
 
-### Design System Colors
+## Design System Colors
 
 | Token                                             | Use                                 |
 | ------------------------------------------------- | ----------------------------------- |
@@ -98,7 +98,7 @@ export default function PriceTag({ amount, currency = "MXN", className }) {
 | `sage` / `sage-dark` / `sage-muted`               | primary accent, CTAs                |
 | `charcoal` / `charcoal-muted` / `charcoal-subtle` | text hierarchy                      |
 
-### Component Checklist
+## Component Checklist
 
 1. Name the file: lowercase for ui primitives, PascalCase for shared/feature.
 2. Use `cn()` for all className merging (never raw template literals).
@@ -111,11 +111,11 @@ export default function PriceTag({ amount, currency = "MXN", className }) {
 9. Text via `useTranslation()` — never hardcode UI strings.
 10. Export named (UI primitives) or default (shared/feature components).
 
-### Existing UI Primitives
+## Existing UI Primitives
 
 `button`, `card`, `input`, `label`, `badge`, `dialog`, `tabs`, `accordion`, `avatar`, `separator`, `skeleton`, `sheet`, `tooltip`, `select`, `checkbox`, `switch`, `popover`, `progress`, `scroll-area`, `collapsible`, `aspect-ratio`, `navigation-menu`, `dropdown-menu`, `toast` (via Sonner).
 
-### Border & Shadow Tokens
+## Border & Shadow Tokens
 
 - Borders: `border-warm-gray-dark/40` (cards), `border-warm-gray-dark/60` (separators)
 - Shadows: `shadow-card`, `shadow-modal`, `shadow-sm`, `shadow-md`

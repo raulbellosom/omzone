@@ -1,10 +1,12 @@
 ---
-name: feature-page
-description: "Create a complete feature page with routing, layout, guards, SEO, i18n, and data fetching. USE FOR: new public pages, customer area pages, admin pages, booking/checkout flows. DO NOT USE FOR: individual UI components (use react-component), admin CRUD lists (use admin-crud)."
-argument-hint: "Describe the page: route, surface (public/customer/admin), data needs"
+description: Crear páginas completas con routing, layout, guards, SEO, i18n y data fetching
 ---
 
 # Feature Page — OMZONE
+
+Crea la página completa descrita a continuación siguiendo las convenciones del proyecto.
+
+**Solicitud:** $ARGUMENTS
 
 ## When to Use
 
@@ -82,7 +84,7 @@ const NewPage = lazy(() => import('@/pages/<surface>/NewPage'))
 </Route>
 
 // Customer (protected):
-<Route element={<RequireAuth roles={['customer', 'admin', 'root']} />}>
+<Route element={<RequireAuth roles={['client', 'admin', 'root']} />}>
   <Route element={<CustomerLayout />}>
     <Route path="account/new" element={<NewPage />} />
   </Route>
@@ -124,11 +126,11 @@ Add translation keys in `src/i18n/locales/es/<namespace>.json` and `en/<namespac
 
 ## Guards Reference
 
-| Surface  | Guard         | Roles                           |
-| -------- | ------------- | ------------------------------- |
-| Public   | none          | —                               |
-| Customer | `RequireAuth` | `['customer', 'admin', 'root']` |
-| Admin    | `RequireAuth` | `['admin', 'root']`             |
+| Surface  | Guard         | Roles                         |
+| -------- | ------------- | ----------------------------- |
+| Public   | none          | —                             |
+| Customer | `RequireAuth` | `['client', 'admin', 'root']` |
+| Admin    | `RequireAuth` | `['admin', 'root']`           |
 
 ## Layout Containers
 
