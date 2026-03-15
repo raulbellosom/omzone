@@ -1,0 +1,13 @@
+{
+  "name": "sync-email-verification",
+  "version": "1.0.0",
+  "description": "Syncs emailVerification state from Appwrite Auth into users_profile.",
+  "main": "src/main.js",
+  "type": "module",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "dependencies": {
+    "node-appwrite": "^14.0.0"
+  }
+}

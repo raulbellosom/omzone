@@ -1,0 +1,13 @@
+{
+  "name": "sync-user-profile",
+  "version": "1.0.0",
+  "description": "Syncs firstName + lastName from users_profile back to Appwrite Auth name.",
+  "main": "src/main.js",
+  "type": "module",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "dependencies": {
+    "node-appwrite": "^14.0.0"
+  }
+}

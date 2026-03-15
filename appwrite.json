@@ -70,26 +70,34 @@
             "databaseId": "main",
             "name": "users_profile",
             "enabled": true,
-            "rowSecurity": false,
+            "rowSecurity": true,
             "columns": [
-                { "key": "userId",       "type": "string",  "required": true,  "array": false, "size": 64,  "default": null,  "encrypt": false },
-                { "key": "roleKey",      "type": "string",  "required": false, "array": false, "default": null, "format": "enum", "elements": ["root","admin","client"] },
-                { "key": "firstName",    "type": "string",  "required": false, "array": false, "size": 80,  "default": null,  "encrypt": false },
-                { "key": "lastName",     "type": "string",  "required": false, "array": false, "size": 80,  "default": null,  "encrypt": false },
-                { "key": "email",        "type": "string",  "required": false, "array": false, "default": null, "format": "email" },
-                { "key": "phone",        "type": "string",  "required": false, "array": false, "size": 20,  "default": null,  "encrypt": false },
-                { "key": "avatarId",     "type": "string",  "required": false, "array": false, "size": 64,  "default": null,  "encrypt": false },
-                { "key": "status",       "type": "string",  "required": false, "array": false, "default": null, "format": "enum", "elements": ["active","inactive","blocked"] },
-                { "key": "locale",       "type": "string",  "required": false, "array": false, "size": 10,  "default": "es",  "encrypt": false },
-                { "key": "isSystemUser", "type": "boolean", "required": false, "array": false, "default": false },
-                { "key": "enabled",      "type": "boolean", "required": false, "array": false, "default": true }
+                { "key": "userId",               "type": "string",   "required": true,  "array": false, "size": 64,  "default": null,    "encrypt": false },
+                { "key": "roleKey",              "type": "string",   "required": false, "array": false, "default": "client", "format": "enum", "elements": ["root","admin","client"] },
+                { "key": "firstName",            "type": "string",   "required": false, "array": false, "size": 80,  "default": null,    "encrypt": false },
+                { "key": "lastName",             "type": "string",   "required": false, "array": false, "size": 80,  "default": null,    "encrypt": false },
+                { "key": "fullName",             "type": "string",   "required": false, "array": false, "size": 200, "default": null,    "encrypt": false },
+                { "key": "email",                "type": "string",   "required": false, "array": false, "default": null, "format": "email" },
+                { "key": "emailVerified",        "type": "boolean",  "required": false, "array": false, "default": false },
+                { "key": "phone",                "type": "string",   "required": false, "array": false, "size": 20,  "default": null,    "encrypt": false },
+                { "key": "avatarId",             "type": "string",   "required": false, "array": false, "size": 64,  "default": null,    "encrypt": false },
+                { "key": "status",               "type": "string",   "required": false, "array": false, "default": "pending_verification", "format": "enum", "elements": ["pending_verification","active","inactive","blocked"] },
+                { "key": "onboardingCompleted",  "type": "boolean",  "required": false, "array": false, "default": false },
+                { "key": "provider",             "type": "string",   "required": false, "array": false, "size": 40,  "default": "email", "encrypt": false },
+                { "key": "locale",               "type": "string",   "required": false, "array": false, "size": 10,  "default": "es",    "encrypt": false },
+                { "key": "isSystemUser",         "type": "boolean",  "required": false, "array": false, "default": false },
+                { "key": "enabled",              "type": "boolean",  "required": false, "array": false, "default": true },
+                { "key": "createdAt",            "type": "datetime", "required": false, "array": false, "default": null },
+                { "key": "updatedAt",            "type": "datetime", "required": false, "array": false, "default": null }
             ],
             "indexes": [
-                { "key": "uq_profile_user",    "type": "unique", "status": "available", "columns": ["userId"],       "orders": ["ASC"] },
-                { "key": "uq_profile_email",   "type": "unique", "status": "available", "columns": ["email"],        "orders": ["ASC"] },
-                { "key": "idx_profile_role",   "type": "key",    "status": "available", "columns": ["roleKey"],      "orders": ["ASC"] },
-                { "key": "idx_profile_status", "type": "key",    "status": "available", "columns": ["status"],       "orders": ["ASC"] },
-                { "key": "idx_profile_system", "type": "key",    "status": "available", "columns": ["isSystemUser"], "orders": ["ASC"] }
+                { "key": "uq_profile_user",         "type": "unique", "status": "available", "columns": ["userId"],          "orders": ["ASC"] },
+                { "key": "uq_profile_email",        "type": "unique", "status": "available", "columns": ["email"],           "orders": ["ASC"] },
+                { "key": "idx_profile_role",        "type": "key",    "status": "available", "columns": ["roleKey"],         "orders": ["ASC"] },
+                { "key": "idx_profile_status",      "type": "key",    "status": "available", "columns": ["status"],          "orders": ["ASC"] },
+                { "key": "idx_profile_system",      "type": "key",    "status": "available", "columns": ["isSystemUser"],    "orders": ["ASC"] },
+                { "key": "idx_profile_verified",    "type": "key",    "status": "available", "columns": ["emailVerified"],   "orders": ["ASC"] },
+                { "key": "idx_profile_onboarding",  "type": "key",    "status": "available", "columns": ["onboardingCompleted"], "orders": ["ASC"] }
             ]
         },
         {
@@ -567,5 +575,52 @@
         }
     ],
     "teams": [],
-    "topics": []
+    "topics": [],
+    "functions": [
+        {
+            "$id": "create-user-profile",
+            "name": "create-user-profile",
+            "runtime": "node-20.0",
+            "path": "appwrite/functions/create-user-profile",
+            "entrypoint": "src/main.js",
+            "ignore": ["node_modules", ".npm"],
+            "execute": [],
+            "events": ["users.*.create"],
+            "schedule": "",
+            "timeout": 15,
+            "enabled": true,
+            "logging": true,
+            "scopes": ["users.read", "databases.read", "databases.write"]
+        },
+        {
+            "$id": "sync-user-profile",
+            "name": "sync-user-profile",
+            "runtime": "node-20.0",
+            "path": "appwrite/functions/sync-user-profile",
+            "entrypoint": "src/main.js",
+            "ignore": ["node_modules", ".npm"],
+            "execute": ["users"],
+            "events": [],
+            "schedule": "",
+            "timeout": 15,
+            "enabled": true,
+            "logging": true,
+            "scopes": ["users.read", "users.write", "databases.read", "databases.write"]
+        },
+        {
+            "$id": "sync-email-verification",
+            "name": "sync-email-verification",
+            "runtime": "node-20.0",
+            "path": "appwrite/functions/sync-email-verification",
+            "entrypoint": "src/main.js",
+            "ignore": ["node_modules", ".npm"],
+            "execute": ["users"],
+            "events": [],
+            "schedule": "",
+            "timeout": 15,
+            "enabled": true,
+            "logging": true,
+            "scopes": ["users.read", "databases.read", "databases.write"]
+        }
+    ]
 }

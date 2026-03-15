@@ -18,8 +18,10 @@ const PackagesPage = lazy(() => import('@/pages/public/PackagesPage'))
 const WellnessPage = lazy(() => import('@/pages/public/WellnessPage'))
 
 // Auth
-const LoginPage = lazy(() => import('@/pages/auth/LoginPage'))
-const RegisterPage = lazy(() => import('@/pages/auth/RegisterPage'))
+const LoginPage       = lazy(() => import('@/pages/auth/LoginPage'))
+const RegisterPage    = lazy(() => import('@/pages/auth/RegisterPage'))
+const CheckEmailPage  = lazy(() => import('@/pages/auth/CheckEmailPage'))
+const VerifyEmailPage = lazy(() => import('@/pages/auth/VerifyEmailPage'))
 
 // Flujos de compra
 const BookingPage = lazy(() => import('@/pages/booking/BookingPage'))
@@ -75,6 +77,8 @@ export default function App() {
           {/* Auth (dentro del layout público para usar Navbar) */}
           <Route path="login" element={<LoginPage />} />
           <Route path="register" element={<RegisterPage />} />
+          <Route path="auth/check-email" element={<CheckEmailPage />} />
+          <Route path="auth/verify-email" element={<VerifyEmailPage />} />
         </Route>
 
         {/* ── Flujos de compra (autenticados o no) ───────────────────── */}
@@ -85,7 +89,7 @@ export default function App() {
         </Route>
 
         {/* ── Área cliente ────────────────────────────────────────────── */}
-        <Route element={<RequireAuth roles={['customer', 'admin', 'root']} />}>
+        <Route element={<RequireAuth roles={['client', 'admin', 'root']} />}>
           <Route element={<CustomerLayout />}>
             <Route path="account" element={<CustomerDashboardPage />} />
             <Route path="account/bookings" element={<CustomerBookingsPage />} />

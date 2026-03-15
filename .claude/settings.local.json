@@ -15,7 +15,8 @@
       "Bash(sed -i 's/\"\"type\"\": \"\"double\"\"/\"\"type\"\": \"\"float\"\"/g' /d/RacoonDevs/omzone/appwrite.config.json)",
       "Bash(grep -c '\"\"float\"\"' /d/RacoonDevs/omzone/appwrite.config.json)",
       "Bash(sed -i 's/\"\"type\"\": \"\"float\"\"/\"\"type\"\": \"\"double\"\"/g' /d/RacoonDevs/omzone/appwrite.config.json)",
-      "Bash(grep -c '\"\"double\"\"' /d/RacoonDevs/omzone/appwrite.config.json)"
+      "Bash(grep -c '\"\"double\"\"' /d/RacoonDevs/omzone/appwrite.config.json)",
+      "Bash(find /d/RacoonDevs/omzone/docs -type f -name *.md)"
     ]
   }
 }

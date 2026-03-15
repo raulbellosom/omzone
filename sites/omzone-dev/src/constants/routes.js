@@ -13,6 +13,8 @@ export const ROUTES = {
   // ── Autenticación ──────────────────────────────────────────────────────────
   LOGIN: '/login',
   REGISTER: '/register',
+  AUTH_CHECK_EMAIL: '/auth/check-email',
+  AUTH_VERIFY_EMAIL: '/auth/verify-email',
 
   // ── Flujos de compra ────────────────────────────────────────────────────────
   BOOKING: (sessionId) => `/booking/${sessionId}`,

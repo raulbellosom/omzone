@@ -123,7 +123,11 @@
       "error": "Correo o contraseña incorrectos. Intenta de nuevo.",
       "demoHint": "Demo: usa valeria@example.com",
       "orContinueWith": "o continúa con",
-      "google": "Google"
+      "google": "Google",
+      "unverifiedEmail": "Tu correo aún no está verificado. Por favor revisa tu bandeja de entrada.",
+      "resendVerification": "Reenviar correo de verificación",
+      "resendSuccess": "Correo de verificación enviado. Revisa tu bandeja de entrada.",
+      "resendError": "No se pudo enviar el correo. Intenta de nuevo."
     },
     "register": {
       "title": "Comienza tu viaje",
@@ -139,7 +143,29 @@
       "hasAccount": "¿Ya tienes cuenta?",
       "signIn": "Inicia sesión",
       "terms": "Al registrarte aceptas nuestros términos de uso y política de privacidad.",
-      "success": "¡Cuenta creada con éxito! Ahora puedes iniciar sesión."
+      "success": "¡Cuenta creada con éxito! Revisa tu correo para verificar tu cuenta.",
+      "emailTaken": "Este correo ya está registrado. Intenta iniciar sesión."
+    },
+    "checkEmail": {
+      "title": "Revisa tu correo",
+      "subtitle": "Hemos enviado un enlace de verificación a {{email}}",
+      "instructions": "Haz clic en el enlace del correo para activar tu cuenta. Si no lo encuentras, revisa la carpeta de spam.",
+      "resend": "Reenviar correo",
+      "resendSuccess": "¡Correo reenviado! Revisa tu bandeja de entrada.",
+      "alreadyVerified": "¿Ya verificaste tu correo?",
+      "goToLogin": "Ir a iniciar sesión",
+      "back": "Regresar al registro"
+    },
+    "verifyEmail": {
+      "verifying": "Verificando tu correo...",
+      "successTitle": "¡Correo verificado!",
+      "successSubtitle": "Tu cuenta está lista. Bienvenida a Omzone.",
+      "goToDashboard": "Ir a mi cuenta",
+      "errorTitle": "No se pudo verificar",
+      "errorLinkExpired": "El enlace de verificación ha expirado o ya fue usado. Solicita uno nuevo.",
+      "errorInvalid": "El enlace de verificación no es válido.",
+      "tryAgain": "Solicitar nuevo enlace",
+      "backToLogin": "Volver al inicio de sesión"
     }
   }
 }

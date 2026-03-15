@@ -123,7 +123,11 @@
       "error": "Wrong email or password. Please try again.",
       "demoHint": "Demo: use valeria@example.com",
       "orContinueWith": "or continue with",
-      "google": "Google"
+      "google": "Google",
+      "unverifiedEmail": "Your email is not verified yet. Please check your inbox.",
+      "resendVerification": "Resend verification email",
+      "resendSuccess": "Verification email sent. Check your inbox.",
+      "resendError": "Could not send email. Please try again."
     },
     "register": {
       "title": "Begin your journey",
@@ -139,7 +143,29 @@
       "hasAccount": "Already have an account?",
       "signIn": "Sign in",
       "terms": "By signing up you agree to our terms of use and privacy policy.",
-      "success": "Account created successfully! You can now sign in."
+      "success": "Account created! Please check your email to verify your account.",
+      "emailTaken": "This email is already registered. Try signing in instead."
+    },
+    "checkEmail": {
+      "title": "Check your email",
+      "subtitle": "We sent a verification link to {{email}}",
+      "instructions": "Click the link in the email to activate your account. If you can't find it, check your spam folder.",
+      "resend": "Resend email",
+      "resendSuccess": "Email resent! Check your inbox.",
+      "alreadyVerified": "Already verified your email?",
+      "goToLogin": "Go to sign in",
+      "back": "Back to sign up"
+    },
+    "verifyEmail": {
+      "verifying": "Verifying your email...",
+      "successTitle": "Email verified!",
+      "successSubtitle": "Your account is ready. Welcome to Omzone.",
+      "goToDashboard": "Go to my account",
+      "errorTitle": "Verification failed",
+      "errorLinkExpired": "The verification link has expired or was already used. Request a new one.",
+      "errorInvalid": "The verification link is not valid.",
+      "tryAgain": "Request new link",
+      "backToLogin": "Back to sign in"
     }
   }
 }

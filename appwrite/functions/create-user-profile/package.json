@@ -1,0 +1,13 @@
+{
+  "name": "create-user-profile",
+  "version": "1.0.0",
+  "description": "Creates a users_profile document when a new Appwrite Auth user is created.",
+  "main": "src/main.js",
+  "type": "module",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "dependencies": {
+    "node-appwrite": "^14.0.0"
+  }
+}

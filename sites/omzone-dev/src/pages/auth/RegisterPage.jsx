@@ -1,104 +1,96 @@
 /**
- * RegisterPage — formulario de registro (mock, no crea usuario real).
+ * RegisterPage — formulario de registro.
  * Ruta: /register
- * En producción: conectar con Appwrite Auth.
- * Diseño: split layout con panel lateral inmersivo.
+ * Soporta mock (VITE_USE_MOCKS=true) y Appwrite real.
+ * En modo real: crea cuenta, inicia sesión y envía verificación de email.
+ * En éxito: redirige a /auth/check-email para que el usuario verifique su correo.
  */
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Eye, EyeOff, CheckCircle, ArrowRight, Sparkles } from "lucide-react";
+import { Eye, EyeOff, ArrowRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import PageMeta from "@/components/seo/PageMeta";
+import { useAuth } from "@/hooks/useAuth.jsx";
 import ROUTES from "@/constants/routes";
 import { cn } from "@/lib/utils";
 import AuthSidePanel from "@/features/auth/AuthSidePanel";
+
+const USE_MOCKS = import.meta.env.VITE_USE_MOCKS === "true";
 
 function validate(form, t) {
   const tv = (k, p) => t(k, { ns: "validation", ...p });
   const errs = {};
   if (!form.firstName.trim()) errs.firstName = tv("required");
-  if (!form.lastName.trim()) errs.lastName = tv("required");
-  if (!form.email.trim()) errs.email = tv("required");
-  else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email))
-    errs.email = tv("email");
-  if (!form.password) errs.password = tv("required");
-  else if (form.password.length < 8)
-    errs.password = tv("minLength", { min: 8 });
+  if (!form.lastName.trim())  errs.lastName  = tv("required");
+  if (!form.email.trim())     errs.email     = tv("required");
+  else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) errs.email = tv("email");
+  if (!form.password)               errs.password = tv("required");
+  else if (form.password.length < 8) errs.password = tv("minLength", { min: 8 });
   if (form.confirm !== form.password) errs.confirm = tv("passwordMatch");
   return errs;
 }
 
 export default function RegisterPage() {
-  const { t } = useTranslation("common");
+  const { t }        = useTranslation("common");
+  const { register } = useAuth();
+  const navigate     = useNavigate();
 
   const [form, setForm] = useState({
     firstName: "",
-    lastName: "",
-    email: "",
-    password: "",
-    confirm: "",
-    phone: "",
+    lastName:  "",
+    email:     "",
+    password:  "",
+    confirm:   "",
+    phone:     "",
   });
-  const [showPass, setShowPass] = useState(false);
-  const [showConf, setShowConf] = useState(false);
-  const [errors, setErrors] = useState({});
+  const [showPass,   setShowPass]   = useState(false);
+  const [showConf,   setShowConf]   = useState(false);
+  const [errors,     setErrors]     = useState({});
   const [submitting, setSubmitting] = useState(false);
-  const [success, setSuccess] = useState(false);
+  const [globalError, setGlobalError] = useState("");
 
   function setField(k, v) {
     setForm((p) => ({ ...p, [k]: v }));
-    if (errors[k]) setErrors((p) => ({ ...p, [k]: undefined }));
+    if (errors[k])      setErrors((p)   => ({ ...p, [k]: undefined }));
+    if (globalError)    setGlobalError("");
   }
 
   async function handleSubmit(e) {
     e.preventDefault();
     const errs = validate(form, t);
-    if (Object.keys(errs).length) {
-      setErrors(errs);
-      return;
-    }
-    setSubmitting(true);
-    await new Promise((r) => setTimeout(r, 800));
-    setSubmitting(false);
-    setSuccess(true);
-  }
+    if (Object.keys(errs).length) { setErrors(errs); return; }
 
-  // Estado de éxito
-  if (success) {
-    return (
-      <div className="flex min-h-[calc(100vh-4rem)]">
-        <AuthSidePanel variant="register" />
-        <div className="flex-1 flex items-center justify-center px-4 py-12 bg-cream relative overflow-hidden">
-          <div
-            className="absolute -top-32 -right-32 w-80 h-80 rounded-full bg-sage/8 blur-3xl pointer-events-none"
-            aria-hidden="true"
-          />
-          <div className="w-full max-w-md text-center animate-fade-in-up relative z-10">
-            <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-sage-muted/50 border border-sage/20 mb-8">
-              <CheckCircle className="w-10 h-10 text-sage" aria-hidden="true" />
-            </div>
-            <h2 className="text-3xl font-display font-semibold text-charcoal mb-3">
-              ¡Cuenta creada!
-            </h2>
-            <p className="text-charcoal-muted mb-10 max-w-sm mx-auto">
-              {t("auth.register.success")}
-            </p>
-            <Button asChild size="lg" className="w-full max-w-xs group">
-              <Link to={ROUTES.LOGIN}>
-                {t("auth.register.signIn")}
-                <ArrowRight
-                  className="w-4 h-4 ml-1 transition-transform group-hover:translate-x-0.5"
-                  aria-hidden="true"
-                />
-              </Link>
-            </Button>
-          </div>
-        </div>
-      </div>
-    );
+    setSubmitting(true);
+    setGlobalError("");
+
+    try {
+      await register({
+        firstName: form.firstName.trim(),
+        lastName:  form.lastName.trim(),
+        email:     form.email.trim().toLowerCase(),
+        password:  form.password,
+      });
+
+      if (USE_MOCKS) {
+        // Mock: go straight to login (no real email sent)
+        navigate(ROUTES.LOGIN);
+      } else {
+        // Real: prompt user to verify email
+        navigate(`${ROUTES.AUTH_CHECK_EMAIL}?email=${encodeURIComponent(form.email.trim().toLowerCase())}`);
+      }
+    } catch (err) {
+      const msg = err?.message ?? "";
+      if (msg.includes("409") || msg.includes("already exists") || msg.includes("user_already_exists")) {
+        setErrors({ email: t("auth.register.emailTaken") });
+      } else {
+        setGlobalError(t("errors.generic"));
+      }
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (
@@ -115,7 +107,6 @@ export default function RegisterPage() {
 
         {/* ── Form panel ────────────────────────────────────────── */}
         <div className="flex-1 flex items-center justify-center px-4 sm:px-8 py-10 bg-cream relative overflow-hidden">
-          {/* Decorative blobs */}
           <div
             className="absolute -top-32 -right-32 w-80 h-80 rounded-full bg-sage/5 blur-3xl pointer-events-none"
             aria-hidden="true"
@@ -152,26 +143,22 @@ export default function RegisterPage() {
             {/* Card */}
             <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-warm-gray-dark/30 shadow-card p-6 sm:p-8 auth-stagger-3">
               <form onSubmit={handleSubmit} noValidate className="space-y-4">
+
+                {/* Error global */}
+                {globalError && (
+                  <div className="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-xl animate-fade-in">
+                    {globalError}
+                  </div>
+                )}
+
                 {/* Nombre + Apellido */}
                 <div className="grid grid-cols-2 gap-3">
                   {[
-                    {
-                      k: "firstName",
-                      label: t("auth.register.firstName"),
-                      ac: "given-name",
-                      ph: "María",
-                    },
-                    {
-                      k: "lastName",
-                      label: t("auth.register.lastName"),
-                      ac: "family-name",
-                      ph: "García",
-                    },
+                    { k: "firstName", label: t("auth.register.firstName"), ac: "given-name",  ph: "María"  },
+                    { k: "lastName",  label: t("auth.register.lastName"),  ac: "family-name", ph: "García" },
                   ].map(({ k, label, ac, ph }) => (
                     <div key={k} className="space-y-1.5">
-                      <Label htmlFor={k} className="text-charcoal-light">
-                        {label}
-                      </Label>
+                      <Label htmlFor={k} className="text-charcoal-light">{label}</Label>
                       <Input
                         id={k}
                         value={form[k]}
@@ -184,9 +171,7 @@ export default function RegisterPage() {
                         )}
                       />
                       {errors[k] && (
-                        <p className="text-xs text-red-500 animate-fade-in">
-                          {errors[k]}
-                        </p>
+                        <p className="text-xs text-red-500 animate-fade-in">{errors[k]}</p>
                       )}
                     </div>
                   ))}
@@ -210,9 +195,7 @@ export default function RegisterPage() {
                     )}
                   />
                   {errors.email && (
-                    <p className="text-xs text-red-500 animate-fade-in">
-                      {errors.email}
-                    </p>
+                    <p className="text-xs text-red-500 animate-fade-in">{errors.email}</p>
                   )}
                 </div>
 
@@ -247,26 +230,19 @@ export default function RegisterPage() {
                       placeholder="Mínimo 8 caracteres"
                       className={cn(
                         "h-11 pr-12 bg-warm-gray/50 border-warm-gray-dark/40 focus:bg-white focus:border-sage transition-colors",
-                        errors.password &&
-                          "border-red-400 focus:border-red-400",
+                        errors.password && "border-red-400 focus:border-red-400",
                       )}
                     />
                     <button
                       type="button"
                       onClick={() => setShowPass(!showPass)}
                       className="absolute right-3.5 top-1/2 -translate-y-1/2 text-charcoal-subtle hover:text-charcoal transition-colors p-1"
-                      aria-label={
-                        showPass ? "Ocultar contraseña" : "Mostrar contraseña"
-                      }
+                      aria-label={showPass ? "Ocultar contraseña" : "Mostrar contraseña"}
                     >
-                      {showPass ? (
-                        <EyeOff className="w-4.5 h-4.5" />
-                      ) : (
-                        <Eye className="w-4.5 h-4.5" />
-                      )}
+                      {showPass ? <EyeOff className="w-4.5 h-4.5" /> : <Eye className="w-4.5 h-4.5" />}
                     </button>
                   </div>
-                  {/* Password strength indicator */}
+                  {/* Password strength bar */}
                   {form.password && (
                     <div className="flex gap-1 pt-1 animate-fade-in">
                       {[1, 2, 3, 4].map((level) => (
@@ -275,9 +251,7 @@ export default function RegisterPage() {
                           className={cn(
                             "h-1 flex-1 rounded-full transition-colors",
                             form.password.length >= level * 3
-                              ? level <= 2
-                                ? "bg-amber-400"
-                                : "bg-sage"
+                              ? level <= 2 ? "bg-amber-400" : "bg-sage"
                               : "bg-warm-gray-dark/30",
                           )}
                         />
@@ -285,13 +259,11 @@ export default function RegisterPage() {
                     </div>
                   )}
                   {errors.password && (
-                    <p className="text-xs text-red-500 animate-fade-in">
-                      {errors.password}
-                    </p>
+                    <p className="text-xs text-red-500 animate-fade-in">{errors.password}</p>
                   )}
                 </div>
 
-                {/* Confirmar */}
+                {/* Confirmar contraseña */}
                 <div className="space-y-1.5">
                   <Label htmlFor="reg-confirm" className="text-charcoal-light">
                     {t("auth.register.confirmPassword")}
@@ -313,23 +285,13 @@ export default function RegisterPage() {
                       type="button"
                       onClick={() => setShowConf(!showConf)}
                       className="absolute right-3.5 top-1/2 -translate-y-1/2 text-charcoal-subtle hover:text-charcoal transition-colors p-1"
-                      aria-label={
-                        showConf
-                          ? "Ocultar confirmación"
-                          : "Mostrar confirmación"
-                      }
+                      aria-label={showConf ? "Ocultar confirmación" : "Mostrar confirmación"}
                     >
-                      {showConf ? (
-                        <EyeOff className="w-4.5 h-4.5" />
-                      ) : (
-                        <Eye className="w-4.5 h-4.5" />
-                      )}
+                      {showConf ? <EyeOff className="w-4.5 h-4.5" /> : <Eye className="w-4.5 h-4.5" />}
                     </button>
                   </div>
                   {errors.confirm && (
-                    <p className="text-xs text-red-500 animate-fade-in">
-                      {errors.confirm}
-                    </p>
+                    <p className="text-xs text-red-500 animate-fade-in">{errors.confirm}</p>
                   )}
                 </div>
 
