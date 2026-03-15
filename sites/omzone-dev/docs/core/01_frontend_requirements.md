@@ -38,7 +38,6 @@ src/
     classes/
     booking/
     checkout/
-    memberships/
     packages/
     wellness/
     customer/
@@ -66,30 +65,30 @@ src/
 - `/`
 - `/classes`
 - `/classes/:slug`
-- `/memberships`
 - `/packages`
 - `/wellness`
 - `/checkout`
+- `/checkout/confirmation`
 - `/login`
 - `/register`
 
-### Privadas cliente
+### Privadas cliente (`/account/*`)
 - `/account`
 - `/account/bookings`
 - `/account/orders`
-- `/account/membership`
+- `/account/packages`
 - `/account/profile`
 
-### Privadas admin
+### Privadas admin (`/app/*`)
 - `/app`
 - `/app/leads`
-- `/app/customers`
+- `/app/clients`
 - `/app/classes`
 - `/app/sessions`
-- `/app/memberships`
 - `/app/packages`
 - `/app/products`
 - `/app/orders`
 - `/app/bookings`
+- `/app/passes`
 - `/app/content`
 - `/app/settings`

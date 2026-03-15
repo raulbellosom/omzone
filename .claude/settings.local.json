@@ -8,7 +8,14 @@
       "Bash(sed:*)",
       "Bash(find /d/RacoonDevs/omzone/src/pages/customer -type f -name *.jsx -o -name *.js)",
       "Bash(powershell -Command \"$files = @\\(''index.html'', ''public/robots.txt'', ''public/sitemap.xml'', ''src/components/seo/PageMeta.jsx'', ''src/lib/seo.js'', ''src/pages/admin/AdminSettingsPage.jsx'', ''src/pages/public/ClassDetailPage.jsx'', ''src/pages/public/ClassesPage.jsx'', ''src/pages/public/LandingPage.jsx'', ''src/pages/public/MembershipsPage.jsx'', ''src/pages/public/PackagesPage.jsx'', ''src/pages/public/WellnessPage.jsx'', ''src/services/mocks/userService.mock.js''\\); foreach \\($f in $files\\) { $content = Get-Content $f -Raw; $content = $content -replace ''omzone\\\\.mx'', ''omzone.com''; Set-Content $f $content -NoNewline }\")",
-      "Bash(python -c \":*)"
+      "Bash(python -c \":*)",
+      "Bash(diff -rq --exclude=node_modules --exclude=.git --exclude=*.lock /d/RacoonDevs/omzone/src /d/RacoonDevs/omzone/sites/omzone-dev/src)",
+      "Bash(python3 -c \"import json; data=json.load\\(open\\(''/d/RacoonDevs/omzone/appwrite.config.json''\\)\\); print\\(f''tables: {len\\(data[\"\"tables\"\"]\\)}, buckets: {len\\(data[\"\"buckets\"\"]\\)}''\\)\")",
+      "Bash(python3 -c \":*)",
+      "Bash(sed -i 's/\"\"type\"\": \"\"double\"\"/\"\"type\"\": \"\"float\"\"/g' /d/RacoonDevs/omzone/appwrite.config.json)",
+      "Bash(grep -c '\"\"float\"\"' /d/RacoonDevs/omzone/appwrite.config.json)",
+      "Bash(sed -i 's/\"\"type\"\": \"\"float\"\"/\"\"type\"\": \"\"double\"\"/g' /d/RacoonDevs/omzone/appwrite.config.json)",
+      "Bash(grep -c '\"\"double\"\"' /d/RacoonDevs/omzone/appwrite.config.json)"
     ]
   }
 }
