@@ -39,9 +39,20 @@ export async function registerWithEmailPassword({
 
 /**
  * Log in with email + password.
+ * Silently clears any stale session before creating a new one so that
+ * ghost sessions (deleted users, expired tokens, corrupt local storage)
+ * never block the login flow.
  * @returns {Promise<object>} Appwrite Auth user object
  */
 export async function loginWithEmailPassword(email, password) {
+  // Purge any stale/ghost session first. If there's no active session this
+  // will throw a 401 which we intentionally swallow.
+  try {
+    await account.deleteSession("current");
+  } catch {
+    // No active session — nothing to clean up, proceed normally.
+  }
+
   await account.createEmailPasswordSession(
     email.trim().toLowerCase(),
     password,
@@ -90,7 +101,7 @@ export async function confirmEmailVerification(userId, secret) {
  * Requires the old (current) password for verification.
  */
 export async function updatePassword(newPassword, currentPassword) {
-  return account.updatePassword(newPassword, currentPassword)
+  return account.updatePassword(newPassword, currentPassword);
 }
 
 /**
