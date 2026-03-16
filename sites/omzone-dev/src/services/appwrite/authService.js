@@ -45,18 +45,35 @@ export async function registerWithEmailPassword({
  * @returns {Promise<object>} Appwrite Auth user object
  */
 export async function loginWithEmailPassword(email, password) {
-  // Purge any stale/ghost session first. If there's no active session this
-  // will throw a 401 which we intentionally swallow.
+  const cleanEmail = email.trim().toLowerCase();
+
+  // Step 1: Purge any stale/ghost session. A 401 here just means no active
+  // session exists — that's fine, we swallow it.
   try {
     await account.deleteSession("current");
   } catch {
     // No active session — nothing to clean up, proceed normally.
   }
 
-  await account.createEmailPasswordSession(
-    email.trim().toLowerCase(),
-    password,
-  );
+  // Step 2: Create the new session. If Appwrite still reports an existing
+  // session (type: user_session_already_exists, code 409 — the SDK may have
+  // cached its state), nuke ALL sessions and retry once.
+  try {
+    await account.createEmailPasswordSession(cleanEmail, password);
+  } catch (err) {
+    if (err?.type === "user_session_already_exists") {
+      try {
+        await account.deleteSessions();
+      } catch {
+        // Ignore — best-effort cleanup.
+      }
+      // Retry after hard-clearing all sessions.
+      await account.createEmailPasswordSession(cleanEmail, password);
+    } else {
+      throw err;
+    }
+  }
+
   return account.get();
 }
 

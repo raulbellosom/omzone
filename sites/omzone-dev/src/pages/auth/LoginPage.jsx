@@ -55,19 +55,28 @@ export default function LoginPage() {
       navigate(from, { replace: true });
     } catch (err) {
       const msg = err?.message ?? "";
+      const type = err?.type ?? "";
+      const code = err?.code ?? "";
+
       if (err?.code === "email_not_verified" || msg === "email_not_verified") {
         setUnverified(true);
         return;
       }
+
+      // Invalid credentials (wrong email/password)
       if (
-        msg.includes("401") ||
+        type === "user_invalid_credentials" ||
         msg.includes("invalid_credentials") ||
         msg.includes("Invalid credentials")
       ) {
         setError(t("auth.login.error"));
-      } else {
-        setError(t("errors.generic"));
+        return;
       }
+
+      // Any other error — show descriptive details so it can be diagnosed
+      // on mobile where network inspector is unavailable.
+      const detail = type || msg || String(code);
+      setError(`${t("errors.generic")}${detail ? ` (${detail})` : ""}`);
     } finally {
       setSubmitting(false);
     }
