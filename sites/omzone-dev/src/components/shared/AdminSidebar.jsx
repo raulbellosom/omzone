@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import {
   LayoutDashboard, Users, UserCheck, BookOpen, Calendar,
   CreditCard, Package, Leaf, ShoppingCart, BookMarked,
-  FileText, Settings, ChevronLeft,
+  QrCode, FileText, Settings, ChevronLeft,
 } from 'lucide-react'
 import ROUTES from '@/constants/routes'
 import { cn } from '@/lib/utils'
@@ -23,6 +23,7 @@ const navItems = [
   null,
   { icon: ShoppingCart, key: 'nav.orders', href: ROUTES.ADMIN_ORDERS },
   { icon: BookMarked, key: 'nav.bookings', href: ROUTES.ADMIN_BOOKINGS },
+  { icon: QrCode, key: 'nav.passes', href: ROUTES.ADMIN_PASSES },
   null,
   { icon: FileText, key: 'nav.content', href: ROUTES.ADMIN_CONTENT },
   { icon: Settings, key: 'nav.settings', href: ROUTES.ADMIN_SETTINGS },

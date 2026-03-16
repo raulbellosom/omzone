@@ -5,7 +5,7 @@ import {
   getWellnessPackageById,
   getWellnessProductById,
   getClassExtras,
-} from '@/services/mocks/wellnessService.mock'
+} from '@/services/appwrite/catalogService'
 
 export function useWellnessProducts(options = {}) {
   return useQuery({

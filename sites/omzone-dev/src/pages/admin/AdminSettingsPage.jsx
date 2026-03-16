@@ -1,8 +1,9 @@
 /**
  * AdminSettingsPage — configuración del estudio.
  * Ruta: /app/settings
+ * Modo real: persiste en app_settings (Appwrite) vía useAppSettings / useUpsertAppSettings.
  */
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Save } from 'lucide-react'
 import { toast } from 'sonner'
@@ -10,6 +11,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
+import { useAppSettings, useUpsertAppSettings } from '@/hooks/useAdmin'
 import AdminPageHeader from '@/components/shared/AdminPageHeader'
 
 const INITIAL = {
@@ -39,24 +41,45 @@ function SectionHeader({ title }) {
   )
 }
 
-function simulateSave() {
-  return new Promise((resolve) => setTimeout(resolve, 800))
-}
-
 export default function AdminSettingsPage() {
   const { t } = useTranslation('admin')
   const [settings, setSettings] = useState(INITIAL)
-  const [saving, setSaving] = useState(false)
+
+  const { data: remoteSettings } = useAppSettings()
+  const upsertSettings = useUpsertAppSettings()
+
+  // Seed form from Appwrite when loaded
+  useEffect(() => {
+    if (remoteSettings) {
+      setSettings((s) => ({
+        ...s,
+        studioName: remoteSettings.appName ?? s.studioName,
+        email: remoteSettings.supportEmail ?? s.email,
+        phone: remoteSettings.contactPhone ?? s.phone,
+        currency: remoteSettings.defaultCurrency ?? s.currency,
+        defaultLang: remoteSettings.defaultLocale ?? s.defaultLang,
+      }))
+    }
+  }, [remoteSettings])
 
   function set(key) {
     return (value) => setSettings((s) => ({ ...s, [key]: value }))
   }
 
-  async function handleSave() {
-    setSaving(true)
-    await simulateSave()
-    setSaving(false)
-    toast.success(t('settings.saved'))
+  function handleSave() {
+    upsertSettings.mutate(
+      {
+        app_name: settings.studioName,
+        support_email: settings.email,
+        contact_phone: settings.phone,
+        default_currency: settings.currency,
+        default_locale: settings.defaultLang,
+      },
+      {
+        onSuccess: () => toast.success(t('settings.saved')),
+        onError: () => toast.error('Error al guardar'),
+      }
+    )
   }
 
   return (
@@ -116,9 +139,9 @@ export default function AdminSettingsPage() {
 
         {/* Save */}
         <div className="flex justify-end">
-          <Button onClick={handleSave} disabled={saving} className="flex items-center gap-2">
+          <Button onClick={handleSave} disabled={upsertSettings.isPending} className="flex items-center gap-2">
             <Save className="w-4 h-4" />
-            {saving ? t('settings.saving') : t('settings.save')}
+            {upsertSettings.isPending ? t('settings.saving') : t('settings.save')}
           </Button>
         </div>
       </div>

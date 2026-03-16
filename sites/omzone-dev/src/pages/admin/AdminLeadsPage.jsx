@@ -6,15 +6,19 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { format } from 'date-fns'
 import { es, enUS } from 'date-fns/locale'
-import { ChevronDown, MessageSquare } from 'lucide-react'
+import { ChevronDown, MessageSquare, Plus } from 'lucide-react'
 import { toast } from 'sonner'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { useAdminLeads, useUpdateLeadStatus, useAddLeadNote } from '@/hooks/useAdmin'
+import { Label } from '@/components/ui/label'
+import { useAdminLeads, useUpdateLeadStatus, useAddLeadNote, useCreateLead } from '@/hooks/useAdmin'
 import AdminPageHeader from '@/components/shared/AdminPageHeader'
+import AdminFormDialog from '@/components/admin/AdminFormDialog'
+
+const EMPTY_LEAD = { full_name: '', email: '', phone: '', interest_type: 'membership', notes: '' }
 
 const STATUSES = ['new', 'contacted', 'qualified', 'won', 'lost']
 const STATUS_BADGE = {
@@ -158,14 +162,30 @@ function LeadCard({ lead, t, dateFnsLocale }) {
 export default function AdminLeadsPage() {
   const { t, i18n } = useTranslation('admin')
   const dateFnsLocale = i18n.language === 'es' ? es : enUS
+  const [dialogOpen, setDialogOpen] = useState(false)
+  const [form, setForm] = useState(EMPTY_LEAD)
 
   const { data: leads, isLoading } = useAdminLeads()
+  const createLead = useCreateLead()
+
+  function handleCreate() {
+    createLead.mutate(form, {
+      onSuccess: () => { setDialogOpen(false); setForm(EMPTY_LEAD); toast.success('Lead creado') },
+      onError: () => toast.error('Error al crear lead'),
+    })
+  }
 
   return (
     <div className="max-w-3xl mx-auto px-4 md:px-8 py-8 animate-fade-in-up">
       <AdminPageHeader
         title={t('leads.title')}
         subtitle={t('leads.subtitle')}
+        action={
+          <Button size="sm" onClick={() => setDialogOpen(true)} className="gap-1.5">
+            <Plus className="w-4 h-4" />
+            {t('leads.newLead', 'Nuevo Lead')}
+          </Button>
+        }
       />
       {isLoading
         ? <div className="space-y-3">{Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} className="h-16 rounded-2xl" />)}</div>
@@ -187,6 +207,48 @@ export default function AdminLeadsPage() {
             </Card>
           )
       }
+
+      <AdminFormDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        title={t('leads.newLead', 'Nuevo Lead')}
+        onSubmit={handleCreate}
+        isSubmitting={createLead.isPending}
+      >
+        <div className="space-y-3">
+          <div className="space-y-1">
+            <Label>{t('leads.fields.name', 'Nombre completo')}</Label>
+            <Input value={form.full_name} onChange={(e) => setForm(f => ({ ...f, full_name: e.target.value }))} required />
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1">
+              <Label>{t('leads.fields.email', 'Email')}</Label>
+              <Input type="email" value={form.email} onChange={(e) => setForm(f => ({ ...f, email: e.target.value }))} required />
+            </div>
+            <div className="space-y-1">
+              <Label>{t('leads.fields.phone', 'Teléfono')}</Label>
+              <Input value={form.phone} onChange={(e) => setForm(f => ({ ...f, phone: e.target.value }))} placeholder="+52 55..." />
+            </div>
+          </div>
+          <div className="space-y-1">
+            <Label>{t('leads.fields.interestType', 'Interés')}</Label>
+            <select
+              className="w-full h-9 rounded-lg border border-sand bg-white px-3 text-sm focus:outline-none focus:ring-2 focus:ring-sage/30"
+              value={form.interest_type}
+              onChange={(e) => setForm(f => ({ ...f, interest_type: e.target.value }))}
+            >
+              <option value="membership">{t('leads.interest.membership', 'Membresía')}</option>
+              <option value="class">{t('leads.interest.class', 'Clase')}</option>
+              <option value="package">{t('leads.interest.package', 'Paquete')}</option>
+              <option value="product">{t('leads.interest.product', 'Producto')}</option>
+            </select>
+          </div>
+          <div className="space-y-1">
+            <Label>{t('leads.fields.notes', 'Notas')}</Label>
+            <Input value={form.notes} onChange={(e) => setForm(f => ({ ...f, notes: e.target.value }))} placeholder="Comentarios opcionales..." />
+          </div>
+        </div>
+      </AdminFormDialog>
     </div>
   )
 }

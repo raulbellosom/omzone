@@ -1,43 +1,16 @@
 /**
  * useAdmin — hooks de datos para el panel administrativo.
- * Todos usan TanStack Query v5 + mocks centralizados.
+ * Conectado directamente a Appwrite vía adminService.js.
  */
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import {
-  adminGetAllClasses,
-  adminToggleClass,
-  adminGetAllSessions,
-  adminCancelSession,
-} from '@/services/mocks/catalogService.mock'
-import {
-  adminGetAllPlans,
-  adminTogglePlan,
-  adminToggleFeatured,
-} from '@/services/mocks/membershipService.mock'
-import {
-  adminGetAllProducts,
-  adminToggleProduct,
-  adminGetAllPackages,
-  adminTogglePackage,
-} from '@/services/mocks/wellnessService.mock'
-import {
-  getLeads,
-  getCustomers,
-  updateLeadStatus,
-  addLeadNote,
-} from '@/services/mocks/crmService.mock'
-import {
-  getAdminOrders,
-  getAdminDashboardMetrics,
-  getCustomerBookings,
-} from '@/services/mocks/commerceService.mock'
+import * as admin from '@/services/appwrite/adminService'
 
 // ── Dashboard ─────────────────────────────────────────────────────────────────
 
 export function useAdminOverview() {
   return useQuery({
     queryKey: ['adminOverview'],
-    queryFn: getAdminDashboardMetrics,
+    queryFn: admin.getDashboardMetrics,
   })
 }
 
@@ -46,15 +19,47 @@ export function useAdminOverview() {
 export function useAdminClasses() {
   return useQuery({
     queryKey: ['adminClasses'],
-    queryFn: adminGetAllClasses,
+    queryFn: admin.listClasses,
   })
 }
 
 export function useToggleClass() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: ({ classId, enabled }) => adminToggleClass(classId, enabled),
+    mutationFn: ({ classId, enabled }) => admin.toggleClass(classId, enabled),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['adminClasses'] }),
+  })
+}
+
+export function useCreateClass() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (data) => admin.createClass(data),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['adminClasses'] }),
+  })
+}
+
+export function useUpdateClass() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ classId, data }) => admin.updateClass(classId, data),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['adminClasses'] }),
+  })
+}
+
+// ── Instructors & Class Types ─────────────────────────────────────────────────
+
+export function useAdminInstructors() {
+  return useQuery({
+    queryKey: ['adminInstructors'],
+    queryFn: admin.listInstructors,
+  })
+}
+
+export function useAdminClassTypes() {
+  return useQuery({
+    queryKey: ['adminClassTypes'],
+    queryFn: admin.listClassTypes,
   })
 }
 
@@ -63,41 +68,41 @@ export function useToggleClass() {
 export function useAdminSessions() {
   return useQuery({
     queryKey: ['adminSessions'],
-    queryFn: adminGetAllSessions,
+    queryFn: () => admin.listSessions(),
   })
 }
 
 export function useCancelSession() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (sessionId) => adminCancelSession(sessionId),
+    mutationFn: (sessionId) => admin.cancelSession(sessionId),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['adminSessions'] }),
   })
 }
 
-// ── Memberships ───────────────────────────────────────────────────────────────
+export function useCreateSession() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (data) => admin.createSession(data),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['adminSessions'] }),
+  })
+}
+
+// ── Memberships (sin colección en Appwrite — devuelve vacío) ──────────────────
 
 export function useAdminMemberships() {
   return useQuery({
     queryKey: ['adminMemberships'],
-    queryFn: adminGetAllPlans,
+    queryFn: () => Promise.resolve([]),
   })
 }
 
 export function useTogglePlan() {
-  const qc = useQueryClient()
-  return useMutation({
-    mutationFn: ({ planId, enabled }) => adminTogglePlan(planId, enabled),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['adminMemberships'] }),
-  })
+  return useMutation({ mutationFn: () => Promise.resolve() })
 }
 
 export function useTogglePlanFeatured() {
-  const qc = useQueryClient()
-  return useMutation({
-    mutationFn: ({ planId, featured }) => adminToggleFeatured(planId, featured),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['adminMemberships'] }),
-  })
+  return useMutation({ mutationFn: () => Promise.resolve() })
 }
 
 // ── Packages ──────────────────────────────────────────────────────────────────
@@ -105,14 +110,30 @@ export function useTogglePlanFeatured() {
 export function useAdminPackages() {
   return useQuery({
     queryKey: ['adminPackages'],
-    queryFn: adminGetAllPackages,
+    queryFn: admin.listPackages,
   })
 }
 
 export function useTogglePackage() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: ({ packageId, enabled }) => adminTogglePackage(packageId, enabled),
+    mutationFn: ({ packageId, enabled }) => admin.togglePackage(packageId, enabled),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['adminPackages'] }),
+  })
+}
+
+export function useCreatePackage() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (data) => admin.createPackage(data),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['adminPackages'] }),
+  })
+}
+
+export function useUpdatePackage() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ packageId, data }) => admin.updatePackage(packageId, data),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['adminPackages'] }),
   })
 }
@@ -122,14 +143,30 @@ export function useTogglePackage() {
 export function useAdminProducts() {
   return useQuery({
     queryKey: ['adminProducts'],
-    queryFn: adminGetAllProducts,
+    queryFn: admin.listProducts,
   })
 }
 
 export function useToggleProduct() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: ({ productId, enabled }) => adminToggleProduct(productId, enabled),
+    mutationFn: ({ productId, enabled }) => admin.toggleProduct(productId, enabled),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['adminProducts'] }),
+  })
+}
+
+export function useCreateProduct() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (data) => admin.createProduct(data),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['adminProducts'] }),
+  })
+}
+
+export function useUpdateProduct() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ productId, data }) => admin.updateProduct(productId, data),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['adminProducts'] }),
   })
 }
@@ -139,7 +176,7 @@ export function useToggleProduct() {
 export function useAdminCustomers() {
   return useQuery({
     queryKey: ['adminCustomers'],
-    queryFn: () => getCustomers(),
+    queryFn: admin.listClients,
   })
 }
 
@@ -148,14 +185,14 @@ export function useAdminCustomers() {
 export function useAdminLeads() {
   return useQuery({
     queryKey: ['adminLeads'],
-    queryFn: () => getLeads(),
+    queryFn: () => admin.listLeads(),
   })
 }
 
 export function useUpdateLeadStatus() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: ({ leadId, status }) => updateLeadStatus(leadId, status),
+    mutationFn: ({ leadId, status }) => admin.updateLeadStatus(leadId, status),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['adminLeads'] }),
   })
 }
@@ -163,7 +200,15 @@ export function useUpdateLeadStatus() {
 export function useAddLeadNote() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: ({ leadId, note }) => addLeadNote(leadId, note),
+    mutationFn: ({ leadId, note }) => admin.addLeadNote(leadId, note),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['adminLeads'] }),
+  })
+}
+
+export function useCreateLead() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (data) => admin.createLead(data),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['adminLeads'] }),
   })
 }
@@ -173,15 +218,71 @@ export function useAddLeadNote() {
 export function useAdminOrders() {
   return useQuery({
     queryKey: ['adminOrders'],
-    queryFn: getAdminOrders,
+    queryFn: admin.listOrders,
   })
 }
 
-// ── Bookings (admin view — all users) ─────────────────────────────────────────
+// ── Bookings ──────────────────────────────────────────────────────────────────
 
 export function useAdminBookings() {
   return useQuery({
     queryKey: ['adminBookings'],
-    queryFn: () => getCustomerBookings('user_customer_1'),
+    queryFn: admin.listBookings,
+  })
+}
+
+// ── Access Passes ─────────────────────────────────────────────────────────────
+
+export function useAdminPasses({ clientUserId, status } = {}) {
+  return useQuery({
+    queryKey: ['adminPasses', clientUserId, status],
+    queryFn: () => admin.listPasses({ clientUserId, status }),
+  })
+}
+
+export function useCancelPass() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (passId) => admin.cancelPass(passId),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['adminPasses'] }),
+  })
+}
+
+// ── Site Content ──────────────────────────────────────────────────────────────
+
+export function useSiteContent(contentKey) {
+  return useQuery({
+    queryKey: ['siteContent', contentKey],
+    queryFn: () => admin.getSiteContent(contentKey),
+    enabled: !!contentKey,
+    staleTime: 1000 * 60 * 5,
+  })
+}
+
+export function useUpsertSiteContent() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ contentKey, locale, metaJson }) =>
+      admin.upsertSiteContent(contentKey, locale, metaJson),
+    onSuccess: (_, { contentKey }) =>
+      qc.invalidateQueries({ queryKey: ['siteContent', contentKey] }),
+  })
+}
+
+// ── App Settings ──────────────────────────────────────────────────────────────
+
+export function useAppSettings() {
+  return useQuery({
+    queryKey: ['appSettings'],
+    queryFn: admin.getAppSettings,
+    staleTime: 1000 * 60 * 5,
+  })
+}
+
+export function useUpsertAppSettings() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (data) => admin.upsertAppSettings(data),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['appSettings'] }),
   })
 }

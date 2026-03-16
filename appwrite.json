@@ -66,7 +66,10 @@
   "tables": [
     {
       "$id": "users_profile",
-      "$permissions": [],
+      "$permissions": [
+        "read(\"label:admin\")",
+        "read(\"label:root\")"
+      ],
       "databaseId": "main",
       "name": "users_profile",
       "enabled": true,
@@ -227,7 +230,16 @@
     },
     {
       "$id": "contact_leads",
-      "$permissions": [],
+      "$permissions": [
+        "read(\"label:admin\")",
+        "create(\"label:admin\")",
+        "update(\"label:admin\")",
+        "delete(\"label:admin\")",
+        "read(\"label:root\")",
+        "create(\"label:root\")",
+        "update(\"label:root\")",
+        "delete(\"label:root\")"
+      ],
       "databaseId": "main",
       "name": "contact_leads",
       "enabled": true,
@@ -313,7 +325,15 @@
     },
     {
       "$id": "instructors",
-      "$permissions": [],
+      "$permissions": [
+        "read(\"any\")",
+        "create(\"label:admin\")",
+        "update(\"label:admin\")",
+        "delete(\"label:admin\")",
+        "create(\"label:root\")",
+        "update(\"label:root\")",
+        "delete(\"label:root\")"
+      ],
       "databaseId": "main",
       "name": "instructors",
       "enabled": true,
@@ -405,7 +425,15 @@
     },
     {
       "$id": "class_types",
-      "$permissions": [],
+      "$permissions": [
+        "read(\"any\")",
+        "create(\"label:admin\")",
+        "update(\"label:admin\")",
+        "delete(\"label:admin\")",
+        "create(\"label:root\")",
+        "update(\"label:root\")",
+        "delete(\"label:root\")"
+      ],
       "databaseId": "main",
       "name": "class_types",
       "enabled": true,
@@ -474,7 +502,15 @@
     },
     {
       "$id": "classes",
-      "$permissions": [],
+      "$permissions": [
+        "read(\"any\")",
+        "create(\"label:admin\")",
+        "update(\"label:admin\")",
+        "delete(\"label:admin\")",
+        "create(\"label:root\")",
+        "update(\"label:root\")",
+        "delete(\"label:root\")"
+      ],
       "databaseId": "main",
       "name": "classes",
       "enabled": true,
@@ -655,7 +691,15 @@
     },
     {
       "$id": "class_sessions",
-      "$permissions": [],
+      "$permissions": [
+        "read(\"any\")",
+        "create(\"label:admin\")",
+        "update(\"label:admin\")",
+        "delete(\"label:admin\")",
+        "create(\"label:root\")",
+        "update(\"label:root\")",
+        "delete(\"label:root\")"
+      ],
       "databaseId": "main",
       "name": "class_sessions",
       "enabled": true,
@@ -780,7 +824,15 @@
     },
     {
       "$id": "wellness_products",
-      "$permissions": [],
+      "$permissions": [
+        "read(\"any\")",
+        "create(\"label:admin\")",
+        "update(\"label:admin\")",
+        "delete(\"label:admin\")",
+        "create(\"label:root\")",
+        "update(\"label:root\")",
+        "delete(\"label:root\")"
+      ],
       "databaseId": "main",
       "name": "wellness_products",
       "enabled": true,
@@ -925,7 +977,15 @@
     },
     {
       "$id": "wellness_packages",
-      "$permissions": [],
+      "$permissions": [
+        "read(\"any\")",
+        "create(\"label:admin\")",
+        "update(\"label:admin\")",
+        "delete(\"label:admin\")",
+        "create(\"label:root\")",
+        "update(\"label:root\")",
+        "delete(\"label:root\")"
+      ],
       "databaseId": "main",
       "name": "wellness_packages",
       "enabled": true,
@@ -1084,7 +1144,13 @@
     },
     {
       "$id": "orders",
-      "$permissions": [],
+      "$permissions": [
+        "read(\"label:admin\")",
+        "update(\"label:admin\")",
+        "read(\"label:root\")",
+        "update(\"label:root\")",
+        "delete(\"label:root\")"
+      ],
       "databaseId": "main",
       "name": "orders",
       "enabled": true,
@@ -1243,7 +1309,10 @@
     },
     {
       "$id": "order_items",
-      "$permissions": [],
+      "$permissions": [
+        "read(\"label:admin\")",
+        "read(\"label:root\")"
+      ],
       "databaseId": "main",
       "name": "order_items",
       "enabled": true,
@@ -1342,7 +1411,10 @@
     },
     {
       "$id": "payments",
-      "$permissions": [],
+      "$permissions": [
+        "read(\"label:admin\")",
+        "read(\"label:root\")"
+      ],
       "databaseId": "main",
       "name": "payments",
       "enabled": true,
@@ -1473,7 +1545,13 @@
     },
     {
       "$id": "bookings",
-      "$permissions": [],
+      "$permissions": [
+        "read(\"label:admin\")",
+        "update(\"label:admin\")",
+        "read(\"label:root\")",
+        "update(\"label:root\")",
+        "delete(\"label:root\")"
+      ],
       "databaseId": "main",
       "name": "bookings",
       "enabled": true,
@@ -1595,7 +1673,10 @@
     },
     {
       "$id": "client_packages",
-      "$permissions": [],
+      "$permissions": [
+        "read(\"label:admin\")",
+        "read(\"label:root\")"
+      ],
       "databaseId": "main",
       "name": "client_packages",
       "enabled": true,
@@ -1720,7 +1801,10 @@
     },
     {
       "$id": "package_usages",
-      "$permissions": [],
+      "$permissions": [
+        "read(\"label:admin\")",
+        "read(\"label:root\")"
+      ],
       "databaseId": "main",
       "name": "package_usages",
       "enabled": true,
@@ -1826,7 +1910,16 @@
     },
     {
       "$id": "access_passes",
-      "$permissions": [],
+      "$permissions": [
+        "read(\"label:admin\")",
+        "create(\"label:admin\")",
+        "update(\"label:admin\")",
+        "delete(\"label:admin\")",
+        "read(\"label:root\")",
+        "create(\"label:root\")",
+        "update(\"label:root\")",
+        "delete(\"label:root\")"
+      ],
       "databaseId": "main",
       "name": "access_passes",
       "enabled": true,
@@ -1964,7 +2057,14 @@
     },
     {
       "$id": "site_content",
-      "$permissions": [],
+      "$permissions": [
+        "read(\"any\")",
+        "create(\"label:admin\")",
+        "update(\"label:admin\")",
+        "create(\"label:root\")",
+        "update(\"label:root\")",
+        "delete(\"label:root\")"
+      ],
       "databaseId": "main",
       "name": "site_content",
       "enabled": true,
@@ -2049,7 +2149,10 @@
     },
     {
       "$id": "audit_logs",
-      "$permissions": [],
+      "$permissions": [
+        "read(\"label:admin\")",
+        "read(\"label:root\")"
+      ],
       "databaseId": "main",
       "name": "audit_logs",
       "enabled": true,
@@ -2166,7 +2269,14 @@
     },
     {
       "$id": "app_settings",
-      "$permissions": [],
+      "$permissions": [
+        "read(\"any\")",
+        "create(\"label:admin\")",
+        "update(\"label:admin\")",
+        "create(\"label:root\")",
+        "update(\"label:root\")",
+        "delete(\"label:root\")"
+      ],
       "databaseId": "main",
       "name": "app_settings",
       "enabled": true,

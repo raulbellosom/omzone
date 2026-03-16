@@ -4,16 +4,35 @@
  */
 import { useState, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Search } from 'lucide-react'
+import { Search, Plus, Pencil } from 'lucide-react'
 import { toast } from 'sonner'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Input } from '@/components/ui/input'
-import { useAdminClasses, useToggleClass } from '@/hooks/useAdmin'
+import { Button } from '@/components/ui/button'
+import { Label } from '@/components/ui/label'
+import {
+  useAdminClasses,
+  useToggleClass,
+  useCreateClass,
+  useUpdateClass,
+  useAdminInstructors,
+  useAdminClassTypes,
+} from '@/hooks/useAdmin'
 import { resolveField } from '@/lib/i18n-data'
 import { formatMXN } from '@/lib/currency'
 import AdminPageHeader from '@/components/shared/AdminPageHeader'
+import AdminFormDialog from '@/components/admin/AdminFormDialog'
+
+const EMPTY_FORM = {
+  title_es: '', title_en: '',
+  summary_es: '', summary_en: '',
+  description_es: '', description_en: '',
+  class_type_id: '', instructor_id: '',
+  difficulty: 'all_levels', duration_min: 60,
+  base_price: 0, is_featured: false, enabled: true,
+}
 
 const DIFFICULTY_BADGE = {
   beginner: 'sage',
@@ -42,9 +61,52 @@ export default function AdminClassesPage() {
   const { t } = useTranslation('admin')
   const [search, setSearch] = useState('')
   const [pendingId, setPendingId] = useState(null)
+  const [dialogOpen, setDialogOpen] = useState(false)
+  const [editing, setEditing] = useState(null) // null = new, object = edit
+  const [form, setForm] = useState(EMPTY_FORM)
 
   const { data: classes, isLoading } = useAdminClasses()
+  const { data: instructors = [] } = useAdminInstructors()
+  const { data: classTypes = [] } = useAdminClassTypes()
   const toggleMutation = useToggleClass()
+  const createMutation = useCreateClass()
+  const updateMutation = useUpdateClass()
+
+  function openCreate() {
+    setEditing(null)
+    setForm(EMPTY_FORM)
+    setDialogOpen(true)
+  }
+
+  function openEdit(cls) {
+    setEditing(cls)
+    setForm({
+      title_es: cls.title_es ?? '', title_en: cls.title_en ?? '',
+      summary_es: cls.summary_es ?? '', summary_en: cls.summary_en ?? '',
+      description_es: cls.description_es ?? '', description_en: cls.description_en ?? '',
+      class_type_id: cls.class_type_id ?? '', instructor_id: cls.instructor_id ?? '',
+      difficulty: cls.difficulty ?? 'all_levels',
+      duration_min: cls.duration_min ?? 60,
+      base_price: cls.base_price ?? 0,
+      is_featured: cls.is_featured ?? false,
+      enabled: cls.enabled ?? true,
+    })
+    setDialogOpen(true)
+  }
+
+  function handleSubmit() {
+    const mutation = editing ? updateMutation : createMutation
+    const payload = editing
+      ? { classId: editing.$id, data: form }
+      : form
+    mutation.mutate(payload, {
+      onSuccess: () => {
+        setDialogOpen(false)
+        toast.success(editing ? 'Clase actualizada' : 'Clase creada')
+      },
+      onError: () => toast.error('Error al guardar'),
+    })
+  }
 
   const filtered = useMemo(() => {
     if (!classes) return []
@@ -67,9 +129,19 @@ export default function AdminClassesPage() {
     )
   }
 
+  const isPending = createMutation.isPending || updateMutation.isPending
+
   return (
     <div className="max-w-5xl mx-auto px-4 md:px-8 py-8 animate-fade-in-up">
-      <AdminPageHeader title={t('classes.title')} />
+      <AdminPageHeader
+        title={t('classes.title')}
+        action={
+          <Button size="sm" onClick={openCreate} className="gap-1.5">
+            <Plus className="w-4 h-4" />
+            {t('classes.newClass', 'Nueva Clase')}
+          </Button>
+        }
+      />
 
       {/* Search */}
       <div className="relative mb-6 max-w-sm">
@@ -115,6 +187,14 @@ export default function AdminClassesPage() {
                       <Badge variant={DIFFICULTY_BADGE[cls.difficulty] ?? 'default'} className="text-[10px] hidden sm:inline-flex">
                         {cls.difficulty?.replace('_', ' ')}
                       </Badge>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="h-7 w-7 p-0 text-charcoal-subtle hover:text-charcoal"
+                        onClick={() => openEdit(cls)}
+                      >
+                        <Pencil className="w-3.5 h-3.5" />
+                      </Button>
                       <Toggle
                         enabled={cls.enabled}
                         onChange={() => handleToggle(cls)}
@@ -134,6 +214,93 @@ export default function AdminClassesPage() {
             </Card>
           )
       }
+
+      {/* Create / Edit dialog */}
+      <AdminFormDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        title={editing ? t('classes.editClass', 'Editar Clase') : t('classes.newClass', 'Nueva Clase')}
+        onSubmit={handleSubmit}
+        isSubmitting={isPending}
+      >
+        <div className="grid grid-cols-2 gap-3">
+          <div className="space-y-1">
+            <Label>{t('classes.fields.titleEs', 'Título ES')}</Label>
+            <Input value={form.title_es} onChange={(e) => setForm(f => ({ ...f, title_es: e.target.value }))} required />
+          </div>
+          <div className="space-y-1">
+            <Label>{t('classes.fields.titleEn', 'Título EN')}</Label>
+            <Input value={form.title_en} onChange={(e) => setForm(f => ({ ...f, title_en: e.target.value }))} />
+          </div>
+          <div className="space-y-1">
+            <Label>{t('classes.fields.summaryEs', 'Resumen ES')}</Label>
+            <Input value={form.summary_es} onChange={(e) => setForm(f => ({ ...f, summary_es: e.target.value }))} />
+          </div>
+          <div className="space-y-1">
+            <Label>{t('classes.fields.summaryEn', 'Resumen EN')}</Label>
+            <Input value={form.summary_en} onChange={(e) => setForm(f => ({ ...f, summary_en: e.target.value }))} />
+          </div>
+          <div className="space-y-1">
+            <Label>{t('classes.fields.classType', 'Tipo de clase')}</Label>
+            <select
+              className="w-full h-9 rounded-lg border border-sand bg-white px-3 text-sm focus:outline-none focus:ring-2 focus:ring-sage/30"
+              value={form.class_type_id}
+              onChange={(e) => setForm(f => ({ ...f, class_type_id: e.target.value }))}
+              required
+            >
+              <option value="">— seleccionar —</option>
+              {classTypes.map(ct => (
+                <option key={ct.$id} value={ct.$id}>{ct.name_es}</option>
+              ))}
+            </select>
+          </div>
+          <div className="space-y-1">
+            <Label>{t('classes.fields.instructor', 'Instructor')}</Label>
+            <select
+              className="w-full h-9 rounded-lg border border-sand bg-white px-3 text-sm focus:outline-none focus:ring-2 focus:ring-sage/30"
+              value={form.instructor_id}
+              onChange={(e) => setForm(f => ({ ...f, instructor_id: e.target.value }))}
+              required
+            >
+              <option value="">— seleccionar —</option>
+              {instructors.map(i => (
+                <option key={i.$id} value={i.$id}>{i.full_name}</option>
+              ))}
+            </select>
+          </div>
+          <div className="space-y-1">
+            <Label>{t('classes.fields.difficulty', 'Dificultad')}</Label>
+            <select
+              className="w-full h-9 rounded-lg border border-sand bg-white px-3 text-sm focus:outline-none focus:ring-2 focus:ring-sage/30"
+              value={form.difficulty}
+              onChange={(e) => setForm(f => ({ ...f, difficulty: e.target.value }))}
+            >
+              <option value="beginner">Principiante</option>
+              <option value="intermediate">Intermedio</option>
+              <option value="advanced">Avanzado</option>
+              <option value="all_levels">Todos los niveles</option>
+            </select>
+          </div>
+          <div className="space-y-1">
+            <Label>{t('classes.fields.duration', 'Duración (min)')}</Label>
+            <Input type="number" min="10" max="240" value={form.duration_min} onChange={(e) => setForm(f => ({ ...f, duration_min: Number(e.target.value) }))} />
+          </div>
+          <div className="space-y-1">
+            <Label>{t('classes.fields.basePrice', 'Precio base')}</Label>
+            <Input type="number" min="0" step="10" value={form.base_price} onChange={(e) => setForm(f => ({ ...f, base_price: Number(e.target.value) }))} />
+          </div>
+          <div className="flex items-center gap-3 pt-5">
+            <label className="flex items-center gap-2 text-sm text-charcoal cursor-pointer">
+              <input type="checkbox" checked={form.is_featured} onChange={(e) => setForm(f => ({ ...f, is_featured: e.target.checked }))} className="accent-sage" />
+              {t('classes.fields.featured', 'Destacada')}
+            </label>
+            <label className="flex items-center gap-2 text-sm text-charcoal cursor-pointer">
+              <input type="checkbox" checked={form.enabled} onChange={(e) => setForm(f => ({ ...f, enabled: e.target.checked }))} className="accent-sage" />
+              {t('common.enabled', 'Activa')}
+            </label>
+          </div>
+        </div>
+      </AdminFormDialog>
     </div>
   )
 }

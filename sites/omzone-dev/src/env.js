@@ -8,10 +8,6 @@
  * APPWRITE_API_KEY nunca aparece aquí ni en .env — solo en Appwrite Console server-side.
  */
 
-// ── Feature flags (frontend-only) ─────────────────────────────────────────────
-/** true = servicios mock (sin Appwrite). false = Appwrite real. */
-export const USE_MOCKS = import.meta.env.VITE_USE_MOCKS === 'true'
-
 // ── App (frontend-only) ───────────────────────────────────────────────────────
 export const APP_NAME     = import.meta.env.VITE_APP_NAME      ?? 'Omzone'
 export const APP_ENV      = import.meta.env.VITE_APP_ENV       ?? 'production'

@@ -10,6 +10,7 @@
     "products": "Productos",
     "orders": "Órdenes",
     "bookings": "Reservas",
+    "passes": "Pases",
     "content": "Contenido",
     "settings": "Configuración"
   },
@@ -204,6 +205,29 @@
       "confirmed": "Confirmada",
       "completed": "Completada",
       "cancelled": "Cancelada"
+    }
+  },
+  "passes": {
+    "title": "Pases de Acceso",
+    "subtitle": "QR de entrada física por usuario.",
+    "cancel": "Cancelar pase",
+    "cancelConfirm": "¿Cancelar?",
+    "cancelSuccess": "Pase cancelado",
+    "noPasses": "No hay pases de acceso registrados.",
+    "noPassesStatus": "No hay pases con ese estado.",
+    "status": {
+      "active": "Activo",
+      "used": "Usado",
+      "expired": "Expirado",
+      "cancelled": "Cancelado"
+    },
+    "fields": {
+      "clientId": "Cliente",
+      "type": "Tipo",
+      "validFrom": "Válido desde",
+      "validUntil": "Válido hasta",
+      "usedAt": "Usado el",
+      "notes": "Notas"
     }
   },
   "content": {

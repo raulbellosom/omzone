@@ -10,6 +10,7 @@
     "products": "Products",
     "orders": "Orders",
     "bookings": "Bookings",
+    "passes": "Passes",
     "content": "Content",
     "settings": "Settings"
   },
@@ -204,6 +205,29 @@
       "confirmed": "Confirmed",
       "cancelled": "Cancelled",
       "completed": "Completed"
+    }
+  },
+  "passes": {
+    "title": "Access Passes",
+    "subtitle": "Physical entry QR codes per user.",
+    "cancel": "Cancel pass",
+    "cancelConfirm": "Cancel?",
+    "cancelSuccess": "Pass cancelled",
+    "noPasses": "No access passes registered.",
+    "noPassesStatus": "No passes with that status.",
+    "status": {
+      "active": "Active",
+      "used": "Used",
+      "expired": "Expired",
+      "cancelled": "Cancelled"
+    },
+    "fields": {
+      "clientId": "Customer",
+      "type": "Type",
+      "validFrom": "Valid from",
+      "validUntil": "Valid until",
+      "usedAt": "Used on",
+      "notes": "Notes"
     }
   },
   "content": {

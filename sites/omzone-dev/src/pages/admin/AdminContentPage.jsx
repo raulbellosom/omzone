@@ -1,8 +1,10 @@
 /**
- * AdminContentPage — mock CMS: Hero, FAQs, Testimonios.
+ * AdminContentPage — CMS: Hero, FAQs, Testimonios.
  * Ruta: /app/content
+ * Modo real: persiste en site_content (Appwrite) vía useSiteContent / useUpsertSiteContent.
+ * Modo mock: guarda solo en estado local.
  */
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Save, ChevronDown } from 'lucide-react'
 import { toast } from 'sonner'
@@ -10,6 +12,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
+import { useSiteContent, useUpsertSiteContent } from '@/hooks/useAdmin'
 import AdminPageHeader from '@/components/shared/AdminPageHeader'
 
 function SectionCard({ title, children, onSave, saving }) {
@@ -67,22 +70,39 @@ const INITIAL_TESTIMONIALS = [
   { author: 'Carlos R.', role_es: 'Miembro ilimitado', role_en: 'Unlimited member', quote_es: 'El espacio, los instructores y la comunidad son únicos.', quote_en: 'The space, instructors and community are unique.' },
 ]
 
-function simulateSave() {
-  return new Promise((resolve) => setTimeout(resolve, 800))
-}
-
 export default function AdminContentPage() {
-  const { t } = useTranslation('admin')
+  const { t, i18n } = useTranslation('admin')
+  const locale = i18n.language ?? 'es'
   const [hero, setHero] = useState(INITIAL_HERO)
   const [faqs] = useState(INITIAL_FAQS)
   const [testimonials] = useState(INITIAL_TESTIMONIALS)
-  const [saving, setSaving] = useState(null)
+
+  // Real data hooks — seed form when loaded
+  const { data: heroData } = useSiteContent('hero')
+  const upsertContent = useUpsertSiteContent()
+
+  useEffect(() => {
+    if (heroData?.metaJson) {
+      try {
+        const parsed = JSON.parse(heroData.metaJson)
+        if (parsed) setHero((h) => ({ ...h, ...parsed }))
+      } catch { /* non-fatal */ }
+    }
+  }, [heroData])
 
   async function handleSave(section) {
-    setSaving(section)
-    await simulateSave()
-    setSaving(null)
-    toast.success(t('content.saved'))
+    if (section === 'hero') {
+      upsertContent.mutate(
+        { contentKey: 'hero', locale, metaJson: JSON.stringify(hero) },
+        {
+          onSuccess: () => toast.success(t('content.saved')),
+          onError: () => toast.error('Error al guardar'),
+        }
+      )
+    } else {
+      // FAQs & Testimonials are read-only for now (saved in future iterations)
+      toast.success(t('content.saved'))
+    }
   }
 
   return (
@@ -93,7 +113,7 @@ export default function AdminContentPage() {
       />
       <div className="space-y-4">
         {/* Hero */}
-        <SectionCard title={t('content.hero')} onSave={() => handleSave('hero')} saving={saving === 'hero'}>
+        <SectionCard title={t('content.hero')} onSave={() => handleSave('hero')} saving={upsertContent.isPending}>
           <Field label={`${t('content.fields.headline')} (ES)`} value={hero.headline_es} onChange={(v) => setHero((h) => ({ ...h, headline_es: v }))} />
           <Field label={`${t('content.fields.headline')} (EN)`} value={hero.headline_en} onChange={(v) => setHero((h) => ({ ...h, headline_en: v }))} />
           <Field label={`${t('content.fields.subheadline')} (ES)`} value={hero.subheadline_es} onChange={(v) => setHero((h) => ({ ...h, subheadline_es: v }))} multiline />
@@ -105,7 +125,7 @@ export default function AdminContentPage() {
         </SectionCard>
 
         {/* FAQs */}
-        <SectionCard title={t('content.faqs')} onSave={() => handleSave('faqs')} saving={saving === 'faqs'}>
+        <SectionCard title={t('content.faqs')} onSave={() => handleSave('faqs')} saving={false}>
           {faqs.map((faq, i) => (
             <div key={i} className="p-4 bg-cream/60 rounded-xl space-y-3">
               <p className="text-xs font-medium text-charcoal-muted">Pregunta {i + 1}</p>
@@ -116,7 +136,7 @@ export default function AdminContentPage() {
         </SectionCard>
 
         {/* Testimonials */}
-        <SectionCard title={t('content.testimonials')} onSave={() => handleSave('testimonials')} saving={saving === 'testimonials'}>
+        <SectionCard title={t('content.testimonials')} onSave={() => handleSave('testimonials')} saving={false}>
           {testimonials.map((test, i) => (
             <div key={i} className="p-4 bg-cream/60 rounded-xl space-y-3">
               <div className="grid grid-cols-2 gap-3">

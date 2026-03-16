@@ -1,29 +1,21 @@
+/**
+ * useMemberships — no hay colección de planes de membresía en Appwrite.
+ * Los paquetes prepagados con créditos se gestionan en wellness_packages.
+ * Estos hooks devuelven vacío para no romper páginas que los consumen.
+ */
 import { useQuery } from '@tanstack/react-query'
-import {
-  getMembershipPlans,
-  getMembershipPlanBySlug,
-  getMembershipPlanById,
-} from '@/services/mocks/membershipService.mock'
 
-export function useMembershipPlans(options = {}) {
-  return useQuery({
-    queryKey: ['membershipPlans', options],
-    queryFn: () => getMembershipPlans(options),
-  })
+const empty = () => Promise.resolve([])
+const emptyOne = () => Promise.resolve(null)
+
+export function useMembershipPlans() {
+  return useQuery({ queryKey: ['membershipPlans'], queryFn: empty })
 }
 
-export function useMembershipPlanBySlug(slug) {
-  return useQuery({
-    queryKey: ['membershipPlan', slug],
-    queryFn: () => getMembershipPlanBySlug(slug),
-    enabled: !!slug,
-  })
+export function useMembershipPlanBySlug() {
+  return useQuery({ queryKey: ['membershipPlan', 'slug'], queryFn: emptyOne })
 }
 
-export function useMembershipPlanById(planId) {
-  return useQuery({
-    queryKey: ['membershipPlan', 'id', planId],
-    queryFn: () => getMembershipPlanById(planId),
-    enabled: !!planId,
-  })
+export function useMembershipPlanById() {
+  return useQuery({ queryKey: ['membershipPlan', 'id'], queryFn: emptyOne })
 }

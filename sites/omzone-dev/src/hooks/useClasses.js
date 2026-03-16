@@ -7,7 +7,7 @@ import {
   getInstructors,
   getClassTypes,
   getAllSessions,
-} from '@/services/mocks/catalogService.mock'
+} from '@/services/appwrite/catalogService'
 
 export function useClasses(options = {}) {
   return useQuery({
