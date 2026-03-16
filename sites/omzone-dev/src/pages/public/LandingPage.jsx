@@ -1,45 +1,44 @@
-import PageMeta from '@/components/seo/PageMeta'
-import StructuredData from '@/components/seo/StructuredData'
-import HeroSection from '@/features/marketing/HeroSection'
-import BenefitsSection from '@/features/marketing/BenefitsSection'
-import FeaturedClassesSection from '@/features/marketing/FeaturedClassesSection'
-import PackagesPreviewSection from '@/features/marketing/PackagesPreviewSection'
-import WellnessPreviewSection from '@/features/marketing/WellnessPreviewSection'
-import TestimonialsSection from '@/features/marketing/TestimonialsSection'
-import StudioSection from '@/features/marketing/StudioSection'
-import FaqSection from '@/features/marketing/FaqSection'
-import CtaSection from '@/features/marketing/CtaSection'
-import { APP_BASE_URL } from '@/env'
+import PageMeta from "@/components/seo/PageMeta";
+import StructuredData from "@/components/seo/StructuredData";
+import HeroSection from "@/features/marketing/HeroSection";
+import BenefitsSection from "@/features/marketing/BenefitsSection";
+import FeaturedClassesSection from "@/features/marketing/FeaturedClassesSection";
+import PackagesPreviewSection from "@/features/marketing/PackagesPreviewSection";
+import WellnessPreviewSection from "@/features/marketing/WellnessPreviewSection";
+import StudioSection from "@/features/marketing/StudioSection";
+import FaqSection from "@/features/marketing/FaqSection";
+import CtaSection from "@/features/marketing/CtaSection";
+import { APP_BASE_URL } from "@/env";
 
-const BASE_URL = APP_BASE_URL
+const BASE_URL = APP_BASE_URL;
 
 const organizationSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'Organization',
-  name: 'Omzone',
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "Omzone",
   description:
-    'Plataforma de yoga y wellness kitchen. Clases, paquetes y complementos de bienestar en un solo lugar.',
+    "Plataforma de yoga y wellness kitchen. Clases, paquetes y complementos de bienestar en un solo lugar.",
   url: BASE_URL,
   logo: `${BASE_URL}/logo.png`,
   sameAs: [],
   contactPoint: {
-    '@type': 'ContactPoint',
-    contactType: 'customer support',
-    availableLanguage: ['Spanish', 'English'],
+    "@type": "ContactPoint",
+    contactType: "customer support",
+    availableLanguage: ["Spanish", "English"],
   },
-}
+};
 
 const websiteSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'WebSite',
-  name: 'Omzone',
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "Omzone",
   url: BASE_URL,
   potentialAction: {
-    '@type': 'SearchAction',
+    "@type": "SearchAction",
     target: `${BASE_URL}/classes?q={search_term_string}`,
-    'query-input': 'required name=search_term_string',
+    "query-input": "required name=search_term_string",
   },
-}
+};
 
 export default function LandingPage() {
   return (
@@ -60,10 +59,9 @@ export default function LandingPage() {
         <FeaturedClassesSection />
         <PackagesPreviewSection />
         <WellnessPreviewSection />
-        <TestimonialsSection />
         <FaqSection />
         <CtaSection />
       </main>
     </>
-  )
+  );
 }
