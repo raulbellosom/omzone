@@ -73,6 +73,21 @@ export default function LoginPage() {
         return;
       }
 
+      // Network / CORS failure — browser can't reach the Appwrite endpoint.
+      // "Load failed" (Safari) / "Failed to fetch" (Chrome) are TypeErrors
+      // thrown before any HTTP response arrives.
+      if (
+        err instanceof TypeError ||
+        msg.toLowerCase().includes("load failed") ||
+        msg.toLowerCase().includes("failed to fetch") ||
+        msg.toLowerCase().includes("network")
+      ) {
+        setError(
+          "Error de red: no se pudo conectar al servidor. Verifica tu conexión o que la URL de la app esté permitida en la consola Appwrite (Settings → Platforms).",
+        );
+        return;
+      }
+
       // Any other error — show descriptive details so it can be diagnosed
       // on mobile where network inspector is unavailable.
       const detail = type || msg || String(code);
