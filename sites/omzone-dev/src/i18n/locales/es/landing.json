@@ -1,7 +1,7 @@
 {
   "hero": {
     "headline": "Tu bienestar,\ntu ritmo.",
-    "subheadline": "Clases de yoga, membresías y complementos wellness en un solo lugar. Reserva, practica y vive mejor.",
+    "subheadline": "Clases de yoga, paquetes y complementos wellness en un solo lugar. Reserva, practica y vive mejor.",
     "ctaMain": "Reservar clase",
     "ctaSecondary": "Ver paquetes",
     "badge": "Yoga + Wellness Kitchen"
@@ -28,7 +28,7 @@
       {
         "icon": "shield",
         "title": "Flexibilidad total",
-        "description": "Asiste a clases sueltas o elige una membresía que se adapte a tu ritmo."
+        "description": "Asiste a clases sueltas o elige un paquete que se adapte a tu ritmo."
       }
     ]
   },
@@ -70,7 +70,7 @@
       {
         "name": "Valeria M.",
         "role": "Miembro desde 2024",
-        "text": "Llevo 6 meses con la membresía ilimitada y ha cambiado completamente mi rutina. Las clases son increíbles y reservar es muy fácil."
+        "text": "Llevo 6 meses con el paquete ilimitado y ha cambiado completamente mi rutina. Las clases son increíbles y reservar es muy fácil."
       },
       {
         "name": "Carlos R.",
@@ -109,14 +109,14 @@
         "answer": "El cupo varía por clase y nivel. Puedes ver los lugares disponibles en tiempo real en el catálogo. Te recomendamos reservar con anticipación."
       },
       {
-        "question": "¿Puedo comprar extras sin estar suscrito?",
-        "answer": "Sí. Los productos de Wellness Kitchen y complementos están disponibles para cualquier cliente, con o sin membresía activa."
+        "question": "¿Puedo comprar extras sin tener un paquete activo?",
+        "answer": "Sí. Los productos de Wellness Kitchen y complementos están disponibles para cualquier cliente, con o sin paquete activo."
       }
     ]
   },
   "cta_section": {
     "title": "Empieza hoy tu transformación",
-    "subtitle": "Tu primera clase o tu primera membresía están a un clic de distancia.",
+    "subtitle": "Tu primera clase o tu primer paquete están a un clic de distancia.",
     "ctaMain": "Reservar mi primera clase",
     "ctaSecondary": "Ver paquetes"
   }

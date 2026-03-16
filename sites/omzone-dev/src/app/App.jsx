@@ -14,7 +14,6 @@ import { RequireAuth, RedirectIfAuthenticated } from "@/routes/guards";
 const LandingPage = lazy(() => import("@/pages/public/LandingPage"));
 const ClassesPage = lazy(() => import("@/pages/public/ClassesPage"));
 const ClassDetailPage = lazy(() => import("@/pages/public/ClassDetailPage"));
-const MembershipsPage = lazy(() => import("@/pages/public/MembershipsPage"));
 const PackagesPage = lazy(() => import("@/pages/public/PackagesPage"));
 const WellnessPage = lazy(() => import("@/pages/public/WellnessPage"));
 
@@ -44,9 +43,6 @@ const CustomerBookingsPage = lazy(
 );
 const CustomerOrdersPage = lazy(
   () => import("@/pages/customer/CustomerOrdersPage"),
-);
-const CustomerMembershipPage = lazy(
-  () => import("@/pages/customer/CustomerMembershipPage"),
 );
 const CustomerProfilePage = lazy(
   () => import("@/pages/customer/CustomerProfilePage"),
@@ -92,7 +88,10 @@ export default function App() {
           <Route element={<RedirectIfAuthenticated />}>
             <Route index element={<LandingPage />} />
           </Route>
-          <Route path="memberships" element={<MembershipsPage />} />
+          <Route
+            path="memberships"
+            element={<Navigate to="/packages" replace />}
+          />
 
           {/* Login / Register: redirige si ya hay sesión (verificada o no) */}
           <Route element={<RedirectIfAuthenticated />}>
@@ -137,9 +136,7 @@ export default function App() {
         {/* ── Panel admin ─────────────────────────────────────────────── */}
         {/* fallback="/zone" → clientes que van a /app son redirigidos a su área */}
         <Route
-          element={
-            <RequireAuth roles={["admin", "root"]} fallback="/zone" />
-          }
+          element={<RequireAuth roles={["admin", "root"]} fallback="/zone" />}
         >
           <Route element={<AdminLayout />}>
             <Route path="app" element={<AdminDashboardPage />} />
@@ -147,14 +144,16 @@ export default function App() {
             <Route path="app/customers" element={<AdminCustomersPage />} />
             <Route path="app/classes" element={<AdminClassesPage />} />
             <Route path="app/sessions" element={<AdminSessionsPage />} />
-            <Route path="app/memberships" element={<Navigate to="/app/packages" replace />} />
             <Route path="app/packages" element={<AdminPackagesPage />} />
             <Route path="app/products" element={<AdminProductsPage />} />
             <Route path="app/orders" element={<AdminOrdersPage />} />
             <Route path="app/bookings" element={<AdminBookingsPage />} />
             <Route path="app/passes" element={<AdminPassesPage />} />
             <Route path="app/content" element={<AdminContentPage />} />
-            <Route path="app/settings" element={<AdminSettingsPage />} />
+            {/* ── Root-only: configuración del estudio ─────────────── */}
+            <Route element={<RequireAuth roles={["root"]} fallback="/app" />}>
+              <Route path="app/settings" element={<AdminSettingsPage />} />
+            </Route>
           </Route>
         </Route>
 

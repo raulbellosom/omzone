@@ -1,11 +1,10 @@
 /**
- * CheckoutPage — checkout unificado para booking, membresías, paquetes y productos.
+ * CheckoutPage — checkout unificado para booking, paquetes y productos.
  * Ruta: /checkout
  * Recibe via location.state:
- *   - Booking:    { intent:'booking', items, customerInfo, total }
- *   - Membresía:  { planId }
- *   - Paquete:    { packageId }
- *   - Producto:   { productId }
+ *   - Booking:  { intent:'booking', items, customerInfo, total }
+ *   - Paquete:  { packageId }
+ *   - Producto: { productId }
  */
 import { useState } from 'react'
 import { useLocation, useNavigate, Link } from 'react-router-dom'
@@ -17,7 +16,6 @@ import { Label } from '@/components/ui/label'
 import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import PageMeta from '@/components/seo/PageMeta'
-import { useMembershipPlanById } from '@/hooks/useMemberships'
 import { useWellnessPackageById, useWellnessProductById } from '@/hooks/useWellness'
 import { createOrder, confirmOrder } from '@/services/appwrite/customerService'
 import { useAuth } from '@/hooks/useAuth.jsx'
@@ -98,20 +96,16 @@ export default function CheckoutPage() {
   const state    = location.state ?? {}
 
   const intentType = state.items ? 'booking'
-    : state.planId    ? 'membership'
     : state.packageId ? 'package'
     : state.productId ? 'product'
     : null
 
-  const { data: plan,  isLoading: lPlan }  = useMembershipPlanById(state.planId)
   const { data: pkg,   isLoading: lPkg  }  = useWellnessPackageById(state.packageId)
   const { data: prod,  isLoading: lProd }  = useWellnessProductById(state.productId)
-  const isLoadingData = lPlan || lPkg || lProd
+  const isLoadingData = lPkg || lProd
 
   const items = (() => {
     if (intentType === 'booking')    return state.items ?? []
-    if (intentType === 'membership' && plan)
-      return [{ id: plan.$id, title: resolveField(plan, 'name'), subtitle: resolveField(plan, 'description'), price: plan.price }]
     if (intentType === 'package' && pkg)
       return [{ id: pkg.$id, title: resolveField(pkg, 'name'), subtitle: resolveField(pkg, 'description'), price: pkg.price }]
     if (intentType === 'product' && prod)

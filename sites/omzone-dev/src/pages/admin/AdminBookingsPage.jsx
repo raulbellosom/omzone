@@ -74,6 +74,7 @@ export default function AdminBookingsPage() {
           : (
             <Card>
               <CardContent className="p-10 text-center">
+                <CalendarCheck className="w-10 h-10 text-charcoal-subtle mx-auto mb-3" />
                 <p className="text-sm text-charcoal-muted">{t('common.noData')}</p>
               </CardContent>
             </Card>

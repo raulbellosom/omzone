@@ -18,7 +18,7 @@ import { useAdminLeads, useUpdateLeadStatus, useAddLeadNote, useCreateLead } fro
 import AdminPageHeader from '@/components/shared/AdminPageHeader'
 import AdminFormDialog from '@/components/admin/AdminFormDialog'
 
-const EMPTY_LEAD = { full_name: '', email: '', phone: '', interest_type: 'membership', notes: '' }
+const EMPTY_LEAD = { full_name: '', email: '', phone: '', interest_type: 'class', notes: '' }
 
 const STATUSES = ['new', 'contacted', 'qualified', 'won', 'lost']
 const STATUS_BADGE = {
@@ -202,6 +202,7 @@ export default function AdminLeadsPage() {
           : (
             <Card>
               <CardContent className="p-10 text-center">
+                <MessageSquare className="w-10 h-10 text-charcoal-subtle mx-auto mb-3" />
                 <p className="text-sm text-charcoal-muted">{t('common.noData')}</p>
               </CardContent>
             </Card>
@@ -237,7 +238,6 @@ export default function AdminLeadsPage() {
               value={form.interest_type}
               onChange={(e) => setForm(f => ({ ...f, interest_type: e.target.value }))}
             >
-              <option value="membership">{t('leads.interest.membership', 'Membresía')}</option>
               <option value="class">{t('leads.interest.class', 'Clase')}</option>
               <option value="package">{t('leads.interest.package', 'Paquete')}</option>
               <option value="product">{t('leads.interest.product', 'Producto')}</option>

@@ -5,7 +5,6 @@
   },
   "nav": {
     "classes": "Clases",
-    "memberships": "Membresías",
     "packages": "Paquetes",
     "wellness": "Wellness Kitchen",
     "login": "Iniciar sesión",
@@ -29,7 +28,6 @@
     "links": {
       "title": "Plataforma",
       "classes": "Clases",
-      "memberships": "Membresías",
       "packages": "Paquetes",
       "wellness": "Wellness Kitchen"
     },
@@ -55,7 +53,6 @@
     "viewDetails": "Ver detalle",
     "addToCart": "Agregar",
     "checkout": "Ir al pago",
-    "subscribe": "Suscribirme",
     "learnMore": "Saber más",
     "back": "Regresar",
     "next": "Continuar",

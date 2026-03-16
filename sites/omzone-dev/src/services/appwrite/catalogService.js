@@ -20,7 +20,7 @@ const DB = APPWRITE_DATABASE_ID
 
 // ── Normalizers ───────────────────────────────────────────────────────────────
 
-function normalizeClass(doc) {
+function normalizeClass(doc, relations = {}) {
   if (!doc) return null
   return {
     $id: doc.$id,
@@ -40,6 +40,8 @@ function normalizeClass(doc) {
     cover_image_id: doc.coverImageId,
     is_featured: doc.isFeatured ?? false,
     enabled: doc.enabled ?? true,
+    class_type: relations.classTypeDoc ? normalizeClassType(relations.classTypeDoc) : null,
+    instructor: relations.instructorDoc ? normalizeInstructor(relations.instructorDoc) : null,
   }
 }
 
@@ -134,6 +136,34 @@ function _parseJson(str) {
   try { return JSON.parse(str) } catch { return null }
 }
 
+async function _batchGetById(collectionId, ids) {
+  const unique = [...new Set((ids ?? []).filter(Boolean))]
+  if (unique.length === 0) return {}
+
+  const res = await databases.listDocuments(DB, collectionId, [
+    Query.equal('$id', unique),
+    Query.limit(unique.length),
+  ])
+
+  return Object.fromEntries(res.documents.map((doc) => [doc.$id, doc]))
+}
+
+async function _enrichClasses(docs) {
+  if (!docs || docs.length === 0) return []
+
+  const [classTypes, instructors] = await Promise.all([
+    _batchGetById(COL_CLASS_TYPES, docs.map((doc) => doc.classTypeId)),
+    _batchGetById(COL_INSTRUCTORS, docs.map((doc) => doc.instructorId)),
+  ])
+
+  return docs.map((doc) =>
+    normalizeClass(doc, {
+      classTypeDoc: classTypes[doc.classTypeId] ?? null,
+      instructorDoc: instructors[doc.instructorId] ?? null,
+    })
+  )
+}
+
 // ── Classes ───────────────────────────────────────────────────────────────────
 
 export async function getClasses({ featured, classTypeId, limit = 50 } = {}) {
@@ -145,7 +175,7 @@ export async function getClasses({ featured, classTypeId, limit = 50 } = {}) {
   if (featured) queries.push(Query.equal('isFeatured', true))
   if (classTypeId) queries.push(Query.equal('classTypeId', classTypeId))
   const res = await databases.listDocuments(DB, COL_CLASSES, queries)
-  return res.documents.map(normalizeClass)
+  return _enrichClasses(res.documents)
 }
 
 export async function getClassBySlug(slug) {
@@ -153,7 +183,9 @@ export async function getClassBySlug(slug) {
     Query.equal('slug', slug),
     Query.limit(1),
   ])
-  return res.documents.length > 0 ? normalizeClass(res.documents[0]) : null
+  if (res.documents.length === 0) return null
+  const [item] = await _enrichClasses([res.documents[0]])
+  return item ?? null
 }
 
 // ── Sessions ──────────────────────────────────────────────────────────────────

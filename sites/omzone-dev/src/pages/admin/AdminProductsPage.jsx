@@ -4,7 +4,7 @@
  */
 import { useState, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Plus, Pencil } from 'lucide-react'
+import { Plus, Pencil, Leaf } from 'lucide-react'
 import { toast } from 'sonner'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -155,6 +155,7 @@ export default function AdminProductsPage() {
           : (
             <Card>
               <CardContent className="p-10 text-center">
+                <Leaf className="w-10 h-10 text-charcoal-subtle mx-auto mb-3" />
                 <p className="text-sm text-charcoal-muted">{t('common.noData')}</p>
               </CardContent>
             </Card>

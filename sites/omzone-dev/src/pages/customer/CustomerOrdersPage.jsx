@@ -5,7 +5,7 @@
 import { useTranslation } from 'react-i18next'
 import { format } from 'date-fns'
 import { es, enUS } from 'date-fns/locale'
-import { ShoppingBag, Award, Dumbbell, Package, Leaf } from 'lucide-react'
+import { ShoppingBag, Dumbbell, Package, Leaf } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -17,7 +17,6 @@ import ROUTES from '@/constants/routes'
 import { cn } from '@/lib/utils'
 
 const TYPE_ICON = {
-  membership:    Award,
   class_session: Dumbbell,
   product:       Leaf,
   package:       Package,

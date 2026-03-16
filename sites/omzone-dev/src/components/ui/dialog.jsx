@@ -1,3 +1,4 @@
+import { forwardRef } from 'react'
 import * as DialogPrimitive from '@radix-ui/react-dialog'
 import { X } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -7,9 +8,10 @@ export const DialogTrigger = DialogPrimitive.Trigger
 export const DialogPortal = DialogPrimitive.Portal
 export const DialogClose = DialogPrimitive.Close
 
-export function DialogOverlay({ className, ...props }) {
+export const DialogOverlay = forwardRef(function DialogOverlay({ className, ...props }, ref) {
   return (
     <DialogPrimitive.Overlay
+      ref={ref}
       className={cn(
         'fixed inset-0 z-50 bg-charcoal/40 backdrop-blur-sm',
         'data-[state=open]:animate-fade-in data-[state=closed]:animate-fade-out',
@@ -18,13 +20,15 @@ export function DialogOverlay({ className, ...props }) {
       {...props}
     />
   )
-}
+})
 
-export function DialogContent({ className, children, ...props }) {
+export const DialogContent = forwardRef(function DialogContent({ className, children, ...props }, ref) {
   return (
     <DialogPortal>
       <DialogOverlay />
       <DialogPrimitive.Content
+        ref={ref}
+        aria-describedby={undefined}
         className={cn(
           'fixed left-1/2 top-1/2 z-50 -translate-x-1/2 -translate-y-1/2',
           'w-full max-w-lg rounded-2xl bg-white p-6 shadow-modal',
@@ -41,7 +45,7 @@ export function DialogContent({ className, children, ...props }) {
       </DialogPrimitive.Content>
     </DialogPortal>
   )
-}
+})
 
 export function DialogHeader({ className, ...props }) {
   return <div className={cn('mb-4', className)} {...props} />

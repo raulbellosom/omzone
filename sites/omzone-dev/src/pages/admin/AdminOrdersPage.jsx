@@ -6,7 +6,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { format } from 'date-fns'
 import { es, enUS } from 'date-fns/locale'
-import { ChevronDown, ChevronRight, ShoppingBag, Award, Leaf, Package } from 'lucide-react'
+import { ChevronDown, ChevronRight, ShoppingBag, Leaf, Package } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -16,7 +16,7 @@ import AdminPageHeader from '@/components/shared/AdminPageHeader'
 
 const PAYMENT_BADGE = { paid: 'sage', pending: 'default', failed: 'destructive', refunded: 'outline' }
 const FULFILL_BADGE  = { confirmed: 'sage', completed: 'outline', cancelled: 'destructive', pending: 'default' }
-const TYPE_ICON = { membership: Award, class_session: ShoppingBag, product: Leaf, package: Package }
+const TYPE_ICON = { class_session: ShoppingBag, product: Leaf, package: Package }
 
 function OrderRow({ order, t, dateFnsLocale }) {
   const [open, setOpen] = useState(false)
@@ -93,6 +93,7 @@ export default function AdminOrdersPage() {
           : (
             <Card>
               <CardContent className="p-10 text-center">
+                <ShoppingBag className="w-10 h-10 text-charcoal-subtle mx-auto mb-3" />
                 <p className="text-sm text-charcoal-muted">{t('common.noData')}</p>
               </CardContent>
             </Card>

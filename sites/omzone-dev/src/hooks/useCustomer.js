@@ -33,15 +33,6 @@ export function useMyBookings() {
   });
 }
 
-export function useMyMembership() {
-  // No membership_plans collection — customer area shows empty state
-  return useQuery({
-    queryKey: ["myMembership"],
-    queryFn: () => Promise.resolve(null),
-    enabled: false,
-  });
-}
-
 export function useCancelBooking() {
   const queryClient = useQueryClient();
   const { user } = useAuth();

@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { Package, ArrowRight, CreditCard, Leaf, Calendar } from 'lucide-react'
+import { Package, ArrowRight, Leaf, Calendar } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -8,9 +8,8 @@ import { formatMXN } from '@/lib/currency'
 import { resolveField } from '@/lib/i18n-data'
 import ROUTES from '@/constants/routes'
 
-const TYPE_ICON = { membership: CreditCard, product: Leaf, class: Calendar }
+const TYPE_ICON = { product: Leaf, class: Calendar }
 const TYPE_COLORS = {
-  membership: 'bg-sage-muted text-sage-darker',
   product:    'bg-sand text-charcoal',
   class:      'bg-warm-gray text-charcoal',
 }

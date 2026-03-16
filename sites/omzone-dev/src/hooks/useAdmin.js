@@ -47,6 +47,14 @@ export function useUpdateClass() {
   })
 }
 
+export function useDeleteClass() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (classId) => admin.deleteClass(classId),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['adminClasses'] }),
+  })
+}
+
 // ── Instructors & Class Types ─────────────────────────────────────────────────
 
 export function useAdminInstructors() {
@@ -56,10 +64,98 @@ export function useAdminInstructors() {
   })
 }
 
+export function useCreateInstructor() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (data) => admin.createInstructor(data),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['adminInstructors'] })
+      qc.invalidateQueries({ queryKey: ['adminClasses'] })
+    },
+  })
+}
+
+export function useUpdateInstructor() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ instructorId, data }) => admin.updateInstructor(instructorId, data),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['adminInstructors'] })
+      qc.invalidateQueries({ queryKey: ['adminClasses'] })
+    },
+  })
+}
+
+export function useToggleInstructor() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ instructorId, enabled }) => admin.toggleInstructor(instructorId, enabled),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['adminInstructors'] })
+      qc.invalidateQueries({ queryKey: ['adminClasses'] })
+    },
+  })
+}
+
+export function useDeleteInstructor() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (instructorId) => admin.deleteInstructor(instructorId),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['adminInstructors'] })
+      qc.invalidateQueries({ queryKey: ['adminClasses'] })
+    },
+  })
+}
+
 export function useAdminClassTypes() {
   return useQuery({
     queryKey: ['adminClassTypes'],
     queryFn: admin.listClassTypes,
+  })
+}
+
+export function useCreateClassType() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (data) => admin.createClassType(data),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['adminClassTypes'] })
+      qc.invalidateQueries({ queryKey: ['adminClasses'] })
+    },
+  })
+}
+
+export function useUpdateClassType() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ classTypeId, data }) => admin.updateClassType(classTypeId, data),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['adminClassTypes'] })
+      qc.invalidateQueries({ queryKey: ['adminClasses'] })
+    },
+  })
+}
+
+export function useToggleClassType() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ classTypeId, enabled }) => admin.toggleClassType(classTypeId, enabled),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['adminClassTypes'] })
+      qc.invalidateQueries({ queryKey: ['adminClasses'] })
+    },
+  })
+}
+
+export function useDeleteClassType() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (classTypeId) => admin.deleteClassType(classTypeId),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['adminClassTypes'] })
+      qc.invalidateQueries({ queryKey: ['adminClasses'] })
+    },
   })
 }
 
@@ -88,21 +184,28 @@ export function useCreateSession() {
   })
 }
 
-// ── Memberships (sin colección en Appwrite — devuelve vacío) ──────────────────
-
-export function useAdminMemberships() {
-  return useQuery({
-    queryKey: ['adminMemberships'],
-    queryFn: () => Promise.resolve([]),
+export function useUpdateSession() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ sessionId, data }) => admin.updateSession(sessionId, data),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['adminSessions'] }),
   })
 }
 
-export function useTogglePlan() {
-  return useMutation({ mutationFn: () => Promise.resolve() })
+export function useToggleSession() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ sessionId, enabled }) => admin.toggleSession(sessionId, enabled),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['adminSessions'] }),
+  })
 }
 
-export function useTogglePlanFeatured() {
-  return useMutation({ mutationFn: () => Promise.resolve() })
+export function useDeleteSession() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (sessionId) => admin.deleteSession(sessionId),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['adminSessions'] }),
+  })
 }
 
 // ── Packages ──────────────────────────────────────────────────────────────────

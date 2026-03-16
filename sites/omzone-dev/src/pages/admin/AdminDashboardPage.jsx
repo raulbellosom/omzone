@@ -82,7 +82,7 @@ export default function AdminDashboardPage() {
         <KpiCard icon={TrendingUp}     label={t('dashboard.metrics.salesToday')}        value={metrics?.salesToday ?? '—'}                loading={lMetrics} accent="sage" />
         <KpiCard icon={CalendarCheck}  label={t('dashboard.metrics.bookingsToday')}      value={metrics?.bookingsToday ?? '—'}             loading={lMetrics} accent="sage" />
         <KpiCard icon={Users}          label={t('dashboard.metrics.newCustomers')}       value={metrics?.newCustomers ?? '—'}              loading={lMetrics} accent="olive" />
-        <KpiCard icon={Award}          label={t('dashboard.metrics.activeMemberships')}  value={metrics?.activeMemberships ?? '—'}         loading={lMetrics} accent="olive" />
+        <KpiCard icon={Award}          label={t('dashboard.metrics.activePackages')}   value={metrics?.active_packages ?? '—'}          loading={lMetrics} accent="olive" />
         <KpiCard icon={ShoppingBag}    label={t('dashboard.metrics.revenue')}            value={metrics ? formatMXN(metrics.revenueMonth) : '—'} loading={lMetrics} accent="charcoal" />
         <KpiCard icon={Zap}            label={t('dashboard.metrics.revenueToday')}       value={metrics ? formatMXN(metrics.revenueToday) : '—'} loading={lMetrics} accent="charcoal" />
       </div>

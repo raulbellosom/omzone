@@ -5,7 +5,6 @@
     "customers": "Customers",
     "classes": "Classes",
     "sessions": "Sessions",
-    "memberships": "Memberships",
     "packages": "Packages",
     "products": "Products",
     "orders": "Orders",
@@ -21,7 +20,7 @@
       "salesToday": "Sales today",
       "bookingsToday": "Bookings today",
       "newCustomers": "New customers",
-      "activeMemberships": "Active memberships",
+      "activePackages": "Active packages",
       "revenue": "Monthly revenue",
       "revenueToday": "Revenue today",
       "totalBookings": "Total bookings"
@@ -46,7 +45,7 @@
     },
     "interest": {
       "class": "Class",
-      "membership": "Membership",
+
       "package": "Package",
       "product": "Product"
     },
@@ -64,7 +63,7 @@
     "title": "Customers",
     "tabs": {
       "all": "All",
-      "active": "With membership",
+      "active": "Active",
       "purchased": "With purchase",
       "registered": "Registered"
     },
@@ -73,62 +72,261 @@
       "email": "Email",
       "phone": "Phone",
       "status": "Status",
-      "membership": "Membership",
       "orders": "Orders",
       "joined": "Joined"
     }
   },
   "classes": {
     "title": "Classes",
-    "new": "New class",
-    "edit": "Edit class",
+    "subtitle": "Manage classes, instructors, and class types from one reusable module.",
+    "tabs": {
+      "catalog": "Classes",
+      "instructors": "Instructors",
+      "types": "Types"
+    },
+    "metrics": {
+      "catalog": "Classes",
+      "catalogHint": "Core catalog ready for sessions and checkout.",
+      "instructors": "Instructors",
+      "instructorsHint": "People available for assignment.",
+      "types": "Types",
+      "typesHint": "Taxonomy used by the public catalog."
+    },
+    "side": {
+      "title": "Dependencies ready",
+      "description": "Each class depends on a well-defined instructor and class type.",
+      "instructors": "Keep instructors active before creating new classes.",
+      "types": "Use consistent types to improve public filters and catalog navigation.",
+      "delete": "Delete actions validate real dependencies to avoid breaking sessions or catalog flows."
+    },
+    "actions": {
+      "new": "New class",
+      "save": "Save class",
+      "create": "Create class"
+    },
+    "dialog": {
+      "createTitle": "New class",
+      "editTitle": "Edit class"
+    },
+    "difficulty": {
+      "beginner": "Beginner",
+      "intermediate": "Intermediate",
+      "advanced": "Advanced",
+      "all_levels": "All levels"
+    },
     "fields": {
       "title": "Title",
-      "type": "Type",
+      "titleEs": "Title ES",
+      "titleEn": "Title EN",
+      "slug": "Slug",
+      "slugPlaceholder": "Generated if left empty",
+      "classType": "Class type",
+      "classTypePlaceholder": "Search and select a class type",
+      "classTypeSearch": "Filter class types",
+      "classTypeEmpty": "No class types match this search",
       "instructor": "Instructor",
+      "instructorPlaceholder": "Search and select an instructor",
+      "instructorSearch": "Filter instructors",
+      "instructorEmpty": "No instructors match this search",
       "difficulty": "Level",
       "duration": "Duration (min)",
-      "price": "Base price",
+      "summaryEs": "Summary ES",
+      "summaryEn": "Summary EN",
+      "descriptionEs": "Description ES",
+      "descriptionEn": "Description EN",
+      "basePrice": "Base price",
       "featured": "Featured",
       "enabled": "Enabled"
+    },
+    "searchPlaceholder": "Search by title, instructor, type, or slug",
+    "hints": {
+      "classType": "Manage the class type catalog in the Types tab.",
+      "instructor": "Manage instructors in the Instructors tab.",
+      "featured": "Featured classes get visual priority in the catalog.",
+      "enabled": "Disabling hides the class from public flows without losing data."
+    },
+    "validation": {
+      "titleRequired": "The Spanish title is required",
+      "dependenciesRequired": "Select both an instructor and a class type"
+    },
+    "feedback": {
+      "created": "Class created",
+      "updated": "Class updated",
+      "deleted": "Class deleted",
+      "enabled": "Class enabled",
+      "disabled": "Class disabled",
+      "saveError": "The class could not be saved",
+      "deleteError": "The class could not be deleted",
+      "toggleError": "The status could not be updated"
+    },
+    "empty": {
+      "title": "No classes configured yet",
+      "description": "Create the first class and connect it to an instructor and type so the catalog is complete."
+    },
+    "emptySummary": "Add a short summary to contextualize this class.",
+    "unassigned": "Unassigned",
+    "delete": {
+      "title": "Confirm deletion",
+      "confirm": "Delete permanently",
+      "description": "This action cannot be undone. If real dependencies exist, the system will block deletion to protect data integrity.",
+      "target": "Selected item"
     }
+  },
+  "instructors": {
+    "actions": {
+      "new": "New instructor",
+      "save": "Save instructor",
+      "create": "Create instructor"
+    },
+    "dialog": {
+      "createTitle": "New instructor",
+      "editTitle": "Edit instructor"
+    },
+    "fields": {
+      "name": "Full name",
+      "slug": "Slug",
+      "slugPlaceholder": "Generated if left empty",
+      "specialties": "Specialties",
+      "specialtiesPlaceholder": "Vinyasa, Breathwork, Sound healing",
+      "order": "Order",
+      "bio": "Short bio"
+    },
+    "searchPlaceholder": "Search by name, bio, slug, or specialties",
+    "hints": {
+      "enabled": "If disabled it will no longer appear in selectors or the public catalog."
+    },
+    "validation": {
+      "nameRequired": "The instructor name is required"
+    },
+    "feedback": {
+      "created": "Instructor created",
+      "updated": "Instructor updated",
+      "deleted": "Instructor deleted",
+      "enabled": "Instructor enabled",
+      "disabled": "Instructor disabled",
+      "saveError": "The instructor could not be saved",
+      "deleteError": "The instructor could not be deleted",
+      "toggleError": "The status could not be updated"
+    },
+    "empty": {
+      "title": "No instructors yet",
+      "description": "Register your instructors so they can be assigned to classes and sessions."
+    },
+    "emptyBio": "Add a short bio to present the instructor."
+  },
+  "classTypes": {
+    "actions": {
+      "new": "New type",
+      "save": "Save type",
+      "create": "Create type"
+    },
+    "dialog": {
+      "createTitle": "New class type",
+      "editTitle": "Edit class type"
+    },
+    "fields": {
+      "nameEs": "Name ES",
+      "nameEn": "Name EN",
+      "slug": "Slug",
+      "slugPlaceholder": "Generated if left empty",
+      "description": "Description"
+    },
+    "searchPlaceholder": "Search by name, slug, or description",
+    "hints": {
+      "enabled": "An active type can be assigned to new classes and appear in public filters."
+    },
+    "validation": {
+      "nameRequired": "The class type name is required"
+    },
+    "feedback": {
+      "created": "Type created",
+      "updated": "Type updated",
+      "deleted": "Type deleted",
+      "enabled": "Type enabled",
+      "disabled": "Type disabled",
+      "saveError": "The type could not be saved",
+      "deleteError": "The type could not be deleted",
+      "toggleError": "The status could not be updated"
+    },
+    "empty": {
+      "title": "No class types yet",
+      "description": "Create the class taxonomy so the catalog and public filters have structure."
+    },
+    "emptyDescription": "Add a brief description to contextualize this type in admin and on the public site."
   },
   "sessions": {
     "title": "Sessions",
+    "subtitle": "Manage schedule, capacity, status, and instructor for every session.",
     "new": "New session",
     "edit": "Edit session",
+    "actions": {
+      "new": "New session",
+      "save": "Save session",
+      "create": "Create session"
+    },
+    "dialog": {
+      "createTitle": "New session",
+      "editTitle": "Edit session"
+    },
     "fields": {
       "class": "Class",
+      "classPlaceholder": "Search and select a class",
+      "classSearch": "Filter classes",
+      "classEmpty": "No classes match this search",
+      "instructor": "Instructor",
+      "instructorPlaceholder": "No instructor",
+      "instructorHint": "Use the class primary instructor",
+      "instructorSearchPlaceholder": "Select instructor (optional)",
+      "instructorSearch": "Filter instructors",
+      "instructorEmpty": "No instructors match this search",
       "date": "Date & time",
+      "sessionDate": "Start",
       "endDate": "End",
       "capacity": "Total capacity",
       "taken": "Booked",
       "available": "Available",
       "price": "Price (if different)",
+      "priceOverride": "Special price (optional)",
+      "priceOverridePlaceholder": "Empty = class base price",
       "location": "Location",
+      "locationPlaceholder": "Main room",
       "status": "Status",
       "enabled": "Enabled"
+    },
+    "searchPlaceholder": "Search by class, status, or location",
+    "hints": {
+      "enabled": "Disabling hides the session from public flows without losing history."
+    },
+    "validation": {
+      "classRequired": "Select a class",
+      "dateRequired": "Select a start date",
+      "dateInvalid": "Invalid start date"
+    },
+    "feedback": {
+      "created": "Session created",
+      "updated": "Session updated",
+      "deleted": "Session deleted",
+      "enabled": "Session enabled",
+      "disabled": "Session disabled",
+      "saveError": "The session could not be saved",
+      "deleteError": "The session could not be deleted",
+      "toggleError": "The status could not be updated"
+    },
+    "empty": {
+      "title": "No sessions yet",
+      "description": "Create a session and assign class, schedule, and capacity to start selling bookings."
+    },
+    "delete": {
+      "title": "Confirm deletion",
+      "description": "This action cannot be undone and will fail if there are related bookings.",
+      "confirm": "Delete session",
+      "target": "Selected session"
     },
     "status": {
       "scheduled": "Scheduled",
       "full": "Full",
       "cancelled": "Cancelled",
       "completed": "Completed"
-    }
-  },
-  "memberships": {
-    "title": "Memberships",
-    "subtitle": "Available subscription plans.",
-    "new": "New plan",
-    "edit": "Edit plan",
-    "fields": {
-      "name": "Plan name",
-      "price": "Monthly price",
-      "classes": "Classes per cycle",
-      "unlimited": "Unlimited",
-      "featured": "Featured",
-      "enabled": "Enabled",
-      "includes": "Includes"
     }
   },
   "packages": {

@@ -2253,8 +2253,6 @@
       "$id": "app_settings",
       "$permissions": [
         "read(\"any\")",
-        "create(\"label:admin\")",
-        "update(\"label:admin\")",
         "create(\"label:root\")",
         "update(\"label:root\")",
         "delete(\"label:root\")"
@@ -2316,6 +2314,42 @@
           "size": 1000,
           "default": null,
           "encrypt": false
+        },
+        {
+          "key": "address",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 255,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "instagram",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 100,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "website",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 255,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "timezone",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 50,
+          "default": null,
+          "encrypt": false
         }
       ],
       "indexes": []
@@ -2367,10 +2401,7 @@
     },
     {
       "$id": "avatars",
-      "$permissions": [
-        "read(\"any\")",
-        "create(\"users\")"
-      ],
+      "$permissions": ["read(\"any\")", "create(\"users\")"],
       "fileSecurity": true,
       "name": "User Avatars",
       "enabled": true,
@@ -2442,6 +2473,26 @@
       "scopes": [
         "users.read",
         "users.write",
+        "databases.read",
+        "databases.write"
+      ],
+      "commands": "npm install"
+    },
+    {
+      "$id": "admin-write-catalog",
+      "name": "admin-write-catalog",
+      "runtime": "node-20.0",
+      "path": "appwrite/functions/admin-write-catalog",
+      "entrypoint": "src/main.js",
+      "ignore": ["node_modules", ".npm"],
+      "execute": ["users"],
+      "events": [],
+      "schedule": "",
+      "timeout": 15,
+      "enabled": true,
+      "logging": true,
+      "scopes": [
+        "users.read",
         "databases.read",
         "databases.write"
       ],

@@ -18,7 +18,7 @@ const organizationSchema = {
   '@type': 'Organization',
   name: 'Omzone',
   description:
-    'Plataforma de yoga y wellness kitchen. Clases, membresías y complementos de bienestar en un solo lugar.',
+    'Plataforma de yoga y wellness kitchen. Clases, paquetes y complementos de bienestar en un solo lugar.',
   url: BASE_URL,
   logo: `${BASE_URL}/logo.png`,
   sameAs: [],
@@ -46,7 +46,7 @@ export default function LandingPage() {
     <>
       <PageMeta
         title={null}
-        description="Clases de yoga, membresías y complementos wellness en un solo lugar. Reserva tu clase, elige tu plan y transforma tu bienestar con Omzone."
+        description="Clases de yoga, paquetes y complementos wellness en un solo lugar. Reserva tu clase, elige tu paquete y transforma tu bienestar con Omzone."
         canonical={BASE_URL}
         locale="es"
       />

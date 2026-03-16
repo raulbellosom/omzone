@@ -1,7 +1,7 @@
 {
   "hero": {
     "headline": "Your wellness,\nyour pace.",
-    "subheadline": "Yoga classes, memberships and wellness extras in one place. Book, practice and live better.",
+    "subheadline": "Yoga classes, packages and wellness extras in one place. Book, practice and live better.",
     "ctaMain": "Book a class",
     "ctaSecondary": "View packages",
     "badge": "Yoga + Wellness Kitchen"
@@ -28,7 +28,7 @@
       {
         "icon": "shield",
         "title": "Total flexibility",
-        "description": "Drop in for a single class or choose a membership that fits your rhythm."
+        "description": "Drop in for a single class or choose a package that fits your rhythm."
       }
     ]
   },
@@ -70,7 +70,7 @@
       {
         "name": "Valeria M.",
         "role": "Member since 2024",
-        "text": "I've had the unlimited membership for 6 months and it completely changed my routine. The classes are incredible and booking is effortless."
+        "text": "I've had the unlimited package for 6 months and it completely changed my routine. The classes are incredible and booking is effortless."
       },
       {
         "name": "Carlos R.",
@@ -109,14 +109,14 @@
         "answer": "Capacity varies by class and level. You can see real-time availability in the catalog. We recommend booking in advance."
       },
       {
-        "question": "Can I buy extras without a membership?",
-        "answer": "Yes. Wellness Kitchen products and add-ons are available to any customer, with or without an active membership."
+        "question": "Can I buy extras without an active package?",
+        "answer": "Yes. Wellness Kitchen products and add-ons are available to any customer, with or without an active package."
       }
     ]
   },
   "cta_section": {
     "title": "Start your transformation today",
-    "subtitle": "Your first class or membership is just one click away.",
+    "subtitle": "Your first class or your first package is just one click away.",
     "ctaMain": "Book my first class",
     "ctaSecondary": "View packages"
   }

@@ -1,0 +1,13 @@
+{
+  "name": "admin-write-catalog",
+  "version": "1.0.0",
+  "description": "Handles secured admin writes for classes, instructors, class types, and sessions.",
+  "main": "src/main.js",
+  "type": "module",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "dependencies": {
+    "node-appwrite": "^14.0.0"
+  }
+}

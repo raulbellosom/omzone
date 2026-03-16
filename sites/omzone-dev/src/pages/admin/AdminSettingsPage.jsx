@@ -3,50 +3,86 @@
  * Ruta: /app/settings
  * Modo real: persiste en app_settings (Appwrite) vía useAppSettings / useUpsertAppSettings.
  */
-import { useState, useEffect } from 'react'
-import { useTranslation } from 'react-i18next'
-import { Save } from 'lucide-react'
-import { toast } from 'sonner'
-import { Card, CardContent } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Button } from '@/components/ui/button'
-import { useAppSettings, useUpsertAppSettings } from '@/hooks/useAdmin'
-import AdminPageHeader from '@/components/shared/AdminPageHeader'
+import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
+import { Save } from "lucide-react";
+import { toast } from "sonner";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useAppSettings, useUpsertAppSettings } from "@/hooks/useAdmin";
+import AdminPageHeader from "@/components/shared/AdminPageHeader";
 
-const INITIAL = {
-  studioName: 'Omzone Studio',
-  address: 'Colonia Condesa, CDMX',
-  phone: '+52 55 1234 5678',
-  email: 'hola@omzone.com',
-  instagram: '@omzonestudio',
-  website: 'https://omzone.com',
-  timezone: 'America/Mexico_City',
-  currency: 'MXN',
-  defaultLang: 'es',
+const EMPTY_SETTINGS = {
+  studioName: "",
+  address: "",
+  phone: "",
+  email: "",
+  instagram: "",
+  website: "",
+  timezone: "",
+  currency: "MXN",
+  defaultLang: "es",
+};
+
+function SettingsSkeleton() {
+  return (
+    <div className="max-w-2xl mx-auto px-4 md:px-8 py-8 animate-fade-in-up">
+      <div className="mb-6">
+        <Skeleton className="h-7 w-64" />
+      </div>
+      <div className="space-y-6">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <Card key={i}>
+            <CardContent className="p-6 space-y-4">
+              <Skeleton className="h-5 w-40" />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <Skeleton className="h-10 sm:col-span-2" />
+                <Skeleton className="h-10 sm:col-span-2" />
+                <Skeleton className="h-10" />
+                <Skeleton className="h-10" />
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+        <div className="flex justify-end">
+          <Skeleton className="h-10 w-40 rounded-xl" />
+        </div>
+      </div>
+    </div>
+  );
 }
 
-function Field({ label, value, onChange, type = 'text' }) {
+function Field({ label, value, onChange, type = "text" }) {
   return (
     <div className="space-y-1.5">
       <Label className="text-xs font-medium text-charcoal-muted">{label}</Label>
-      <Input value={value} onChange={(e) => onChange(e.target.value)} type={type} className="text-sm" />
+      <Input
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        type={type}
+        className="text-sm"
+      />
     </div>
-  )
+  );
 }
 
 function SectionHeader({ title }) {
   return (
-    <h3 className="font-semibold text-charcoal text-sm pb-3 mb-4 border-b border-warm-gray-dark/20">{title}</h3>
-  )
+    <h3 className="font-semibold text-charcoal text-sm pb-3 mb-4 border-b border-warm-gray-dark/20">
+      {title}
+    </h3>
+  );
 }
 
 export default function AdminSettingsPage() {
-  const { t } = useTranslation('admin')
-  const [settings, setSettings] = useState(INITIAL)
+  const { t } = useTranslation("admin");
+  const [settings, setSettings] = useState(EMPTY_SETTINGS);
 
-  const { data: remoteSettings } = useAppSettings()
-  const upsertSettings = useUpsertAppSettings()
+  const { data: remoteSettings, isLoading } = useAppSettings();
+  const upsertSettings = useUpsertAppSettings();
 
   // Seed form from Appwrite when loaded
   useEffect(() => {
@@ -54,52 +90,82 @@ export default function AdminSettingsPage() {
       setSettings((s) => ({
         ...s,
         studioName: remoteSettings.appName ?? s.studioName,
+        address: remoteSettings.address ?? s.address,
         email: remoteSettings.supportEmail ?? s.email,
         phone: remoteSettings.contactPhone ?? s.phone,
+        instagram: remoteSettings.instagram ?? s.instagram,
+        website: remoteSettings.website ?? s.website,
+        timezone: remoteSettings.timezone ?? s.timezone,
         currency: remoteSettings.defaultCurrency ?? s.currency,
         defaultLang: remoteSettings.defaultLocale ?? s.defaultLang,
-      }))
+      }));
     }
-  }, [remoteSettings])
+  }, [remoteSettings]);
 
   function set(key) {
-    return (value) => setSettings((s) => ({ ...s, [key]: value }))
+    return (value) => setSettings((s) => ({ ...s, [key]: value }));
   }
 
   function handleSave() {
     upsertSettings.mutate(
       {
         app_name: settings.studioName,
+        address: settings.address,
         support_email: settings.email,
         contact_phone: settings.phone,
+        instagram: settings.instagram,
+        website: settings.website,
+        timezone: settings.timezone,
         default_currency: settings.currency,
         default_locale: settings.defaultLang,
       },
       {
-        onSuccess: () => toast.success(t('settings.saved')),
-        onError: () => toast.error('Error al guardar'),
-      }
-    )
+        onSuccess: () => toast.success(t("settings.saved")),
+        onError: () => toast.error("Error al guardar"),
+      },
+    );
+  }
+
+  if (isLoading) {
+    return <SettingsSkeleton />;
   }
 
   return (
     <div className="max-w-2xl mx-auto px-4 md:px-8 py-8 animate-fade-in-up">
-      <AdminPageHeader title={t('settings.title')} />
+      <AdminPageHeader title={t("settings.title")} />
 
       <div className="space-y-6">
         {/* Studio info */}
         <Card>
           <CardContent className="p-6">
-            <SectionHeader title={t('settings.studio')} />
+            <SectionHeader title={t("settings.studio")} />
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="sm:col-span-2">
-                <Field label={t('settings.fields.studioName')} value={settings.studioName} onChange={set('studioName')} />
+                <Field
+                  label={t("settings.fields.studioName")}
+                  value={settings.studioName}
+                  onChange={set("studioName")}
+                />
               </div>
               <div className="sm:col-span-2">
-                <Field label={t('settings.fields.address')} value={settings.address} onChange={set('address')} />
+                <Field
+                  label={t("settings.fields.address")}
+                  value={settings.address}
+                  onChange={set("address")}
+                />
               </div>
-              <Field label={t('settings.fields.phone')} value={settings.phone} onChange={set('phone')} type="tel" />
-              <Field label={t('settings.fields.email')} value={settings.email} onChange={set('email')} type="email" />
+              <Field
+                label={t("settings.fields.phone")}
+                value={settings.phone}
+                onChange={set("phone")}
+                type="tel"
+              />
+              <Field
+                label={t("settings.fields.email")}
+                value={settings.email}
+                onChange={set("email")}
+                type="email"
+              />
             </div>
           </CardContent>
         </Card>
@@ -107,10 +173,19 @@ export default function AdminSettingsPage() {
         {/* Social */}
         <Card>
           <CardContent className="p-6">
-            <SectionHeader title={t('settings.branding')} />
+            <SectionHeader title={t("settings.branding")} />
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <Field label={t('settings.fields.instagram')} value={settings.instagram} onChange={set('instagram')} />
-              <Field label={t('settings.fields.website')} value={settings.website} onChange={set('website')} type="url" />
+              <Field
+                label={t("settings.fields.instagram")}
+                value={settings.instagram}
+                onChange={set("instagram")}
+              />
+              <Field
+                label={t("settings.fields.website")}
+                value={settings.website}
+                onChange={set("website")}
+                type="url"
+              />
             </div>
           </CardContent>
         </Card>
@@ -118,15 +193,25 @@ export default function AdminSettingsPage() {
         {/* Localization */}
         <Card>
           <CardContent className="p-6">
-            <SectionHeader title={t('settings.localization')} />
+            <SectionHeader title={t("settings.localization")} />
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <Field label={t('settings.fields.timezone')} value={settings.timezone} onChange={set('timezone')} />
-              <Field label={t('settings.fields.currency')} value={settings.currency} onChange={set('currency')} />
+              <Field
+                label={t("settings.fields.timezone")}
+                value={settings.timezone}
+                onChange={set("timezone")}
+              />
+              <Field
+                label={t("settings.fields.currency")}
+                value={settings.currency}
+                onChange={set("currency")}
+              />
               <div className="space-y-1.5">
-                <Label className="text-xs font-medium text-charcoal-muted">{t('settings.fields.defaultLang')}</Label>
+                <Label className="text-xs font-medium text-charcoal-muted">
+                  {t("settings.fields.defaultLang")}
+                </Label>
                 <select
                   value={settings.defaultLang}
-                  onChange={(e) => set('defaultLang')(e.target.value)}
+                  onChange={(e) => set("defaultLang")(e.target.value)}
                   className="w-full text-sm rounded-xl border border-warm-gray-dark/40 bg-white px-3 py-2 h-10 focus:outline-none focus:ring-2 focus:ring-sage/30"
                 >
                   <option value="es">Español</option>
@@ -139,12 +224,18 @@ export default function AdminSettingsPage() {
 
         {/* Save */}
         <div className="flex justify-end">
-          <Button onClick={handleSave} disabled={upsertSettings.isPending} className="flex items-center gap-2">
+          <Button
+            onClick={handleSave}
+            disabled={upsertSettings.isPending}
+            className="flex items-center gap-2"
+          >
             <Save className="w-4 h-4" />
-            {upsertSettings.isPending ? t('settings.saving') : t('settings.save')}
+            {upsertSettings.isPending
+              ? t("settings.saving")
+              : t("settings.save")}
           </Button>
         </div>
       </div>
     </div>
-  )
+  );
 }

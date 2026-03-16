@@ -179,7 +179,7 @@ export async function cancelBooking(bookingId) {
  * @param {Array}  data.items          — [{ id, title, price, ... }]
  * @param {string} data.customer_email
  * @param {number} data.grand_total
- * @param {string} data.intent         — 'booking' | 'package' | 'product' | 'membership'
+ * @param {string} data.intent         — 'booking' | 'package' | 'product'
  * @param {string} [data.user_id]
  * @param {string} [data.promo_code]
  */

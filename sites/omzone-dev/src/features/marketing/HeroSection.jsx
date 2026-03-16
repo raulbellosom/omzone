@@ -176,13 +176,13 @@ export default function HeroSection() {
             <p className="text-xs text-white/40 mt-1">7 / 12 lugares</p>
           </div>
 
-          {/* Membership card */}
+          {/* Package card */}
           <div className="bg-sage/80 backdrop-blur-md border border-sage-light/30 rounded-2xl p-4 shadow-xl ml-6">
             <p className="text-xs font-medium text-sage-light/80 uppercase tracking-wider mb-1">
-              Membresía activa
+              Paquete activo
             </p>
-            <p className="text-sm font-semibold text-white">Yoga ilimitado</p>
-            <p className="text-xs text-white/55 mt-0.5">Renueva en 18 días</p>
+            <p className="text-sm font-semibold text-white">Yoga · 8 sesiones</p>
+            <p className="text-xs text-white/55 mt-0.5">Vence en 18 días</p>
             <div className="flex gap-1 mt-3">
               {[...Array(4)].map((_, i) => (
                 <div

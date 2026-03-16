@@ -5,7 +5,6 @@
     "customers": "Clientes",
     "classes": "Clases",
     "sessions": "Sesiones",
-    "memberships": "Membresías",
     "packages": "Paquetes",
     "products": "Productos",
     "orders": "Órdenes",
@@ -21,7 +20,7 @@
       "salesToday": "Ventas hoy",
       "bookingsToday": "Reservas hoy",
       "newCustomers": "Clientes nuevos",
-      "activeMemberships": "Membresías activas",
+      "activePackages": "Paquetes activos",
       "revenue": "Ingresos del mes",
       "revenueToday": "Ingresos hoy",
       "totalBookings": "Total reservas"
@@ -46,7 +45,6 @@
     },
     "interest": {
       "class": "Clase",
-      "membership": "Membresía",
       "package": "Paquete",
       "product": "Producto"
     },
@@ -64,7 +62,7 @@
     "title": "Clientes",
     "tabs": {
       "all": "Todos",
-      "active": "Con membresía",
+      "active": "Activos",
       "purchased": "Con compra",
       "registered": "Registrados"
     },
@@ -73,41 +71,255 @@
       "email": "Correo",
       "phone": "Teléfono",
       "status": "Estado",
-      "membership": "Membresía",
       "orders": "Pedidos",
       "joined": "Fecha registro"
     }
   },
   "classes": {
     "title": "Clases",
-    "new": "Nueva clase",
-    "edit": "Editar clase",
+    "subtitle": "Gestiona clases, instructores y tipos desde un mismo módulo reutilizable.",
+    "tabs": {
+      "catalog": "Clases",
+      "instructors": "Instructores",
+      "types": "Tipos"
+    },
+    "metrics": {
+      "catalog": "Clases",
+      "catalogHint": "Catálogo principal listo para sesiones y venta.",
+      "instructors": "Instructores",
+      "instructorsHint": "Personas disponibles para asignación.",
+      "types": "Tipos",
+      "typesHint": "Taxonomía usada por el catálogo público."
+    },
+    "side": {
+      "title": "Dependencias listas",
+      "description": "Cada clase depende de un instructor y un tipo bien definidos.",
+      "instructors": "Mantén instructores activos antes de crear clases nuevas.",
+      "types": "Usa tipos consistentes para mejorar los filtros públicos y la navegación del catálogo.",
+      "delete": "El borrado valida dependencias reales para evitar romper sesiones o catálogos."
+    },
+    "actions": {
+      "new": "Nueva clase",
+      "save": "Guardar clase",
+      "create": "Crear clase"
+    },
+    "dialog": {
+      "createTitle": "Nueva clase",
+      "editTitle": "Editar clase"
+    },
+    "difficulty": {
+      "beginner": "Principiante",
+      "intermediate": "Intermedio",
+      "advanced": "Avanzado",
+      "all_levels": "Todos los niveles"
+    },
     "fields": {
       "title": "Título",
-      "type": "Tipo",
+      "titleEs": "Título ES",
+      "titleEn": "Título EN",
+      "slug": "Slug",
+      "slugPlaceholder": "Se genera si lo dejas vacío",
+      "classType": "Tipo de clase",
+      "classTypePlaceholder": "Busca y selecciona un tipo",
+      "classTypeSearch": "Filtrar tipos",
+      "classTypeEmpty": "No hay tipos disponibles con ese criterio",
       "instructor": "Instructor",
+      "instructorPlaceholder": "Busca y selecciona un instructor",
+      "instructorSearch": "Filtrar instructores",
+      "instructorEmpty": "No hay instructores disponibles con ese criterio",
       "difficulty": "Nivel",
       "duration": "Duración (min)",
-      "price": "Precio base",
+      "summaryEs": "Resumen ES",
+      "summaryEn": "Resumen EN",
+      "descriptionEs": "Descripción ES",
+      "descriptionEn": "Descripción EN",
+      "basePrice": "Precio base",
       "featured": "Destacada",
       "enabled": "Habilitada"
+    },
+    "searchPlaceholder": "Buscar por título, instructor, tipo o slug",
+    "hints": {
+      "classType": "Administra el catálogo de tipos en la pestaña Tipos.",
+      "instructor": "Administra instructores en la pestaña Instructores.",
+      "featured": "Las clases destacadas tienen prioridad visual en el catálogo.",
+      "enabled": "Al desactivarla se oculta del flujo público sin perder información."
+    },
+    "validation": {
+      "titleRequired": "El título en español es obligatorio",
+      "dependenciesRequired": "Selecciona un instructor y un tipo de clase"
+    },
+    "feedback": {
+      "created": "Clase creada",
+      "updated": "Clase actualizada",
+      "deleted": "Clase eliminada",
+      "enabled": "Clase habilitada",
+      "disabled": "Clase deshabilitada",
+      "saveError": "No se pudo guardar la clase",
+      "deleteError": "No se pudo eliminar la clase",
+      "toggleError": "No se pudo actualizar el estado"
+    },
+    "empty": {
+      "title": "Todavía no hay clases configuradas",
+      "description": "Crea la primera clase y relaciónala con su instructor y tipo para que el catálogo quede completo."
+    },
+    "emptySummary": "Agrega un resumen breve para contextualizar esta clase.",
+    "unassigned": "Sin asignar",
+    "delete": {
+      "title": "Confirmar eliminación",
+      "confirm": "Eliminar definitivamente",
+      "description": "Esta acción no se puede deshacer. Si existen dependencias reales el sistema bloqueará el borrado para proteger integridad de datos.",
+      "target": "Elemento seleccionado"
     }
+  },
+  "instructors": {
+    "actions": {
+      "new": "Nuevo instructor",
+      "save": "Guardar instructor",
+      "create": "Crear instructor"
+    },
+    "dialog": {
+      "createTitle": "Nuevo instructor",
+      "editTitle": "Editar instructor"
+    },
+    "fields": {
+      "name": "Nombre completo",
+      "slug": "Slug",
+      "slugPlaceholder": "Se genera si lo dejas vacío",
+      "specialties": "Especialidades",
+      "specialtiesPlaceholder": "Vinyasa, Breathwork, Sound healing",
+      "order": "Orden",
+      "bio": "Bio corta"
+    },
+    "searchPlaceholder": "Buscar por nombre, bio, slug o especialidades",
+    "hints": {
+      "enabled": "Si lo desactivas ya no aparecerá para selección o catálogo público."
+    },
+    "validation": {
+      "nameRequired": "El nombre del instructor es obligatorio"
+    },
+    "feedback": {
+      "created": "Instructor creado",
+      "updated": "Instructor actualizado",
+      "deleted": "Instructor eliminado",
+      "enabled": "Instructor habilitado",
+      "disabled": "Instructor deshabilitado",
+      "saveError": "No se pudo guardar el instructor",
+      "deleteError": "No se pudo eliminar el instructor",
+      "toggleError": "No se pudo actualizar el estado"
+    },
+    "empty": {
+      "title": "Todavía no hay instructores",
+      "description": "Registra a tus instructores para poder asignarlos en las clases y sesiones."
+    },
+    "emptyBio": "Agrega una biografía corta para presentar al instructor."
+  },
+  "classTypes": {
+    "actions": {
+      "new": "Nuevo tipo",
+      "save": "Guardar tipo",
+      "create": "Crear tipo"
+    },
+    "dialog": {
+      "createTitle": "Nuevo tipo de clase",
+      "editTitle": "Editar tipo de clase"
+    },
+    "fields": {
+      "nameEs": "Nombre ES",
+      "nameEn": "Nombre EN",
+      "slug": "Slug",
+      "slugPlaceholder": "Se genera si lo dejas vacío",
+      "description": "Descripción"
+    },
+    "searchPlaceholder": "Buscar por nombre, slug o descripción",
+    "hints": {
+      "enabled": "Un tipo activo puede asignarse a clases nuevas y aparecer en filtros públicos."
+    },
+    "validation": {
+      "nameRequired": "El nombre del tipo es obligatorio"
+    },
+    "feedback": {
+      "created": "Tipo creado",
+      "updated": "Tipo actualizado",
+      "deleted": "Tipo eliminado",
+      "enabled": "Tipo habilitado",
+      "disabled": "Tipo deshabilitado",
+      "saveError": "No se pudo guardar el tipo",
+      "deleteError": "No se pudo eliminar el tipo",
+      "toggleError": "No se pudo actualizar el estado"
+    },
+    "empty": {
+      "title": "Todavía no hay tipos de clase",
+      "description": "Crea la taxonomía de clases para que el catálogo y los filtros públicos tengan estructura."
+    },
+    "emptyDescription": "Agrega una descripción breve para contextualizar este tipo en el panel y el sitio público."
   },
   "sessions": {
     "title": "Sesiones",
-    "new": "Nueva sesión",
-    "edit": "Editar sesión",
+    "subtitle": "Administra agenda, capacidad, estado e instructor de cada sesion.",
+    "new": "Nueva sesion",
+    "edit": "Editar sesion",
+    "actions": {
+      "new": "Nueva sesion",
+      "save": "Guardar sesion",
+      "create": "Crear sesion"
+    },
+    "dialog": {
+      "createTitle": "Nueva sesion",
+      "editTitle": "Editar sesion"
+    },
     "fields": {
       "class": "Clase",
+      "classPlaceholder": "Busca y selecciona una clase",
+      "classSearch": "Filtrar clases",
+      "classEmpty": "No hay clases con ese criterio",
+      "instructor": "Instructor",
+      "instructorPlaceholder": "Sin instructor",
+      "instructorHint": "Usar instructor principal de la clase",
+      "instructorSearchPlaceholder": "Selecciona instructor (opcional)",
+      "instructorSearch": "Filtrar instructores",
+      "instructorEmpty": "No hay instructores con ese criterio",
       "date": "Fecha y hora",
+      "sessionDate": "Inicio",
       "endDate": "Fin",
       "capacity": "Cupo total",
       "taken": "Reservados",
       "available": "Disponibles",
       "price": "Precio (si difiere)",
+      "priceOverride": "Precio especial (opcional)",
+      "priceOverridePlaceholder": "Vacio = precio base de la clase",
       "location": "Ubicación",
+      "locationPlaceholder": "Sala principal",
       "status": "Estado",
       "enabled": "Habilitada"
+    },
+    "searchPlaceholder": "Buscar por clase, estatus o ubicacion",
+    "hints": {
+      "enabled": "Desactivar oculta la sesion del flujo publico sin perder historial."
+    },
+    "validation": {
+      "classRequired": "Selecciona una clase",
+      "dateRequired": "Selecciona fecha de inicio",
+      "dateInvalid": "Fecha de inicio invalida"
+    },
+    "feedback": {
+      "created": "Sesion creada",
+      "updated": "Sesion actualizada",
+      "deleted": "Sesion eliminada",
+      "enabled": "Sesion habilitada",
+      "disabled": "Sesion deshabilitada",
+      "saveError": "No se pudo guardar la sesion",
+      "deleteError": "No se pudo eliminar la sesion",
+      "toggleError": "No se pudo actualizar el estado"
+    },
+    "empty": {
+      "title": "Todavia no hay sesiones",
+      "description": "Crea una sesion y asignale clase, horario y capacidad para empezar a vender reservas."
+    },
+    "delete": {
+      "title": "Confirmar eliminacion",
+      "description": "Esta accion no se puede deshacer y fallara si existen reservas asociadas.",
+      "confirm": "Eliminar sesion",
+      "target": "Sesion seleccionada"
     },
     "status": {
       "scheduled": "Programada",
@@ -137,21 +349,6 @@
       "confirmed": "Confirmado",
       "cancelled": "Cancelado",
       "completed": "Completado"
-    }
-  },
-  "memberships": {
-    "title": "Membresías",
-    "subtitle": "Planes de suscripción disponibles.",
-    "new": "Nuevo plan",
-    "edit": "Editar plan",
-    "fields": {
-      "name": "Nombre del plan",
-      "price": "Precio mensual",
-      "classes": "Clases por ciclo",
-      "unlimited": "Ilimitado",
-      "featured": "Destacado",
-      "enabled": "Habilitado",
-      "includes": "Incluye"
     }
   },
   "packages": {

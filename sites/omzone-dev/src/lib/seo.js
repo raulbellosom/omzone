@@ -31,7 +31,7 @@ const DEFAULT_OG_IMAGE = `${BASE_URL}/og-image.jpg`
 export function buildPageMeta(config) {
   const {
     title,
-    description = 'Clases de yoga, membresías y complementos wellness en un solo lugar.',
+    description = 'Clases de yoga, paquetes y complementos wellness en un solo lugar.',
     canonical,
     ogImage = DEFAULT_OG_IMAGE,
     ogType = 'website',
@@ -102,21 +102,3 @@ export function buildClassStructuredData(cls, session) {
   }
 }
 
-/**
- * Genera JSON-LD para un plan de membresía (schema.org/Offer).
- */
-export function buildMembershipStructuredData(plan) {
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'Offer',
-    name: plan.name_es,
-    description: plan.description_es,
-    price: plan.price,
-    priceCurrency: 'MXN',
-    priceValidUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
-      .toISOString()
-      .split('T')[0],
-    availability: 'https://schema.org/InStock',
-    url: `${BASE_URL}/memberships`,
-  }
-}

@@ -33,7 +33,7 @@ export default function PageMeta({
 
   const metaDescription =
     description ??
-    'Clases de yoga, membresías y complementos wellness en un solo lugar.'
+    'Clases de yoga, paquetes y complementos wellness en un solo lugar.'
 
   const metaImage = ogImage ?? defaultOgImage
   const metaCanonical = canonical ?? baseUrl

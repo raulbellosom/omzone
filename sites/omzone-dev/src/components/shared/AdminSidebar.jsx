@@ -15,6 +15,7 @@ import {
   Settings,
   ChevronLeft,
 } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth.jsx";
 import {
   Sheet,
   SheetContent,
@@ -42,14 +43,19 @@ const navItems = [
   { icon: QrCode, key: "nav.passes", href: ROUTES.ADMIN_PASSES },
   null,
   { icon: FileText, key: "nav.content", href: ROUTES.ADMIN_CONTENT },
-  { icon: Settings, key: "nav.settings", href: ROUTES.ADMIN_SETTINGS },
+  {
+    icon: Settings,
+    key: "nav.settings",
+    href: ROUTES.ADMIN_SETTINGS,
+    rootOnly: true,
+  },
 ];
 
 /** Shared nav list used in both desktop sidebar and mobile sheet */
-function SidebarNavList({ t, onNavigate }) {
+function SidebarNavList({ t, onNavigate, visibleItems }) {
   return (
     <ul className="space-y-0.5">
-      {navItems.map((item, idx) => {
+      {visibleItems.map((item, idx) => {
         if (item === null) {
           return (
             <li
@@ -96,7 +102,13 @@ function SidebarNavList({ t, onNavigate }) {
 
 export default function AdminSidebar({ mobileOpen = false, onMobileClose }) {
   const { t } = useTranslation("admin");
+  const { user } = useAuth();
   const [collapsed, setCollapsed] = useState(false);
+
+  const isRoot = user?.role_key === "root";
+  const visibleNavItems = navItems.filter(
+    (item) => item === null || !item.rootOnly || isRoot,
+  );
 
   return (
     <>
@@ -141,7 +153,7 @@ export default function AdminSidebar({ mobileOpen = false, onMobileClose }) {
         {/* Nav items */}
         <nav className="flex-1 overflow-y-auto py-3 px-2">
           <ul className="space-y-0.5">
-            {navItems.map((item, idx) => {
+            {visibleNavItems.map((item, idx) => {
               if (item === null) {
                 return (
                   <li
@@ -217,7 +229,11 @@ export default function AdminSidebar({ mobileOpen = false, onMobileClose }) {
             </SheetDescription>
           </SheetHeader>
           <nav className="flex-1 overflow-y-auto py-3 px-2">
-            <SidebarNavList t={t} onNavigate={onMobileClose} />
+            <SidebarNavList
+              t={t}
+              onNavigate={onMobileClose}
+              visibleItems={visibleNavItems}
+            />
           </nav>
         </SheetContent>
       </Sheet>

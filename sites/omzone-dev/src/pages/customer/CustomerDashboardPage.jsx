@@ -5,14 +5,14 @@
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { CalendarCheck, ShoppingBag, Award, ArrowRight, BookOpen, Leaf, GlassWater } from 'lucide-react'
-import { format, differenceInDays } from 'date-fns'
+import { format } from 'date-fns'
 import { es, enUS } from 'date-fns/locale'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Badge } from '@/components/ui/badge'
 import { useAuth } from '@/hooks/useAuth.jsx'
-import { useMyBookings, useMyOrders, useMyMembership } from '@/hooks/useCustomer'
+import { useMyBookings, useMyOrders } from '@/hooks/useCustomer'
 import { resolveField } from '@/lib/i18n-data'
 import { formatMXN } from '@/lib/currency'
 import ROUTES from '@/constants/routes'
@@ -47,18 +47,10 @@ export default function CustomerDashboardPage() {
 
   const { data: bookings, isLoading: lBookings } = useMyBookings()
   const { data: orders,   isLoading: lOrders   } = useMyOrders()
-  const { data: memb,     isLoading: lMemb     } = useMyMembership()
 
   const upcomingBookings = bookings?.filter((b) => b.status === 'confirmed') ?? []
   const nextBooking      = upcomingBookings[0] ?? null
   const recentOrders     = orders?.slice(0, 3) ?? []
-  const daysLeft         = memb ? Math.max(0, differenceInDays(new Date(memb.ends_at), new Date())) : 0
-
-  const membershipValue = memb
-    ? (memb.is_unlimited
-        ? t('dashboard.unlimited')
-        : `${memb.classes_allowed - memb.classes_used} ${t('dashboard.of')} ${memb.classes_allowed}`)
-    : t('dashboard.noMembership')
 
   return (
     <div className="max-w-4xl mx-auto px-4 md:px-8 py-8 animate-fade-in-up">
@@ -71,7 +63,7 @@ export default function CustomerDashboardPage() {
       </div>
 
       {/* Stat cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
         <StatCard
           icon={CalendarCheck}
           label={t('dashboard.nextClass')}
@@ -80,13 +72,6 @@ export default function CustomerDashboardPage() {
             : t('dashboard.noNextClass')}
           loading={lBookings}
           to={ROUTES.ZONE_BOOKINGS}
-        />
-        <StatCard
-          icon={Award}
-          label={t('dashboard.classesUsed')}
-          value={membershipValue}
-          loading={lMemb}
-          to={ROUTES.ZONE_PACKAGES}
         />
         <StatCard
           icon={ShoppingBag}
@@ -156,59 +141,25 @@ export default function CustomerDashboardPage() {
 
         {/* Right column */}
         <div className="space-y-6">
-          {/* Membresía mini */}
+          {/* Paquetes */}
           <section>
             <div className="flex items-center justify-between mb-3">
-              <h2 className="font-semibold text-charcoal">{t('dashboard.activeMembership')}</h2>
+              <h2 className="font-semibold text-charcoal">{t('nav.packages')}</h2>
               <Link to={ROUTES.ZONE_PACKAGES} className="text-xs text-sage hover:underline font-medium">
                 {t('dashboard.viewAll')}
               </Link>
             </div>
-            {lMemb
-              ? <Skeleton className="h-28 rounded-2xl" />
-              : memb
-                ? (
-                  <Card>
-                    <CardContent className="p-5">
-                      <div className="flex items-center justify-between mb-3">
-                        <p className="font-medium text-charcoal text-sm">
-                          {resolveField(memb.plan, 'name')}
-                        </p>
-                        <Badge variant="sage" className="text-[10px]">{t('membership.active')}</Badge>
-                      </div>
-                      {!memb.is_unlimited && (
-                        <>
-                          <div className="w-full h-1.5 bg-warm-gray rounded-full overflow-hidden mb-1">
-                            <div
-                              className="h-full bg-sage rounded-full transition-[width] duration-700"
-                              style={{ width: `${(memb.classes_used / memb.classes_allowed) * 100}%` }}
-                            />
-                          </div>
-                          <p className="text-xs text-charcoal-muted">
-                            {t('membership.usageOf', { used: memb.classes_used, total: memb.classes_allowed })}
-                          </p>
-                        </>
-                      )}
-                      <p className="text-xs text-charcoal-subtle mt-2">
-                        {t('dashboard.renewsIn', { days: daysLeft })}
-                      </p>
-                    </CardContent>
-                  </Card>
-                )
-                : (
-                  <Card>
-                    <CardContent className="p-5 flex items-center gap-4">
-                      <Award className="w-6 h-6 text-charcoal-subtle shrink-0" />
-                      <div className="flex-1">
-                        <p className="text-sm text-charcoal-muted mb-2">{t('dashboard.noMembership')}</p>
-                        <Link to={ROUTES.PACKAGES} className="text-xs text-sage font-medium hover:underline">
-                          {t('dashboard.explorePlans')}
-                        </Link>
-                      </div>
-                    </CardContent>
-                  </Card>
-                )
-            }
+            <Card>
+              <CardContent className="p-5 flex items-center gap-4">
+                <ShoppingBag className="w-6 h-6 text-charcoal-subtle shrink-0" />
+                <div className="flex-1">
+                  <p className="text-sm text-charcoal-muted mb-2">{t('dashboard.packagesPrompt')}</p>
+                  <Link to={ROUTES.PACKAGES} className="text-xs text-sage font-medium hover:underline">
+                    {t('dashboard.explorePlans')}
+                  </Link>
+                </div>
+              </CardContent>
+            </Card>
           </section>
 
           {/* Pedidos recientes */}

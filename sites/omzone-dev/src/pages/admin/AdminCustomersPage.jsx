@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import { useAdminCustomers } from "@/hooks/useAdmin";
 import AdminPageHeader from "@/components/shared/AdminPageHeader";
 
-const TABS = ["all", "active", "inactive"];
+const TABS = ["all", "active", "registered"];
 
 export default function AdminCustomersPage() {
   const { t, i18n } = useTranslation("admin");
@@ -28,9 +28,9 @@ export default function AdminCustomersPage() {
     if (!customers) return [];
     let result = customers;
     if (tab === "active")
-      result = result.filter((c) => c.status === "active" && c.membership);
-    if (tab === "inactive")
-      result = result.filter((c) => c.status === "inactive" || !c.membership);
+      result = result.filter((c) => c.status === "active");
+    if (tab === "registered")
+      result = result.filter((c) => c.status !== "active");
     if (search.trim()) {
       const q = search.toLowerCase();
       result = result.filter(
@@ -116,11 +116,11 @@ export default function AdminCustomersPage() {
                         : "—"}
                     </span>
                     <Badge
-                      variant={c.membership ? "sage" : "outline"}
+                      variant={c.status === 'active' ? 'sage' : 'outline'}
                       className="text-[10px]"
                     >
-                      {c.membership
-                        ? t("customers.fields.membership")
+                      {c.status === 'active'
+                        ? t("customers.fields.status")
                         : t("common.noData")}
                     </Badge>
                     <span className="text-xs text-charcoal-muted hidden md:inline">
@@ -135,7 +135,7 @@ export default function AdminCustomersPage() {
       ) : (
         <Card>
           <CardContent className="p-10 text-center">
-            <Users className="w-8 h-8 text-charcoal-subtle mx-auto mb-3" />
+            <Users className="w-10 h-10 text-charcoal-subtle mx-auto mb-3" />
             <p className="text-sm text-charcoal-muted">{t("common.noData")}</p>
           </CardContent>
         </Card>
