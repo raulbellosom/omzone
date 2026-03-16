@@ -65,6 +65,20 @@ html {
   -webkit-tap-highlight-color: transparent;
 }
 
+/* ── iOS ZOOM FIX ─────────────────────────────────────────────────────────
+   iOS Safari hace zoom automático en inputs con font-size < 16px.
+   Forzamos 16px como mínimo para evitar que se descuadre la vista al
+   enfocar un campo. La escala visual se controla con scale() si se desea
+   un tamaño menor, pero nunca bajando el font-size en el DOM.
+   ──────────────────────────────────────────────────────────────────────── */
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  input,
+  textarea,
+  select {
+    font-size: max(16px, 1em);
+  }
+}
+
 body {
   background-color: var(--color-cream);
   color: var(--color-charcoal);
