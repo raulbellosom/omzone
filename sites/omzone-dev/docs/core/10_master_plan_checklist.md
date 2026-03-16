@@ -43,12 +43,14 @@
 
 ## Fase 4 — Panel admin (Frontend)
 
+> **Nota de modelo comercial**: no existe `/app/memberships` como gestor de suscripciones. No hay suscripciones ni cargos recurrentes. La ruta `/app/memberships` en el código es un placeholder que debe reconvertirse en el gestor de `wellness_packages` (paquetes prepago de una sola compra) o eliminarse. Ver `02_backend_appwrite_requirements.md`.
+
 - [ ] Dashboard métricas (`/app`)
 - [ ] Leads (`/app/leads`)
 - [ ] Clientes (`/app/clients`)
 - [ ] CRUD clases (`/app/classes`)
 - [ ] CRUD sesiones (`/app/sessions`)
-- [ ] CRUD paquetes (`/app/packages`)
+- [ ] CRUD paquetes — wellness_packages prepago (`/app/packages`)
 - [ ] CRUD productos wellness (`/app/products`)
 - [ ] Órdenes (`/app/orders`)
 - [ ] Reservaciones (`/app/bookings`)

@@ -35,9 +35,12 @@ const navLinks = [
 export default function Navbar() {
   const { t, i18n } = useTranslation("common");
   const { user, logout } = useAuth();
-  const currentLang = (i18n.resolvedLanguage ?? i18n.language ?? 'es').slice(0, 2)
-  const nextLang = currentLang === 'es' ? 'en' : 'es'
-  const langLabel = currentLang === 'es' ? 'English' : 'Español'
+  const currentLang = (i18n.resolvedLanguage ?? i18n.language ?? "es").slice(
+    0,
+    2,
+  );
+  const nextLang = currentLang === "es" ? "en" : "es";
+  const langLabel = currentLang === "es" ? "English" : "Español";
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -56,7 +59,7 @@ export default function Navbar() {
   // Logo destination: admins → /app, clients → /zone, guests → /
   const logoHref = !user
     ? ROUTES.HOME
-    : user.role_key === 'client'
+    : user.role_key === "client"
       ? ROUTES.ZONE_DASHBOARD
       : ROUTES.ADMIN;
 
@@ -109,7 +112,9 @@ export default function Navbar() {
                     {user.first_name}
                   </span>
                   <Avatar className="h-8 w-8 hover:ring-2 hover:ring-sage/40 transition-all">
-                    {avatarUrl && <AvatarImage src={avatarUrl} alt={user.first_name} />}
+                    {avatarUrl && (
+                      <AvatarImage src={avatarUrl} alt={user.first_name} />
+                    )}
                     <AvatarFallback className="text-xs bg-sage-muted text-sage-darker font-semibold">
                       {initials}
                     </AvatarFallback>
@@ -127,17 +132,25 @@ export default function Navbar() {
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
-                  <Link to={ROUTES.ZONE_PROFILE} className="flex items-center gap-2">
+                  <Link
+                    to={ROUTES.ZONE_PROFILE}
+                    className="flex items-center gap-2"
+                  >
                     <User className="w-4 h-4 text-charcoal-muted" />
                     {t("nav.myProfile")}
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => i18n.changeLanguage(nextLang)} className="flex items-center gap-2">
+                <DropdownMenuItem
+                  onClick={() => i18n.changeLanguage(nextLang)}
+                  className="flex items-center gap-2"
+                >
                   <Globe className="w-4 h-4 text-charcoal-muted" />
                   {langLabel}
                 </DropdownMenuItem>
-                {user.email_verified && <DropdownMenuSeparator />}
-                {user.email_verified && (
+                {(user.role_key === "admin" || user.role_key === "root") && (
+                  <DropdownMenuSeparator />
+                )}
+                {(user.role_key === "admin" || user.role_key === "root") && (
                   <DropdownMenuItem asChild>
                     <Link to={ROUTES.ADMIN} className="flex items-center gap-2">
                       <LayoutDashboard className="w-4 h-4 text-charcoal-muted" />
@@ -221,7 +234,9 @@ export default function Navbar() {
                 {/* User info */}
                 <div className="flex items-center gap-3 px-3 py-2">
                   <Avatar className="h-9 w-9 shrink-0">
-                    {avatarUrl && <AvatarImage src={avatarUrl} alt={user.first_name} />}
+                    {avatarUrl && (
+                      <AvatarImage src={avatarUrl} alt={user.first_name} />
+                    )}
                     <AvatarFallback className="text-xs bg-sage-muted text-sage-darker font-semibold">
                       {initials}
                     </AvatarFallback>
@@ -254,7 +269,7 @@ export default function Navbar() {
                   <Globe className="w-4 h-4 text-charcoal-muted" />
                   {langLabel}
                 </button>
-                {user.email_verified && (
+                {(user.role_key === "admin" || user.role_key === "root") && (
                   <SheetClose asChild>
                     <Link
                       to={ROUTES.ADMIN}

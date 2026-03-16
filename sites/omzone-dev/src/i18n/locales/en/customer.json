@@ -1,4 +1,7 @@
 {
+  "common": {
+    "search": "Search..."
+  },
   "nav": {
     "dashboard": "Dashboard",
     "bookings": "My bookings",

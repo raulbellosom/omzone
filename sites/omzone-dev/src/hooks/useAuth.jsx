@@ -121,7 +121,7 @@ export function AuthProvider({ children }) {
       setUser(normalized);
       return normalized;
     } catch {
-      setUser(null);
+      // Network / transient error — keep the current session, do not log out.
       return null;
     }
   }

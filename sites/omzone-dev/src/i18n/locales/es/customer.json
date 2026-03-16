@@ -1,4 +1,7 @@
 {
+  "common": {
+    "search": "Buscar..."
+  },
   "nav": {
     "dashboard": "Dashboard",
     "bookings": "Mis reservas",

@@ -53,16 +53,16 @@ export function useCancelBooking() {
 }
 
 export function useUpdateProfile() {
-  const { user, refreshUser } = useAuth();
+  const { user, setUser, refreshUser } = useAuth();
   return useMutation({
     mutationFn: async (data) => {
       const profileUpdate = {};
 
       // Handle avatar file upload
       if (data.file instanceof File) {
-        if (user.avatar_id) await deleteAvatar(user.avatar_id)
-        const newAvatarId = await uploadAvatar(user.$id, data.file)
-        profileUpdate.avatarId = newAvatarId
+        if (user.avatar_id) await deleteAvatar(user.avatar_id);
+        const newAvatarId = await uploadAvatar(user.$id, data.file);
+        profileUpdate.avatarId = newAvatarId;
       }
 
       if (data.first_name !== undefined) profileUpdate.firstName = data.first_name;
@@ -78,7 +78,29 @@ export function useUpdateProfile() {
         promises.push(updateMyPhone(user.$id, data.phone || null));
       }
       await Promise.all(promises);
+
+      // Build a local patch for immediate optimistic UI update
+      const patch = {};
+      if (profileUpdate.avatarId !== undefined) patch.avatar_id = profileUpdate.avatarId;
+      if (profileUpdate.firstName !== undefined) {
+        patch.first_name = data.first_name;
+        patch.full_name = [data.first_name ?? user.first_name, data.last_name ?? user.last_name].filter(Boolean).join(' ');
+      }
+      if (profileUpdate.lastName !== undefined) {
+        patch.last_name = data.last_name;
+        patch.full_name = [data.first_name ?? user.first_name, data.last_name ?? user.last_name].filter(Boolean).join(' ');
+      }
+      if (data.phone !== undefined) patch.phone = data.phone || null;
+      return patch;
     },
-    onSuccess: () => refreshUser(),
+    onSuccess: async (patch) => {
+      // Apply changed fields immediately so the UI reflects them without waiting
+      // for the network round-trip of refreshUser.
+      if (patch && Object.keys(patch).length) {
+        setUser((prev) => (prev ? { ...prev, ...patch } : prev));
+      }
+      // Full server sync for authoritative state (auth labels, etc.)
+      await refreshUser();
+    },
   });
 }

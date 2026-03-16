@@ -62,9 +62,6 @@ const AdminCustomersPage = lazy(
 );
 const AdminClassesPage = lazy(() => import("@/pages/admin/AdminClassesPage"));
 const AdminSessionsPage = lazy(() => import("@/pages/admin/AdminSessionsPage"));
-const AdminMembershipsPage = lazy(
-  () => import("@/pages/admin/AdminMembershipsPage"),
-);
 const AdminPackagesPage = lazy(() => import("@/pages/admin/AdminPackagesPage"));
 const AdminProductsPage = lazy(() => import("@/pages/admin/AdminProductsPage"));
 const AdminOrdersPage = lazy(() => import("@/pages/admin/AdminOrdersPage"));
@@ -150,7 +147,7 @@ export default function App() {
             <Route path="app/customers" element={<AdminCustomersPage />} />
             <Route path="app/classes" element={<AdminClassesPage />} />
             <Route path="app/sessions" element={<AdminSessionsPage />} />
-            <Route path="app/memberships" element={<AdminMembershipsPage />} />
+            <Route path="app/memberships" element={<Navigate to="/app/packages" replace />} />
             <Route path="app/packages" element={<AdminPackagesPage />} />
             <Route path="app/products" element={<AdminProductsPage />} />
             <Route path="app/orders" element={<AdminOrdersPage />} />

@@ -16,6 +16,15 @@ Documento canonico para el backend Appwrite del MVP de OMZONE.
 - Seguridad base: `Auth` + labels + permissions + `Functions`.
 - Database sugerida: `main`.
 
+## Modelo comercial — solo compras únicas
+
+> **Regla de negocio definitiva**: OMZONE **no tiene suscripciones ni cargos recurrentes** de ningún tipo.
+>
+> - Todos los pagos son `one-time charge` (pago único en el momento de la compra).
+> - Los "paquetes" (yoga, wellness o combinados) son créditos prepagados con fecha de expiración fija; la expiración **no activa un cobro automático**.
+> - No existen `membership_plans`, `memberships`, webhooks de renovación, ni endpoints de cobro recurrente (Stripe Subscriptions, PayPal Billing Agreements, etc.).
+> - Si en el futuro se añaden suscripciones, debe crearse un documento de decisión arquitectónica separado antes de tocar el código.
+
 ## Principio arquitectonico
 
 La aplicacion usa un solo proyecto Appwrite para el MVP.

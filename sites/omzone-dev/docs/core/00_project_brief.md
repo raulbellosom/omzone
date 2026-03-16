@@ -4,9 +4,10 @@
 
 Construir una plataforma moderna para vender una experiencia integral de bienestar:
 - clases de yoga,
-- membresías,
-- paquetes,
+- paquetes de clases y wellness (compra única),
 - complementos wellness kitchen.
+
+> **Modelo comercial**: solo compras de una sola vez (one-time purchase). No existen suscripciones, planes recurrentes ni cargos automáticos de ningún tipo. Lo que en el UI se denomina "membresía" o "plan" es siempre un paquete prepagado con créditos y/o fecha de expiración fija, comprado una sola vez.
 
 ## Objetivo MVP
 
@@ -17,7 +18,7 @@ Construir una plataforma moderna para vender una experiencia integral de bienest
 - checkout,
 - dashboard de cliente,
 - dashboard admin,
-- gestión de clases, horarios, membresías, paquetes, productos, leads, ventas y clientes.
+- gestión de clases, horarios, paquetes, productos, leads, ventas y clientes.
 
 ## Diferencial
 

@@ -36,6 +36,7 @@ export const ROUTES = {
   ADMIN_DASHBOARD: "/app",
   ADMIN_LEADS: "/app/leads",
   ADMIN_CLIENTS: "/app/clients",
+  ADMIN_CUSTOMERS: "/app/customers",
   ADMIN_CLASSES: "/app/classes",
   ADMIN_SESSIONS: "/app/sessions",
   ADMIN_PACKAGES: "/app/packages",

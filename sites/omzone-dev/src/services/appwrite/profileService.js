@@ -120,6 +120,19 @@ export async function syncEmailVerification(userId) {
  * @param {object|null} profile    - users_profile document (may be null right
  *                                   after registration before function runs)
  */
+/**
+ * Derive the canonical role from Appwrite Auth labels (source of truth) first,
+ * then fall back to the profile document's roleKey field.
+ * Priority: root > admin > client label > profile.roleKey > 'client'
+ */
+function _deriveRole(authUser, profile) {
+  const labels = authUser?.labels ?? [];
+  if (labels.includes("root")) return "root";
+  if (labels.includes("admin")) return "admin";
+  if (labels.includes("client")) return "client";
+  return profile?.roleKey ?? "client";
+}
+
 export function normalizeProfile(authUser, profile) {
   if (!authUser && !profile) return null;
 
@@ -140,8 +153,8 @@ export function normalizeProfile(authUser, profile) {
     last_name: ln,
     full_name: profile?.fullName ?? computedFullName ?? authUser?.name ?? "",
 
-    // Access control
-    role_key: profile?.roleKey ?? "client",
+    // Access control — authUser.labels is the source of truth
+    role_key: _deriveRole(authUser, profile),
 
     // Account state
     status: profile?.status ?? "pending_verification",
@@ -167,26 +180,21 @@ export function normalizeProfile(authUser, profile) {
  * Returns the new file $id (avatarId).
  */
 export async function uploadAvatar(userId, file) {
-  const result = await storage.createFile(
-    BUCKET_AVATARS,
-    ID.unique(),
-    file,
-    [
-      Permission.read(Role.any()),
-      Permission.update(Role.user(userId)),
-      Permission.delete(Role.user(userId)),
-    ],
-  )
-  return result.$id
+  const result = await storage.createFile(BUCKET_AVATARS, ID.unique(), file, [
+    Permission.read(Role.any()),
+    Permission.update(Role.user(userId)),
+    Permission.delete(Role.user(userId)),
+  ]);
+  return result.$id;
 }
 
 /**
  * Delete an avatar file. Non-fatal — silently ignores 404.
  */
 export async function deleteAvatar(fileId) {
-  if (!fileId || !BUCKET_AVATARS) return
+  if (!fileId || !BUCKET_AVATARS) return;
   try {
-    await storage.deleteFile(BUCKET_AVATARS, fileId)
+    await storage.deleteFile(BUCKET_AVATARS, fileId);
   } catch {
     // File may already be deleted — ignore
   }
@@ -197,8 +205,8 @@ export async function deleteAvatar(fileId) {
  * Returns null when avatarId or bucket is not configured.
  */
 export function getAvatarUrl(avatarId, size = 128) {
-  if (!avatarId || !BUCKET_AVATARS) return null
-  return storage.getFilePreview(BUCKET_AVATARS, avatarId, size, size).href
+  if (!avatarId || !BUCKET_AVATARS) return null;
+  return storage.getFilePreview(BUCKET_AVATARS, avatarId, size, size);
 }
 
 // ── Private helpers ───────────────────────────────────────────────────────────
