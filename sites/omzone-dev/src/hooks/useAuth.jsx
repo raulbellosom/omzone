@@ -69,7 +69,13 @@ export function AuthProvider({ children }) {
    * Creates Appwrite account, session, and sends verification email.
    * Returns the Appwrite Auth user.
    */
-  async function register({ firstName, lastName, email, password }) {
+  async function register({
+    firstName,
+    lastName,
+    email,
+    password,
+    phone = null,
+  }) {
     await realAuth.registerWithEmailPassword({
       firstName,
       lastName,
@@ -80,6 +86,15 @@ export function AuthProvider({ children }) {
     // Session exists in Appwrite (needed for createVerification / resend)
     // but we intentionally do NOT set user in context — the navbar should
     // show the logged-out state until email is verified.
+
+    // Save phone to Appwrite Auth when provided.
+    // Phone never writes to users_profile — it lives in Auth only.
+    if (phone) {
+      const authUser = await realAuth.getCurrentUser();
+      if (authUser) {
+        await profileSvc.updateMyPhone(authUser.$id, phone);
+      }
+    }
   }
 
   /**

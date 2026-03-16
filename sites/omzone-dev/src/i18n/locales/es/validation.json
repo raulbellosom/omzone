@@ -5,6 +5,7 @@
   "maxLength": "Máximo {{max}} caracteres.",
   "passwordMatch": "Las contraseñas no coinciden.",
   "phone": "Ingresa un número de teléfono válido.",
+  "phoneFormat": "Formato inválido. Usa el formato E.164: +525512345678",
   "cardNumber": "Número de tarjeta inválido.",
   "expiry": "Fecha de vencimiento inválida.",
   "cvv": "CVV inválido.",

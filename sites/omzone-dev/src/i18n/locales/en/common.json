@@ -140,6 +140,7 @@
       "password": "Password",
       "confirmPassword": "Confirm password",
       "phone": "Phone (optional)",
+      "phoneHint": "International format: +15551234567",
       "submit": "Create account",
       "submitting": "Creating account...",
       "hasAccount": "Already have an account?",

@@ -29,6 +29,9 @@ function validate(form, t) {
   else if (form.password.length < 8)
     errs.password = tv("minLength", { min: 8 });
   if (form.confirm !== form.password) errs.confirm = tv("passwordMatch");
+  const phoneNorm = form.phone.replace(/\s/g, "");
+  if (phoneNorm && !/^\+[1-9]\d{1,14}$/.test(phoneNorm))
+    errs.phone = tv("phoneFormat");
   return errs;
 }
 
@@ -76,6 +79,7 @@ export default function RegisterPage() {
         lastName: form.lastName.trim(),
         email: form.email.trim().toLowerCase(),
         password: form.password,
+        phone: form.phone.replace(/\s/g, "") || null,
       });
 
       const email = encodeURIComponent(form.email.trim().toLowerCase());
@@ -232,8 +236,20 @@ export default function RegisterPage() {
                     onChange={(e) => setField("phone", e.target.value)}
                     autoComplete="tel"
                     placeholder="+52 55 1234 5678"
-                    className="h-11 bg-warm-gray/50 border-warm-gray-dark/40 focus:bg-white focus:border-sage transition-colors"
+                    className={cn(
+                      "h-11 bg-warm-gray/50 border-warm-gray-dark/40 focus:bg-white focus:border-sage transition-colors",
+                      errors.phone && "border-red-400 focus:border-red-400",
+                    )}
                   />
+                  {errors.phone ? (
+                    <p className="text-xs text-red-500 animate-fade-in">
+                      {errors.phone}
+                    </p>
+                  ) : (
+                    <p className="text-xs text-charcoal-subtle">
+                      {t("auth.register.phoneHint")}
+                    </p>
+                  )}
                 </div>
 
                 {/* Contraseña */}

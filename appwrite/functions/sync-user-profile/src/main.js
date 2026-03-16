@@ -55,6 +55,7 @@ export default async ({ req, res, log, error }) => {
   }
 
   const requestedUserId = body?.userId;
+  const phoneFromBody = body?.phone !== undefined ? body.phone : undefined;
   if (!requestedUserId) {
     return res.json({ ok: false, error: "Missing userId" }, 400);
   }
@@ -120,5 +121,20 @@ export default async ({ req, res, log, error }) => {
   }
 
   log(`Synced Auth.name="${fullName}" for user ${requestedUserId}`);
+
+  // ── Sync Auth.phone if phone was provided in the request body ────────────────
+  // phone is no longer stored in users_profile; it lives in Auth only.
+  if (phoneFromBody !== undefined) {
+    if (phoneFromBody) {
+      try {
+        await users.updatePhone(requestedUserId, phoneFromBody);
+        log(`Synced Auth.phone for user ${requestedUserId}`);
+      } catch (e) {
+        error(`Failed to update Auth.phone: ${e.message}`);
+      }
+    }
+    // null / empty means "clear" — no-op (Appwrite requires OTP to clear phone via client)
+  }
+
   return res.json({ ok: true, fullName });
 };

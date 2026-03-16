@@ -67,7 +67,6 @@ export default async ({ req, res, log, error }) => {
   }
 
   const userId = user?.$id;
-  const email = user?.email ?? "";
   const name = (user?.name ?? "").trim();
 
   if (!userId) {
@@ -108,7 +107,6 @@ export default async ({ req, res, log, error }) => {
       APPWRITE_USERS_PROFILE_COLLECTION_ID,
       userId,
       {
-        email,
         firstName,
         lastName,
         fullName,

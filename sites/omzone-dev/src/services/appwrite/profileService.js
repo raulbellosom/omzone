@@ -20,14 +20,8 @@ const COLLECTION_ID = COL_USERS_PROFILE;
 const FN_SYNC_PROFILE = FN_SYNC_USER_PROFILE;
 const FN_SYNC_VERIFY = FN_SYNC_EMAIL_VERIFICATION;
 
-/** Allowed fields the client can write directly. */
-const CLIENT_WRITABLE = [
-  "firstName",
-  "lastName",
-  "phone",
-  "locale",
-  "avatarId",
-];
+/** Allowed fields the client can write directly to the profile document. */
+const CLIENT_WRITABLE = ["firstName", "lastName", "locale", "avatarId"];
 
 // ── Read ─────────────────────────────────────────────────────────────────────
 
@@ -95,6 +89,15 @@ export async function syncMyProfileToAuth(userId) {
 }
 
 /**
+ * Update the phone number in Appwrite Auth directly.
+ * Invokes sync-user-profile with the phone in the body —
+ * no database write needed (phone no longer lives in users_profile).
+ */
+export async function updateMyPhone(userId, phone) {
+  return _invokeFunction(FN_SYNC_PROFILE, { userId, phone: phone || null });
+}
+
+/**
  * Invoke sync-email-verification Function.
  * Called from VerifyEmailPage after account.updateVerification() succeeds.
  */
@@ -126,7 +129,7 @@ export function normalizeProfile(authUser, profile) {
     // Unique identifier — always the Auth $id (== profile.$id)
     $id: authUser?.$id ?? profile?.$id ?? null,
 
-    email: authUser?.email ?? profile?.email ?? "",
+    email: authUser?.email ?? "",
     email_verified:
       authUser?.emailVerification ?? profile?.emailVerified ?? false,
 
@@ -142,8 +145,8 @@ export function normalizeProfile(authUser, profile) {
     status: profile?.status ?? "pending_verification",
     onboarding_completed: profile?.onboardingCompleted ?? false,
 
-    // Extended info
-    phone: profile?.phone ?? null,
+    // Extended info — phone lives in Auth, not in users_profile
+    phone: authUser?.phone ?? null,
     avatar_id: profile?.avatarId ?? null,
     locale: profile?.locale ?? "es",
     provider: profile?.provider ?? "email",

@@ -140,6 +140,7 @@
       "password": "Contraseña",
       "confirmPassword": "Confirmar contraseña",
       "phone": "Teléfono (opcional)",
+      "phoneHint": "Formato internacional: +525512345678",
       "submit": "Crear cuenta",
       "submitting": "Creando cuenta...",
       "hasAccount": "¿Ya tienes cuenta?",
