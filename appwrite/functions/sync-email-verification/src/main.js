@@ -129,5 +129,12 @@ export default async ({ req, res, log, error }) => {
   }
 
   log(`Synced emailVerified=${emailVerified} for user ${requestedUserId}`);
+  // Ensure the client label is set (idempotent — covers users registered before label sync was added).
+  try {
+    await users.updateLabels(requestedUserId, ["client"]);
+  } catch (labelErr) {
+    error(`Failed to assign label: ${labelErr.message}`);
+    // Non-fatal.
+  }
   return res.json({ ok: true, emailVerified, statusUpdated: !!update.status });
 };

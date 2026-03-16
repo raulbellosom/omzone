@@ -3,7 +3,7 @@
     "dashboard": "Dashboard",
     "bookings": "My bookings",
     "orders": "My orders",
-    "membership": "My membership",
+    "packages": "My packages",
     "profile": "My profile"
   },
   "dashboard": {
@@ -118,6 +118,12 @@
     "emailNote": "Email cannot be changed from here.",
     "passwordSaved": "Password updated",
     "passwordSaving": "Updating...",
-    "personalInfo": "Personal information"
+    "personalInfo": "Personal information",
+    "forgotPassword": "Forgot your password?",
+    "wrongPassword": "Incorrect password",
+    "sendingRecovery": "Sending...",
+    "recoverySent": "Recovery email sent",
+    "avatarSaved": "Profile photo updated",
+    "avatarError": "Invalid file (max 5 MB, formats: jpg, png, webp)"
   }
 }

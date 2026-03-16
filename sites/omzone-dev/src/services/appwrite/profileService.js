@@ -7,12 +7,14 @@
  *    Appwrite Functions using a server API key.
  *  - Functions are called by profileService when appropriate.
  */
-import { databases, functions } from "./client";
+import { databases, functions, storage } from "./client";
+import { ID, Permission, Role } from "appwrite";
 import {
   APPWRITE_DATABASE_ID,
   COL_USERS_PROFILE,
   FN_SYNC_USER_PROFILE,
   FN_SYNC_EMAIL_VERIFICATION,
+  BUCKET_AVATARS,
 } from "@/env";
 
 const DB_ID = APPWRITE_DATABASE_ID;
@@ -155,6 +157,48 @@ export function normalizeProfile(authUser, profile) {
     _profile: profile ?? null,
     _authUser: authUser ?? null,
   };
+}
+
+// ── Avatar storage ────────────────────────────────────────────────────────────
+
+/**
+ * Upload a profile avatar for a user.
+ * Sets file-level permissions so only the owner can update/delete it.
+ * Returns the new file $id (avatarId).
+ */
+export async function uploadAvatar(userId, file) {
+  const result = await storage.createFile(
+    BUCKET_AVATARS,
+    ID.unique(),
+    file,
+    [
+      Permission.read(Role.any()),
+      Permission.update(Role.user(userId)),
+      Permission.delete(Role.user(userId)),
+    ],
+  )
+  return result.$id
+}
+
+/**
+ * Delete an avatar file. Non-fatal — silently ignores 404.
+ */
+export async function deleteAvatar(fileId) {
+  if (!fileId || !BUCKET_AVATARS) return
+  try {
+    await storage.deleteFile(BUCKET_AVATARS, fileId)
+  } catch {
+    // File may already be deleted — ignore
+  }
+}
+
+/**
+ * Returns a preview URL for an avatar file (synchronous).
+ * Returns null when avatarId or bucket is not configured.
+ */
+export function getAvatarUrl(avatarId, size = 128) {
+  if (!avatarId || !BUCKET_AVATARS) return null
+  return storage.getFilePreview(BUCKET_AVATARS, avatarId, size, size).href
 }
 
 // ── Private helpers ───────────────────────────────────────────────────────────

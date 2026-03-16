@@ -86,6 +86,14 @@ export async function confirmEmailVerification(userId, secret) {
 }
 
 /**
+ * Change the current user's password.
+ * Requires the old (current) password for verification.
+ */
+export async function updatePassword(newPassword, currentPassword) {
+  return account.updatePassword(newPassword, currentPassword)
+}
+
+/**
  * Send password recovery email.
  * Appwrite emails a link: REDIRECT_URL?userId=xxx&secret=yyy
  */

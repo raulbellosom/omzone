@@ -23,13 +23,13 @@ export const ROUTES = {
   CHECKOUT: "/checkout",
   CHECKOUT_CONFIRMATION: "/checkout/confirmation",
 
-  // ── Área cliente (/account) ─────────────────────────────────────────────────
-  ACCOUNT: "/account",
-  ACCOUNT_DASHBOARD: "/account",
-  ACCOUNT_BOOKINGS: "/account/bookings",
-  ACCOUNT_ORDERS: "/account/orders",
-  ACCOUNT_PACKAGES: "/account/packages",
-  ACCOUNT_PROFILE: "/account/profile",
+  // ── Área cliente (/zone) ────────────────────────────────────────────────────
+  ZONE: "/zone",
+  ZONE_DASHBOARD: "/zone",
+  ZONE_BOOKINGS: "/zone/bookings",
+  ZONE_ORDERS: "/zone/orders",
+  ZONE_PACKAGES: "/zone/packages",
+  ZONE_PROFILE: "/zone/profile",
 
   // ── Panel admin (/app) ───────────────────────────────────────────────────────
   ADMIN: "/app",

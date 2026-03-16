@@ -79,21 +79,21 @@ export default function CustomerDashboardPage() {
             ? resolveField(nextBooking.session.class, 'title')
             : t('dashboard.noNextClass')}
           loading={lBookings}
-          to={ROUTES.ACCOUNT_BOOKINGS}
+          to={ROUTES.ZONE_BOOKINGS}
         />
         <StatCard
           icon={Award}
           label={t('dashboard.classesUsed')}
           value={membershipValue}
           loading={lMemb}
-          to={ROUTES.ACCOUNT_MEMBERSHIP}
+          to={ROUTES.ZONE_PACKAGES}
         />
         <StatCard
           icon={ShoppingBag}
           label={t('dashboard.totalOrders')}
           value={orders?.length ?? '—'}
           loading={lOrders}
-          to={ROUTES.ACCOUNT_ORDERS}
+          to={ROUTES.ZONE_ORDERS}
         />
       </div>
 
@@ -102,7 +102,7 @@ export default function CustomerDashboardPage() {
         <section>
           <div className="flex items-center justify-between mb-3">
             <h2 className="font-semibold text-charcoal">{t('dashboard.nextClass')}</h2>
-            <Link to={ROUTES.ACCOUNT_BOOKINGS} className="text-xs text-sage hover:underline font-medium">
+            <Link to={ROUTES.ZONE_BOOKINGS} className="text-xs text-sage hover:underline font-medium">
               {t('dashboard.viewAll')}
             </Link>
           </div>
@@ -160,7 +160,7 @@ export default function CustomerDashboardPage() {
           <section>
             <div className="flex items-center justify-between mb-3">
               <h2 className="font-semibold text-charcoal">{t('dashboard.activeMembership')}</h2>
-              <Link to={ROUTES.ACCOUNT_MEMBERSHIP} className="text-xs text-sage hover:underline font-medium">
+              <Link to={ROUTES.ZONE_PACKAGES} className="text-xs text-sage hover:underline font-medium">
                 {t('dashboard.viewAll')}
               </Link>
             </div>
@@ -215,7 +215,7 @@ export default function CustomerDashboardPage() {
           <section>
             <div className="flex items-center justify-between mb-3">
               <h2 className="font-semibold text-charcoal">{t('dashboard.recentOrders')}</h2>
-              <Link to={ROUTES.ACCOUNT_ORDERS} className="text-xs text-sage hover:underline font-medium">
+              <Link to={ROUTES.ZONE_ORDERS} className="text-xs text-sage hover:underline font-medium">
                 {t('dashboard.viewAll')}
               </Link>
             </div>

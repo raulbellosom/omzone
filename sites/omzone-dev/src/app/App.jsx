@@ -4,6 +4,7 @@ import { Suspense, lazy } from "react";
 // Layouts
 import PublicLayout from "@/layouts/PublicLayout";
 import CustomerLayout from "@/layouts/CustomerLayout";
+import SmartLayout from "@/layouts/SmartLayout";
 import AdminLayout from "@/layouts/AdminLayout";
 
 // Guards
@@ -94,11 +95,7 @@ export default function App() {
           <Route element={<RedirectIfAuthenticated />}>
             <Route index element={<LandingPage />} />
           </Route>
-          <Route path="classes" element={<ClassesPage />} />
-          <Route path="classes/:slug" element={<ClassDetailPage />} />
           <Route path="memberships" element={<MembershipsPage />} />
-          <Route path="packages" element={<PackagesPage />} />
-          <Route path="wellness" element={<WellnessPage />} />
 
           {/* Login / Register: redirige si ya hay sesión (verificada o no) */}
           <Route element={<RedirectIfAuthenticated />}>
@@ -111,6 +108,14 @@ export default function App() {
           <Route path="auth/reset-password" element={<ResetPasswordPage />} />
         </Route>
 
+        {/* ── Contenido con SmartLayout (público o cliente según auth) ── */}
+        <Route element={<SmartLayout />}>
+          <Route path="classes" element={<ClassesPage />} />
+          <Route path="classes/:slug" element={<ClassDetailPage />} />
+          <Route path="packages" element={<PackagesPage />} />
+          <Route path="wellness" element={<WellnessPage />} />
+        </Route>
+
         {/* ── Flujos de compra (autenticados o no) ───────────────────── */}
         <Route element={<PublicLayout />}>
           <Route path="booking/:sessionId" element={<BookingPage />} />
@@ -118,25 +123,25 @@ export default function App() {
           <Route path="checkout/confirmation" element={<ConfirmationPage />} />
         </Route>
 
-        {/* ── Área cliente ────────────────────────────────────────────── */}
+        {/* ── Área cliente (/zone) ────────────────────────────────────── */}
         <Route element={<RequireAuth roles={["client", "admin", "root"]} />}>
           <Route element={<CustomerLayout />}>
-            <Route path="account" element={<CustomerDashboardPage />} />
-            <Route path="account/bookings" element={<CustomerBookingsPage />} />
-            <Route path="account/orders" element={<CustomerOrdersPage />} />
-            <Route
-              path="account/membership"
-              element={<CustomerMembershipPage />}
-            />
-            <Route path="account/profile" element={<CustomerProfilePage />} />
+            <Route path="zone" element={<CustomerDashboardPage />} />
+            <Route path="zone/bookings" element={<CustomerBookingsPage />} />
+            <Route path="zone/orders" element={<CustomerOrdersPage />} />
+            <Route path="zone/profile" element={<CustomerProfilePage />} />
           </Route>
         </Route>
 
+        {/* ── Compat redirect /account → /zone ────────────────────────── */}
+        <Route path="account" element={<Navigate to="/zone" replace />} />
+        <Route path="account/*" element={<Navigate to="/zone" replace />} />
+
         {/* ── Panel admin ─────────────────────────────────────────────── */}
-        {/* fallback="/account" → clientes que van a /app son redirigidos a su área */}
+        {/* fallback="/zone" → clientes que van a /app son redirigidos a su área */}
         <Route
           element={
-            <RequireAuth roles={["admin", "root"]} fallback="/account" />
+            <RequireAuth roles={["admin", "root"]} fallback="/zone" />
           }
         >
           <Route element={<AdminLayout />}>

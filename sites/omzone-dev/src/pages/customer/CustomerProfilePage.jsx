@@ -1,19 +1,23 @@
 /**
  * CustomerProfilePage — datos personales, contraseña y preferencias.
- * Ruta: /account/profile
+ * Ruta: /zone/profile
  */
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Eye, EyeOff, UserCircle } from 'lucide-react'
+import { Eye, EyeOff, UserCircle, Camera } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent } from '@/components/ui/card'
-import LanguageSwitcher from '@/components/shared/LanguageSwitcher'
 import { useAuth } from '@/hooks/useAuth.jsx'
 import { useUpdateProfile } from '@/hooks/useCustomer'
+import { getAvatarUrl } from '@/services/appwrite/profileService'
+import * as authService from '@/services/appwrite/authService'
 import { cn } from '@/lib/utils'
+
+const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp']
+const MAX_SIZE_BYTES = 5 * 1024 * 1024 // 5MB
 
 function SectionCard({ title, children }) {
   return (
@@ -27,7 +31,7 @@ function SectionCard({ title, children }) {
 }
 
 export default function CustomerProfilePage() {
-  const { t } = useTranslation('customer')
+  const { t, i18n } = useTranslation('customer')
   const { user } = useAuth()
   const { mutateAsync: updateProfile, isPending: saving } = useUpdateProfile()
 
@@ -40,7 +44,9 @@ export default function CustomerProfilePage() {
   const [passForm, setPassForm] = useState({ current: '', next: '', confirm: '' })
   const [showPass, setShowPass] = useState({ current: false, next: false, confirm: false })
   const [savingPass, setSavingPass] = useState(false)
+  const [sendingRecovery, setSendingRecovery] = useState(false)
   const [passErrors, setPassErrors] = useState({})
+  const [uploadingAvatar, setUploadingAvatar] = useState(false)
 
   function setField(k, v) { setForm((p) => ({ ...p, [k]: v })) }
   function setPassField(k, v) {
@@ -48,6 +54,31 @@ export default function CustomerProfilePage() {
     if (passErrors[k]) setPassErrors((p) => ({ ...p, [k]: undefined }))
   }
 
+  // ── Avatar ────────────────────────────────────────────────────────────────
+  async function handleAvatarChange(e) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    if (!ALLOWED_TYPES.includes(file.type)) {
+      toast.error(t('profile.avatarError'))
+      return
+    }
+    if (file.size > MAX_SIZE_BYTES) {
+      toast.error(t('profile.avatarError'))
+      return
+    }
+    setUploadingAvatar(true)
+    try {
+      await updateProfile({ file })
+      toast.success(t('profile.avatarSaved'))
+    } catch {
+      toast.error(t('common:errors.generic'))
+    } finally {
+      setUploadingAvatar(false)
+      e.target.value = ''
+    }
+  }
+
+  // ── Profile info ──────────────────────────────────────────────────────────
   async function handleSaveProfile(e) {
     e.preventDefault()
     try {
@@ -58,6 +89,7 @@ export default function CustomerProfilePage() {
     }
   }
 
+  // ── Change password ───────────────────────────────────────────────────────
   async function handleSavePassword(e) {
     e.preventDefault()
     const errs = {}
@@ -67,24 +99,82 @@ export default function CustomerProfilePage() {
     if (Object.keys(errs).length) { setPassErrors(errs); return }
 
     setSavingPass(true)
-    await new Promise((r) => setTimeout(r, 800))
-    setSavingPass(false)
-    setPassForm({ current: '', next: '', confirm: '' })
-    toast.success(t('profile.passwordSaved'))
+    try {
+      await authService.updatePassword(passForm.next, passForm.current)
+      setPassForm({ current: '', next: '', confirm: '' })
+      toast.success(t('profile.passwordSaved'))
+    } catch (err) {
+      if (err?.code === 401) {
+        setPassErrors({ current: t('profile.wrongPassword') })
+      } else {
+        toast.error(t('common:errors.generic'))
+      }
+    } finally {
+      setSavingPass(false)
+    }
   }
 
+  async function handleForgotPassword() {
+    setSendingRecovery(true)
+    try {
+      await authService.sendPasswordRecovery(user.email)
+      toast.success(t('profile.recoverySent'))
+    } catch {
+      toast.error(t('common:errors.generic'))
+    } finally {
+      setSendingRecovery(false)
+    }
+  }
+
+  // ── Computed ──────────────────────────────────────────────────────────────
   const initials = [user?.first_name?.[0], user?.last_name?.[0]].filter(Boolean).join('')
+  const avatarUrl = getAvatarUrl(user?.avatar_id, 128)
+
+  const currentLang = (i18n.resolvedLanguage ?? i18n.language ?? 'es').slice(0, 2)
+  const langName = currentLang === 'es' ? 'Español' : 'English'
+  const nextLang = currentLang === 'es' ? 'en' : 'es'
 
   return (
     <div className="max-w-2xl mx-auto px-4 md:px-8 py-8 animate-fade-in-up space-y-6">
       {/* Header */}
       <div className="flex items-center gap-4 mb-2">
-        <div className="w-14 h-14 rounded-full bg-sage-muted flex items-center justify-center shrink-0">
-          {initials
-            ? <span className="text-sage font-semibold text-lg select-none">{initials}</span>
-            : <UserCircle className="w-7 h-7 text-sage" />
+        {/* Avatar with upload overlay */}
+        <label className={cn(
+          'relative w-14 h-14 rounded-full cursor-pointer group shrink-0',
+          uploadingAvatar && 'opacity-60 pointer-events-none'
+        )}>
+          {avatarUrl
+            ? <img src={avatarUrl} alt="" className="w-full h-full rounded-full object-cover" />
+            : (
+              <div className="w-full h-full rounded-full bg-sage-muted flex items-center justify-center">
+                {initials
+                  ? <span className="text-sage font-semibold text-lg select-none">{initials}</span>
+                  : <UserCircle className="w-7 h-7 text-sage" />}
+              </div>
+            )
           }
-        </div>
+          {uploadingAvatar
+            ? (
+              <div className="absolute inset-0 rounded-full bg-black/30 flex items-center justify-center">
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              </div>
+            )
+            : (
+              <div className="absolute inset-0 rounded-full bg-black/30 flex items-center justify-center
+                              opacity-0 group-hover:opacity-100 transition-opacity">
+                <Camera className="w-5 h-5 text-white" />
+              </div>
+            )
+          }
+          <input
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            capture="user"
+            className="sr-only"
+            onChange={handleAvatarChange}
+          />
+        </label>
+
         <div>
           <h1 className="text-2xl font-display font-semibold text-charcoal">{t('profile.title')}</h1>
           <p className="text-sm text-charcoal-muted">{user?.email}</p>
@@ -182,9 +272,19 @@ export default function CustomerProfilePage() {
             </div>
           ))}
 
-          <Button type="submit" variant="outline" disabled={savingPass} className="w-full sm:w-auto">
-            {savingPass ? t('profile.passwordSaving') : t('profile.changePassword')}
-          </Button>
+          <div className="flex items-center justify-between gap-4 flex-wrap">
+            <Button type="submit" variant="outline" disabled={savingPass} className="w-full sm:w-auto">
+              {savingPass ? t('profile.passwordSaving') : t('profile.changePassword')}
+            </Button>
+            <button
+              type="button"
+              onClick={handleForgotPassword}
+              disabled={sendingRecovery}
+              className="text-xs text-sage hover:underline disabled:opacity-50 transition-opacity"
+            >
+              {sendingRecovery ? t('profile.sendingRecovery') : t('profile.forgotPassword')}
+            </button>
+          </div>
         </form>
       </SectionCard>
 
@@ -197,7 +297,9 @@ export default function CustomerProfilePage() {
               {t('common:lang.switch')}
             </p>
           </div>
-          <LanguageSwitcher />
+          <Button variant="outline" size="sm" onClick={() => i18n.changeLanguage(nextLang)}>
+            {langName}
+          </Button>
         </div>
       </SectionCard>
     </div>

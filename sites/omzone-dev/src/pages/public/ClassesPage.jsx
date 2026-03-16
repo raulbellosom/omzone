@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { SlidersHorizontal, SearchX } from 'lucide-react'
 import PageMeta from '@/components/seo/PageMeta'
@@ -8,6 +8,7 @@ import ClassFilters from '@/features/classes/ClassFilters'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Button } from '@/components/ui/button'
 import { useClasses, useClassTypes } from '@/hooks/useClasses'
+import { useSidebar } from '@/contexts/SidebarContext'
 import { resolveField } from '@/lib/i18n-data'
 import { APP_BASE_URL } from '@/env'
 
@@ -19,6 +20,18 @@ export default function ClassesPage() {
 
   const { data: classes, isLoading } = useClasses()
   const { data: classTypes } = useClassTypes()
+
+  // Inject filters into CustomerLayout sidebar when authenticated
+  const sidebar = useSidebar()
+  useEffect(() => {
+    if (!sidebar) return
+    sidebar.setFilterPanel(
+      <ClassFilters filters={filters} onChange={setFilters} classTypes={classTypes ?? []} />
+    )
+    return () => sidebar.clearFilter()
+  // Re-inject when filters or classTypes change so the sidebar stays in sync
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sidebar, filters, classTypes])
 
   const filtered = useMemo(() => {
     if (!classes) return []
@@ -78,23 +91,25 @@ export default function ClassesPage() {
 
       {/* ── Main content ───────────────────────────────────────── */}
       <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-14">
-        <div className="grid lg:grid-cols-[280px_1fr] gap-8 items-start">
+        <div className={sidebar ? 'grid gap-8 items-start' : 'grid lg:grid-cols-[280px_1fr] gap-8 items-start'}>
 
-          {/* ── Filters sidebar ──────────────────────────────── */}
-          <aside
-            aria-label={t('filters.title')}
-            className="bg-white rounded-3xl p-6 border border-warm-gray-dark/40 shadow-card lg:sticky lg:top-24"
-          >
-            <div className="flex items-center gap-2 mb-6">
-              <SlidersHorizontal className="w-4 h-4 text-charcoal-muted" aria-hidden="true" />
-              <h2 className="text-sm font-semibold text-charcoal">{t('filters.title')}</h2>
-            </div>
-            <ClassFilters
-              filters={filters}
-              onChange={setFilters}
-              classTypes={classTypes ?? []}
-            />
-          </aside>
+          {/* ── Filters sidebar — only in public layout (no sidebar context) ── */}
+          {!sidebar && (
+            <aside
+              aria-label={t('filters.title')}
+              className="bg-white rounded-3xl p-6 border border-warm-gray-dark/40 shadow-card lg:sticky lg:top-24"
+            >
+              <div className="flex items-center gap-2 mb-6">
+                <SlidersHorizontal className="w-4 h-4 text-charcoal-muted" aria-hidden="true" />
+                <h2 className="text-sm font-semibold text-charcoal">{t('filters.title')}</h2>
+              </div>
+              <ClassFilters
+                filters={filters}
+                onChange={setFilters}
+                classTypes={classTypes ?? []}
+              />
+            </aside>
+          )}
 
           {/* ── Results ──────────────────────────────────────── */}
           <section aria-label="Resultados de clases">

@@ -24,7 +24,7 @@
  *   APPWRITE_COLLECTION_USERS_PROFILE_ID    — users_profile
  */
 
-import { Client, Databases, ID, Permission, Role } from "node-appwrite";
+import { Client, Databases, Users, ID, Permission, Role } from "node-appwrite";
 
 export default async ({ req, res, log, error }) => {
   // ── Environment ────────────────────────────────────────────────────────────
@@ -55,6 +55,7 @@ export default async ({ req, res, log, error }) => {
     .setKey(APPWRITE_API_KEY);
 
   const db = new Databases(client);
+  const users = new Users(client);
 
   // ── Parse event payload ────────────────────────────────────────────────────
   // When triggered by users.*.create the request body IS the user object.
@@ -130,6 +131,13 @@ export default async ({ req, res, log, error }) => {
     );
 
     log(`Profile created for user ${userId} — document ${doc.$id}`);
+    // Assign 'client' label so collection-level label:client permissions work.
+    try {
+      await users.updateLabels(userId, ["client"]);
+    } catch (labelErr) {
+      error(`Failed to assign label: ${labelErr.message}`);
+      // Non-fatal: profile exists; label can be set manually in Appwrite Console.
+    }
     return res.json({ ok: true, documentId: doc.$id });
   } catch (e) {
     error(`Failed to create profile: ${e.message}`);

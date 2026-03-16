@@ -44,6 +44,7 @@ export const COL_APP_SETTINGS       = import.meta.env.APPWRITE_COLLECTION_APP_SE
 // ── Appwrite — buckets ────────────────────────────────────────────────────────
 export const BUCKET_PUBLIC_MEDIA  = import.meta.env.APPWRITE_BUCKET_PUBLIC_MEDIA_ID
 export const BUCKET_PRIVATE_MEDIA = import.meta.env.APPWRITE_BUCKET_PRIVATE_MEDIA_ID
+export const BUCKET_AVATARS       = import.meta.env.APPWRITE_BUCKET_AVATARS_ID
 
 // ── Appwrite — functions ──────────────────────────────────────────────────────
 export const FN_CREATE_USER_PROFILE     = import.meta.env.APPWRITE_FUNCTION_CREATE_USER_PROFILE_ID

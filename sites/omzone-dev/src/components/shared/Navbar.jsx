@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Menu, LogOut, LayoutDashboard } from "lucide-react";
+import { Menu, LogOut, LayoutDashboard, Globe, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -21,7 +21,7 @@ import {
   SheetClose,
 } from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
-import LanguageSwitcher from "@/components/shared/LanguageSwitcher";
+import { getAvatarUrl } from "@/services/appwrite/profileService";
 import { useAuth } from "@/hooks/useAuth.jsx";
 import ROUTES from "@/constants/routes";
 import { cn } from "@/lib/utils";
@@ -33,8 +33,11 @@ const navLinks = [
 ];
 
 export default function Navbar() {
-  const { t } = useTranslation("common");
+  const { t, i18n } = useTranslation("common");
   const { user, logout } = useAuth();
+  const currentLang = (i18n.resolvedLanguage ?? i18n.language ?? 'es').slice(0, 2)
+  const nextLang = currentLang === 'es' ? 'en' : 'es'
+  const langLabel = currentLang === 'es' ? 'English' : 'Español'
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -48,8 +51,14 @@ export default function Navbar() {
     ? `${user.first_name?.[0] ?? ""}${user.last_name?.[0] ?? ""}`.toUpperCase()
     : "";
 
-  // Logo destination: authenticated users always go to /app (which smart-redirects clients to /account)
-  const logoHref = user ? ROUTES.ADMIN : ROUTES.HOME;
+  const avatarUrl = user?.avatar_id ? getAvatarUrl(user.avatar_id, 64) : null;
+
+  // Logo destination: admins → /app, clients → /zone, guests → /
+  const logoHref = !user
+    ? ROUTES.HOME
+    : user.role_key === 'client'
+      ? ROUTES.ZONE_DASHBOARD
+      : ROUTES.ADMIN;
 
   return (
     <header
@@ -87,19 +96,20 @@ export default function Navbar() {
           ))}
         </ul>
 
-        {/* Selector de idioma — desktop */}
-        <LanguageSwitcher className="hidden md:flex" />
-
         {/* Acciones desktop */}
         <div className="hidden md:flex items-center gap-2">
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button
-                  className="rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sage focus-visible:ring-offset-2"
+                  className="flex items-center gap-2 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sage focus-visible:ring-offset-2"
                   aria-label={t("nav.userMenu")}
                 >
+                  <span className="text-sm font-medium text-charcoal hidden lg:block">
+                    {user.first_name}
+                  </span>
                   <Avatar className="h-8 w-8 hover:ring-2 hover:ring-sage/40 transition-all">
+                    {avatarUrl && <AvatarImage src={avatarUrl} alt={user.first_name} />}
                     <AvatarFallback className="text-xs bg-sage-muted text-sage-darker font-semibold">
                       {initials}
                     </AvatarFallback>
@@ -116,6 +126,17 @@ export default function Navbar() {
                   </span>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link to={ROUTES.ZONE_PROFILE} className="flex items-center gap-2">
+                    <User className="w-4 h-4 text-charcoal-muted" />
+                    {t("nav.myProfile")}
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => i18n.changeLanguage(nextLang)} className="flex items-center gap-2">
+                  <Globe className="w-4 h-4 text-charcoal-muted" />
+                  {langLabel}
+                </DropdownMenuItem>
+                {user.email_verified && <DropdownMenuSeparator />}
                 {user.email_verified && (
                   <DropdownMenuItem asChild>
                     <Link to={ROUTES.ADMIN} className="flex items-center gap-2">
@@ -124,7 +145,7 @@ export default function Navbar() {
                     </Link>
                   </DropdownMenuItem>
                 )}
-                {user.email_verified && <DropdownMenuSeparator />}
+                <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={handleLogout}
                   className="text-red-600 hover:bg-red-50 focus:bg-red-50"
@@ -190,10 +211,6 @@ export default function Navbar() {
                 </NavLink>
               </SheetClose>
             ))}
-            {/* Selector de idioma — móvil */}
-            <div className="px-3 pt-2">
-              <LanguageSwitcher />
-            </div>
           </div>
 
           <Separator />
@@ -204,6 +221,7 @@ export default function Navbar() {
                 {/* User info */}
                 <div className="flex items-center gap-3 px-3 py-2">
                   <Avatar className="h-9 w-9 shrink-0">
+                    {avatarUrl && <AvatarImage src={avatarUrl} alt={user.first_name} />}
                     <AvatarFallback className="text-xs bg-sage-muted text-sage-darker font-semibold">
                       {initials}
                     </AvatarFallback>
@@ -220,6 +238,22 @@ export default function Navbar() {
 
                 <Separator className="my-1" />
 
+                <SheetClose asChild>
+                  <Link
+                    to={ROUTES.ZONE_PROFILE}
+                    className="flex items-center gap-2 px-3 py-3 rounded-xl text-sm text-charcoal hover:bg-warm-gray"
+                  >
+                    <User className="w-4 h-4 text-charcoal-muted" />
+                    {t("nav.myProfile")}
+                  </Link>
+                </SheetClose>
+                <button
+                  onClick={() => i18n.changeLanguage(nextLang)}
+                  className="flex items-center gap-2 px-3 py-3 rounded-xl text-sm text-charcoal hover:bg-warm-gray text-left"
+                >
+                  <Globe className="w-4 h-4 text-charcoal-muted" />
+                  {langLabel}
+                </button>
                 {user.email_verified && (
                   <SheetClose asChild>
                     <Link

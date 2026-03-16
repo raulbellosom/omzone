@@ -4,16 +4,16 @@
  */
 import { NavLink } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { LayoutDashboard, Calendar, ShoppingBag, CreditCard, User } from 'lucide-react'
+import { LayoutDashboard, Calendar, ShoppingBag, Package, User } from 'lucide-react'
 import ROUTES from '@/constants/routes'
 import { cn } from '@/lib/utils'
 
 const items = [
-  { icon: LayoutDashboard, key: 'nav.dashboard', href: ROUTES.ACCOUNT_DASHBOARD },
-  { icon: Calendar, key: 'nav.bookings', href: ROUTES.ACCOUNT_BOOKINGS },
-  { icon: ShoppingBag, key: 'nav.orders', href: ROUTES.ACCOUNT_ORDERS },
-  { icon: CreditCard, key: 'nav.membership', href: ROUTES.ACCOUNT_MEMBERSHIP },
-  { icon: User, key: 'nav.profile', href: ROUTES.ACCOUNT_PROFILE },
+  { icon: LayoutDashboard, key: 'nav.dashboard', href: ROUTES.ZONE_DASHBOARD },
+  { icon: Calendar, key: 'nav.bookings', href: ROUTES.ZONE_BOOKINGS },
+  { icon: ShoppingBag, key: 'nav.orders', href: ROUTES.ZONE_ORDERS },
+  { icon: Package, key: 'nav.packages', href: ROUTES.ZONE_PACKAGES },
+  { icon: User, key: 'nav.profile', href: ROUTES.ZONE_PROFILE },
 ]
 
 export default function BottomNav() {
@@ -26,7 +26,7 @@ export default function BottomNav() {
           <li key={href} className="flex-1">
             <NavLink
               to={href}
-              end={href === ROUTES.ACCOUNT_DASHBOARD}
+              end={href === ROUTES.ZONE_DASHBOARD}
               className={({ isActive }) =>
                 cn(
                   'relative flex flex-col items-center gap-0.5 py-2.5 px-1 text-[10px] font-medium',

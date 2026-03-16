@@ -1,6 +1,6 @@
 {
   "projectId": "69b37e1f001cce5d19cc",
-  "projectName": "dev",
+  "projectName": "OMZONE",
   "settings": {
     "services": {
       "account": true,
@@ -66,10 +66,7 @@
   "tables": [
     {
       "$id": "users_profile",
-      "$permissions": [
-        "read(\"label:admin\")",
-        "read(\"label:root\")"
-      ],
+      "$permissions": ["read(\"label:admin\")", "read(\"label:root\")"],
       "databaseId": "main",
       "name": "users_profile",
       "enabled": true,
@@ -1154,7 +1151,7 @@
       "databaseId": "main",
       "name": "orders",
       "enabled": true,
-      "rowSecurity": false,
+      "rowSecurity": true,
       "columns": [
         {
           "key": "orderNo",
@@ -1309,14 +1306,11 @@
     },
     {
       "$id": "order_items",
-      "$permissions": [
-        "read(\"label:admin\")",
-        "read(\"label:root\")"
-      ],
+      "$permissions": ["read(\"label:admin\")", "read(\"label:root\")"],
       "databaseId": "main",
       "name": "order_items",
       "enabled": true,
-      "rowSecurity": false,
+      "rowSecurity": true,
       "columns": [
         {
           "key": "orderId",
@@ -1411,14 +1405,11 @@
     },
     {
       "$id": "payments",
-      "$permissions": [
-        "read(\"label:admin\")",
-        "read(\"label:root\")"
-      ],
+      "$permissions": ["read(\"label:admin\")", "read(\"label:root\")"],
       "databaseId": "main",
       "name": "payments",
       "enabled": true,
-      "rowSecurity": false,
+      "rowSecurity": true,
       "columns": [
         {
           "key": "orderId",
@@ -1555,7 +1546,7 @@
       "databaseId": "main",
       "name": "bookings",
       "enabled": true,
-      "rowSecurity": false,
+      "rowSecurity": true,
       "columns": [
         {
           "key": "clientUserId",
@@ -1673,14 +1664,11 @@
     },
     {
       "$id": "client_packages",
-      "$permissions": [
-        "read(\"label:admin\")",
-        "read(\"label:root\")"
-      ],
+      "$permissions": ["read(\"label:admin\")", "read(\"label:root\")"],
       "databaseId": "main",
       "name": "client_packages",
       "enabled": true,
-      "rowSecurity": false,
+      "rowSecurity": true,
       "columns": [
         {
           "key": "clientUserId",
@@ -1801,14 +1789,11 @@
     },
     {
       "$id": "package_usages",
-      "$permissions": [
-        "read(\"label:admin\")",
-        "read(\"label:root\")"
-      ],
+      "$permissions": ["read(\"label:admin\")", "read(\"label:root\")"],
       "databaseId": "main",
       "name": "package_usages",
       "enabled": true,
-      "rowSecurity": false,
+      "rowSecurity": true,
       "columns": [
         {
           "key": "clientPackageId",
@@ -1923,7 +1908,7 @@
       "databaseId": "main",
       "name": "access_passes",
       "enabled": true,
-      "rowSecurity": false,
+      "rowSecurity": true,
       "columns": [
         {
           "key": "clientUserId",
@@ -2149,10 +2134,7 @@
     },
     {
       "$id": "audit_logs",
-      "$permissions": [
-        "read(\"label:admin\")",
-        "read(\"label:root\")"
-      ],
+      "$permissions": ["read(\"label:admin\")", "read(\"label:root\")"],
       "databaseId": "main",
       "name": "audit_logs",
       "enabled": true,
@@ -2382,6 +2364,21 @@
       "compression": "none",
       "encryption": true,
       "antivirus": true
+    },
+    {
+      "$id": "avatars",
+      "$permissions": [
+        "read(\"any\")",
+        "create(\"users\")"
+      ],
+      "fileSecurity": true,
+      "name": "User Avatars",
+      "enabled": true,
+      "maximumFileSize": 5242880,
+      "allowedFileExtensions": ["jpg", "jpeg", "png", "webp"],
+      "compression": "none",
+      "encryption": true,
+      "antivirus": true
     }
   ],
   "teams": [],
@@ -2400,7 +2397,12 @@
       "timeout": 15,
       "enabled": true,
       "logging": true,
-      "scopes": ["users.read", "databases.read", "databases.write"],
+      "scopes": [
+        "users.read",
+        "users.write",
+        "databases.read",
+        "databases.write"
+      ],
       "commands": "npm install"
     },
     {
@@ -2437,7 +2439,12 @@
       "timeout": 15,
       "enabled": true,
       "logging": true,
-      "scopes": ["users.read", "databases.read", "databases.write"],
+      "scopes": [
+        "users.read",
+        "users.write",
+        "databases.read",
+        "databases.write"
+      ],
       "commands": "npm install"
     }
   ]

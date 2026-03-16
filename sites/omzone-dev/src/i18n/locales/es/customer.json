@@ -3,7 +3,7 @@
     "dashboard": "Dashboard",
     "bookings": "Mis reservas",
     "orders": "Mis pedidos",
-    "membership": "Mi membresía",
+    "packages": "Mis paquetes",
     "profile": "Mi perfil"
   },
   "dashboard": {
@@ -118,6 +118,12 @@
     "emailNote": "El correo no se puede cambiar desde aquí.",
     "passwordSaved": "Contraseña actualizada",
     "passwordSaving": "Actualizando...",
-    "personalInfo": "Información personal"
+    "personalInfo": "Información personal",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "wrongPassword": "Contraseña incorrecta",
+    "sendingRecovery": "Enviando...",
+    "recoverySent": "Email de recuperación enviado",
+    "avatarSaved": "Foto de perfil actualizada",
+    "avatarError": "Archivo no válido (máx. 5 MB, formatos: jpg, png, webp)"
   }
 }

@@ -10,6 +10,8 @@ import {
 import {
   updateMyUserProfile,
   updateMyPhone,
+  uploadAvatar,
+  deleteAvatar,
 } from "@/services/appwrite/profileService";
 import { useAuth } from "@/hooks/useAuth.jsx";
 
@@ -54,14 +56,23 @@ export function useUpdateProfile() {
   const { user, refreshUser } = useAuth();
   return useMutation({
     mutationFn: async (data) => {
+      const profileUpdate = {};
+
+      // Handle avatar file upload
+      if (data.file instanceof File) {
+        if (user.avatar_id) await deleteAvatar(user.avatar_id)
+        const newAvatarId = await uploadAvatar(user.$id, data.file)
+        profileUpdate.avatarId = newAvatarId
+      }
+
+      if (data.first_name !== undefined) profileUpdate.firstName = data.first_name;
+      if (data.last_name !== undefined) profileUpdate.lastName = data.last_name;
+      if (data.locale !== undefined) profileUpdate.locale = data.locale;
+      if (data.avatarId !== undefined) profileUpdate.avatarId = data.avatarId;
+
       const promises = [];
-      const nameUpdate = {};
-      if (data.first_name !== undefined) nameUpdate.firstName = data.first_name;
-      if (data.last_name !== undefined) nameUpdate.lastName = data.last_name;
-      if (data.locale !== undefined) nameUpdate.locale = data.locale;
-      if (data.avatarId !== undefined) nameUpdate.avatarId = data.avatarId;
-      if (Object.keys(nameUpdate).length) {
-        promises.push(updateMyUserProfile(user.$id, nameUpdate));
+      if (Object.keys(profileUpdate).length) {
+        promises.push(updateMyUserProfile(user.$id, profileUpdate));
       }
       if (data.phone !== undefined) {
         promises.push(updateMyPhone(user.$id, data.phone || null));
