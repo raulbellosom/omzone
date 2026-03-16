@@ -9,8 +9,9 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Button } from '@/components/ui/button'
 import { useClasses, useClassTypes } from '@/hooks/useClasses'
 import { resolveField } from '@/lib/i18n-data'
+import { APP_BASE_URL } from '@/env'
 
-const BASE_URL = import.meta.env.VITE_APP_BASE_URL ?? 'https://omzone.com'
+const BASE_URL = APP_BASE_URL
 
 export default function ClassesPage() {
   const { t } = useTranslation('classes')

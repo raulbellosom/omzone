@@ -27,8 +27,9 @@ export default function VerifyEmailPage() {
   const navigate       = useNavigate();
   const { refreshUser } = useAuth();
 
-  const userId  = params.get("userId")
-  const secret  = params.get("secret")
+  const userId   = params.get("userId")
+  const secret   = params.get("secret")
+  const redirect = params.get("redirect") ?? ""
 
   const [status,   setStatus]   = useState(STATUS.VERIFYING)
   const [errorMsg, setErrorMsg] = useState("")
@@ -52,6 +53,10 @@ export default function VerifyEmailPage() {
         // Refresh auth context so the user object reflects the new state
         await refreshUser()
         setStatus(STATUS.SUCCESS)
+        // Small delay so the success state is visible before redirecting
+        setTimeout(() => {
+          navigate(redirect || ROUTES.ADMIN, { replace: true })
+        }, 1800)
       } catch (err) {
         const msg = err?.message ?? ""
         if (msg.includes("expired") || msg.includes("invalid") || msg.includes("401")) {
@@ -112,7 +117,7 @@ export default function VerifyEmailPage() {
               <Button
                 size="lg"
                 className="w-full group"
-                onClick={() => navigate(ROUTES.ACCOUNT_DASHBOARD, { replace: true })}
+                onClick={() => navigate(redirect || ROUTES.ADMIN, { replace: true })}
               >
                 {t("auth.verifyEmail.goToDashboard")}
                 <ArrowRight

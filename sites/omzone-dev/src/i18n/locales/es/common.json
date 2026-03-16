@@ -12,7 +12,9 @@
     "register": "Registrarse",
     "myAccount": "Mi cuenta",
     "logout": "Cerrar sesión",
-    "adminPanel": "Panel admin"
+    "adminPanel": "Panel admin",
+    "goToApp": "Ir a la aplicación",
+    "userMenu": "Menú de usuario"
   },
   "lang": {
     "es": "Español",
@@ -166,6 +168,30 @@
       "errorInvalid": "El enlace de verificación no es válido.",
       "tryAgain": "Solicitar nuevo enlace",
       "backToLogin": "Volver al inicio de sesión"
+    },
+    "forgotPassword": {
+      "title": "¿Olvidaste tu contraseña?",
+      "subtitle": "Ingresa tu correo y te enviaremos un enlace para restablecerla",
+      "email": "Correo electrónico",
+      "submit": "Enviar enlace",
+      "submitting": "Enviando...",
+      "successTitle": "Correo enviado",
+      "successSubtitle": "Revisa tu bandeja de entrada. El enlace es válido por 1 hora.",
+      "backToLogin": "Volver al inicio de sesión",
+      "error": "No encontramos una cuenta con ese correo."
+    },
+    "resetPassword": {
+      "title": "Nueva contraseña",
+      "subtitle": "Crea una contraseña segura para tu cuenta",
+      "newPassword": "Nueva contraseña",
+      "confirmPassword": "Confirmar contraseña",
+      "submit": "Restablecer contraseña",
+      "submitting": "Guardando...",
+      "successTitle": "¡Contraseña actualizada!",
+      "successSubtitle": "Ya puedes iniciar sesión con tu nueva contraseña.",
+      "goToLogin": "Ir a iniciar sesión",
+      "errorExpired": "El enlace de recuperación ha expirado. Solicita uno nuevo.",
+      "errorInvalid": "El enlace no es válido."
     }
   }
 }

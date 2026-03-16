@@ -18,12 +18,13 @@
  *
  * Request body (JSON): { "userId": "<auth_user_id>" }
  *
- * Environment variables:
- *   APPWRITE_ENDPOINT, APPWRITE_PROJECT_ID, APPWRITE_API_KEY
- *   APPWRITE_DATABASE_ID, APPWRITE_USERS_PROFILE_COLLECTION_ID
+ * Environment variables (Appwrite Console Global Variables — same names as frontend .env):
+ *   APPWRITE_ENDPOINT, APPWRITE_PROJECT_ID
+ *   APPWRITE_API_KEY                          — server secret (never in frontend .env)
+ *   APPWRITE_DATABASE_ID, APPWRITE_COLLECTION_USERS_PROFILE_ID
  */
 
-import { Client, Databases, Users, Query } from 'node-appwrite'
+import { Client, Databases, Users } from "node-appwrite";
 
 export default async ({ req, res, log, error }) => {
   const {
@@ -31,81 +32,87 @@ export default async ({ req, res, log, error }) => {
     APPWRITE_PROJECT_ID,
     APPWRITE_API_KEY,
     APPWRITE_DATABASE_ID,
-    APPWRITE_USERS_PROFILE_COLLECTION_ID,
-  } = process.env
+    APPWRITE_COLLECTION_USERS_PROFILE_ID,
+  } = process.env;
 
-  if (!APPWRITE_API_KEY || !APPWRITE_DATABASE_ID || !APPWRITE_USERS_PROFILE_COLLECTION_ID) {
-    error('Missing required environment variables.')
-    return res.json({ ok: false, error: 'Misconfigured function' }, 500)
+  const APPWRITE_USERS_PROFILE_COLLECTION_ID =
+    APPWRITE_COLLECTION_USERS_PROFILE_ID;
+
+  if (
+    !APPWRITE_API_KEY ||
+    !APPWRITE_DATABASE_ID ||
+    !APPWRITE_COLLECTION_USERS_PROFILE_ID
+  ) {
+    error("Missing required environment variables.");
+    return res.json({ ok: false, error: "Misconfigured function" }, 500);
   }
 
   // ── Parse body ─────────────────────────────────────────────────────────────
-  let body
+  let body;
   try {
-    body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body
+    body = typeof req.body === "string" ? JSON.parse(req.body) : req.body;
   } catch {
-    return res.json({ ok: false, error: 'Invalid JSON body' }, 400)
+    return res.json({ ok: false, error: "Invalid JSON body" }, 400);
   }
 
-  const requestedUserId = body?.userId
+  const requestedUserId = body?.userId;
   if (!requestedUserId) {
-    return res.json({ ok: false, error: 'Missing userId' }, 400)
+    return res.json({ ok: false, error: "Missing userId" }, 400);
   }
 
   // ── Authorization ──────────────────────────────────────────────────────────
-  const callerUserId = req.headers?.['x-appwrite-user-id']
+  const callerUserId = req.headers?.["x-appwrite-user-id"];
   if (callerUserId && callerUserId !== requestedUserId) {
-    error(`Unauthorized: caller ${callerUserId} attempted to sync ${requestedUserId}`)
-    return res.json({ ok: false, error: 'Unauthorized' }, 401)
+    error(
+      `Unauthorized: caller ${callerUserId} attempted to sync ${requestedUserId}`,
+    );
+    return res.json({ ok: false, error: "Unauthorized" }, 401);
   }
 
   // ── Server client ──────────────────────────────────────────────────────────
   const client = new Client()
-    .setEndpoint(APPWRITE_ENDPOINT || 'https://cloud.appwrite.io/v1')
+    .setEndpoint(APPWRITE_ENDPOINT || "https://cloud.appwrite.io/v1")
     .setProject(APPWRITE_PROJECT_ID)
-    .setKey(APPWRITE_API_KEY)
+    .setKey(APPWRITE_API_KEY);
 
-  const db    = new Databases(client)
-  const users = new Users(client)
+  const db = new Databases(client);
+  const users = new Users(client);
 
   // ── Read authoritative verification state from Auth ───────────────────────
-  let authUser
+  let authUser;
   try {
-    authUser = await users.get(requestedUserId)
+    authUser = await users.get(requestedUserId);
   } catch (e) {
-    error(`Failed to get Auth user: ${e.message}`)
-    return res.json({ ok: false, error: e.message }, 500)
+    error(`Failed to get Auth user: ${e.message}`);
+    return res.json({ ok: false, error: e.message }, 500);
   }
 
-  const emailVerified = authUser?.emailVerification ?? false
+  const emailVerified = authUser?.emailVerification ?? false;
 
-  // ── Fetch profile ──────────────────────────────────────────────────────────
-  let profile
+  // ── Fetch profile — document $id === userId ─────────────────────────────
+  let profile;
   try {
-    const result = await db.listDocuments(
+    profile = await db.getDocument(
       APPWRITE_DATABASE_ID,
       APPWRITE_USERS_PROFILE_COLLECTION_ID,
-      [Query.equal('userId', requestedUserId), Query.limit(1)],
-    )
-    profile = result.documents[0]
+      requestedUserId,
+    );
   } catch (e) {
-    error(`Failed to fetch profile: ${e.message}`)
-    return res.json({ ok: false, error: e.message }, 500)
-  }
-
-  if (!profile) {
-    return res.json({ ok: false, error: 'Profile not found' }, 404)
+    if (e.code === 404)
+      return res.json({ ok: false, error: "Profile not found" }, 404);
+    error(`Failed to fetch profile: ${e.message}`);
+    return res.json({ ok: false, error: e.message }, 500);
   }
 
   // ── Build update payload ───────────────────────────────────────────────────
   const update = {
     emailVerified,
     updatedAt: new Date().toISOString(),
-  }
+  };
 
   // Promote status from pending_verification → active when email is verified
-  if (emailVerified && profile.status === 'pending_verification') {
-    update.status = 'active'
+  if (emailVerified && profile.status === "pending_verification") {
+    update.status = "active";
   }
 
   // ── Persist to profile ─────────────────────────────────────────────────────
@@ -115,12 +122,12 @@ export default async ({ req, res, log, error }) => {
       APPWRITE_USERS_PROFILE_COLLECTION_ID,
       profile.$id,
       update,
-    )
+    );
   } catch (e) {
-    error(`Failed to update profile: ${e.message}`)
-    return res.json({ ok: false, error: e.message }, 500)
+    error(`Failed to update profile: ${e.message}`);
+    return res.json({ ok: false, error: e.message }, 500);
   }
 
-  log(`Synced emailVerified=${emailVerified} for user ${requestedUserId}`)
-  return res.json({ ok: true, emailVerified, statusUpdated: !!update.status })
-}
+  log(`Synced emailVerified=${emailVerified} for user ${requestedUserId}`);
+  return res.json({ ok: true, emailVerified, statusUpdated: !!update.status });
+};

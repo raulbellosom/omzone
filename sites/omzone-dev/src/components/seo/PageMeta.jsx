@@ -1,4 +1,5 @@
 import { Helmet } from 'react-helmet-async'
+import { APP_BASE_URL } from '@/env'
 
 /**
  * PageMeta — aplica metadata SEO por página usando react-helmet-async.
@@ -23,7 +24,7 @@ export default function PageMeta({
   children,
 }) {
   const siteName = 'Omzone'
-  const baseUrl = import.meta.env.VITE_APP_BASE_URL ?? 'https://omzone.com'
+  const baseUrl = APP_BASE_URL
   const defaultOgImage = `${baseUrl}/og-image.jpg`
 
   const fullTitle = title

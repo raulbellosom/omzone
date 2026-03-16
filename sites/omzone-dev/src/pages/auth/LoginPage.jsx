@@ -1,11 +1,15 @@
 /**
  * LoginPage — formulario de inicio de sesión.
  * Ruta: /login
- * Soporta mock (VITE_USE_MOCKS=true) y Appwrite real.
  * Muestra aviso si el email no está verificado + opción de reenvío.
  */
 import { useState } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import {
+  Link,
+  useNavigate,
+  useLocation,
+  useSearchParams,
+} from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Eye, EyeOff, ArrowRight, MailWarning, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
@@ -18,24 +22,25 @@ import ROUTES from "@/constants/routes";
 import { cn } from "@/lib/utils";
 import AuthSidePanel from "@/features/auth/AuthSidePanel";
 
-const USE_MOCKS = import.meta.env.VITE_USE_MOCKS === "true";
-
 export default function LoginPage() {
   const { t } = useTranslation("common");
   const { login } = useAuth();
-  const navigate  = useNavigate();
-  const location  = useLocation();
-  const from = location.state?.from ?? ROUTES.ACCOUNT_DASHBOARD;
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [searchParams] = useSearchParams();
+  const redirectParam = searchParams.get("redirect") ?? "";
+  // Priority: ?redirect param > router state (from RequireAuth) > /app (smart-redirects clients to /account)
+  const from = redirectParam || location.state?.from?.pathname || ROUTES.ADMIN;
 
-  const [email,      setEmail]      = useState("");
-  const [password,   setPassword]   = useState("");
-  const [showPass,   setShowPass]   = useState(false);
-  const [error,      setError]      = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPass, setShowPass] = useState(false);
+  const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
   // Shown when user logs in but email is not yet verified
-  const [unverified,  setUnverified]  = useState(false);
-  const [resending,   setResending]   = useState(false);
+  const [unverified, setUnverified] = useState(false);
+  const [resending, setResending] = useState(false);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -47,17 +52,18 @@ export default function LoginPage() {
 
     try {
       const user = await login(email.trim(), password);
-
-      // Block access if email not verified (real mode only)
-      if (!USE_MOCKS && !user?.email_verified) {
-        setUnverified(true);
-        return;
-      }
-
       navigate(from, { replace: true });
     } catch (err) {
       const msg = err?.message ?? "";
-      if (msg.includes("401") || msg.includes("invalid_credentials") || msg.includes("Invalid credentials")) {
+      if (err?.code === "email_not_verified" || msg === "email_not_verified") {
+        setUnverified(true);
+        return;
+      }
+      if (
+        msg.includes("401") ||
+        msg.includes("invalid_credentials") ||
+        msg.includes("Invalid credentials")
+      ) {
         setError(t("auth.login.error"));
       } else {
         setError(t("errors.generic"));
@@ -71,9 +77,8 @@ export default function LoginPage() {
     if (resending) return;
     setResending(true);
     try {
-      const { sendEmailVerification } = await import(
-        "@/services/appwrite/authService"
-      );
+      const { sendEmailVerification } =
+        await import("@/services/appwrite/authService");
       await sendEmailVerification();
       toast.success(t("auth.login.resendSuccess"));
     } catch {
@@ -127,12 +132,14 @@ export default function LoginPage() {
 
             {/* Card */}
             <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-warm-gray-dark/30 shadow-card p-6 sm:p-8 auth-stagger-3">
-
               {/* Email not verified warning */}
               {unverified && (
                 <div className="mb-5 bg-amber-50 border border-amber-200 rounded-xl p-4">
                   <div className="flex gap-3">
-                    <MailWarning className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" aria-hidden="true" />
+                    <MailWarning
+                      className="w-5 h-5 text-amber-600 shrink-0 mt-0.5"
+                      aria-hidden="true"
+                    />
                     <div>
                       <p className="text-sm font-medium text-amber-800">
                         {t("auth.login.unverifiedEmail")}
@@ -143,7 +150,10 @@ export default function LoginPage() {
                         disabled={resending}
                         className="mt-2 inline-flex items-center gap-1.5 text-xs font-medium text-amber-700 hover:text-amber-900 hover:underline transition-colors disabled:opacity-60"
                       >
-                        <RefreshCw className={cn("w-3 h-3", resending && "animate-spin")} aria-hidden="true" />
+                        <RefreshCw
+                          className={cn("w-3 h-3", resending && "animate-spin")}
+                          aria-hidden="true"
+                        />
                         {resending
                           ? t("actions.loading")
                           : t("auth.login.resendVerification")}
@@ -191,6 +201,7 @@ export default function LoginPage() {
                     </Label>
                     <button
                       type="button"
+                      onClick={() => navigate(ROUTES.AUTH_FORGOT_PASSWORD)}
                       className="text-xs text-sage hover:text-sage-dark hover:underline transition-colors"
                     >
                       {t("auth.login.forgotPassword")}
@@ -210,7 +221,9 @@ export default function LoginPage() {
                       type="button"
                       onClick={() => setShowPass(!showPass)}
                       className="absolute right-3.5 top-1/2 -translate-y-1/2 text-charcoal-subtle hover:text-charcoal transition-colors p-1"
-                      aria-label={showPass ? "Ocultar contraseña" : "Mostrar contraseña"}
+                      aria-label={
+                        showPass ? "Ocultar contraseña" : "Mostrar contraseña"
+                      }
                     >
                       {showPass ? (
                         <EyeOff className="w-4.5 h-4.5" />
@@ -241,45 +254,17 @@ export default function LoginPage() {
                   )}
                 </Button>
               </form>
-
-              {/* Divider */}
-              <div className="flex items-center gap-3 my-6">
-                <div className="flex-1 h-px bg-warm-gray-dark/40" />
-                <span className="text-xs text-charcoal-subtle uppercase tracking-wide">
-                  {t("auth.login.orContinueWith")}
-                </span>
-                <div className="flex-1 h-px bg-warm-gray-dark/40" />
-              </div>
-
-              {/* Social login placeholder */}
-              <button
-                type="button"
-                disabled
-                className="w-full flex items-center justify-center gap-3 h-12 rounded-xl border border-warm-gray-dark/40 bg-white hover:bg-warm-gray/50 text-charcoal-light text-sm font-medium transition-colors disabled:opacity-50"
-                title="Próximamente"
-              >
-                <svg className="w-5 h-5" viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4" />
-                  <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
-                  <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18A10.96 10.96 0 0 0 1 12c0 1.77.42 3.44 1.18 4.93l3.66-2.84z" fill="#FBBC05" />
-                  <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
-                </svg>
-                {t("auth.login.google")}
-              </button>
-
-              {/* Demo hint — solo visible en modo mock */}
-              {USE_MOCKS && (
-                <p className="text-xs text-center text-charcoal-subtle mt-5 bg-sage-muted/30 border border-sage/10 rounded-xl px-3 py-2.5">
-                  {t("auth.login.demoHint")}
-                </p>
-              )}
             </div>
 
             {/* Registro link */}
             <p className="text-sm text-center text-charcoal-muted mt-8 auth-stagger-4">
               {t("auth.login.noAccount")}{" "}
               <Link
-                to={ROUTES.REGISTER}
+                to={
+                  redirectParam
+                    ? `${ROUTES.REGISTER}?redirect=${encodeURIComponent(redirectParam)}`
+                    : ROUTES.REGISTER
+                }
                 className="text-sage font-semibold hover:text-sage-dark hover:underline transition-colors"
               >
                 {t("auth.login.createAccount")}

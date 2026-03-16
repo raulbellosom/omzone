@@ -12,7 +12,9 @@
     "register": "Sign up",
     "myAccount": "My account",
     "logout": "Sign out",
-    "adminPanel": "Admin panel"
+    "adminPanel": "Admin panel",
+    "goToApp": "Go to app",
+    "userMenu": "User menu"
   },
   "lang": {
     "es": "Español",
@@ -166,6 +168,30 @@
       "errorInvalid": "The verification link is not valid.",
       "tryAgain": "Request new link",
       "backToLogin": "Back to sign in"
+    },
+    "forgotPassword": {
+      "title": "Forgot your password?",
+      "subtitle": "Enter your email and we'll send you a link to reset it",
+      "email": "Email address",
+      "submit": "Send link",
+      "submitting": "Sending...",
+      "successTitle": "Email sent",
+      "successSubtitle": "Check your inbox. The link is valid for 1 hour.",
+      "backToLogin": "Back to sign in",
+      "error": "We couldn't find an account with that email."
+    },
+    "resetPassword": {
+      "title": "New password",
+      "subtitle": "Create a secure password for your account",
+      "newPassword": "New password",
+      "confirmPassword": "Confirm password",
+      "submit": "Reset password",
+      "submitting": "Saving...",
+      "successTitle": "Password updated!",
+      "successSubtitle": "You can now sign in with your new password.",
+      "goToLogin": "Go to sign in",
+      "errorExpired": "The recovery link has expired. Please request a new one.",
+      "errorInvalid": "The recovery link is not valid."
     }
   }
 }

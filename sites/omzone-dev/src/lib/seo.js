@@ -6,8 +6,10 @@
  *   const meta = buildPageMeta({ title: 'Morning Flow', description: '...' })
  */
 
+import { APP_BASE_URL } from '@/env'
+
 const SITE_NAME = 'Omzone'
-const BASE_URL = import.meta.env.VITE_APP_BASE_URL ?? 'https://omzone.com'
+const BASE_URL = APP_BASE_URL
 const DEFAULT_OG_IMAGE = `${BASE_URL}/og-image.jpg`
 
 /**

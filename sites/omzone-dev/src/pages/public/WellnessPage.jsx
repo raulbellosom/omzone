@@ -8,8 +8,9 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { useWellnessProducts } from '@/hooks/useWellness'
 import { resolveField } from '@/lib/i18n-data'
 import { cn } from '@/lib/utils'
+import { APP_BASE_URL } from '@/env'
 
-const BASE_URL = import.meta.env.VITE_APP_BASE_URL ?? 'https://omzone.com'
+const BASE_URL = APP_BASE_URL
 
 const PRODUCT_TYPES = ['smoothie', 'snack', 'supplement', 'plan', 'addon', 'other']
 

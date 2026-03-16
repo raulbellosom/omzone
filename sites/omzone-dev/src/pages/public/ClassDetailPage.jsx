@@ -18,8 +18,9 @@ import { formatDateTime, formatDuration } from '@/lib/dates'
 import ROUTES from '@/constants/routes'
 import { cn } from '@/lib/utils'
 import { buildClassStructuredData } from '@/lib/seo'
+import { APP_BASE_URL } from '@/env'
 
-const BASE_URL = import.meta.env.VITE_APP_BASE_URL ?? 'https://omzone.com'
+const BASE_URL = APP_BASE_URL
 
 const TYPE_GRADIENTS = {
   vinyasa:    'from-sage-muted to-sage-light',

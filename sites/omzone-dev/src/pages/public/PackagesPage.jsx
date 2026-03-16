@@ -5,8 +5,9 @@ import PackageCard from '@/features/packages/PackageCard'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useWellnessPackages } from '@/hooks/useWellness'
 import { resolveField } from '@/lib/i18n-data'
+import { APP_BASE_URL } from '@/env'
 
-const BASE_URL = import.meta.env.VITE_APP_BASE_URL ?? 'https://omzone.com'
+const BASE_URL = APP_BASE_URL
 
 export default function PackagesPage() {
   const { t } = useTranslation('packages')

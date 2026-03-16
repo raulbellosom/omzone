@@ -3,31 +3,38 @@
  * All functions use the client SDK (browser context).
  * Server-only operations (role/status writes) are handled by Functions.
  */
-import { ID } from 'appwrite'
-import { account } from './client'
+import { ID } from "appwrite";
+import { account } from "./client";
+import { APPWRITE_APP_URL } from "@/env";
 
 /**
  * Register a new user.
  * Steps: create account → start session → send verification email.
  * @returns {Promise<object>} Appwrite Auth user object
  */
-export async function registerWithEmailPassword({ firstName, lastName, email, password }) {
-  const fn        = firstName.trim()
-  const ln        = lastName.trim()
-  const fullName  = [fn, ln].filter(Boolean).join(' ')
-  const cleanEmail = email.trim().toLowerCase()
+export async function registerWithEmailPassword({
+  firstName,
+  lastName,
+  email,
+  password,
+  locale = "es",
+}) {
+  const fn = firstName.trim();
+  const ln = lastName.trim();
+  const fullName = [fn, ln].filter(Boolean).join(" ");
+  const cleanEmail = email.trim().toLowerCase();
 
   // 1. Create user (triggers create-user-profile function via event)
-  await account.create(ID.unique(), cleanEmail, password, fullName)
+  await account.create(ID.unique(), cleanEmail, password, fullName);
 
   // 2. Start session immediately so we can request email verification
-  await account.createEmailPasswordSession(cleanEmail, password)
+  await account.createEmailPasswordSession(cleanEmail, password);
 
-  // 3. Send verification email (Appwrite uses its configured SMTP + templates)
-  const appUrl = import.meta.env.VITE_APPWRITE_APP_URL || import.meta.env.VITE_APP_BASE_URL
-  await account.createVerification(`${appUrl}/auth/verify-email`)
+  // 3. Send verification email
+  const appUrl = APPWRITE_APP_URL;
+  await account.createVerification(`${appUrl}/auth/verify-email`);
 
-  return account.get()
+  return account.get();
 }
 
 /**
@@ -35,15 +42,18 @@ export async function registerWithEmailPassword({ firstName, lastName, email, pa
  * @returns {Promise<object>} Appwrite Auth user object
  */
 export async function loginWithEmailPassword(email, password) {
-  await account.createEmailPasswordSession(email.trim().toLowerCase(), password)
-  return account.get()
+  await account.createEmailPasswordSession(
+    email.trim().toLowerCase(),
+    password,
+  );
+  return account.get();
 }
 
 /**
  * Destroy current session.
  */
 export async function logout() {
-  await account.deleteSession('current')
+  await account.deleteSession("current");
 }
 
 /**
@@ -52,9 +62,9 @@ export async function logout() {
  */
 export async function getCurrentUser() {
   try {
-    return await account.get()
+    return await account.get();
   } catch {
-    return null
+    return null;
   }
 }
 
@@ -63,8 +73,8 @@ export async function getCurrentUser() {
  * User must be logged in.
  */
 export async function sendEmailVerification() {
-  const appUrl = import.meta.env.VITE_APPWRITE_APP_URL || import.meta.env.VITE_APP_BASE_URL
-  return account.createVerification(`${appUrl}/auth/verify-email`)
+  const appUrl = APPWRITE_APP_URL;
+  return account.createVerification(`${appUrl}/auth/verify-email`);
 }
 
 /**
@@ -72,5 +82,25 @@ export async function sendEmailVerification() {
  * Called from VerifyEmailPage after reading URL query params.
  */
 export async function confirmEmailVerification(userId, secret) {
-  return account.updateVerification(userId, secret)
+  return account.updateVerification(userId, secret);
+}
+
+/**
+ * Send password recovery email.
+ * Appwrite emails a link: REDIRECT_URL?userId=xxx&secret=yyy
+ */
+export async function sendPasswordRecovery(email) {
+  const appUrl = APPWRITE_APP_URL;
+  return account.createRecovery(
+    email.trim().toLowerCase(),
+    `${appUrl}/auth/reset-password`,
+  );
+}
+
+/**
+ * Confirm password recovery and set new password.
+ * Called from ResetPasswordPage after reading userId + secret from URL params.
+ */
+export async function confirmPasswordRecovery(userId, secret, password) {
+  return account.updateRecovery(userId, secret, password);
 }

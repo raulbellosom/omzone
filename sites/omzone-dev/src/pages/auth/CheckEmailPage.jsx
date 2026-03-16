@@ -16,9 +16,10 @@ import AuthSidePanel from "@/features/auth/AuthSidePanel";
 import { sendEmailVerification } from "@/services/appwrite/authService";
 
 export default function CheckEmailPage() {
-  const { t }          = useTranslation("common");
-  const [params]       = useSearchParams();
-  const email          = params.get("email") ?? "";
+  const { t } = useTranslation("common");
+  const [params] = useSearchParams();
+  const email = params.get("email") ?? "";
+  const redirect = params.get("redirect") ?? "";
 
   const [resending, setResending] = useState(false);
 
@@ -104,7 +105,11 @@ export default function CheckEmailPage() {
 
             {/* Back link */}
             <Link
-              to={ROUTES.REGISTER}
+              to={
+                redirect
+                  ? `${ROUTES.REGISTER}?redirect=${encodeURIComponent(redirect)}`
+                  : ROUTES.REGISTER
+              }
               className="inline-flex items-center gap-1.5 text-sm text-charcoal-subtle hover:text-charcoal transition-colors mt-8"
             >
               <ArrowLeft className="w-4 h-4" aria-hidden="true" />

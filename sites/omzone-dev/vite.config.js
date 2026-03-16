@@ -11,6 +11,9 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
+  // Expose vars with APPWRITE_ prefix (shared with functions) and VITE_ (frontend-only).
+  // APPWRITE_API_KEY is safe: it lives only in Appwrite Console global vars, never in .env.
+  envPrefix: ['APPWRITE_', 'VITE_'],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),

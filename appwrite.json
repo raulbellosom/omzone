@@ -1,626 +1,2358 @@
 {
-    "projectId": "69b37e1f001cce5d19cc",
-    "projectName": "dev",
-    "settings": {
-        "services": {
-            "account": true,
-            "avatars": true,
-            "databases": true,
-            "locale": true,
-            "health": true,
-            "storage": true,
-            "teams": true,
-            "users": true,
-            "sites": true,
-            "functions": true,
-            "graphql": true,
-            "messaging": true
-        },
-        "auth": {
-            "methods": {
-                "jwt": true,
-                "phone": true,
-                "invites": true,
-                "anonymous": true,
-                "email-otp": true,
-                "magic-url": true,
-                "email-password": true
-            },
-            "security": {
-                "duration": 31536000,
-                "limit": 0,
-                "sessionsLimit": 10,
-                "passwordHistory": 0,
-                "passwordDictionary": false,
-                "personalDataCheck": false,
-                "sessionAlerts": false,
-                "mockNumbers": []
-            }
-        }
+  "projectId": "69b37e1f001cce5d19cc",
+  "projectName": "dev",
+  "settings": {
+    "services": {
+      "account": true,
+      "avatars": true,
+      "databases": true,
+      "locale": true,
+      "health": true,
+      "storage": true,
+      "teams": true,
+      "users": true,
+      "sites": true,
+      "functions": true,
+      "graphql": true,
+      "messaging": true
     },
-    "sites": [
+    "auth": {
+      "methods": {
+        "jwt": true,
+        "phone": true,
+        "invites": true,
+        "anonymous": true,
+        "email-otp": true,
+        "magic-url": true,
+        "email-password": true
+      },
+      "security": {
+        "duration": 31536000,
+        "limit": 0,
+        "sessionsLimit": 10,
+        "passwordHistory": 0,
+        "passwordDictionary": false,
+        "personalDataCheck": false,
+        "sessionAlerts": false,
+        "mockNumbers": []
+      }
+    }
+  },
+  "sites": [
+    {
+      "$id": "69b465ef00065194e9d2",
+      "name": "omzone-dev",
+      "path": "sites/omzone-dev",
+      "framework": "vite",
+      "enabled": true,
+      "logging": true,
+      "timeout": 30,
+      "buildRuntime": "node-22",
+      "adapter": "static",
+      "installCommand": "npm install",
+      "buildCommand": "npm run build",
+      "outputDirectory": "./dist",
+      "fallbackFile": "index.html",
+      "specification": "s-8vcpu-8gb"
+    }
+  ],
+  "tablesDB": [
+    {
+      "$id": "main",
+      "name": "main",
+      "enabled": true
+    }
+  ],
+  "tables": [
+    {
+      "$id": "users_profile",
+      "$permissions": [],
+      "databaseId": "main",
+      "name": "users_profile",
+      "enabled": true,
+      "rowSecurity": true,
+      "columns": [
         {
-            "$id": "69b465ef00065194e9d2",
-            "name": "omzone-dev",
-            "path": "sites/omzone-dev",
-            "framework": "vite",
-            "enabled": true,
-            "logging": true,
-            "timeout": 30,
-            "buildRuntime": "node-22",
-            "adapter": "static",
-            "installCommand": "npm install",
-            "buildCommand": "npm run build",
-            "outputDirectory": "./dist",
-            "fallbackFile": "index.html",
-            "specification": "s-8vcpu-8gb"
+          "key": "roleKey",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "default": "client",
+          "format": "enum",
+          "elements": ["root", "admin", "client"]
+        },
+        {
+          "key": "firstName",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 80,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "lastName",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 80,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "fullName",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 200,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "email",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "default": null,
+          "format": "email"
+        },
+        {
+          "key": "emailVerified",
+          "type": "boolean",
+          "required": false,
+          "array": false,
+          "default": false
+        },
+        {
+          "key": "phone",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 20,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "avatarId",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "status",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "default": "pending_verification",
+          "format": "enum",
+          "elements": ["pending_verification", "active", "inactive", "blocked"]
+        },
+        {
+          "key": "onboardingCompleted",
+          "type": "boolean",
+          "required": false,
+          "array": false,
+          "default": false
+        },
+        {
+          "key": "provider",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 40,
+          "default": "email",
+          "encrypt": false
+        },
+        {
+          "key": "locale",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 10,
+          "default": "es",
+          "encrypt": false
+        },
+        {
+          "key": "isSystemUser",
+          "type": "boolean",
+          "required": false,
+          "array": false,
+          "default": false
+        },
+        {
+          "key": "enabled",
+          "type": "boolean",
+          "required": false,
+          "array": false,
+          "default": true
+        },
+        {
+          "key": "createdAt",
+          "type": "datetime",
+          "required": false,
+          "array": false,
+          "default": null
+        },
+        {
+          "key": "updatedAt",
+          "type": "datetime",
+          "required": false,
+          "array": false,
+          "default": null
         }
-    ],
-    "tablesDB": [
+      ],
+      "indexes": [
         {
-            "$id": "main",
-            "name": "main",
-            "enabled": true
+          "key": "uq_profile_email",
+          "type": "unique",
+          "status": "available",
+          "columns": ["email"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_profile_role",
+          "type": "key",
+          "status": "available",
+          "columns": ["roleKey"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_profile_status",
+          "type": "key",
+          "status": "available",
+          "columns": ["status"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_profile_system",
+          "type": "key",
+          "status": "available",
+          "columns": ["isSystemUser"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_profile_verified",
+          "type": "key",
+          "status": "available",
+          "columns": ["emailVerified"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_profile_onboarding",
+          "type": "key",
+          "status": "available",
+          "columns": ["onboardingCompleted"],
+          "orders": ["ASC"]
         }
-    ],
-    "tables": [
+      ]
+    },
+    {
+      "$id": "contact_leads",
+      "$permissions": [],
+      "databaseId": "main",
+      "name": "contact_leads",
+      "enabled": true,
+      "rowSecurity": false,
+      "columns": [
         {
-            "$id": "users_profile",
-            "$permissions": [],
-            "databaseId": "main",
-            "name": "users_profile",
-            "enabled": true,
-            "rowSecurity": true,
-            "columns": [
-                { "key": "userId",               "type": "string",   "required": true,  "array": false, "size": 64,  "default": null,    "encrypt": false },
-                { "key": "roleKey",              "type": "string",   "required": false, "array": false, "default": "client", "format": "enum", "elements": ["root","admin","client"] },
-                { "key": "firstName",            "type": "string",   "required": false, "array": false, "size": 80,  "default": null,    "encrypt": false },
-                { "key": "lastName",             "type": "string",   "required": false, "array": false, "size": 80,  "default": null,    "encrypt": false },
-                { "key": "fullName",             "type": "string",   "required": false, "array": false, "size": 200, "default": null,    "encrypt": false },
-                { "key": "email",                "type": "string",   "required": false, "array": false, "default": null, "format": "email" },
-                { "key": "emailVerified",        "type": "boolean",  "required": false, "array": false, "default": false },
-                { "key": "phone",                "type": "string",   "required": false, "array": false, "size": 20,  "default": null,    "encrypt": false },
-                { "key": "avatarId",             "type": "string",   "required": false, "array": false, "size": 64,  "default": null,    "encrypt": false },
-                { "key": "status",               "type": "string",   "required": false, "array": false, "default": "pending_verification", "format": "enum", "elements": ["pending_verification","active","inactive","blocked"] },
-                { "key": "onboardingCompleted",  "type": "boolean",  "required": false, "array": false, "default": false },
-                { "key": "provider",             "type": "string",   "required": false, "array": false, "size": 40,  "default": "email", "encrypt": false },
-                { "key": "locale",               "type": "string",   "required": false, "array": false, "size": 10,  "default": "es",    "encrypt": false },
-                { "key": "isSystemUser",         "type": "boolean",  "required": false, "array": false, "default": false },
-                { "key": "enabled",              "type": "boolean",  "required": false, "array": false, "default": true },
-                { "key": "createdAt",            "type": "datetime", "required": false, "array": false, "default": null },
-                { "key": "updatedAt",            "type": "datetime", "required": false, "array": false, "default": null }
-            ],
-            "indexes": [
-                { "key": "uq_profile_user",         "type": "unique", "status": "available", "columns": ["userId"],          "orders": ["ASC"] },
-                { "key": "uq_profile_email",        "type": "unique", "status": "available", "columns": ["email"],           "orders": ["ASC"] },
-                { "key": "idx_profile_role",        "type": "key",    "status": "available", "columns": ["roleKey"],         "orders": ["ASC"] },
-                { "key": "idx_profile_status",      "type": "key",    "status": "available", "columns": ["status"],          "orders": ["ASC"] },
-                { "key": "idx_profile_system",      "type": "key",    "status": "available", "columns": ["isSystemUser"],    "orders": ["ASC"] },
-                { "key": "idx_profile_verified",    "type": "key",    "status": "available", "columns": ["emailVerified"],   "orders": ["ASC"] },
-                { "key": "idx_profile_onboarding",  "type": "key",    "status": "available", "columns": ["onboardingCompleted"], "orders": ["ASC"] }
-            ]
+          "key": "fullName",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 120,
+          "default": null,
+          "encrypt": false
         },
         {
-            "$id": "contact_leads",
-            "$permissions": [],
-            "databaseId": "main",
-            "name": "contact_leads",
-            "enabled": true,
-            "rowSecurity": false,
-            "columns": [
-                { "key": "fullName",     "type": "string", "required": false, "array": false, "size": 120,  "default": null, "encrypt": false },
-                { "key": "email",        "type": "string", "required": false, "array": false, "default": null, "format": "email" },
-                { "key": "phone",        "type": "string", "required": false, "array": false, "size": 20,   "default": null, "encrypt": false },
-                { "key": "interestType", "type": "string", "required": false, "array": false, "default": null, "format": "enum", "elements": ["class","package","wellness","other"] },
-                { "key": "notes",        "type": "string", "required": false, "array": false, "size": 4000, "default": null, "encrypt": false },
-                { "key": "status",       "type": "string", "required": false, "array": false, "default": null, "format": "enum", "elements": ["new","contacted","qualified","won","lost"] }
-            ],
-            "indexes": [
-                { "key": "idx_leads_email",    "type": "key", "status": "available", "columns": ["email"],        "orders": ["ASC"] },
-                { "key": "idx_leads_interest", "type": "key", "status": "available", "columns": ["interestType"], "orders": ["ASC"] },
-                { "key": "idx_leads_status",   "type": "key", "status": "available", "columns": ["status"],       "orders": ["ASC"] }
-            ]
+          "key": "email",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "default": null,
+          "format": "email"
         },
         {
-            "$id": "instructors",
-            "$permissions": [],
-            "databaseId": "main",
-            "name": "instructors",
-            "enabled": true,
-            "rowSecurity": false,
-            "columns": [
-                { "key": "slug",         "type": "string",  "required": false, "array": false, "size": 100,  "default": null, "encrypt": false },
-                { "key": "fullName",     "type": "string",  "required": false, "array": false, "size": 120,  "default": null, "encrypt": false },
-                { "key": "shortBio",     "type": "string",  "required": false, "array": false, "size": 600,  "default": null, "encrypt": false },
-                { "key": "photoId",      "type": "string",  "required": false, "array": false, "size": 64,   "default": null, "encrypt": false },
-                { "key": "specialties",  "type": "string",  "required": false, "array": false, "size": 2000, "default": null, "encrypt": false },
-                { "key": "displayOrder", "type": "integer", "required": false, "array": false, "default": null },
-                { "key": "enabled",      "type": "boolean", "required": false, "array": false, "default": null }
-            ],
-            "indexes": [
-                { "key": "uq_inst_slug",     "type": "unique", "status": "available", "columns": ["slug"],         "orders": ["ASC"] },
-                { "key": "idx_inst_order",   "type": "key",    "status": "available", "columns": ["displayOrder"], "orders": ["ASC"] },
-                { "key": "idx_inst_enabled", "type": "key",    "status": "available", "columns": ["enabled"],      "orders": ["ASC"] }
-            ]
+          "key": "phone",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 20,
+          "default": null,
+          "encrypt": false
         },
         {
-            "$id": "class_types",
-            "$permissions": [],
-            "databaseId": "main",
-            "name": "class_types",
-            "enabled": true,
-            "rowSecurity": false,
-            "columns": [
-                { "key": "slug",        "type": "string",  "required": false, "array": false, "size": 80,  "default": null, "encrypt": false },
-                { "key": "nameEs",      "type": "string",  "required": false, "array": false, "size": 80,  "default": null, "encrypt": false },
-                { "key": "nameEn",      "type": "string",  "required": false, "array": false, "size": 80,  "default": null, "encrypt": false },
-                { "key": "description", "type": "string",  "required": false, "array": false, "size": 500, "default": null, "encrypt": false },
-                { "key": "enabled",     "type": "boolean", "required": false, "array": false, "default": null }
-            ],
-            "indexes": [
-                { "key": "uq_clstype_slug",     "type": "unique", "status": "available", "columns": ["slug"],    "orders": ["ASC"] },
-                { "key": "idx_clstype_enabled", "type": "key",    "status": "available", "columns": ["enabled"], "orders": ["ASC"] }
-            ]
+          "key": "interestType",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "default": null,
+          "format": "enum",
+          "elements": ["class", "package", "wellness", "other"]
         },
         {
-            "$id": "classes",
-            "$permissions": [],
-            "databaseId": "main",
-            "name": "classes",
-            "enabled": true,
-            "rowSecurity": false,
-            "columns": [
-                { "key": "slug",          "type": "string",  "required": false, "array": false, "size": 120,  "default": null, "encrypt": false },
-                { "key": "titleEs",       "type": "string",  "required": false, "array": false, "size": 120,  "default": null, "encrypt": false },
-                { "key": "titleEn",       "type": "string",  "required": false, "array": false, "size": 120,  "default": null, "encrypt": false },
-                { "key": "summaryEs",     "type": "string",  "required": false, "array": false, "size": 320,  "default": null, "encrypt": false },
-                { "key": "summaryEn",     "type": "string",  "required": false, "array": false, "size": 320,  "default": null, "encrypt": false },
-                { "key": "descriptionEs", "type": "string",  "required": false, "array": false, "size": 6000, "default": null, "encrypt": false },
-                { "key": "descriptionEn", "type": "string",  "required": false, "array": false, "size": 6000, "default": null, "encrypt": false },
-                { "key": "classTypeId",   "type": "string",  "required": false, "array": false, "size": 64,   "default": null, "encrypt": false },
-                { "key": "instructorId",  "type": "string",  "required": false, "array": false, "size": 64,   "default": null, "encrypt": false },
-                { "key": "difficulty",    "type": "string",  "required": false, "array": false, "default": null, "format": "enum", "elements": ["beginner","intermediate","advanced","all_levels"] },
-                { "key": "durationMin",   "type": "integer", "required": false, "array": false, "default": null },
-                { "key": "basePrice",     "type": "double",  "required": false, "array": false, "default": null },
-                { "key": "coverImageId",  "type": "string",  "required": false, "array": false, "size": 64,   "default": null, "encrypt": false },
-                { "key": "isFeatured",    "type": "boolean", "required": false, "array": false, "default": null },
-                { "key": "enabled",       "type": "boolean", "required": false, "array": false, "default": null }
-            ],
-            "indexes": [
-                { "key": "uq_classes_slug",     "type": "unique", "status": "available", "columns": ["slug"],         "orders": ["ASC"] },
-                { "key": "idx_classes_type",    "type": "key",    "status": "available", "columns": ["classTypeId"],  "orders": ["ASC"] },
-                { "key": "idx_classes_instr",   "type": "key",    "status": "available", "columns": ["instructorId"], "orders": ["ASC"] },
-                { "key": "idx_classes_diff",    "type": "key",    "status": "available", "columns": ["difficulty"],   "orders": ["ASC"] },
-                { "key": "idx_classes_feat",    "type": "key",    "status": "available", "columns": ["isFeatured"],   "orders": ["ASC"] },
-                { "key": "idx_classes_enabled", "type": "key",    "status": "available", "columns": ["enabled"],      "orders": ["ASC"] }
-            ]
+          "key": "notes",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 4000,
+          "default": null,
+          "encrypt": false
         },
         {
-            "$id": "class_sessions",
-            "$permissions": [],
-            "databaseId": "main",
-            "name": "class_sessions",
-            "enabled": true,
-            "rowSecurity": false,
-            "columns": [
-                { "key": "classId",       "type": "string",   "required": false, "array": false, "size": 64,  "default": null, "encrypt": false },
-                { "key": "sessionDate",   "type": "datetime", "required": false, "array": false, "default": null },
-                { "key": "endDate",       "type": "datetime", "required": false, "array": false, "default": null },
-                { "key": "capacityTotal", "type": "integer",  "required": false, "array": false, "default": null },
-                { "key": "capacityTaken", "type": "integer",  "required": false, "array": false, "default": null },
-                { "key": "priceOverride", "type": "double",   "required": false, "array": false, "default": null },
-                { "key": "instructorId",  "type": "string",   "required": false, "array": false, "size": 64,  "default": null, "encrypt": false },
-                { "key": "status",        "type": "string",   "required": false, "array": false, "default": null, "format": "enum", "elements": ["scheduled","full","cancelled","completed"] },
-                { "key": "locationLabel", "type": "string",   "required": false, "array": false, "size": 120, "default": null, "encrypt": false },
-                { "key": "enabled",       "type": "boolean",  "required": false, "array": false, "default": null }
-            ],
-            "indexes": [
-                { "key": "idx_sess_class",   "type": "key", "status": "available", "columns": ["classId"],     "orders": ["ASC"] },
-                { "key": "idx_sess_date",    "type": "key", "status": "available", "columns": ["sessionDate"], "orders": ["ASC"] },
-                { "key": "idx_sess_status",  "type": "key", "status": "available", "columns": ["status"],      "orders": ["ASC"] },
-                { "key": "idx_sess_instr",   "type": "key", "status": "available", "columns": ["instructorId"],"orders": ["ASC"] },
-                { "key": "idx_sess_enabled", "type": "key", "status": "available", "columns": ["enabled"],     "orders": ["ASC"] }
-            ]
-        },
-        {
-            "$id": "wellness_products",
-            "$permissions": [],
-            "databaseId": "main",
-            "name": "wellness_products",
-            "enabled": true,
-            "rowSecurity": false,
-            "columns": [
-                { "key": "slug",          "type": "string",  "required": false, "array": false, "size": 100,  "default": null, "encrypt": false },
-                { "key": "nameEs",        "type": "string",  "required": false, "array": false, "size": 120,  "default": null, "encrypt": false },
-                { "key": "nameEn",        "type": "string",  "required": false, "array": false, "size": 120,  "default": null, "encrypt": false },
-                { "key": "descriptionEs", "type": "string",  "required": false, "array": false, "size": 2500, "default": null, "encrypt": false },
-                { "key": "descriptionEn", "type": "string",  "required": false, "array": false, "size": 2500, "default": null, "encrypt": false },
-                { "key": "productType",   "type": "string",  "required": false, "array": false, "default": null, "format": "enum", "elements": ["smoothie","snack","supplement","plan","addon","other"] },
-                { "key": "price",         "type": "double",  "required": false, "array": false, "default": null },
-                { "key": "coverImageId",  "type": "string",  "required": false, "array": false, "size": 64,   "default": null, "encrypt": false },
-                { "key": "isAddonOnly",   "type": "boolean", "required": false, "array": false, "default": null },
-                { "key": "enabled",       "type": "boolean", "required": false, "array": false, "default": null },
-                { "key": "isFeatured",    "type": "boolean", "required": false, "array": false, "default": null }
-            ],
-            "indexes": [
-                { "key": "uq_wprod_slug",     "type": "unique", "status": "available", "columns": ["slug"],        "orders": ["ASC"] },
-                { "key": "idx_wprod_type",    "type": "key",    "status": "available", "columns": ["productType"], "orders": ["ASC"] },
-                { "key": "idx_wprod_addon",   "type": "key",    "status": "available", "columns": ["isAddonOnly"], "orders": ["ASC"] },
-                { "key": "idx_wprod_feat",    "type": "key",    "status": "available", "columns": ["isFeatured"],  "orders": ["ASC"] },
-                { "key": "idx_wprod_enabled", "type": "key",    "status": "available", "columns": ["enabled"],     "orders": ["ASC"] }
-            ]
-        },
-        {
-            "$id": "wellness_packages",
-            "$permissions": [],
-            "databaseId": "main",
-            "name": "wellness_packages",
-            "enabled": true,
-            "rowSecurity": false,
-            "columns": [
-                { "key": "slug",               "type": "string",  "required": false, "array": false, "size": 100,  "default": null,  "encrypt": false },
-                { "key": "nameEs",             "type": "string",  "required": false, "array": false, "size": 120,  "default": null,  "encrypt": false },
-                { "key": "nameEn",             "type": "string",  "required": false, "array": false, "size": 120,  "default": null,  "encrypt": false },
-                { "key": "descriptionEs",      "type": "string",  "required": false, "array": false, "size": 2000, "default": null,  "encrypt": false },
-                { "key": "descriptionEn",      "type": "string",  "required": false, "array": false, "size": 2000, "default": null,  "encrypt": false },
-                { "key": "price",              "type": "double",  "required": false, "array": false, "default": null },
-                { "key": "salePriceEnabled",   "type": "boolean", "required": false, "array": false, "default": false },
-                { "key": "salePrice",          "type": "double",  "required": false, "array": false, "default": null },
-                { "key": "classCredits",       "type": "integer", "required": false, "array": false, "default": 0 },
-                { "key": "wellnessCredits",    "type": "integer", "required": false, "array": false, "default": 0 },
-                { "key": "expirationDays",     "type": "integer", "required": false, "array": false, "default": 30 },
-                { "key": "rulesJson",          "type": "string",  "required": false, "array": false, "size": 1000, "default": null,  "encrypt": false },
-                { "key": "itemsJson",          "type": "string",  "required": false, "array": false, "size": 2000, "default": null,  "encrypt": false },
-                { "key": "enabled",            "type": "boolean", "required": false, "array": false, "default": null },
-                { "key": "isFeatured",         "type": "boolean", "required": false, "array": false, "default": null }
-            ],
-            "indexes": [
-                { "key": "uq_wpkg_slug",     "type": "unique", "status": "available", "columns": ["slug"],             "orders": ["ASC"] },
-                { "key": "idx_wpkg_feat",    "type": "key",    "status": "available", "columns": ["isFeatured"],       "orders": ["ASC"] },
-                { "key": "idx_wpkg_enabled", "type": "key",    "status": "available", "columns": ["enabled"],          "orders": ["ASC"] },
-                { "key": "idx_wpkg_sale",    "type": "key",    "status": "available", "columns": ["salePriceEnabled"], "orders": ["ASC"] }
-            ]
-        },
-        {
-            "$id": "orders",
-            "$permissions": [],
-            "databaseId": "main",
-            "name": "orders",
-            "enabled": true,
-            "rowSecurity": false,
-            "columns": [
-                { "key": "orderNo",          "type": "string",   "required": false, "array": false, "size": 40,   "default": null, "encrypt": false },
-                { "key": "clientUserId",     "type": "string",   "required": false, "array": false, "size": 64,   "default": null, "encrypt": false },
-                { "key": "clientEmail",      "type": "string",   "required": false, "array": false, "default": null, "format": "email" },
-                { "key": "currency",         "type": "string",   "required": false, "array": false, "size": 3,    "default": "MXN", "encrypt": false },
-                { "key": "subtotal",         "type": "double",   "required": false, "array": false, "default": null },
-                { "key": "discountTotal",    "type": "double",   "required": false, "array": false, "default": null },
-                { "key": "taxTotal",         "type": "double",   "required": false, "array": false, "default": null },
-                { "key": "grandTotal",       "type": "double",   "required": false, "array": false, "default": null },
-                { "key": "paymentStatus",    "type": "string",   "required": false, "array": false, "default": null, "format": "enum", "elements": ["pending","paid","failed","refunded","partial_refund"] },
-                { "key": "fulfillmentState", "type": "string",   "required": false, "array": false, "default": null, "format": "enum", "elements": ["pending","confirmed","cancelled","completed"] },
-                { "key": "promoCode",        "type": "string",   "required": false, "array": false, "size": 40,   "default": null, "encrypt": false },
-                { "key": "notes",            "type": "string",   "required": false, "array": false, "size": 1500, "default": null, "encrypt": false },
-                { "key": "paidAt",           "type": "datetime", "required": false, "array": false, "default": null }
-            ],
-            "indexes": [
-                { "key": "uq_orders_no",      "type": "unique", "status": "available", "columns": ["orderNo"],          "orders": ["ASC"] },
-                { "key": "idx_orders_client", "type": "key",    "status": "available", "columns": ["clientUserId"],     "orders": ["ASC"] },
-                { "key": "idx_orders_pay",    "type": "key",    "status": "available", "columns": ["paymentStatus"],    "orders": ["ASC"] },
-                { "key": "idx_orders_state",  "type": "key",    "status": "available", "columns": ["fulfillmentState"], "orders": ["ASC"] },
-                { "key": "idx_orders_paid",   "type": "key",    "status": "available", "columns": ["paidAt"],           "orders": ["DESC"] }
-            ]
-        },
-        {
-            "$id": "order_items",
-            "$permissions": [],
-            "databaseId": "main",
-            "name": "order_items",
-            "enabled": true,
-            "rowSecurity": false,
-            "columns": [
-                { "key": "orderId",       "type": "string",  "required": false, "array": false, "size": 64,  "default": null, "encrypt": false },
-                { "key": "itemType",      "type": "string",  "required": false, "array": false, "default": null, "format": "enum", "elements": ["class_session","wellness_package","product","addon"] },
-                { "key": "referenceId",   "type": "string",  "required": false, "array": false, "size": 64,  "default": null, "encrypt": false },
-                { "key": "titleSnapshot", "type": "string",  "required": false, "array": false, "size": 160, "default": null, "encrypt": false },
-                { "key": "quantity",      "type": "integer", "required": false, "array": false, "default": null },
-                { "key": "unitPrice",     "type": "double",  "required": false, "array": false, "default": null },
-                { "key": "lineTotal",     "type": "double",  "required": false, "array": false, "default": null },
-                { "key": "metaJson",      "type": "string",  "required": false, "array": false, "size": 2000, "default": null, "encrypt": false }
-            ],
-            "indexes": [
-                { "key": "idx_oitems_order", "type": "key", "status": "available", "columns": ["orderId"],     "orders": ["ASC"] },
-                { "key": "idx_oitems_ref",   "type": "key", "status": "available", "columns": ["referenceId"], "orders": ["ASC"] },
-                { "key": "idx_oitems_type",  "type": "key", "status": "available", "columns": ["itemType"],    "orders": ["ASC"] }
-            ]
-        },
-        {
-            "$id": "payments",
-            "$permissions": [],
-            "databaseId": "main",
-            "name": "payments",
-            "enabled": true,
-            "rowSecurity": false,
-            "columns": [
-                { "key": "orderId",            "type": "string",   "required": false, "array": false, "size": 64,   "default": null, "encrypt": false },
-                { "key": "provider",           "type": "string",   "required": false, "array": false, "default": null, "format": "enum", "elements": ["stripe","paypal"] },
-                { "key": "providerPaymentId",  "type": "string",   "required": false, "array": false, "size": 200,  "default": null, "encrypt": false },
-                { "key": "providerSessionId",  "type": "string",   "required": false, "array": false, "size": 200,  "default": null, "encrypt": false },
-                { "key": "amount",             "type": "double",   "required": false, "array": false, "default": null },
-                { "key": "currency",           "type": "string",   "required": false, "array": false, "size": 3,    "default": "MXN", "encrypt": false },
-                { "key": "status",             "type": "string",   "required": false, "array": false, "default": null, "format": "enum", "elements": ["pending","succeeded","failed","refunded","disputed"] },
-                { "key": "rawSummary",         "type": "string",   "required": false, "array": false, "size": 4000, "default": null, "encrypt": false },
-                { "key": "paidAt",             "type": "datetime", "required": false, "array": false, "default": null },
-                { "key": "refundedAt",         "type": "datetime", "required": false, "array": false, "default": null }
-            ],
-            "indexes": [
-                { "key": "idx_pay_order",    "type": "key", "status": "available", "columns": ["orderId"],           "orders": ["ASC"] },
-                { "key": "idx_pay_provider", "type": "key", "status": "available", "columns": ["provider"],          "orders": ["ASC"] },
-                { "key": "idx_pay_ext_id",   "type": "key", "status": "available", "columns": ["providerPaymentId"], "orders": ["ASC"] },
-                { "key": "idx_pay_status",   "type": "key", "status": "available", "columns": ["status"],            "orders": ["ASC"] },
-                { "key": "idx_pay_paid",     "type": "key", "status": "available", "columns": ["paidAt"],            "orders": ["DESC"] }
-            ]
-        },
-        {
-            "$id": "bookings",
-            "$permissions": [],
-            "databaseId": "main",
-            "name": "bookings",
-            "enabled": true,
-            "rowSecurity": false,
-            "columns": [
-                { "key": "clientUserId", "type": "string",   "required": false, "array": false, "size": 64,   "default": null, "encrypt": false },
-                { "key": "sessionId",    "type": "string",   "required": false, "array": false, "size": 64,   "default": null, "encrypt": false },
-                { "key": "orderId",      "type": "string",   "required": false, "array": false, "size": 64,   "default": null, "encrypt": false },
-                { "key": "bookingCode",  "type": "string",   "required": false, "array": false, "size": 40,   "default": null, "encrypt": false },
-                { "key": "status",       "type": "string",   "required": false, "array": false, "default": null, "format": "enum", "elements": ["pending","confirmed","cancelled","completed","no_show","rescheduled"] },
-                { "key": "unitPrice",    "type": "double",   "required": false, "array": false, "default": null },
-                { "key": "extrasJson",   "type": "string",   "required": false, "array": false, "size": 2000, "default": null, "encrypt": false },
-                { "key": "reservedAt",   "type": "datetime", "required": false, "array": false, "default": null }
-            ],
-            "indexes": [
-                { "key": "uq_bookings_code",     "type": "unique", "status": "available", "columns": ["bookingCode"],  "orders": ["ASC"] },
-                { "key": "idx_bookings_client",  "type": "key",    "status": "available", "columns": ["clientUserId"], "orders": ["ASC"] },
-                { "key": "idx_bookings_session", "type": "key",    "status": "available", "columns": ["sessionId"],    "orders": ["ASC"] },
-                { "key": "idx_bookings_order",   "type": "key",    "status": "available", "columns": ["orderId"],      "orders": ["ASC"] },
-                { "key": "idx_bookings_status",  "type": "key",    "status": "available", "columns": ["status"],       "orders": ["ASC"] }
-            ]
-        },
-        {
-            "$id": "client_packages",
-            "$permissions": [],
-            "databaseId": "main",
-            "name": "client_packages",
-            "enabled": true,
-            "rowSecurity": false,
-            "columns": [
-                { "key": "clientUserId",            "type": "string",   "required": false, "array": false, "size": 64, "default": null, "encrypt": false },
-                { "key": "packageId",               "type": "string",   "required": false, "array": false, "size": 64, "default": null, "encrypt": false },
-                { "key": "orderId",                 "type": "string",   "required": false, "array": false, "size": 64, "default": null, "encrypt": false },
-                { "key": "purchasedAt",             "type": "datetime", "required": false, "array": false, "default": null },
-                { "key": "expiresAt",               "type": "datetime", "required": false, "array": false, "default": null },
-                { "key": "totalClassCredits",       "type": "integer",  "required": false, "array": false, "default": 0 },
-                { "key": "totalWellnessCredits",    "type": "integer",  "required": false, "array": false, "default": 0 },
-                { "key": "remainingClassCredits",   "type": "integer",  "required": false, "array": false, "default": 0 },
-                { "key": "remainingWellnessCredits","type": "integer",  "required": false, "array": false, "default": 0 },
-                { "key": "status",                  "type": "string",   "required": false, "array": false, "default": null, "format": "enum", "elements": ["active","exhausted","expired","cancelled"] }
-            ],
-            "indexes": [
-                { "key": "idx_cpkg_client",  "type": "key", "status": "available", "columns": ["clientUserId"], "orders": ["ASC"] },
-                { "key": "idx_cpkg_package", "type": "key", "status": "available", "columns": ["packageId"],    "orders": ["ASC"] },
-                { "key": "idx_cpkg_order",   "type": "key", "status": "available", "columns": ["orderId"],      "orders": ["ASC"] },
-                { "key": "idx_cpkg_status",  "type": "key", "status": "available", "columns": ["status"],       "orders": ["ASC"] },
-                { "key": "idx_cpkg_expires", "type": "key", "status": "available", "columns": ["expiresAt"],    "orders": ["ASC"] }
-            ]
-        },
-        {
-            "$id": "package_usages",
-            "$permissions": [],
-            "databaseId": "main",
-            "name": "package_usages",
-            "enabled": true,
-            "rowSecurity": false,
-            "columns": [
-                { "key": "clientPackageId", "type": "string",   "required": false, "array": false, "size": 64, "default": null, "encrypt": false },
-                { "key": "clientUserId",    "type": "string",   "required": false, "array": false, "size": 64, "default": null, "encrypt": false },
-                { "key": "bookingId",       "type": "string",   "required": false, "array": false, "size": 64, "default": null, "encrypt": false },
-                { "key": "orderItemId",     "type": "string",   "required": false, "array": false, "size": 64, "default": null, "encrypt": false },
-                { "key": "usageType",       "type": "string",   "required": false, "array": false, "default": null, "format": "enum", "elements": ["class_session","wellness_product"] },
-                { "key": "quantity",        "type": "integer",  "required": false, "array": false, "default": 1 },
-                { "key": "consumedAt",      "type": "datetime", "required": false, "array": false, "default": null }
-            ],
-            "indexes": [
-                { "key": "idx_pkguse_cpkg",     "type": "key", "status": "available", "columns": ["clientPackageId"], "orders": ["ASC"] },
-                { "key": "idx_pkguse_client",   "type": "key", "status": "available", "columns": ["clientUserId"],    "orders": ["ASC"] },
-                { "key": "idx_pkguse_booking",  "type": "key", "status": "available", "columns": ["bookingId"],       "orders": ["ASC"] },
-                { "key": "idx_pkguse_type",     "type": "key", "status": "available", "columns": ["usageType"],       "orders": ["ASC"] },
-                { "key": "idx_pkguse_consumed", "type": "key", "status": "available", "columns": ["consumedAt"],      "orders": ["DESC"] }
-            ]
-        },
-        {
-            "$id": "access_passes",
-            "$permissions": [],
-            "databaseId": "main",
-            "name": "access_passes",
-            "enabled": true,
-            "rowSecurity": false,
-            "columns": [
-                { "key": "clientUserId", "type": "string",   "required": false, "array": false, "size": 64,  "default": null, "encrypt": false },
-                { "key": "passType",     "type": "string",   "required": false, "array": false, "default": null, "format": "enum", "elements": ["booking","order","package"] },
-                { "key": "referenceId",  "type": "string",   "required": false, "array": false, "size": 64,  "default": null, "encrypt": false },
-                { "key": "qrToken",      "type": "string",   "required": false, "array": false, "size": 200, "default": null, "encrypt": false },
-                { "key": "status",       "type": "string",   "required": false, "array": false, "default": null, "format": "enum", "elements": ["active","used","expired","cancelled"] },
-                { "key": "validFrom",    "type": "datetime", "required": false, "array": false, "default": null },
-                { "key": "validUntil",   "type": "datetime", "required": false, "array": false, "default": null },
-                { "key": "usedAt",       "type": "datetime", "required": false, "array": false, "default": null },
-                { "key": "usedBy",       "type": "string",   "required": false, "array": false, "size": 64,  "default": null, "encrypt": false },
-                { "key": "notes",        "type": "string",   "required": false, "array": false, "size": 500, "default": null, "encrypt": false }
-            ],
-            "indexes": [
-                { "key": "uq_pass_token",   "type": "unique", "status": "available", "columns": ["qrToken"],      "orders": ["ASC"] },
-                { "key": "idx_pass_client", "type": "key",    "status": "available", "columns": ["clientUserId"], "orders": ["ASC"] },
-                { "key": "idx_pass_type",   "type": "key",    "status": "available", "columns": ["passType"],     "orders": ["ASC"] },
-                { "key": "idx_pass_ref",    "type": "key",    "status": "available", "columns": ["referenceId"],  "orders": ["ASC"] },
-                { "key": "idx_pass_status", "type": "key",    "status": "available", "columns": ["status"],       "orders": ["ASC"] },
-                { "key": "idx_pass_until",  "type": "key",    "status": "available", "columns": ["validUntil"],   "orders": ["ASC"] }
-            ]
-        },
-        {
-            "$id": "site_content",
-            "$permissions": [],
-            "databaseId": "main",
-            "name": "site_content",
-            "enabled": true,
-            "rowSecurity": false,
-            "columns": [
-                { "key": "contentKey", "type": "string",  "required": false, "array": false, "size": 80,    "default": null, "encrypt": false },
-                { "key": "locale",     "type": "string",  "required": false, "array": false, "size": 10,    "default": null, "encrypt": false },
-                { "key": "title",      "type": "string",  "required": false, "array": false, "size": 200,   "default": null, "encrypt": false },
-                { "key": "body",       "type": "string",  "required": false, "array": false, "size": 4000,  "default": null, "encrypt": false },
-                { "key": "metaJson",   "type": "string",  "required": false, "array": false, "size": 2000,  "default": null, "encrypt": false },
-                { "key": "enabled",    "type": "boolean", "required": false, "array": false, "default": null }
-            ],
-            "indexes": [
-                { "key": "idx_content_key",     "type": "key", "status": "available", "columns": ["contentKey"], "orders": ["ASC"] },
-                { "key": "idx_content_locale",  "type": "key", "status": "available", "columns": ["locale"],     "orders": ["ASC"] },
-                { "key": "idx_content_enabled", "type": "key", "status": "available", "columns": ["enabled"],    "orders": ["ASC"] }
-            ]
-        },
-        {
-            "$id": "audit_logs",
-            "$permissions": [],
-            "databaseId": "main",
-            "name": "audit_logs",
-            "enabled": true,
-            "rowSecurity": false,
-            "columns": [
-                { "key": "actorUserId", "type": "string",   "required": false, "array": false, "size": 64,   "default": null, "encrypt": false },
-                { "key": "actorRole",   "type": "string",   "required": false, "array": false, "default": null, "format": "enum", "elements": ["system","root","admin","client"] },
-                { "key": "action",      "type": "string",   "required": false, "array": false, "size": 100,  "default": null, "encrypt": false },
-                { "key": "targetType",  "type": "string",   "required": false, "array": false, "size": 60,   "default": null, "encrypt": false },
-                { "key": "targetId",    "type": "string",   "required": false, "array": false, "size": 64,   "default": null, "encrypt": false },
-                { "key": "summary",     "type": "string",   "required": false, "array": false, "size": 1000, "default": null, "encrypt": false },
-                { "key": "metaJson",    "type": "string",   "required": false, "array": false, "size": 4000, "default": null, "encrypt": false },
-                { "key": "createdAt",   "type": "datetime", "required": false, "array": false, "default": null }
-            ],
-            "indexes": [
-                { "key": "idx_audit_actor",       "type": "key", "status": "available", "columns": ["actorUserId"], "orders": ["ASC"] },
-                { "key": "idx_audit_action",      "type": "key", "status": "available", "columns": ["action"],      "orders": ["ASC"] },
-                { "key": "idx_audit_target_type", "type": "key", "status": "available", "columns": ["targetType"],  "orders": ["ASC"] },
-                { "key": "idx_audit_target_id",   "type": "key", "status": "available", "columns": ["targetId"],    "orders": ["ASC"] },
-                { "key": "idx_audit_created",     "type": "key", "status": "available", "columns": ["createdAt"],   "orders": ["DESC"] }
-            ]
-        },
-        {
-            "$id": "app_settings",
-            "$permissions": [],
-            "databaseId": "main",
-            "name": "app_settings",
-            "enabled": true,
-            "rowSecurity": false,
-            "columns": [
-                { "key": "appName",         "type": "string", "required": false, "array": false, "size": 100, "default": null, "encrypt": false },
-                { "key": "defaultLocale",   "type": "string", "required": false, "array": false, "size": 10,  "default": null, "encrypt": false },
-                { "key": "defaultCurrency", "type": "string", "required": false, "array": false, "size": 3,   "default": null, "encrypt": false },
-                { "key": "supportEmail",    "type": "string", "required": false, "array": false, "default": null, "format": "email" },
-                { "key": "contactPhone",    "type": "string", "required": false, "array": false, "size": 20,  "default": null, "encrypt": false },
-                { "key": "bookingNotice",   "type": "string", "required": false, "array": false, "size": 1000,"default": null, "encrypt": false }
-            ],
-            "indexes": []
+          "key": "status",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "default": null,
+          "format": "enum",
+          "elements": ["new", "contacted", "qualified", "won", "lost"]
         }
-    ],
-    "buckets": [
+      ],
+      "indexes": [
         {
-            "$id": "public-media",
-            "$permissions": [
-                "read(\"any\")",
-                "create(\"label:admin\")",
-                "read(\"label:admin\")",
-                "update(\"label:admin\")",
-                "delete(\"label:admin\")",
-                "create(\"label:root\")",
-                "read(\"label:root\")",
-                "update(\"label:root\")",
-                "delete(\"label:root\")"
-            ],
-            "fileSecurity": false,
-            "name": "public-media",
-            "enabled": true,
-            "maximumFileSize": 10000000,
-            "allowedFileExtensions": ["jpg","jpeg","png","webp","gif","svg"],
-            "compression": "none",
-            "encryption": true,
-            "antivirus": true
+          "key": "idx_leads_email",
+          "type": "key",
+          "status": "available",
+          "columns": ["email"],
+          "orders": ["ASC"]
         },
         {
-            "$id": "private-media",
-            "$permissions": [
-                "create(\"label:admin\")",
-                "read(\"label:admin\")",
-                "update(\"label:admin\")",
-                "delete(\"label:admin\")",
-                "create(\"label:root\")",
-                "read(\"label:root\")",
-                "update(\"label:root\")",
-                "delete(\"label:root\")"
-            ],
-            "fileSecurity": false,
-            "name": "private-media",
-            "enabled": true,
-            "maximumFileSize": 15000000,
-            "allowedFileExtensions": [],
-            "compression": "none",
-            "encryption": true,
-            "antivirus": true
+          "key": "idx_leads_interest",
+          "type": "key",
+          "status": "available",
+          "columns": ["interestType"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_leads_status",
+          "type": "key",
+          "status": "available",
+          "columns": ["status"],
+          "orders": ["ASC"]
         }
-    ],
-    "teams": [],
-    "topics": [],
-    "functions": [
+      ]
+    },
+    {
+      "$id": "instructors",
+      "$permissions": [],
+      "databaseId": "main",
+      "name": "instructors",
+      "enabled": true,
+      "rowSecurity": false,
+      "columns": [
         {
-            "$id": "create-user-profile",
-            "name": "create-user-profile",
-            "runtime": "node-20.0",
-            "path": "appwrite/functions/create-user-profile",
-            "entrypoint": "src/main.js",
-            "ignore": ["node_modules", ".npm"],
-            "execute": [],
-            "events": ["users.*.create"],
-            "schedule": "",
-            "timeout": 15,
-            "enabled": true,
-            "logging": true,
-            "scopes": ["users.read", "databases.read", "databases.write"]
+          "key": "slug",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 100,
+          "default": null,
+          "encrypt": false
         },
         {
-            "$id": "sync-user-profile",
-            "name": "sync-user-profile",
-            "runtime": "node-20.0",
-            "path": "appwrite/functions/sync-user-profile",
-            "entrypoint": "src/main.js",
-            "ignore": ["node_modules", ".npm"],
-            "execute": ["users"],
-            "events": [],
-            "schedule": "",
-            "timeout": 15,
-            "enabled": true,
-            "logging": true,
-            "scopes": ["users.read", "users.write", "databases.read", "databases.write"]
+          "key": "fullName",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 120,
+          "default": null,
+          "encrypt": false
         },
         {
-            "$id": "sync-email-verification",
-            "name": "sync-email-verification",
-            "runtime": "node-20.0",
-            "path": "appwrite/functions/sync-email-verification",
-            "entrypoint": "src/main.js",
-            "ignore": ["node_modules", ".npm"],
-            "execute": ["users"],
-            "events": [],
-            "schedule": "",
-            "timeout": 15,
-            "enabled": true,
-            "logging": true,
-            "scopes": ["users.read", "databases.read", "databases.write"]
+          "key": "shortBio",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 600,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "photoId",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "specialties",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 2000,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "displayOrder",
+          "type": "integer",
+          "required": false,
+          "array": false,
+          "default": null
+        },
+        {
+          "key": "enabled",
+          "type": "boolean",
+          "required": false,
+          "array": false,
+          "default": null
         }
-    ]
+      ],
+      "indexes": [
+        {
+          "key": "uq_inst_slug",
+          "type": "unique",
+          "status": "available",
+          "columns": ["slug"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_inst_order",
+          "type": "key",
+          "status": "available",
+          "columns": ["displayOrder"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_inst_enabled",
+          "type": "key",
+          "status": "available",
+          "columns": ["enabled"],
+          "orders": ["ASC"]
+        }
+      ]
+    },
+    {
+      "$id": "class_types",
+      "$permissions": [],
+      "databaseId": "main",
+      "name": "class_types",
+      "enabled": true,
+      "rowSecurity": false,
+      "columns": [
+        {
+          "key": "slug",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 80,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "nameEs",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 80,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "nameEn",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 80,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "description",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 500,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "enabled",
+          "type": "boolean",
+          "required": false,
+          "array": false,
+          "default": null
+        }
+      ],
+      "indexes": [
+        {
+          "key": "uq_clstype_slug",
+          "type": "unique",
+          "status": "available",
+          "columns": ["slug"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_clstype_enabled",
+          "type": "key",
+          "status": "available",
+          "columns": ["enabled"],
+          "orders": ["ASC"]
+        }
+      ]
+    },
+    {
+      "$id": "classes",
+      "$permissions": [],
+      "databaseId": "main",
+      "name": "classes",
+      "enabled": true,
+      "rowSecurity": false,
+      "columns": [
+        {
+          "key": "slug",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 120,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "titleEs",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 120,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "titleEn",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 120,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "summaryEs",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 320,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "summaryEn",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 320,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "descriptionEs",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 6000,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "descriptionEn",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 6000,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "classTypeId",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "instructorId",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "difficulty",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "default": null,
+          "format": "enum",
+          "elements": ["beginner", "intermediate", "advanced", "all_levels"]
+        },
+        {
+          "key": "durationMin",
+          "type": "integer",
+          "required": false,
+          "array": false,
+          "default": null
+        },
+        {
+          "key": "basePrice",
+          "type": "double",
+          "required": false,
+          "array": false,
+          "default": null
+        },
+        {
+          "key": "coverImageId",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "isFeatured",
+          "type": "boolean",
+          "required": false,
+          "array": false,
+          "default": null
+        },
+        {
+          "key": "enabled",
+          "type": "boolean",
+          "required": false,
+          "array": false,
+          "default": null
+        }
+      ],
+      "indexes": [
+        {
+          "key": "uq_classes_slug",
+          "type": "unique",
+          "status": "available",
+          "columns": ["slug"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_classes_type",
+          "type": "key",
+          "status": "available",
+          "columns": ["classTypeId"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_classes_instr",
+          "type": "key",
+          "status": "available",
+          "columns": ["instructorId"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_classes_diff",
+          "type": "key",
+          "status": "available",
+          "columns": ["difficulty"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_classes_feat",
+          "type": "key",
+          "status": "available",
+          "columns": ["isFeatured"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_classes_enabled",
+          "type": "key",
+          "status": "available",
+          "columns": ["enabled"],
+          "orders": ["ASC"]
+        }
+      ]
+    },
+    {
+      "$id": "class_sessions",
+      "$permissions": [],
+      "databaseId": "main",
+      "name": "class_sessions",
+      "enabled": true,
+      "rowSecurity": false,
+      "columns": [
+        {
+          "key": "classId",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "sessionDate",
+          "type": "datetime",
+          "required": false,
+          "array": false,
+          "default": null
+        },
+        {
+          "key": "endDate",
+          "type": "datetime",
+          "required": false,
+          "array": false,
+          "default": null
+        },
+        {
+          "key": "capacityTotal",
+          "type": "integer",
+          "required": false,
+          "array": false,
+          "default": null
+        },
+        {
+          "key": "capacityTaken",
+          "type": "integer",
+          "required": false,
+          "array": false,
+          "default": null
+        },
+        {
+          "key": "priceOverride",
+          "type": "double",
+          "required": false,
+          "array": false,
+          "default": null
+        },
+        {
+          "key": "instructorId",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "status",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "default": null,
+          "format": "enum",
+          "elements": ["scheduled", "full", "cancelled", "completed"]
+        },
+        {
+          "key": "locationLabel",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 120,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "enabled",
+          "type": "boolean",
+          "required": false,
+          "array": false,
+          "default": null
+        }
+      ],
+      "indexes": [
+        {
+          "key": "idx_sess_class",
+          "type": "key",
+          "status": "available",
+          "columns": ["classId"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_sess_date",
+          "type": "key",
+          "status": "available",
+          "columns": ["sessionDate"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_sess_status",
+          "type": "key",
+          "status": "available",
+          "columns": ["status"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_sess_instr",
+          "type": "key",
+          "status": "available",
+          "columns": ["instructorId"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_sess_enabled",
+          "type": "key",
+          "status": "available",
+          "columns": ["enabled"],
+          "orders": ["ASC"]
+        }
+      ]
+    },
+    {
+      "$id": "wellness_products",
+      "$permissions": [],
+      "databaseId": "main",
+      "name": "wellness_products",
+      "enabled": true,
+      "rowSecurity": false,
+      "columns": [
+        {
+          "key": "slug",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 100,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "nameEs",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 120,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "nameEn",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 120,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "descriptionEs",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 2500,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "descriptionEn",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 2500,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "productType",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "default": null,
+          "format": "enum",
+          "elements": [
+            "smoothie",
+            "snack",
+            "supplement",
+            "plan",
+            "addon",
+            "other"
+          ]
+        },
+        {
+          "key": "price",
+          "type": "double",
+          "required": false,
+          "array": false,
+          "default": null
+        },
+        {
+          "key": "coverImageId",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "isAddonOnly",
+          "type": "boolean",
+          "required": false,
+          "array": false,
+          "default": null
+        },
+        {
+          "key": "enabled",
+          "type": "boolean",
+          "required": false,
+          "array": false,
+          "default": null
+        },
+        {
+          "key": "isFeatured",
+          "type": "boolean",
+          "required": false,
+          "array": false,
+          "default": null
+        }
+      ],
+      "indexes": [
+        {
+          "key": "uq_wprod_slug",
+          "type": "unique",
+          "status": "available",
+          "columns": ["slug"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_wprod_type",
+          "type": "key",
+          "status": "available",
+          "columns": ["productType"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_wprod_addon",
+          "type": "key",
+          "status": "available",
+          "columns": ["isAddonOnly"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_wprod_feat",
+          "type": "key",
+          "status": "available",
+          "columns": ["isFeatured"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_wprod_enabled",
+          "type": "key",
+          "status": "available",
+          "columns": ["enabled"],
+          "orders": ["ASC"]
+        }
+      ]
+    },
+    {
+      "$id": "wellness_packages",
+      "$permissions": [],
+      "databaseId": "main",
+      "name": "wellness_packages",
+      "enabled": true,
+      "rowSecurity": false,
+      "columns": [
+        {
+          "key": "slug",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 100,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "nameEs",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 120,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "nameEn",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 120,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "descriptionEs",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 2000,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "descriptionEn",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 2000,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "price",
+          "type": "double",
+          "required": false,
+          "array": false,
+          "default": null
+        },
+        {
+          "key": "salePriceEnabled",
+          "type": "boolean",
+          "required": false,
+          "array": false,
+          "default": false
+        },
+        {
+          "key": "salePrice",
+          "type": "double",
+          "required": false,
+          "array": false,
+          "default": null
+        },
+        {
+          "key": "classCredits",
+          "type": "integer",
+          "required": false,
+          "array": false,
+          "default": 0
+        },
+        {
+          "key": "wellnessCredits",
+          "type": "integer",
+          "required": false,
+          "array": false,
+          "default": 0
+        },
+        {
+          "key": "expirationDays",
+          "type": "integer",
+          "required": false,
+          "array": false,
+          "default": 30
+        },
+        {
+          "key": "rulesJson",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 1000,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "itemsJson",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 2000,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "enabled",
+          "type": "boolean",
+          "required": false,
+          "array": false,
+          "default": null
+        },
+        {
+          "key": "isFeatured",
+          "type": "boolean",
+          "required": false,
+          "array": false,
+          "default": null
+        }
+      ],
+      "indexes": [
+        {
+          "key": "uq_wpkg_slug",
+          "type": "unique",
+          "status": "available",
+          "columns": ["slug"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_wpkg_feat",
+          "type": "key",
+          "status": "available",
+          "columns": ["isFeatured"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_wpkg_enabled",
+          "type": "key",
+          "status": "available",
+          "columns": ["enabled"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_wpkg_sale",
+          "type": "key",
+          "status": "available",
+          "columns": ["salePriceEnabled"],
+          "orders": ["ASC"]
+        }
+      ]
+    },
+    {
+      "$id": "orders",
+      "$permissions": [],
+      "databaseId": "main",
+      "name": "orders",
+      "enabled": true,
+      "rowSecurity": false,
+      "columns": [
+        {
+          "key": "orderNo",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 40,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "clientUserId",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "clientEmail",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "default": null,
+          "format": "email"
+        },
+        {
+          "key": "currency",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 3,
+          "default": "MXN",
+          "encrypt": false
+        },
+        {
+          "key": "subtotal",
+          "type": "double",
+          "required": false,
+          "array": false,
+          "default": null
+        },
+        {
+          "key": "discountTotal",
+          "type": "double",
+          "required": false,
+          "array": false,
+          "default": null
+        },
+        {
+          "key": "taxTotal",
+          "type": "double",
+          "required": false,
+          "array": false,
+          "default": null
+        },
+        {
+          "key": "grandTotal",
+          "type": "double",
+          "required": false,
+          "array": false,
+          "default": null
+        },
+        {
+          "key": "paymentStatus",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "default": null,
+          "format": "enum",
+          "elements": [
+            "pending",
+            "paid",
+            "failed",
+            "refunded",
+            "partial_refund"
+          ]
+        },
+        {
+          "key": "fulfillmentState",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "default": null,
+          "format": "enum",
+          "elements": ["pending", "confirmed", "cancelled", "completed"]
+        },
+        {
+          "key": "promoCode",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 40,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "notes",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 1500,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "paidAt",
+          "type": "datetime",
+          "required": false,
+          "array": false,
+          "default": null
+        }
+      ],
+      "indexes": [
+        {
+          "key": "uq_orders_no",
+          "type": "unique",
+          "status": "available",
+          "columns": ["orderNo"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_orders_client",
+          "type": "key",
+          "status": "available",
+          "columns": ["clientUserId"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_orders_pay",
+          "type": "key",
+          "status": "available",
+          "columns": ["paymentStatus"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_orders_state",
+          "type": "key",
+          "status": "available",
+          "columns": ["fulfillmentState"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_orders_paid",
+          "type": "key",
+          "status": "available",
+          "columns": ["paidAt"],
+          "orders": ["DESC"]
+        }
+      ]
+    },
+    {
+      "$id": "order_items",
+      "$permissions": [],
+      "databaseId": "main",
+      "name": "order_items",
+      "enabled": true,
+      "rowSecurity": false,
+      "columns": [
+        {
+          "key": "orderId",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "itemType",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "default": null,
+          "format": "enum",
+          "elements": ["class_session", "wellness_package", "product", "addon"]
+        },
+        {
+          "key": "referenceId",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "titleSnapshot",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 160,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "quantity",
+          "type": "integer",
+          "required": false,
+          "array": false,
+          "default": null
+        },
+        {
+          "key": "unitPrice",
+          "type": "double",
+          "required": false,
+          "array": false,
+          "default": null
+        },
+        {
+          "key": "lineTotal",
+          "type": "double",
+          "required": false,
+          "array": false,
+          "default": null
+        },
+        {
+          "key": "metaJson",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 2000,
+          "default": null,
+          "encrypt": false
+        }
+      ],
+      "indexes": [
+        {
+          "key": "idx_oitems_order",
+          "type": "key",
+          "status": "available",
+          "columns": ["orderId"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_oitems_ref",
+          "type": "key",
+          "status": "available",
+          "columns": ["referenceId"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_oitems_type",
+          "type": "key",
+          "status": "available",
+          "columns": ["itemType"],
+          "orders": ["ASC"]
+        }
+      ]
+    },
+    {
+      "$id": "payments",
+      "$permissions": [],
+      "databaseId": "main",
+      "name": "payments",
+      "enabled": true,
+      "rowSecurity": false,
+      "columns": [
+        {
+          "key": "orderId",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "provider",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "default": null,
+          "format": "enum",
+          "elements": ["stripe", "paypal"]
+        },
+        {
+          "key": "providerPaymentId",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 200,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "providerSessionId",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 200,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "amount",
+          "type": "double",
+          "required": false,
+          "array": false,
+          "default": null
+        },
+        {
+          "key": "currency",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 3,
+          "default": "MXN",
+          "encrypt": false
+        },
+        {
+          "key": "status",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "default": null,
+          "format": "enum",
+          "elements": ["pending", "succeeded", "failed", "refunded", "disputed"]
+        },
+        {
+          "key": "rawSummary",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 4000,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "paidAt",
+          "type": "datetime",
+          "required": false,
+          "array": false,
+          "default": null
+        },
+        {
+          "key": "refundedAt",
+          "type": "datetime",
+          "required": false,
+          "array": false,
+          "default": null
+        }
+      ],
+      "indexes": [
+        {
+          "key": "idx_pay_order",
+          "type": "key",
+          "status": "available",
+          "columns": ["orderId"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_pay_provider",
+          "type": "key",
+          "status": "available",
+          "columns": ["provider"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_pay_ext_id",
+          "type": "key",
+          "status": "available",
+          "columns": ["providerPaymentId"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_pay_status",
+          "type": "key",
+          "status": "available",
+          "columns": ["status"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_pay_paid",
+          "type": "key",
+          "status": "available",
+          "columns": ["paidAt"],
+          "orders": ["DESC"]
+        }
+      ]
+    },
+    {
+      "$id": "bookings",
+      "$permissions": [],
+      "databaseId": "main",
+      "name": "bookings",
+      "enabled": true,
+      "rowSecurity": false,
+      "columns": [
+        {
+          "key": "clientUserId",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "sessionId",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "orderId",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "bookingCode",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 40,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "status",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "default": null,
+          "format": "enum",
+          "elements": [
+            "pending",
+            "confirmed",
+            "cancelled",
+            "completed",
+            "no_show",
+            "rescheduled"
+          ]
+        },
+        {
+          "key": "unitPrice",
+          "type": "double",
+          "required": false,
+          "array": false,
+          "default": null
+        },
+        {
+          "key": "extrasJson",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 2000,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "reservedAt",
+          "type": "datetime",
+          "required": false,
+          "array": false,
+          "default": null
+        }
+      ],
+      "indexes": [
+        {
+          "key": "uq_bookings_code",
+          "type": "unique",
+          "status": "available",
+          "columns": ["bookingCode"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_bookings_client",
+          "type": "key",
+          "status": "available",
+          "columns": ["clientUserId"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_bookings_session",
+          "type": "key",
+          "status": "available",
+          "columns": ["sessionId"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_bookings_order",
+          "type": "key",
+          "status": "available",
+          "columns": ["orderId"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_bookings_status",
+          "type": "key",
+          "status": "available",
+          "columns": ["status"],
+          "orders": ["ASC"]
+        }
+      ]
+    },
+    {
+      "$id": "client_packages",
+      "$permissions": [],
+      "databaseId": "main",
+      "name": "client_packages",
+      "enabled": true,
+      "rowSecurity": false,
+      "columns": [
+        {
+          "key": "clientUserId",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "packageId",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "orderId",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "purchasedAt",
+          "type": "datetime",
+          "required": false,
+          "array": false,
+          "default": null
+        },
+        {
+          "key": "expiresAt",
+          "type": "datetime",
+          "required": false,
+          "array": false,
+          "default": null
+        },
+        {
+          "key": "totalClassCredits",
+          "type": "integer",
+          "required": false,
+          "array": false,
+          "default": 0
+        },
+        {
+          "key": "totalWellnessCredits",
+          "type": "integer",
+          "required": false,
+          "array": false,
+          "default": 0
+        },
+        {
+          "key": "remainingClassCredits",
+          "type": "integer",
+          "required": false,
+          "array": false,
+          "default": 0
+        },
+        {
+          "key": "remainingWellnessCredits",
+          "type": "integer",
+          "required": false,
+          "array": false,
+          "default": 0
+        },
+        {
+          "key": "status",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "default": null,
+          "format": "enum",
+          "elements": ["active", "exhausted", "expired", "cancelled"]
+        }
+      ],
+      "indexes": [
+        {
+          "key": "idx_cpkg_client",
+          "type": "key",
+          "status": "available",
+          "columns": ["clientUserId"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_cpkg_package",
+          "type": "key",
+          "status": "available",
+          "columns": ["packageId"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_cpkg_order",
+          "type": "key",
+          "status": "available",
+          "columns": ["orderId"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_cpkg_status",
+          "type": "key",
+          "status": "available",
+          "columns": ["status"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_cpkg_expires",
+          "type": "key",
+          "status": "available",
+          "columns": ["expiresAt"],
+          "orders": ["ASC"]
+        }
+      ]
+    },
+    {
+      "$id": "package_usages",
+      "$permissions": [],
+      "databaseId": "main",
+      "name": "package_usages",
+      "enabled": true,
+      "rowSecurity": false,
+      "columns": [
+        {
+          "key": "clientPackageId",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "clientUserId",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "bookingId",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "orderItemId",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "usageType",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "default": null,
+          "format": "enum",
+          "elements": ["class_session", "wellness_product"]
+        },
+        {
+          "key": "quantity",
+          "type": "integer",
+          "required": false,
+          "array": false,
+          "default": 1
+        },
+        {
+          "key": "consumedAt",
+          "type": "datetime",
+          "required": false,
+          "array": false,
+          "default": null
+        }
+      ],
+      "indexes": [
+        {
+          "key": "idx_pkguse_cpkg",
+          "type": "key",
+          "status": "available",
+          "columns": ["clientPackageId"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_pkguse_client",
+          "type": "key",
+          "status": "available",
+          "columns": ["clientUserId"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_pkguse_booking",
+          "type": "key",
+          "status": "available",
+          "columns": ["bookingId"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_pkguse_type",
+          "type": "key",
+          "status": "available",
+          "columns": ["usageType"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_pkguse_consumed",
+          "type": "key",
+          "status": "available",
+          "columns": ["consumedAt"],
+          "orders": ["DESC"]
+        }
+      ]
+    },
+    {
+      "$id": "access_passes",
+      "$permissions": [],
+      "databaseId": "main",
+      "name": "access_passes",
+      "enabled": true,
+      "rowSecurity": false,
+      "columns": [
+        {
+          "key": "clientUserId",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "passType",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "default": null,
+          "format": "enum",
+          "elements": ["booking", "order", "package"]
+        },
+        {
+          "key": "referenceId",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "qrToken",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 200,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "status",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "default": null,
+          "format": "enum",
+          "elements": ["active", "used", "expired", "cancelled"]
+        },
+        {
+          "key": "validFrom",
+          "type": "datetime",
+          "required": false,
+          "array": false,
+          "default": null
+        },
+        {
+          "key": "validUntil",
+          "type": "datetime",
+          "required": false,
+          "array": false,
+          "default": null
+        },
+        {
+          "key": "usedAt",
+          "type": "datetime",
+          "required": false,
+          "array": false,
+          "default": null
+        },
+        {
+          "key": "usedBy",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "notes",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 500,
+          "default": null,
+          "encrypt": false
+        }
+      ],
+      "indexes": [
+        {
+          "key": "uq_pass_token",
+          "type": "unique",
+          "status": "available",
+          "columns": ["qrToken"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_pass_client",
+          "type": "key",
+          "status": "available",
+          "columns": ["clientUserId"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_pass_type",
+          "type": "key",
+          "status": "available",
+          "columns": ["passType"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_pass_ref",
+          "type": "key",
+          "status": "available",
+          "columns": ["referenceId"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_pass_status",
+          "type": "key",
+          "status": "available",
+          "columns": ["status"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_pass_until",
+          "type": "key",
+          "status": "available",
+          "columns": ["validUntil"],
+          "orders": ["ASC"]
+        }
+      ]
+    },
+    {
+      "$id": "site_content",
+      "$permissions": [],
+      "databaseId": "main",
+      "name": "site_content",
+      "enabled": true,
+      "rowSecurity": false,
+      "columns": [
+        {
+          "key": "contentKey",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 80,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "locale",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 10,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "title",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 200,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "body",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 4000,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "metaJson",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 2000,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "enabled",
+          "type": "boolean",
+          "required": false,
+          "array": false,
+          "default": null
+        }
+      ],
+      "indexes": [
+        {
+          "key": "idx_content_key",
+          "type": "key",
+          "status": "available",
+          "columns": ["contentKey"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_content_locale",
+          "type": "key",
+          "status": "available",
+          "columns": ["locale"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_content_enabled",
+          "type": "key",
+          "status": "available",
+          "columns": ["enabled"],
+          "orders": ["ASC"]
+        }
+      ]
+    },
+    {
+      "$id": "audit_logs",
+      "$permissions": [],
+      "databaseId": "main",
+      "name": "audit_logs",
+      "enabled": true,
+      "rowSecurity": false,
+      "columns": [
+        {
+          "key": "actorUserId",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "actorRole",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "default": null,
+          "format": "enum",
+          "elements": ["system", "root", "admin", "client"]
+        },
+        {
+          "key": "action",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 100,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "targetType",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 60,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "targetId",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "summary",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 1000,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "metaJson",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 4000,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "createdAt",
+          "type": "datetime",
+          "required": false,
+          "array": false,
+          "default": null
+        }
+      ],
+      "indexes": [
+        {
+          "key": "idx_audit_actor",
+          "type": "key",
+          "status": "available",
+          "columns": ["actorUserId"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_audit_action",
+          "type": "key",
+          "status": "available",
+          "columns": ["action"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_audit_target_type",
+          "type": "key",
+          "status": "available",
+          "columns": ["targetType"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_audit_target_id",
+          "type": "key",
+          "status": "available",
+          "columns": ["targetId"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_audit_created",
+          "type": "key",
+          "status": "available",
+          "columns": ["createdAt"],
+          "orders": ["DESC"]
+        }
+      ]
+    },
+    {
+      "$id": "app_settings",
+      "$permissions": [],
+      "databaseId": "main",
+      "name": "app_settings",
+      "enabled": true,
+      "rowSecurity": false,
+      "columns": [
+        {
+          "key": "appName",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 100,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "defaultLocale",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 10,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "defaultCurrency",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 3,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "supportEmail",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "default": null,
+          "format": "email"
+        },
+        {
+          "key": "contactPhone",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 20,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "bookingNotice",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 1000,
+          "default": null,
+          "encrypt": false
+        }
+      ],
+      "indexes": []
+    }
+  ],
+  "buckets": [
+    {
+      "$id": "public-media",
+      "$permissions": [
+        "read(\"any\")",
+        "create(\"label:admin\")",
+        "read(\"label:admin\")",
+        "update(\"label:admin\")",
+        "delete(\"label:admin\")",
+        "create(\"label:root\")",
+        "read(\"label:root\")",
+        "update(\"label:root\")",
+        "delete(\"label:root\")"
+      ],
+      "fileSecurity": false,
+      "name": "public-media",
+      "enabled": true,
+      "maximumFileSize": 10000000,
+      "allowedFileExtensions": ["jpg", "jpeg", "png", "webp", "gif", "svg"],
+      "compression": "none",
+      "encryption": true,
+      "antivirus": true
+    },
+    {
+      "$id": "private-media",
+      "$permissions": [
+        "create(\"label:admin\")",
+        "read(\"label:admin\")",
+        "update(\"label:admin\")",
+        "delete(\"label:admin\")",
+        "create(\"label:root\")",
+        "read(\"label:root\")",
+        "update(\"label:root\")",
+        "delete(\"label:root\")"
+      ],
+      "fileSecurity": false,
+      "name": "private-media",
+      "enabled": true,
+      "maximumFileSize": 15000000,
+      "allowedFileExtensions": [],
+      "compression": "none",
+      "encryption": true,
+      "antivirus": true
+    }
+  ],
+  "teams": [],
+  "topics": [],
+  "functions": [
+    {
+      "$id": "create-user-profile",
+      "name": "create-user-profile",
+      "runtime": "node-20.0",
+      "path": "appwrite/functions/create-user-profile",
+      "entrypoint": "src/main.js",
+      "ignore": ["node_modules", ".npm"],
+      "execute": [],
+      "events": ["users.*.create"],
+      "schedule": "",
+      "timeout": 15,
+      "enabled": true,
+      "logging": true,
+      "scopes": ["users.read", "databases.read", "databases.write"],
+      "commands": "npm install"
+    },
+    {
+      "$id": "sync-user-profile",
+      "name": "sync-user-profile",
+      "runtime": "node-20.0",
+      "path": "appwrite/functions/sync-user-profile",
+      "entrypoint": "src/main.js",
+      "ignore": ["node_modules", ".npm"],
+      "execute": ["users"],
+      "events": [],
+      "schedule": "",
+      "timeout": 15,
+      "enabled": true,
+      "logging": true,
+      "scopes": [
+        "users.read",
+        "users.write",
+        "databases.read",
+        "databases.write"
+      ],
+      "commands": "npm install"
+    },
+    {
+      "$id": "sync-email-verification",
+      "name": "sync-email-verification",
+      "runtime": "node-20.0",
+      "path": "appwrite/functions/sync-email-verification",
+      "entrypoint": "src/main.js",
+      "ignore": ["node_modules", ".npm"],
+      "execute": ["users"],
+      "events": [],
+      "schedule": "",
+      "timeout": 15,
+      "enabled": true,
+      "logging": true,
+      "scopes": ["users.read", "databases.read", "databases.write"],
+      "commands": "npm install"
+    }
+  ]
 }

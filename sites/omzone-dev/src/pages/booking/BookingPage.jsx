@@ -445,6 +445,23 @@ export default function BookingPage() {
     }
   }, [user])
 
+  // Restaurar estado del booking pendiente tras login/registro
+  useEffect(() => {
+    if (!user || !sessionId) return
+    const raw = sessionStorage.getItem('pendingBooking')
+    if (!raw) return
+    try {
+      const pending = JSON.parse(raw)
+      if (pending.sessionId === sessionId) {
+        if (pending.selectedExtras?.length) setSelectedExtras(pending.selectedExtras)
+        sessionStorage.removeItem('pendingBooking')
+        setStep(3)
+      }
+    } catch {
+      sessionStorage.removeItem('pendingBooking')
+    }
+  }, [user, sessionId])
+
   const cls = selectedSession?.class ?? sessionData?.class ?? null
 
   const stepLabels = [
@@ -457,6 +474,18 @@ export default function BookingPage() {
   // Navigación entre pasos
   function goNext() {
     if (step === 1 && !selectedSession) return
+
+    // Gate: paso 2→3 requiere autenticación
+    if (step === 2 && !user) {
+      sessionStorage.setItem('pendingBooking', JSON.stringify({
+        sessionId,
+        selectedExtras,
+        selectedSessionId: selectedSession?.$id ?? null,
+      }))
+      navigate(`/register?redirect=/booking/${sessionId}`)
+      return
+    }
+
     if (step === 3) {
       const errs = validateStep3(customerInfo, t)
       if (Object.keys(errs).length > 0) { setErrors(errs); return }
@@ -605,7 +634,7 @@ export default function BookingPage() {
                 <Button
                   onClick={goNext}
                   disabled={!canNext}
-                  className="gap-1.5 min-w-[160px]"
+                  className="gap-1.5 min-w-40"
                   size="lg"
                 >
                   {step === 4 ? t('step4.proceedToPayment') : t('common:actions.next')}

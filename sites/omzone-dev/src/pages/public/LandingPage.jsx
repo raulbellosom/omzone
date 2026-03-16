@@ -9,8 +9,9 @@ import TestimonialsSection from '@/features/marketing/TestimonialsSection'
 import StudioSection from '@/features/marketing/StudioSection'
 import FaqSection from '@/features/marketing/FaqSection'
 import CtaSection from '@/features/marketing/CtaSection'
+import { APP_BASE_URL } from '@/env'
 
-const BASE_URL = import.meta.env.VITE_APP_BASE_URL ?? 'https://omzone.com'
+const BASE_URL = APP_BASE_URL
 
 const organizationSchema = {
   '@context': 'https://schema.org',

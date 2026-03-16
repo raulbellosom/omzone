@@ -11,8 +11,9 @@ import {
 } from '@/components/ui/accordion'
 import { useMembershipPlans } from '@/hooks/useMemberships'
 import { resolveField } from '@/lib/i18n-data'
+import { APP_BASE_URL } from '@/env'
 
-const BASE_URL = import.meta.env.VITE_APP_BASE_URL ?? 'https://omzone.com'
+const BASE_URL = APP_BASE_URL
 
 export default function MembershipsPage() {
   const { t } = useTranslation('memberships')
@@ -84,7 +85,7 @@ export default function MembershipsPage() {
         {/* Nota de confianza */}
         <div className="flex flex-wrap justify-center gap-8 py-10 border-y border-warm-gray-dark/50 mb-20">
           {(t('trust', { returnObjects: true }) ?? []).map(({ title, desc }) => (
-            <div key={title} className="text-center max-w-[180px]">
+            <div key={title} className="text-center max-w-45">
               <p className="text-sm font-semibold text-charcoal mb-1">{title}</p>
               <p className="text-xs text-charcoal-muted">{desc}</p>
             </div>
