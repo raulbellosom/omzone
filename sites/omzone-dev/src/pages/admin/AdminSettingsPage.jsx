@@ -15,6 +15,42 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useAppSettings, useUpsertAppSettings } from "@/hooks/useAdmin";
 import AdminPageHeader from "@/components/shared/AdminPageHeader";
 
+const CURRENCIES = [
+  { value: "MXN", label: "MXN — Peso mexicano" },
+  { value: "USD", label: "USD — Dólar estadounidense" },
+  { value: "EUR", label: "EUR — Euro" },
+  { value: "GBP", label: "GBP — Libra esterlina" },
+  { value: "COP", label: "COP — Peso colombiano" },
+  { value: "ARS", label: "ARS — Peso argentino" },
+  { value: "CLP", label: "CLP — Peso chileno" },
+  { value: "BRL", label: "BRL — Real brasileño" },
+];
+
+const TIMEZONES = [
+  {
+    value: "America/Mexico_City",
+    label: "America/Mexico_City (CDMX, Monterrey)",
+  },
+  { value: "America/Cancun", label: "America/Cancun (Cancún, Q. Roo)" },
+  {
+    value: "America/Chihuahua",
+    label: "America/Chihuahua (Chihuahua, Culiacán)",
+  },
+  { value: "America/Tijuana", label: "America/Tijuana (Tijuana, Mexicali)" },
+  { value: "America/Bogota", label: "America/Bogota (Colombia)" },
+  { value: "America/Lima", label: "America/Lima (Perú)" },
+  { value: "America/Santiago", label: "America/Santiago (Chile)" },
+  { value: "America/Buenos_Aires", label: "America/Buenos_Aires (Argentina)" },
+  { value: "America/Sao_Paulo", label: "America/Sao_Paulo (Brasil)" },
+  { value: "America/Caracas", label: "America/Caracas (Venezuela)" },
+  { value: "America/New_York", label: "America/New_York (EST/EDT)" },
+  { value: "America/Chicago", label: "America/Chicago (CST/CDT)" },
+  { value: "America/Los_Angeles", label: "America/Los_Angeles (PST/PDT)" },
+  { value: "Europe/Madrid", label: "Europe/Madrid (España)" },
+  { value: "Europe/London", label: "Europe/London (Reino Unido)" },
+  { value: "UTC", label: "UTC" },
+];
+
 const EMPTY_SETTINGS = {
   studioName: "",
   address: "",
@@ -195,16 +231,43 @@ export default function AdminSettingsPage() {
           <CardContent className="p-6">
             <SectionHeader title={t("settings.localization")} />
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <Field
-                label={t("settings.fields.timezone")}
-                value={settings.timezone}
-                onChange={set("timezone")}
-              />
-              <Field
-                label={t("settings.fields.currency")}
-                value={settings.currency}
-                onChange={set("currency")}
-              />
+              {/* Timezone */}
+              <div className="space-y-1.5">
+                <Label className="text-xs font-medium text-charcoal-muted">
+                  {t("settings.fields.timezone")}
+                </Label>
+                <select
+                  value={settings.timezone}
+                  onChange={(e) => set("timezone")(e.target.value)}
+                  className="w-full text-sm rounded-xl border border-warm-gray-dark/40 bg-white px-3 py-2 h-10 focus:outline-none focus:ring-2 focus:ring-sage/30"
+                >
+                  {TIMEZONES.map((tz) => (
+                    <option key={tz.value} value={tz.value}>
+                      {tz.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Currency */}
+              <div className="space-y-1.5">
+                <Label className="text-xs font-medium text-charcoal-muted">
+                  {t("settings.fields.currency")}
+                </Label>
+                <select
+                  value={settings.currency}
+                  onChange={(e) => set("currency")(e.target.value)}
+                  className="w-full text-sm rounded-xl border border-warm-gray-dark/40 bg-white px-3 py-2 h-10 focus:outline-none focus:ring-2 focus:ring-sage/30"
+                >
+                  {CURRENCIES.map((c) => (
+                    <option key={c.value} value={c.value}>
+                      {c.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Language */}
               <div className="space-y-1.5">
                 <Label className="text-xs font-medium text-charcoal-muted">
                   {t("settings.fields.defaultLang")}

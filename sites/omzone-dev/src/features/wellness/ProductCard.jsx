@@ -12,7 +12,7 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { formatMXN } from "@/lib/currency";
+import { useCurrency } from "@/hooks/useCurrency";
 import { resolveField } from "@/lib/i18n-data";
 import { useAuth } from "@/hooks/useAuth";
 import ROUTES from "@/constants/routes";
@@ -46,6 +46,7 @@ const TYPE_VISUALS = {
 export default function ProductCard({ product, compact = false }) {
   const { t } = useTranslation("wellness");
   const { user } = useAuth();
+  const { formatPrice } = useCurrency();
   if (!product) return null;
 
   const name = resolveField(product, "name");
@@ -129,7 +130,7 @@ export default function ProductCard({ product, compact = false }) {
                 compact ? "text-base" : "text-lg",
               )}
             >
-              {formatMXN(product.price)}
+              {formatPrice(product.price)}
             </span>
           )}
           {!compact && !product.is_addon_only && (

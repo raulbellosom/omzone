@@ -1,22 +1,30 @@
+const CURRENCY_LOCALE_MAP = {
+  MXN: "es-MX",
+  USD: "en-US",
+  EUR: "de-DE",
+  GBP: "en-GB",
+  COP: "es-CO",
+  ARS: "es-AR",
+  CLP: "es-CL",
+  BRL: "pt-BR",
+};
+
 /**
- * Formatea un número como moneda MXN.
- * @param {number} amount
- * @param {string} [currency='MXN']
- * @param {string} [locale='es-MX']
- * @returns {string}
+ * Formatea un número como moneda.
+ * Si no se pasa `locale`, se resuelve automáticamente desde `currency`.
  */
-export function formatCurrency(amount, currency = 'MXN', locale = 'es-MX') {
-  return new Intl.NumberFormat(locale, {
-    style: 'currency',
+export function formatCurrency(amount, currency = "MXN", locale) {
+  const resolvedLocale = locale ?? CURRENCY_LOCALE_MAP[currency] ?? "es-MX";
+  const formatted = new Intl.NumberFormat(resolvedLocale, {
+    style: "currency",
     currency,
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
-  }).format(amount)
+  }).format(amount);
+  return `${formatted} ${currency}`;
 }
 
-/**
- * Formatea como MXN con símbolo compacto: "$1,490"
- */
+/** @deprecated Usar useCurrency().formatPrice para moneda dinámica */
 export function formatMXN(amount) {
-  return formatCurrency(amount, 'MXN', 'es-MX')
+  return formatCurrency(amount, "MXN", "es-MX");
 }

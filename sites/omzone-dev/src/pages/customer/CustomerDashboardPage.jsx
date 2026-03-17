@@ -23,7 +23,7 @@ import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/useAuth.jsx";
 import { useMyBookings, useMyOrders } from "@/hooks/useCustomer";
 import { resolveField } from "@/lib/i18n-data";
-import { formatMXN } from "@/lib/currency";
+import { useCurrency } from "@/hooks/useCurrency";
 import ROUTES from "@/constants/routes";
 
 function StatCard({ icon: Icon, label, value, loading, to }) {
@@ -59,6 +59,7 @@ function StatCard({ icon: Icon, label, value, loading, to }) {
 
 export default function CustomerDashboardPage() {
   const { t, i18n } = useTranslation("customer");
+  const { formatPrice } = useCurrency();
   const { user } = useAuth();
   const dateFnsLocale = i18n.language === "es" ? es : enUS;
 
@@ -236,7 +237,7 @@ export default function CustomerDashboardPage() {
                           </p>
                         </div>
                         <span className="font-semibold text-charcoal text-sm shrink-0">
-                          {formatMXN(order.grand_total)}
+                          {formatPrice(order.grand_total)}
                         </span>
                       </li>
                     ))}

@@ -31,7 +31,7 @@ import { useClassBySlug, useSessionsByClass } from "@/hooks/useClasses";
 import { useClassExtras } from "@/hooks/useWellness";
 import { useAuth } from "@/hooks/useAuth";
 import { resolveField } from "@/lib/i18n-data";
-import { formatMXN } from "@/lib/currency";
+import { useCurrency } from "@/hooks/useCurrency";
 import { formatDateTime, formatDuration } from "@/lib/dates";
 import { getMediaPreviewUrl } from "@/lib/media";
 import ROUTES from "@/constants/routes";
@@ -64,6 +64,7 @@ export default function ClassDetailPage() {
   const { t } = useTranslation("classes");
   const { t: tc } = useTranslation("common");
   const { user } = useAuth();
+  const { formatPrice, currency } = useCurrency();
 
   const { data: cls, isLoading: loadingClass } = useClassBySlug(slug);
   const { data: sessions, isLoading: loadingSessions } = useSessionsByClass(
@@ -123,7 +124,7 @@ export default function ClassDetailPage() {
   }
 
   // Structured data
-  const structuredData = buildClassStructuredData(cls, activeSession);
+  const structuredData = buildClassStructuredData(cls, activeSession, currency);
 
   return (
     <>
@@ -316,7 +317,7 @@ export default function ClassDetailPage() {
                               </span>
                               {active && user && (
                                 <span className="text-xs font-semibold text-sage">
-                                  {formatMXN(
+                                  {formatPrice(
                                     sess.price_override ?? cls.base_price,
                                   )}
                                 </span>
@@ -415,7 +416,7 @@ export default function ClassDetailPage() {
                 <div className="space-y-2 py-4 border-y border-warm-gray-dark/50 mb-4 text-sm">
                   <div className="flex justify-between">
                     <span className="text-charcoal-muted">{title}</span>
-                    <span className="font-medium">{formatMXN(price)}</span>
+                    <span className="font-medium">{formatPrice(price)}</span>
                   </div>
                   {selectedExtras.length > 0 && (
                     <div className="flex justify-between">
@@ -425,14 +426,14 @@ export default function ClassDetailPage() {
                         })}
                       </span>
                       <span className="font-medium">
-                        {formatMXN(extrasTotal)}
+                        {formatPrice(extrasTotal)}
                       </span>
                     </div>
                   )}
                   <div className="flex justify-between pt-2 border-t border-warm-gray-dark/40 text-base font-bold text-charcoal">
                     <span>{t("detail.total")}</span>
                     <span className="text-sage">
-                      {formatMXN(price + extrasTotal)}
+                      {formatPrice(price + extrasTotal)}
                     </span>
                   </div>
                 </div>

@@ -24,7 +24,7 @@ import {
   useAdminLeads,
   useAdminSessions,
 } from "@/hooks/useAdmin";
-import { formatMXN } from "@/lib/currency";
+import { useCurrency } from "@/hooks/useCurrency";
 import { resolveField } from "@/lib/i18n-data";
 import AdminPageHeader from "@/components/shared/AdminPageHeader";
 import ROUTES from "@/constants/routes";
@@ -80,6 +80,7 @@ const PAYMENT_COLORS = {
 
 export default function AdminDashboardPage() {
   const { t, i18n } = useTranslation("admin");
+  const { formatPrice } = useCurrency();
   const dateFnsLocale = i18n.language === "es" ? es : enUS;
 
   const { data: metrics, isLoading: lMetrics } = useAdminOverview();
@@ -132,14 +133,14 @@ export default function AdminDashboardPage() {
         <KpiCard
           icon={ShoppingBag}
           label={t("dashboard.metrics.revenue")}
-          value={metrics ? formatMXN(metrics.revenue_month) : "—"}
+          value={metrics ? formatPrice(metrics.revenue_month) : "—"}
           loading={lMetrics}
           accent="charcoal"
         />
         <KpiCard
           icon={Zap}
           label={t("dashboard.metrics.revenueToday")}
-          value={metrics ? formatMXN(metrics.revenue_today) : "—"}
+          value={metrics ? formatPrice(metrics.revenue_today) : "—"}
           loading={lMetrics}
           accent="charcoal"
         />
@@ -188,7 +189,7 @@ export default function AdminDashboardPage() {
                           {t(`orders.paymentStatus.${o.payment_status}`)}
                         </Badge>
                         <span className="font-semibold text-charcoal text-sm">
-                          {formatMXN(o.grand_total)}
+                          {formatPrice(o.grand_total)}
                         </span>
                       </div>
                     </li>

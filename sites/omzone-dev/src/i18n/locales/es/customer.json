@@ -32,6 +32,19 @@
     "noRecentOrders": "Aún sin pedidos recientes",
     "bookingCode": "Código de reserva"
   },
+  "home": {
+    "heroTitle": "Tu espacio de bienestar",
+    "heroSubtitle": "Explora clases, paquetes y productos diseñados para transformar tu bienestar integral.",
+    "classesTitle": "Clases destacadas",
+    "classesSubtitle": "Encuentra la práctica perfecta para tu nivel e intención.",
+    "packagesTitle": "Planes y paquetes",
+    "packagesSubtitle": "Ahorra más con nuestros paquetes combinados de yoga y wellness.",
+    "wellnessTitle": "Complementos de bienestar",
+    "wellnessSubtitle": "Smoothies funcionales, suplementos y planes nutricionales para potenciar tu práctica.",
+    "aboutEyebrow": "Nuestro espacio",
+    "aboutTitle": "Un lugar donde el bienestar es un estilo de vida",
+    "aboutDescription": "En Omzone combinamos prácticas ancestrales de yoga con nutrición moderna y experiencias inmersivas en la naturaleza. Nuestro enfoque integral transforma cuerpo, mente y alma a través de cuatro ejes: movimiento consciente, nutrición funcional, inmersiones en la naturaleza y experiencias de reconexión."
+  },
   "bookings": {
     "title": "Mis reservas",
     "upcoming": "Próximas",

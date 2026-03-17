@@ -25,7 +25,7 @@ export const ROUTES = {
 
   // ── Área cliente (/zone) ────────────────────────────────────────────────────
   ZONE: "/zone",
-  ZONE_DASHBOARD: "/zone",
+  ZONE_DASHBOARD: "/zone/dashboard",
   ZONE_BOOKINGS: "/zone/bookings",
   ZONE_ORDERS: "/zone/orders",
   ZONE_PACKAGES: "/zone/packages",

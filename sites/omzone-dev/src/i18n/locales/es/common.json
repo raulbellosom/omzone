@@ -4,6 +4,7 @@
     "tagline": "Yoga & Wellness Kitchen"
   },
   "nav": {
+    "home": "Inicio",
     "classes": "Clases",
     "packages": "Paquetes",
     "wellness": "Wellness Kitchen",
@@ -14,7 +15,11 @@
     "adminPanel": "Panel admin",
     "goToApp": "Ir a la aplicación",
     "myProfile": "Mi perfil",
-    "userMenu": "Menú de usuario"
+    "userMenu": "Menú de usuario",
+    "dashboard": "Mi dashboard",
+    "bookings": "Mis reservas",
+    "orders": "Mis pedidos",
+    "profile": "Mi perfil"
   },
   "lang": {
     "es": "Español",

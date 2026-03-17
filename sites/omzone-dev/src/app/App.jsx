@@ -3,7 +3,7 @@ import { Suspense, lazy } from "react";
 
 // Layouts
 import PublicLayout from "@/layouts/PublicLayout";
-import CustomerLayout from "@/layouts/CustomerLayout";
+import ClientLayout from "@/layouts/ClientLayout";
 import SmartLayout from "@/layouts/SmartLayout";
 import AdminLayout from "@/layouts/AdminLayout";
 
@@ -35,6 +35,7 @@ const ConfirmationPage = lazy(
 );
 
 // Área cliente
+const ClientHomePage = lazy(() => import("@/pages/customer/ClientHomePage"));
 const CustomerDashboardPage = lazy(
   () => import("@/pages/customer/CustomerDashboardPage"),
 );
@@ -121,8 +122,9 @@ export default function App() {
 
         {/* ── Área cliente (/zone) ────────────────────────────────────── */}
         <Route element={<RequireAuth roles={["client", "admin", "root"]} />}>
-          <Route element={<CustomerLayout />}>
-            <Route path="zone" element={<CustomerDashboardPage />} />
+          <Route element={<ClientLayout />}>
+            <Route path="zone" element={<ClientHomePage />} />
+            <Route path="zone/dashboard" element={<CustomerDashboardPage />} />
             <Route path="zone/bookings" element={<CustomerBookingsPage />} />
             <Route path="zone/orders" element={<CustomerOrdersPage />} />
             <Route path="zone/profile" element={<CustomerProfilePage />} />

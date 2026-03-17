@@ -4,7 +4,7 @@ import { Package, ArrowRight, Leaf, Calendar } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { formatMXN } from "@/lib/currency";
+import { useCurrency } from "@/hooks/useCurrency";
 import { resolveField } from "@/lib/i18n-data";
 import { useAuth } from "@/hooks/useAuth";
 import ROUTES from "@/constants/routes";
@@ -17,6 +17,7 @@ const TYPE_COLORS = {
 
 export default function PackageCard({ pkg }) {
   const { t } = useTranslation("packages");
+  const { formatPrice } = useCurrency();
   const { user } = useAuth();
   if (!pkg) return null;
 
@@ -82,7 +83,7 @@ export default function PackageCard({ pkg }) {
           <div className="flex items-center justify-between mb-3">
             {user && (
               <span className="text-2xl font-bold text-charcoal font-display">
-                {formatMXN(pkg.price)}
+                {formatPrice(pkg.price)}
               </span>
             )}
             {pkg.is_featured && (

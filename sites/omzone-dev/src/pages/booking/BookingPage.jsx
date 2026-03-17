@@ -31,7 +31,7 @@ import { useSessionById, useSessionsByClass } from "@/hooks/useClasses";
 import { useClassExtras } from "@/hooks/useWellness";
 import { useAuth } from "@/hooks/useAuth.jsx";
 import { resolveField } from "@/lib/i18n-data";
-import { formatMXN } from "@/lib/currency";
+import { useCurrency } from "@/hooks/useCurrency";
 import { formatDate, formatTime } from "@/lib/dates";
 import { getMediaPreviewUrl } from "@/lib/media";
 import ROUTES from "@/constants/routes";
@@ -67,6 +67,7 @@ function BookingSidebar({
     return sum + (extra?.price ?? 0);
   }, 0);
   const total = basePrice * quantity + extrasTotal;
+  const { formatPrice } = useCurrency();
 
   return (
     <aside className="lg:sticky lg:top-24">
@@ -124,7 +125,7 @@ function BookingSidebar({
                 {t("summary.subtotal")}
               </span>
               <span className="font-medium">
-                {formatMXN(basePrice)}
+                {formatPrice(basePrice)}
                 {quantity > 1 && (
                   <span className="text-charcoal-subtle text-xs">
                     {" "}
@@ -150,7 +151,7 @@ function BookingSidebar({
                       {resolveField(extra, "name")}
                     </span>
                     <span className="font-medium">
-                      {formatMXN(extra.price)}
+                      {formatPrice(extra.price)}
                     </span>
                   </div>
                 );
@@ -164,7 +165,7 @@ function BookingSidebar({
               {t("summary.total")}
             </span>
             <span className="text-xl font-bold text-sage font-display">
-              {formatMXN(total)}
+              {formatPrice(total)}
             </span>
           </div>
         </CardContent>
@@ -352,6 +353,7 @@ function Step1({
 
 // ── Paso 2 — Extras ───────────────────────────────────────────────────────────
 function Step2({ extras, selectedExtras, onToggle, t }) {
+  const { formatPrice } = useCurrency();
   return (
     <div className="space-y-4 animate-fade-in">
       <div>
@@ -390,7 +392,7 @@ function Step2({ extras, selectedExtras, onToggle, t }) {
                     {desc}
                   </p>
                   <p className="text-sm font-bold text-sage mt-2">
-                    {formatMXN(extra.price)}
+                    {formatPrice(extra.price)}
                   </p>
                 </div>
                 <div
@@ -511,6 +513,7 @@ function Step4({
     const extra = extraItems.find((e) => e.$id === id);
     return sum + (extra?.price ?? 0);
   }, 0);
+  const { formatPrice } = useCurrency();
 
   return (
     <div className="space-y-5 animate-fade-in">
@@ -544,7 +547,7 @@ function Step4({
           {formatTime(session.session_date)} · {session.location_label}
         </p>
         <p className="text-sm font-medium text-sage mt-1">
-          {formatMXN(basePrice)}
+          {formatPrice(basePrice)}
           {quantity > 1 && (
             <span className="text-charcoal-subtle"> × {quantity} boletos</span>
           )}
@@ -575,7 +578,9 @@ function Step4({
                   className="flex justify-between text-sm text-charcoal"
                 >
                   <span>{resolveField(extra, "name")}</span>
-                  <span className="font-medium">{formatMXN(extra.price)}</span>
+                  <span className="font-medium">
+                    {formatPrice(extra.price)}
+                  </span>
                 </li>
               );
             })}
@@ -609,7 +614,7 @@ function Step4({
       <div className="flex items-center justify-between px-1">
         <span className="font-bold text-charcoal">{t("summary.total")}</span>
         <span className="text-2xl font-bold text-sage font-display">
-          {formatMXN(basePrice * quantity + extrasTotal)}
+          {formatPrice(basePrice * quantity + extrasTotal)}
         </span>
       </div>
     </div>

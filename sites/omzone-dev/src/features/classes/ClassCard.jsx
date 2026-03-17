@@ -26,7 +26,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import DifficultyBadge from "./DifficultyBadge";
-import { formatMXN } from "@/lib/currency";
+import { useCurrency } from "@/hooks/useCurrency";
 import { formatDuration } from "@/lib/dates";
 import { getMediaPreviewUrl } from "@/lib/media";
 import { resolveField } from "@/lib/i18n-data";
@@ -88,6 +88,7 @@ export default function ClassCard({
 // ── Datos compartidos ─────────────────────────────────────────────────────────
 
 function useCardData(cls, session) {
+  const { formatPrice } = useCurrency();
   const typeSlug = cls.class_type?.slug ?? "default";
   const gradient = TYPE_GRADIENT[typeSlug] ?? TYPE_GRADIENT.default;
   const accent = TYPE_ACCENT[typeSlug] ?? TYPE_ACCENT.default;
@@ -107,7 +108,7 @@ function useCardData(cls, session) {
     ? session.capacity_total - session.capacity_taken
     : null;
   const isFull = session?.status === "full" || spotsLeft === 0;
-  const price = formatMXN(session?.price_override ?? cls.base_price);
+  const price = formatPrice(session?.price_override ?? cls.base_price);
 
   return {
     typeSlug,

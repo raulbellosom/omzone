@@ -38,6 +38,7 @@ import {
 import { resolveField } from "@/lib/i18n-data";
 import { getMediaPreviewUrl } from "@/lib/media";
 import { cn } from "@/lib/utils";
+import { useCurrency } from "@/hooks/useCurrency";
 
 const STATUS_BADGE = {
   scheduled: "sage",
@@ -155,6 +156,7 @@ function SessionActions({
 
 export default function AdminSessionsPage() {
   const { t, i18n } = useTranslation("admin");
+  const { currency } = useCurrency();
   const dateFnsLocale = i18n.language === "es" ? es : enUS;
 
   const [search, setSearch] = useState("");
@@ -638,22 +640,28 @@ export default function AdminSessionsPage() {
                   "Precio especial (opcional)",
                 )}
               </Label>
-              <Input
-                type="number"
-                min="0"
-                step="10"
-                value={form.price_override}
-                onChange={(event) =>
-                  setForm((prev) => ({
-                    ...prev,
-                    price_override: event.target.value,
-                  }))
-                }
-                placeholder={t(
-                  "sessions.fields.priceOverridePlaceholder",
-                  "Vacio = precio base de la clase",
-                )}
-              />
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-medium text-charcoal-muted select-none pointer-events-none z-10">
+                  {currency}
+                </span>
+                <Input
+                  type="number"
+                  min="0"
+                  step="10"
+                  className="pl-12"
+                  value={form.price_override}
+                  onChange={(event) =>
+                    setForm((prev) => ({
+                      ...prev,
+                      price_override: event.target.value,
+                    }))
+                  }
+                  placeholder={t(
+                    "sessions.fields.priceOverridePlaceholder",
+                    "Vacio = precio base de la clase",
+                  )}
+                />
+              </div>
             </div>
           </div>
 

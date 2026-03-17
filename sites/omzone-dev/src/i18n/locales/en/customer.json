@@ -32,6 +32,19 @@
     "noRecentOrders": "No recent orders yet",
     "bookingCode": "Booking code"
   },
+  "home": {
+    "heroTitle": "Your wellness space",
+    "heroSubtitle": "Explore classes, packages and products designed to transform your holistic well-being.",
+    "classesTitle": "Featured classes",
+    "classesSubtitle": "Find the perfect practice for your level and intention.",
+    "packagesTitle": "Plans & packages",
+    "packagesSubtitle": "Save more with our combined yoga & wellness packages.",
+    "wellnessTitle": "Wellness products",
+    "wellnessSubtitle": "Functional smoothies, supplements and nutrition plans to enhance your practice.",
+    "aboutEyebrow": "Our space",
+    "aboutTitle": "Where wellness becomes a lifestyle",
+    "aboutDescription": "At Omzone we blend ancestral yoga practices with modern nutrition and immersive nature experiences. Our holistic approach transforms body, mind and soul through four pillars: conscious movement, functional nutrition, nature immersions and reconnection experiences."
+  },
   "bookings": {
     "title": "My bookings",
     "upcoming": "Upcoming",

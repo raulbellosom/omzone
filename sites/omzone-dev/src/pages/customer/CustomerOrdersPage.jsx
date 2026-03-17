@@ -13,7 +13,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { useMyOrders } from "@/hooks/useCustomer";
-import { formatMXN } from "@/lib/currency";
+import { useCurrency } from "@/hooks/useCurrency";
 import ROUTES from "@/constants/routes";
 import { cn } from "@/lib/utils";
 
@@ -31,6 +31,7 @@ const PAYMENT_BADGE = {
 };
 
 function OrderCard({ order, t, dateFnsLocale }) {
+  const { formatPrice } = useCurrency();
   const PrimaryIcon = TYPE_ICON[order.items[0]?.item_type] ?? ShoppingBag;
   const badgeVariant = PAYMENT_BADGE[order.payment_status] ?? "outline";
 
@@ -59,7 +60,7 @@ function OrderCard({ order, t, dateFnsLocale }) {
               {t(`orders.paymentStatus.${order.payment_status}`)}
             </Badge>
             <span className="font-bold text-charcoal font-display">
-              {formatMXN(order.grand_total)}
+              {formatPrice(order.grand_total)}
             </span>
           </div>
         </div>
@@ -85,7 +86,7 @@ function OrderCard({ order, t, dateFnsLocale }) {
                   </div>
                 </div>
                 <span className="text-sm font-semibold text-charcoal shrink-0">
-                  {formatMXN(item.line_total)}
+                  {formatPrice(item.line_total)}
                 </span>
               </li>
             );

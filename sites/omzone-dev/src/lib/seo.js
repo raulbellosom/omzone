@@ -6,11 +6,11 @@
  *   const meta = buildPageMeta({ title: 'Morning Flow', description: '...' })
  */
 
-import { APP_BASE_URL } from '@/env'
+import { APP_BASE_URL } from "@/env";
 
-const SITE_NAME = 'Omzone'
-const BASE_URL = APP_BASE_URL
-const DEFAULT_OG_IMAGE = `${BASE_URL}/og-image.jpg`
+const SITE_NAME = "Omzone";
+const BASE_URL = APP_BASE_URL;
+const DEFAULT_OG_IMAGE = `${BASE_URL}/og-image.jpg`;
 
 /**
  * @typedef {Object} PageMetaConfig
@@ -31,26 +31,26 @@ const DEFAULT_OG_IMAGE = `${BASE_URL}/og-image.jpg`
 export function buildPageMeta(config) {
   const {
     title,
-    description = 'Clases de yoga, paquetes y complementos wellness en un solo lugar.',
+    description = "Clases de yoga, paquetes y complementos wellness en un solo lugar.",
     canonical,
     ogImage = DEFAULT_OG_IMAGE,
-    ogType = 'website',
+    ogType = "website",
     noIndex = false,
-    locale = 'es',
+    locale = "es",
     structured = null,
-  } = config
+  } = config;
 
   const fullTitle = title
     ? `${title} · ${SITE_NAME}`
-    : `${SITE_NAME} · Yoga & Wellness Kitchen`
+    : `${SITE_NAME} · Yoga & Wellness Kitchen`;
 
-  const ogLocale = locale === 'en' ? 'en_US' : 'es_MX'
+  const ogLocale = locale === "en" ? "en_US" : "es_MX";
 
   return {
     title: fullTitle,
     description,
     canonical: canonical ?? BASE_URL,
-    robots: noIndex ? 'noindex, nofollow' : 'index, follow',
+    robots: noIndex ? "noindex, nofollow" : "index, follow",
     og: {
       title: fullTitle,
       description,
@@ -61,44 +61,43 @@ export function buildPageMeta(config) {
       locale: ogLocale,
     },
     twitter: {
-      card: 'summary_large_image',
+      card: "summary_large_image",
       title: fullTitle,
       description,
       image: ogImage,
     },
     structured,
-  }
+  };
 }
 
 /**
  * Genera JSON-LD para una clase de yoga (schema.org/Event o Course).
  */
-export function buildClassStructuredData(cls, session) {
+export function buildClassStructuredData(cls, session, currency = "MXN") {
   return {
-    '@context': 'https://schema.org',
-    '@type': 'Event',
+    "@context": "https://schema.org",
+    "@type": "Event",
     name: cls.title_es,
     description: cls.description_es,
     startDate: session?.session_date,
     endDate: session?.end_date,
-    eventStatus: 'https://schema.org/EventScheduled',
-    eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+    eventStatus: "https://schema.org/EventScheduled",
+    eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
     location: {
-      '@type': 'Place',
-      name: session?.location_label ?? 'Omzone Studio',
+      "@type": "Place",
+      name: session?.location_label ?? "Omzone Studio",
     },
     offers: {
-      '@type': 'Offer',
+      "@type": "Offer",
       price: session?.price_override ?? cls.base_price,
-      priceCurrency: 'MXN',
-      availability: 'https://schema.org/InStock',
+      priceCurrency: currency,
+      availability: "https://schema.org/InStock",
       url: `${BASE_URL}/classes/${cls.slug}`,
     },
     organizer: {
-      '@type': 'Organization',
+      "@type": "Organization",
       name: SITE_NAME,
       url: BASE_URL,
     },
-  }
+  };
 }
-

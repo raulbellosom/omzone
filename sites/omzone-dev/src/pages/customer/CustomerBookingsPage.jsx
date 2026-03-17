@@ -24,7 +24,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "react-router-dom";
 import { useMyBookings, useCancelBooking } from "@/hooks/useCustomer";
 import { resolveField } from "@/lib/i18n-data";
-import { formatMXN } from "@/lib/currency";
+import { useCurrency } from "@/hooks/useCurrency";
 import ROUTES from "@/constants/routes";
 import { cn } from "@/lib/utils";
 
@@ -44,6 +44,7 @@ const STATUS_ICON = {
 
 function BookingCard({ booking, t, dateFnsLocale, onCancel, cancelling }) {
   const [confirmingCancel, setConfirmingCancel] = useState(false);
+  const { formatPrice } = useCurrency();
   const cls = booking.session.class;
   const isUpcoming = booking.status === "confirmed";
   const StatusIcon = STATUS_ICON[booking.status] ?? CheckCircle;
@@ -131,7 +132,7 @@ function BookingCard({ booking, t, dateFnsLocale, onCancel, cancelling }) {
                     key={ex.product_id}
                     className="text-[10px] bg-sand/60 text-charcoal-muted px-2 py-0.5 rounded-full"
                   >
-                    {ex.name} · {formatMXN(ex.price)}
+                    {ex.name} · {formatPrice(ex.price)}
                   </span>
                 ))}
               </div>
@@ -142,7 +143,7 @@ function BookingCard({ booking, t, dateFnsLocale, onCancel, cancelling }) {
               <span className="text-xs text-charcoal-subtle">
                 {t("bookings.total")}:{" "}
                 <span className="font-semibold text-charcoal">
-                  {formatMXN(
+                  {formatPrice(
                     booking.unit_price +
                       (booking.extras_json?.reduce((s, e) => s + e.price, 0) ??
                         0),

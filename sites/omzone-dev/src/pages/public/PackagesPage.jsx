@@ -1,38 +1,40 @@
-import { useTranslation } from 'react-i18next'
-import PageMeta from '@/components/seo/PageMeta'
-import StructuredData from '@/components/seo/StructuredData'
-import PackageCard from '@/features/packages/PackageCard'
-import { Skeleton } from '@/components/ui/skeleton'
-import { useWellnessPackages } from '@/hooks/useWellness'
-import { resolveField } from '@/lib/i18n-data'
-import { APP_BASE_URL } from '@/env'
+import { useTranslation } from "react-i18next";
+import PageMeta from "@/components/seo/PageMeta";
+import StructuredData from "@/components/seo/StructuredData";
+import PackageCard from "@/features/packages/PackageCard";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useWellnessPackages } from "@/hooks/useWellness";
+import { resolveField } from "@/lib/i18n-data";
+import { APP_BASE_URL } from "@/env";
+import { useCurrency } from "@/hooks/useCurrency";
 
-const BASE_URL = APP_BASE_URL
+const BASE_URL = APP_BASE_URL;
 
 export default function PackagesPage() {
-  const { t } = useTranslation('packages')
-  const { data: packages, isLoading } = useWellnessPackages()
+  const { t } = useTranslation("packages");
+  const { currency } = useCurrency();
+  const { data: packages, isLoading } = useWellnessPackages();
 
   const itemListSchema = packages
     ? {
-        '@context': 'https://schema.org',
-        '@type': 'ItemList',
-        name: 'Paquetes wellness yoga y nutrición Omzone',
+        "@context": "https://schema.org",
+        "@type": "ItemList",
+        name: "Paquetes wellness yoga y nutrición Omzone",
         itemListElement: packages.map((pkg, i) => ({
-          '@type': 'ListItem',
+          "@type": "ListItem",
           position: i + 1,
           item: {
-            '@type': 'Offer',
-            name: resolveField(pkg, 'name'),
-            description: resolveField(pkg, 'description'),
+            "@type": "Offer",
+            name: resolveField(pkg, "name"),
+            description: resolveField(pkg, "description"),
             price: pkg.price,
-            priceCurrency: 'MXN',
+            priceCurrency: currency,
             url: `${BASE_URL}/packages`,
-            availability: 'https://schema.org/InStock',
+            availability: "https://schema.org/InStock",
           },
         })),
       }
-    : null
+    : null;
 
   return (
     <>
@@ -48,18 +50,20 @@ export default function PackagesPage() {
         {/* Header */}
         <header className="text-center max-w-xl mx-auto mb-14">
           <span className="inline-block text-xs uppercase tracking-widest font-medium text-sage bg-sage-muted px-3 py-1 rounded-full mb-4">
-            {t('page.badge')}
+            {t("page.badge")}
           </span>
           <h1 className="font-display text-3xl md:text-5xl text-charcoal font-semibold mb-4 text-balance">
-            {t('page.title')}
+            {t("page.title")}
           </h1>
-          <p className="text-charcoal-muted text-lg">{t('page.subtitle')}</p>
+          <p className="text-charcoal-muted text-lg">{t("page.subtitle")}</p>
         </header>
 
         {/* Paquetes */}
         {isLoading ? (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[...Array(3)].map((_, i) => <Skeleton key={i} className="h-80 rounded-2xl" />)}
+            {[...Array(3)].map((_, i) => (
+              <Skeleton key={i} className="h-80 rounded-2xl" />
+            ))}
           </div>
         ) : (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -72,13 +76,13 @@ export default function PackagesPage() {
         {/* Bloque informativo */}
         <aside className="mt-16 bg-sage-muted/40 rounded-2xl p-8 text-center max-w-2xl mx-auto">
           <h2 className="font-display text-xl text-charcoal font-semibold mb-2">
-            {t('cta.title')}
+            {t("cta.title")}
           </h2>
           <p className="text-charcoal-muted text-sm leading-relaxed">
-            {t('cta.description')}
+            {t("cta.description")}
           </p>
         </aside>
       </main>
     </>
-  )
+  );
 }

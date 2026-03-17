@@ -42,7 +42,7 @@ export function RequireAuth({ roles = [], fallback = "/" }) {
  * RedirectIfAuthenticated — redirige usuarios verificados fuera de páginas
  * públicas (landing, login, register) hacia su panel.
  */
-export function RedirectIfAuthenticated({ to = "/app" }) {
+export function RedirectIfAuthenticated({ to = "/zone" }) {
   const { user, loading } = useAuth();
 
   if (loading) return <LoadingSpinner />;

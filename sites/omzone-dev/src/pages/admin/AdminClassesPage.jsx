@@ -45,7 +45,7 @@ import {
   useUpdateClassType,
   useUpdateInstructor,
 } from "@/hooks/useAdmin";
-import { formatMXN } from "@/lib/currency";
+import { useCurrency } from "@/hooks/useCurrency";
 import { resolveField } from "@/lib/i18n-data";
 import { cn } from "@/lib/utils";
 
@@ -211,6 +211,7 @@ function EntityActions({
 
 export default function AdminClassesPage() {
   const { t } = useTranslation("admin");
+  const { formatPrice, currency } = useCurrency();
   const [activeTab, setActiveTab] = useState("classes");
   const [classSearch, setClassSearch] = useState("");
   const [instructorSearch, setInstructorSearch] = useState("");
@@ -613,7 +614,7 @@ export default function AdminClassesPage() {
                       {t("classes.fields.basePrice", "Precio base")}
                     </p>
                     <p className="mt-1 text-lg font-semibold text-charcoal">
-                      {formatMXN(item.base_price ?? 0)}
+                      {formatPrice(item.base_price ?? 0)}
                     </p>
                   </div>
                 </div>
@@ -1277,18 +1278,24 @@ export default function AdminClassesPage() {
           <div className="grid gap-3 md:grid-cols-2">
             <div className="space-y-1.5">
               <Label>{t("classes.fields.basePrice", "Precio base")}</Label>
-              <Input
-                type="number"
-                min="0"
-                step="10"
-                value={classForm.base_price}
-                onChange={(event) =>
-                  setClassForm((current) => ({
-                    ...current,
-                    base_price: event.target.value,
-                  }))
-                }
-              />
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-medium text-charcoal-muted select-none pointer-events-none z-10">
+                  {currency}
+                </span>
+                <Input
+                  type="number"
+                  min="0"
+                  step="10"
+                  className="pl-12"
+                  value={classForm.base_price}
+                  onChange={(event) =>
+                    setClassForm((current) => ({
+                      ...current,
+                      base_price: event.target.value,
+                    }))
+                  }
+                />
+              </div>
             </div>
             <div className="space-y-3">
               <MediaUpload
