@@ -1,10 +1,42 @@
 {
   "hero": {
     "headline": "Your wellness,\nyour pace.",
-    "subheadline": "Yoga classes, packages and wellness extras in one place. Book, practice and live better.",
+    "subheadline": "Wellness Studio, Immersions, Stays and Experiences. A universe designed to reconnect body, mind and spirit in one place.",
     "ctaMain": "Book a class",
     "ctaSecondary": "View packages",
-    "badge": "Yoga + Wellness Kitchen"
+    "badge": "Studio · Immersions · Stays · Experiences"
+  },
+  "pillars": {
+    "eyebrow": "The 4 system pillars",
+    "title": "The OMZONE universe",
+    "subtitle": "Four dimensions of wellbeing designed to transform body, mind and spirit. Each pillar is a complete world; together, they create an unparalleled experience.",
+    "cta": "Explore",
+    "items": [
+      {
+        "id": "01",
+        "label": "Wellness Studio",
+        "tagline": "Movement · Yoga · Breathing · Physical recovery",
+        "description": "A space designed to restore your energy through conscious movement, breathwork and yoga practice in all its dimensions."
+      },
+      {
+        "id": "02",
+        "label": "Immersions",
+        "tagline": "Intensive programs · Deep reconnection",
+        "description": "Multi-day retreats and immersion programs to break from routine and dive into a profound transformation of body and mind."
+      },
+      {
+        "id": "03",
+        "label": "Stays",
+        "tagline": "Private stays · Rest · Regeneration",
+        "description": "Exclusive spaces where the environment does the work. Stays designed for radical rest and complete regeneration."
+      },
+      {
+        "id": "04",
+        "label": "Experiences",
+        "tagline": "Surf · Freediving · Marine exploration · Nature",
+        "description": "Conscious adventures in the ocean and nature. Surf, freediving and expeditions designed to awaken your senses."
+      }
+    ]
   },
   "benefits": {
     "title": "Everything you need to transform your wellbeing",

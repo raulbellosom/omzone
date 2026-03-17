@@ -1,6 +1,7 @@
 import PageMeta from "@/components/seo/PageMeta";
 import StructuredData from "@/components/seo/StructuredData";
 import HeroSection from "@/features/marketing/HeroSection";
+import FourPillarsSection from "@/features/marketing/FourPillarsSection";
 import BenefitsSection from "@/features/marketing/BenefitsSection";
 import FeaturedClassesSection from "@/features/marketing/FeaturedClassesSection";
 import PackagesPreviewSection from "@/features/marketing/PackagesPreviewSection";
@@ -54,12 +55,13 @@ export default function LandingPage() {
 
       <main>
         <HeroSection />
-        <BenefitsSection />
+        <FourPillarsSection />
         <StudioSection />
         <FeaturedClassesSection />
         <PackagesPreviewSection />
         <WellnessPreviewSection />
         <FaqSection />
+        <BenefitsSection />
         <CtaSection />
       </main>
     </>

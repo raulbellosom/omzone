@@ -1,10 +1,42 @@
 {
   "hero": {
     "headline": "Tu bienestar,\ntu ritmo.",
-    "subheadline": "Clases de yoga, paquetes y complementos wellness en un solo lugar. Reserva, practica y vive mejor.",
+    "subheadline": "Wellness Studio, Immersions, Stays y Experiences. Un universo diseñado para reconectar cuerpo, mente y espíritu en un mismo lugar.",
     "ctaMain": "Reservar clase",
     "ctaSecondary": "Ver paquetes",
-    "badge": "Yoga + Wellness Kitchen"
+    "badge": "Studio · Immersions · Stays · Experiences"
+  },
+  "pillars": {
+    "eyebrow": "Los 4 ejes del sistema",
+    "title": "El universo OMZONE",
+    "subtitle": "Cuatro dimensiones de bienestar diseñadas para transformar cuerpo, mente y espíritu. Cada eje es un mundo completo; juntos, crean una experiencia sin igual.",
+    "cta": "Explorar",
+    "items": [
+      {
+        "id": "01",
+        "label": "Wellness Studio",
+        "tagline": "Movimiento · Yoga · Respiración · Recuperación",
+        "description": "Un espacio diseñado para restaurar tu energía a través del movimiento consciente, la respiración y la práctica de yoga en todas sus dimensiones."
+      },
+      {
+        "id": "02",
+        "label": "Immersions",
+        "tagline": "Programas intensivos · Reconexión profunda",
+        "description": "Retiros y programas de inmersión para salir de la rutina y sumergirte en una transformación profunda de cuerpo y mente."
+      },
+      {
+        "id": "03",
+        "label": "Stays",
+        "tagline": "Estancias privadas · Descanso · Regeneración",
+        "description": "Espacios exclusivos donde el entorno hace el trabajo. Estancias diseñadas para el descanso radical y la regeneración completa."
+      },
+      {
+        "id": "04",
+        "label": "Experiences",
+        "tagline": "Surf · Apnea · Exploración marina · Naturaleza",
+        "description": "Aventuras conscientes en el océano y la naturaleza. Surf, apnea y expediciones diseñadas para despertar tus sentidos."
+      }
+    ]
   },
   "benefits": {
     "title": "Todo lo que necesitas para transformar tu bienestar",
