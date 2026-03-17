@@ -30,6 +30,7 @@ import { formatMXN } from "@/lib/currency";
 import { formatDuration } from "@/lib/dates";
 import { getMediaPreviewUrl } from "@/lib/media";
 import { resolveField } from "@/lib/i18n-data";
+import { useAuth } from "@/hooks/useAuth";
 import ROUTES from "@/constants/routes";
 import { cn } from "@/lib/utils";
 
@@ -138,6 +139,7 @@ function ClassCardOverlay({ cls, session, t }) {
     isFull,
     price,
   } = useCardData(cls, session);
+  const { user } = useAuth();
 
   return (
     <article className="group relative overflow-hidden rounded-3xl cursor-pointer shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-1.5 aspect-3/4">
@@ -225,7 +227,9 @@ function ClassCardOverlay({ cls, session, t }) {
               </span>
             )}
           </div>
-          <span className="text-base font-bold text-white">{price}</span>
+          {user && (
+            <span className="text-base font-bold text-white">{price}</span>
+          )}
         </div>
 
         {/* CTA — link normal para no romper el hover del artículo */}
@@ -262,6 +266,7 @@ function ClassCardSplit({ cls, session, t }) {
     isFull,
     price,
   } = useCardData(cls, session);
+  const { user } = useAuth();
 
   return (
     <article className="group rounded-3xl overflow-hidden cursor-pointer shadow-md hover:shadow-xl transition-all duration-400 hover:-translate-y-0.5 flex flex-col bg-white border border-warm-gray-dark/30">
@@ -340,7 +345,11 @@ function ClassCardSplit({ cls, session, t }) {
               </span>
             )}
           </div>
-          <span className="font-bold text-sage text-sm shrink-0">{price}</span>
+          {user && (
+            <span className="font-bold text-sage text-sm shrink-0">
+              {price}
+            </span>
+          )}
         </div>
 
         <Button
@@ -367,6 +376,7 @@ function ClassCardCompact({ cls, session, t }) {
     cls,
     session,
   );
+  const { user } = useAuth();
 
   return (
     <article className="group flex flex-row h-20 rounded-2xl overflow-hidden bg-white border border-warm-gray-dark/30 hover:shadow-card-hover transition-all duration-300 cursor-pointer">
@@ -400,7 +410,9 @@ function ClassCardCompact({ cls, session, t }) {
         <div className="flex items-center gap-2 mt-0.5 text-xs text-charcoal-muted">
           <Clock className="w-3 h-3" />
           <span>{formatDuration(cls.duration_min)}</span>
-          <span className="font-semibold text-sage ml-auto">{price}</span>
+          {user && (
+            <span className="font-semibold text-sage ml-auto">{price}</span>
+          )}
         </div>
       </div>
     </article>

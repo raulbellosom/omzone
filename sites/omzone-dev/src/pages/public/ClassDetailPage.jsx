@@ -16,6 +16,7 @@ import {
   Sun,
   Sparkles,
   Activity,
+  Lock,
 } from "lucide-react";
 import { useState } from "react";
 import PageMeta from "@/components/seo/PageMeta";
@@ -313,7 +314,7 @@ export default function ClassDetailPage() {
                               >
                                 {t("card.spots", { count: spots })}
                               </span>
-                              {active && (
+                              {active && user && (
                                 <span className="text-xs font-semibold text-sage">
                                   {formatMXN(
                                     sess.price_override ?? cls.base_price,
@@ -387,68 +388,119 @@ export default function ClassDetailPage() {
 
           {/* ── Sidebar de reserva (sticky) ────────────────────────────── */}
           <aside className="lg:sticky lg:top-24">
-            <div className="bg-white rounded-2xl border border-warm-gray-dark/50 shadow-card p-5">
-              <h3 className="text-base font-semibold text-charcoal mb-4">
-                {t("detail.selectSession")}
-              </h3>
+            {user ? (
+              <div className="bg-white rounded-2xl border border-warm-gray-dark/50 shadow-card p-5">
+                <h3 className="text-base font-semibold text-charcoal mb-4">
+                  {t("detail.selectSession")}
+                </h3>
 
-              {/* Resumen de sesión seleccionada */}
-              {activeSession && (
-                <div className="bg-cream rounded-xl p-3 mb-4 text-sm">
-                  <p className="font-medium text-charcoal flex items-center gap-1.5">
-                    <Calendar
-                      className="w-4 h-4 text-sage"
-                      aria-hidden="true"
-                    />
-                    {formatDateTime(activeSession.session_date)}
-                  </p>
-                  <p className="text-charcoal-muted text-xs mt-1 ml-5">
-                    {activeSession.location_label} ·{" "}
-                    {formatDuration(cls.duration_min)}
-                  </p>
-                </div>
-              )}
-
-              {/* Desglose de precio */}
-              <div className="space-y-2 py-4 border-y border-warm-gray-dark/50 mb-4 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-charcoal-muted">{title}</span>
-                  <span className="font-medium">{formatMXN(price)}</span>
-                </div>
-                {selectedExtras.length > 0 && (
-                  <div className="flex justify-between">
-                    <span className="text-charcoal-muted">
-                      {t("detail.extrasCount", {
-                        count: selectedExtras.length,
-                      })}
-                    </span>
-                    <span className="font-medium">
-                      {formatMXN(extrasTotal)}
-                    </span>
+                {/* Resumen de sesión seleccionada */}
+                {activeSession && (
+                  <div className="bg-cream rounded-xl p-3 mb-4 text-sm">
+                    <p className="font-medium text-charcoal flex items-center gap-1.5">
+                      <Calendar
+                        className="w-4 h-4 text-sage"
+                        aria-hidden="true"
+                      />
+                      {formatDateTime(activeSession.session_date)}
+                    </p>
+                    <p className="text-charcoal-muted text-xs mt-1 ml-5">
+                      {activeSession.location_label} ·{" "}
+                      {formatDuration(cls.duration_min)}
+                    </p>
                   </div>
                 )}
-                <div className="flex justify-between pt-2 border-t border-warm-gray-dark/40 text-base font-bold text-charcoal">
-                  <span>{t("detail.total")}</span>
-                  <span className="text-sage">
-                    {formatMXN(price + extrasTotal)}
-                  </span>
+
+                {/* Desglose de precio */}
+                <div className="space-y-2 py-4 border-y border-warm-gray-dark/50 mb-4 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-charcoal-muted">{title}</span>
+                    <span className="font-medium">{formatMXN(price)}</span>
+                  </div>
+                  {selectedExtras.length > 0 && (
+                    <div className="flex justify-between">
+                      <span className="text-charcoal-muted">
+                        {t("detail.extrasCount", {
+                          count: selectedExtras.length,
+                        })}
+                      </span>
+                      <span className="font-medium">
+                        {formatMXN(extrasTotal)}
+                      </span>
+                    </div>
+                  )}
+                  <div className="flex justify-between pt-2 border-t border-warm-gray-dark/40 text-base font-bold text-charcoal">
+                    <span>{t("detail.total")}</span>
+                    <span className="text-sage">
+                      {formatMXN(price + extrasTotal)}
+                    </span>
+                  </div>
+                </div>
+
+                <Button
+                  size="lg"
+                  className="w-full"
+                  disabled={!activeSession || activeSession.status === "full"}
+                  onClick={handleBookNow}
+                >
+                  {t("detail.bookNow")}
+                  <ArrowRight className="w-4 h-4" aria-hidden="true" />
+                </Button>
+
+                <p className="text-center text-xs text-charcoal-subtle mt-3">
+                  {t("detail.noFees")}
+                </p>
+              </div>
+            ) : (
+              <div className="bg-white rounded-2xl border border-warm-gray-dark/50 shadow-card p-8 text-center space-y-5">
+                <div className="w-12 h-12 rounded-full bg-cream flex items-center justify-center mx-auto">
+                  <Lock
+                    className="w-5 h-5 text-charcoal-subtle"
+                    aria-hidden="true"
+                  />
+                </div>
+                <div>
+                  <p className="font-semibold text-charcoal mb-1">
+                    {t("detail.guestTitle", "Inicia sesión para reservar")}
+                  </p>
+                  <p className="text-sm text-charcoal-muted">
+                    {t(
+                      "detail.guestSubtitle",
+                      "Crea una cuenta para ver precios y disponibilidad.",
+                    )}
+                  </p>
+                </div>
+                <div className="flex flex-col gap-2 pt-1">
+                  <Button asChild size="lg" className="w-full">
+                    <Link
+                      to={`${ROUTES.LOGIN}?redirect=${encodeURIComponent(
+                        activeSession
+                          ? ROUTES.BOOKING(activeSession.$id)
+                          : ROUTES.CLASSES,
+                      )}`}
+                    >
+                      {t("auth.signIn", "Iniciar sesión")}
+                    </Link>
+                  </Button>
+                  <Button
+                    asChild
+                    variant="outline"
+                    size="lg"
+                    className="w-full"
+                  >
+                    <Link
+                      to={`${ROUTES.REGISTER}?redirect=${encodeURIComponent(
+                        activeSession
+                          ? ROUTES.BOOKING(activeSession.$id)
+                          : ROUTES.CLASSES,
+                      )}`}
+                    >
+                      {t("auth.createAccount", "Crear cuenta")}
+                    </Link>
+                  </Button>
                 </div>
               </div>
-
-              <Button
-                size="lg"
-                className="w-full"
-                disabled={!activeSession || activeSession.status === "full"}
-                onClick={handleBookNow}
-              >
-                {t("detail.bookNow")}
-                <ArrowRight className="w-4 h-4" aria-hidden="true" />
-              </Button>
-
-              <p className="text-center text-xs text-charcoal-subtle mt-3">
-                {t("detail.noFees")}
-              </p>
-            </div>
+            )}
           </aside>
         </div>
       </main>
