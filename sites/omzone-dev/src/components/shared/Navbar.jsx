@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Menu, LogOut, LayoutDashboard, Globe, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -35,14 +35,35 @@ const navLinks = [
 export default function Navbar() {
   const { t, i18n } = useTranslation("common");
   const { user, logout } = useAuth();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [isAtTop, setIsAtTop] = useState(true);
+
   const currentLang = (i18n.resolvedLanguage ?? i18n.language ?? "es").slice(
     0,
     2,
   );
   const nextLang = currentLang === "es" ? "en" : "es";
   const langLabel = currentLang === "es" ? "English" : "Español";
-  const navigate = useNavigate();
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const isLanding = location.pathname === ROUTES.HOME;
+  const isOverlay = isLanding && isAtTop;
+
+  useEffect(() => {
+    if (!isLanding) {
+      setIsAtTop(false);
+      return;
+    }
+
+    const handleScroll = () => {
+      setIsAtTop(window.scrollY < 24);
+    };
+
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [isLanding]);
 
   async function handleLogout() {
     setMobileOpen(false);
@@ -56,7 +77,6 @@ export default function Navbar() {
 
   const avatarUrl = user?.avatar_id ? getAvatarUrl(user.avatar_id, 64) : null;
 
-  // Logo destination: admins → /app, clients → /zone, guests → /
   const logoHref = !user
     ? ROUTES.HOME
     : user.role_key === "client"
@@ -65,31 +85,42 @@ export default function Navbar() {
 
   return (
     <header
-      className="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-warm-gray-dark/50"
-      style={{ boxShadow: "var(--shadow-nav)" }}
+      className={cn(
+        "fixed inset-x-0 top-0 z-40 border-b transition-[background-color,border-color,box-shadow,backdrop-filter] duration-300",
+        isOverlay
+          ? "border-white/10 bg-white/8 backdrop-blur-sm"
+          : "border-warm-gray-dark/50 bg-white/80 backdrop-blur-xl",
+      )}
+      style={{ boxShadow: isOverlay ? "none" : "var(--shadow-nav)" }}
     >
-      <nav className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between gap-4">
-        {/* Logo */}
-        <Link to={logoHref} className="flex items-center gap-2 shrink-0">
+      <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4">
+        <Link to={logoHref} className="flex shrink-0 items-center gap-2">
           <img
             src="/logo.png"
             alt="Omzone"
-            className="h-8 w-auto object-contain"
+            className={cn(
+              "h-8 w-auto object-contain transition duration-300",
+              isOverlay &&
+                "brightness-0 invert drop-shadow-[0_4px_18px_rgba(0,0,0,0.28)]",
+            )}
           />
         </Link>
 
-        {/* Nav desktop */}
-        <ul className="hidden md:flex items-center gap-1">
+        <ul className="hidden items-center gap-1 md:flex">
           {navLinks.map(({ key, href }) => (
             <li key={href}>
               <NavLink
                 to={href}
                 className={({ isActive }) =>
                   cn(
-                    "px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+                    "rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                     isActive
-                      ? "text-sage bg-sage-muted/50"
-                      : "text-charcoal-muted hover:text-charcoal hover:bg-warm-gray",
+                      ? isOverlay
+                        ? "bg-white/14 text-white"
+                        : "bg-sage-muted/50 text-sage"
+                      : isOverlay
+                        ? "text-white/78 hover:bg-white/10 hover:text-white"
+                        : "text-charcoal-muted hover:bg-warm-gray hover:text-charcoal",
                   )
                 }
               >
@@ -99,23 +130,32 @@ export default function Navbar() {
           ))}
         </ul>
 
-        {/* Acciones desktop */}
-        <div className="hidden md:flex items-center gap-2">
+        <div className="hidden items-center gap-2 md:flex">
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button
-                  className="flex items-center gap-2 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sage focus-visible:ring-offset-2"
+                  className={cn(
+                    "flex items-center gap-2 rounded-full px-1.5 py-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sage",
+                    isOverlay
+                      ? "border border-white/10 bg-white/8 focus-visible:ring-offset-0"
+                      : "focus-visible:ring-offset-2",
+                  )}
                   aria-label={t("nav.userMenu")}
                 >
-                  <span className="text-sm font-medium text-charcoal hidden lg:block">
+                  <span
+                    className={cn(
+                      "hidden text-sm font-medium lg:block",
+                      isOverlay ? "text-white" : "text-charcoal",
+                    )}
+                  >
                     {user.first_name}
                   </span>
-                  <Avatar className="h-8 w-8 hover:ring-2 hover:ring-sage/40 transition-all">
+                  <Avatar className="h-8 w-8 transition-all hover:ring-2 hover:ring-sage/40">
                     {avatarUrl && (
                       <AvatarImage src={avatarUrl} alt={user.first_name} />
                     )}
-                    <AvatarFallback className="text-xs bg-sage-muted text-sage-darker font-semibold">
+                    <AvatarFallback className="bg-sage-muted text-xs font-semibold text-sage-darker">
                       {initials}
                     </AvatarFallback>
                   </Avatar>
@@ -126,7 +166,7 @@ export default function Navbar() {
                   <span className="block font-semibold text-charcoal">
                     {user.full_name || `${user.first_name} ${user.last_name}`}
                   </span>
-                  <span className="block text-charcoal-subtle font-normal truncate max-w-45">
+                  <span className="block max-w-45 truncate font-normal text-charcoal-subtle">
                     {user.email}
                   </span>
                 </DropdownMenuLabel>
@@ -136,7 +176,7 @@ export default function Navbar() {
                     to={ROUTES.ZONE_PROFILE}
                     className="flex items-center gap-2"
                   >
-                    <User className="w-4 h-4 text-charcoal-muted" />
+                    <User className="h-4 w-4 text-charcoal-muted" />
                     {t("nav.myProfile")}
                   </Link>
                 </DropdownMenuItem>
@@ -144,7 +184,7 @@ export default function Navbar() {
                   onClick={() => i18n.changeLanguage(nextLang)}
                   className="flex items-center gap-2"
                 >
-                  <Globe className="w-4 h-4 text-charcoal-muted" />
+                  <Globe className="h-4 w-4 text-charcoal-muted" />
                   {langLabel}
                 </DropdownMenuItem>
                 {(user.role_key === "admin" || user.role_key === "root") && (
@@ -153,7 +193,7 @@ export default function Navbar() {
                 {(user.role_key === "admin" || user.role_key === "root") && (
                   <DropdownMenuItem asChild>
                     <Link to={ROUTES.ADMIN} className="flex items-center gap-2">
-                      <LayoutDashboard className="w-4 h-4 text-charcoal-muted" />
+                      <LayoutDashboard className="h-4 w-4 text-charcoal-muted" />
                       {t("nav.goToApp")}
                     </Link>
                   </DropdownMenuItem>
@@ -163,34 +203,62 @@ export default function Navbar() {
                   onClick={handleLogout}
                   className="text-red-600 hover:bg-red-50 focus:bg-red-50"
                 >
-                  <LogOut className="w-4 h-4 mr-2" />
+                  <LogOut className="mr-2 h-4 w-4" />
                   {t("nav.logout")}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
             <>
-              <Button variant="ghost" size="sm" asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => i18n.changeLanguage(nextLang)}
+                className={cn(
+                  "min-w-11 px-3 font-semibold tracking-wide",
+                  isOverlay && "text-white hover:bg-white/10 hover:text-white",
+                )}
+              >
+                {nextLang.toUpperCase()}
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                asChild
+                className={cn(
+                  isOverlay && "text-white hover:bg-white/10 hover:text-white",
+                )}
+              >
                 <Link to={ROUTES.LOGIN}>{t("nav.login")}</Link>
               </Button>
-              <Button size="sm" asChild>
+              <Button
+                size="sm"
+                asChild
+                className={cn(
+                  isOverlay &&
+                    "bg-white/92 text-charcoal shadow-lg shadow-charcoal/10 hover:bg-white",
+                )}
+              >
                 <Link to={ROUTES.CLASSES}>{t("actions.bookClass")}</Link>
               </Button>
             </>
           )}
         </div>
 
-        {/* Hamburger móvil */}
         <button
-          className="md:hidden p-2 rounded-lg hover:bg-warm-gray transition-colors"
+          className={cn(
+            "rounded-lg p-2 transition-colors md:hidden",
+            isOverlay ? "hover:bg-white/10" : "hover:bg-warm-gray",
+          )}
           onClick={() => setMobileOpen(true)}
           aria-label="Abrir menú"
         >
-          <Menu className="w-5 h-5 text-charcoal" />
+          <Menu
+            className={cn("h-5 w-5", isOverlay ? "text-white" : "text-charcoal")}
+          />
         </button>
       </nav>
 
-      {/* Mobile menu */}
       <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
         <SheetContent side="right">
           <SheetHeader>
@@ -206,14 +274,14 @@ export default function Navbar() {
             </SheetDescription>
           </SheetHeader>
 
-          <div className="px-5 py-4 flex flex-col gap-1">
+          <div className="flex flex-col gap-1 px-5 py-4">
             {navLinks.map(({ key, href }) => (
               <SheetClose asChild key={href}>
                 <NavLink
                   to={href}
                   className={({ isActive }) =>
                     cn(
-                      "block px-3 py-3 rounded-xl text-sm font-medium transition-colors duration-150",
+                      "block rounded-xl px-3 py-3 text-sm font-medium transition-colors duration-150",
                       isActive
                         ? "bg-sage-muted text-sage-darker"
                         : "text-charcoal hover:bg-warm-gray",
@@ -228,24 +296,23 @@ export default function Navbar() {
 
           <Separator />
 
-          <div className="px-5 py-4 flex flex-col gap-2">
+          <div className="flex flex-col gap-2 px-5 py-4">
             {user ? (
               <>
-                {/* User info */}
                 <div className="flex items-center gap-3 px-3 py-2">
                   <Avatar className="h-9 w-9 shrink-0">
                     {avatarUrl && (
                       <AvatarImage src={avatarUrl} alt={user.first_name} />
                     )}
-                    <AvatarFallback className="text-xs bg-sage-muted text-sage-darker font-semibold">
+                    <AvatarFallback className="bg-sage-muted text-xs font-semibold text-sage-darker">
                       {initials}
                     </AvatarFallback>
                   </Avatar>
                   <div className="min-w-0">
-                    <p className="text-sm font-semibold text-charcoal truncate">
+                    <p className="truncate text-sm font-semibold text-charcoal">
                       {user.full_name || `${user.first_name} ${user.last_name}`}
                     </p>
-                    <p className="text-xs text-charcoal-subtle truncate">
+                    <p className="truncate text-xs text-charcoal-subtle">
                       {user.email}
                     </p>
                   </div>
@@ -256,40 +323,46 @@ export default function Navbar() {
                 <SheetClose asChild>
                   <Link
                     to={ROUTES.ZONE_PROFILE}
-                    className="flex items-center gap-2 px-3 py-3 rounded-xl text-sm text-charcoal hover:bg-warm-gray"
+                    className="flex items-center gap-2 rounded-xl px-3 py-3 text-sm text-charcoal hover:bg-warm-gray"
                   >
-                    <User className="w-4 h-4 text-charcoal-muted" />
+                    <User className="h-4 w-4 text-charcoal-muted" />
                     {t("nav.myProfile")}
                   </Link>
                 </SheetClose>
                 <button
                   onClick={() => i18n.changeLanguage(nextLang)}
-                  className="flex items-center gap-2 px-3 py-3 rounded-xl text-sm text-charcoal hover:bg-warm-gray text-left"
+                  className="flex items-center gap-2 rounded-xl px-3 py-3 text-left text-sm text-charcoal hover:bg-warm-gray"
                 >
-                  <Globe className="w-4 h-4 text-charcoal-muted" />
+                  <Globe className="h-4 w-4 text-charcoal-muted" />
                   {langLabel}
                 </button>
                 {(user.role_key === "admin" || user.role_key === "root") && (
                   <SheetClose asChild>
                     <Link
                       to={ROUTES.ADMIN}
-                      className="flex items-center gap-2 px-3 py-3 rounded-xl text-sm text-charcoal hover:bg-warm-gray"
+                      className="flex items-center gap-2 rounded-xl px-3 py-3 text-sm text-charcoal hover:bg-warm-gray"
                     >
-                      <LayoutDashboard className="w-4 h-4 text-charcoal-muted" />
+                      <LayoutDashboard className="h-4 w-4 text-charcoal-muted" />
                       {t("nav.goToApp")}
                     </Link>
                   </SheetClose>
                 )}
                 <button
                   onClick={handleLogout}
-                  className="flex items-center gap-2 px-3 py-3 rounded-xl text-sm text-red-600 hover:bg-red-50 text-left"
+                  className="flex items-center gap-2 rounded-xl px-3 py-3 text-left text-sm text-red-600 hover:bg-red-50"
                 >
-                  <LogOut className="w-4 h-4" />
+                  <LogOut className="h-4 w-4" />
                   {t("nav.logout")}
                 </button>
               </>
             ) : (
               <>
+                <button
+                  onClick={() => i18n.changeLanguage(nextLang)}
+                  className="rounded-xl px-3 py-3 text-left text-sm font-semibold tracking-wide text-charcoal hover:bg-warm-gray"
+                >
+                  {nextLang.toUpperCase()}
+                </button>
                 <SheetClose asChild>
                   <Link to={ROUTES.LOGIN}>
                     <Button variant="outline" className="w-full">

@@ -24,6 +24,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Switch } from "@/components/ui/switch";
 import AdminFormDialog from "@/components/admin/AdminFormDialog";
 import AdminPageHeader from "@/components/shared/AdminPageHeader";
+import MediaUpload from "@/components/shared/MediaUpload";
 import SearchCombobox from "@/components/shared/SearchCombobox";
 import {
   useAdminClasses,
@@ -35,6 +36,7 @@ import {
   useUpdateSession,
 } from "@/hooks/useAdmin";
 import { resolveField } from "@/lib/i18n-data";
+import { getMediaPreviewUrl } from "@/lib/media";
 import { cn } from "@/lib/utils";
 
 const STATUS_BADGE = {
@@ -55,6 +57,7 @@ const EMPTY_FORM = {
   instructor_id: "",
   status: "scheduled",
   location_label: "",
+  cover_image_id: "",
   enabled: true,
 };
 
@@ -101,7 +104,9 @@ function EmptyState({ icon: Icon, title, description, action }) {
         </div>
         <div>
           <p className="text-base font-medium text-charcoal">{title}</p>
-          <p className="mt-1 max-w-md text-sm text-charcoal-muted">{description}</p>
+          <p className="mt-1 max-w-md text-sm text-charcoal-muted">
+            {description}
+          </p>
         </div>
         {action}
       </CardContent>
@@ -109,7 +114,13 @@ function EmptyState({ icon: Icon, title, description, action }) {
   );
 }
 
-function SessionActions({ onEdit, onDelete, enabled, onToggle, toggleDisabled }) {
+function SessionActions({
+  onEdit,
+  onDelete,
+  enabled,
+  onToggle,
+  toggleDisabled,
+}) {
   return (
     <div className="flex items-center gap-2">
       <Button
@@ -172,7 +183,10 @@ export default function AdminSessionsPage() {
     {
       value: "",
       label: t("sessions.fields.instructorPlaceholder", "Sin instructor"),
-      description: t("sessions.fields.instructorHint", "Usar instructor principal de la clase"),
+      description: t(
+        "sessions.fields.instructorHint",
+        "Usar instructor principal de la clase",
+      ),
       keywords: ["none", "null", "sin instructor"],
     },
     ...instructors.map((item) => ({
@@ -187,7 +201,9 @@ export default function AdminSessionsPage() {
     const query = search.trim().toLowerCase();
     if (!query) return true;
 
-    const instructor = instructors.find((entry) => entry.$id === item.instructor_id);
+    const instructor = instructors.find(
+      (entry) => entry.$id === item.instructor_id,
+    );
 
     return [
       resolveField(item.class ?? {}, "title"),
@@ -218,6 +234,7 @@ export default function AdminSessionsPage() {
       instructor_id: item.instructor_id ?? "",
       status: item.status ?? "scheduled",
       location_label: item.location_label ?? "",
+      cover_image_id: item.cover_image_id ?? "",
       enabled: item.enabled ?? true,
     });
     setDialogOpen(true);
@@ -225,17 +242,23 @@ export default function AdminSessionsPage() {
 
   function handleSubmit() {
     if (!form.class_id) {
-      toast.error(t("sessions.validation.classRequired", "Selecciona una clase"));
+      toast.error(
+        t("sessions.validation.classRequired", "Selecciona una clase"),
+      );
       return;
     }
     if (!form.session_date) {
-      toast.error(t("sessions.validation.dateRequired", "Selecciona fecha de inicio"));
+      toast.error(
+        t("sessions.validation.dateRequired", "Selecciona fecha de inicio"),
+      );
       return;
     }
 
     const sessionDateIso = toIsoDateTime(form.session_date);
     if (!sessionDateIso) {
-      toast.error(t("sessions.validation.dateInvalid", "Fecha de inicio invalida"));
+      toast.error(
+        t("sessions.validation.dateInvalid", "Fecha de inicio invalida"),
+      );
       return;
     }
 
@@ -252,6 +275,7 @@ export default function AdminSessionsPage() {
       instructor_id: form.instructor_id || null,
       status: form.status,
       location_label: form.location_label || null,
+      cover_image_id: form.cover_image_id || null,
       enabled: Boolean(form.enabled),
     };
 
@@ -295,7 +319,10 @@ export default function AdminSessionsPage() {
           toast.error(
             getErrorMessage(
               error,
-              t("sessions.feedback.toggleError", "No se pudo actualizar el estado"),
+              t(
+                "sessions.feedback.toggleError",
+                "No se pudo actualizar el estado",
+              ),
             ),
           );
         },
@@ -331,7 +358,12 @@ export default function AdminSessionsPage() {
           "Administra agenda, capacidad, estado e instructor de cada sesion.",
         )}
         action={
-          <Button type="button" size="sm" className="gap-2" onClick={openCreateDialog}>
+          <Button
+            type="button"
+            size="sm"
+            className="gap-2"
+            onClick={openCreateDialog}
+          >
             <Plus className="h-4 w-4" />
             {t("sessions.actions.new", "Nueva sesion")}
           </Button>
@@ -342,7 +374,10 @@ export default function AdminSessionsPage() {
         <SearchField
           value={search}
           onChange={setSearch}
-          placeholder={t("sessions.searchPlaceholder", "Buscar por clase, estatus o ubicacion")}
+          placeholder={t(
+            "sessions.searchPlaceholder",
+            "Buscar por clase, estatus o ubicacion",
+          )}
         />
       </div>
 
@@ -390,30 +425,59 @@ export default function AdminSessionsPage() {
               >
                 <CardContent className="space-y-4 p-5">
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                    <div className="min-w-0 flex-1">
-                      <div className="mb-1 flex flex-wrap items-center gap-2">
-                        <p className="text-base font-semibold text-charcoal">{classLabel}</p>
-                        <Badge variant={STATUS_BADGE[item.status] ?? "default"}>
-                          {t(`sessions.status.${item.status}`)}
-                        </Badge>
-                      </div>
-                      <p className="text-sm text-charcoal-muted">
-                        {format(new Date(item.session_date), "EEEE d MMM · HH:mm", {
-                          locale: dateFnsLocale,
-                        })}
-                        {item.end_date
-                          ? ` - ${format(new Date(item.end_date), "HH:mm", {
+                    <div className="min-w-0 flex-1 flex flex-row items-start gap-3">
+                      {/* Thumbnail de portada (sesión o clase) */}
+                      {(item.cover_image_id || item.class?.cover_image_id) && (
+                        <img
+                          src={getMediaPreviewUrl(
+                            item.cover_image_id || item.class?.cover_image_id,
+                            120,
+                            120,
+                            80,
+                          )}
+                          alt=""
+                          aria-hidden="true"
+                          className="w-14 h-14 rounded-xl object-cover shrink-0 border border-warm-gray-dark/20"
+                        />
+                      )}
+                      <div className="min-w-0 flex-1">
+                        <div className="mb-1 flex flex-wrap items-center gap-2">
+                          <p className="text-base font-semibold text-charcoal">
+                            {classLabel}
+                          </p>
+                          <Badge
+                            variant={STATUS_BADGE[item.status] ?? "default"}
+                          >
+                            {t(`sessions.status.${item.status}`)}
+                          </Badge>
+                        </div>
+                        <p className="text-sm text-charcoal-muted">
+                          {format(
+                            new Date(item.session_date),
+                            "EEEE d MMM · HH:mm",
+                            {
                               locale: dateFnsLocale,
-                            })}`
-                          : ""}
-                        {item.location_label ? ` · ${item.location_label}` : ""}
-                      </p>
-                      <div className="mt-2 flex items-center gap-2 text-xs text-charcoal-subtle">
-                        <UserRound className="h-3.5 w-3.5" />
-                        <span>
-                          {instructor?.full_name ||
-                            t("sessions.fields.instructorPlaceholder", "Sin instructor")}
-                        </span>
+                            },
+                          )}
+                          {item.end_date
+                            ? ` - ${format(new Date(item.end_date), "HH:mm", {
+                                locale: dateFnsLocale,
+                              })}`
+                            : ""}
+                          {item.location_label
+                            ? ` · ${item.location_label}`
+                            : ""}
+                        </p>
+                        <div className="mt-2 flex items-center gap-2 text-xs text-charcoal-subtle">
+                          <UserRound className="h-3.5 w-3.5" />
+                          <span>
+                            {instructor?.full_name ||
+                              t(
+                                "sessions.fields.instructorPlaceholder",
+                                "Sin instructor",
+                              )}
+                          </span>
+                        </div>
                       </div>
                     </div>
 
@@ -468,13 +532,40 @@ export default function AdminSessionsPage() {
             <Label>{t("sessions.fields.class", "Clase")}</Label>
             <SearchCombobox
               value={form.class_id}
-              onValueChange={(next) => setForm((prev) => ({ ...prev, class_id: next }))}
+              onValueChange={(next) =>
+                setForm((prev) => ({ ...prev, class_id: next }))
+              }
               options={classOptions}
-              placeholder={t("sessions.fields.classPlaceholder", "Busca y selecciona una clase")}
-              searchPlaceholder={t("sessions.fields.classSearch", "Filtrar clases")}
-              emptyMessage={t("sessions.fields.classEmpty", "No hay clases con ese criterio")}
+              placeholder={t(
+                "sessions.fields.classPlaceholder",
+                "Busca y selecciona una clase",
+              )}
+              searchPlaceholder={t(
+                "sessions.fields.classSearch",
+                "Filtrar clases",
+              )}
+              emptyMessage={t(
+                "sessions.fields.classEmpty",
+                "No hay clases con ese criterio",
+              )}
             />
           </div>
+
+          <MediaUpload
+            value={form.cover_image_id}
+            onChange={(id) =>
+              setForm((prev) => ({ ...prev, cover_image_id: id ?? "" }))
+            }
+            label={t(
+              "sessions.fields.coverImage",
+              "Imagen de portada (opcional)",
+            )}
+            hint={t(
+              "sessions.hints.coverImage",
+              "Sobreescribe la imagen de la clase para esta sesión.",
+            )}
+            aspectRatio="4/3"
+          />
 
           <div className="space-y-1.5">
             <Label>{t("sessions.fields.instructor", "Instructor")}</Label>
@@ -506,7 +597,10 @@ export default function AdminSessionsPage() {
                 type="datetime-local"
                 value={form.session_date}
                 onChange={(event) =>
-                  setForm((prev) => ({ ...prev, session_date: event.target.value }))
+                  setForm((prev) => ({
+                    ...prev,
+                    session_date: event.target.value,
+                  }))
                 }
                 required
               />
@@ -529,7 +623,10 @@ export default function AdminSessionsPage() {
                 max="200"
                 value={form.capacity_total}
                 onChange={(event) =>
-                  setForm((prev) => ({ ...prev, capacity_total: event.target.value }))
+                  setForm((prev) => ({
+                    ...prev,
+                    capacity_total: event.target.value,
+                  }))
                 }
                 required
               />
@@ -547,7 +644,10 @@ export default function AdminSessionsPage() {
                 step="10"
                 value={form.price_override}
                 onChange={(event) =>
-                  setForm((prev) => ({ ...prev, price_override: event.target.value }))
+                  setForm((prev) => ({
+                    ...prev,
+                    price_override: event.target.value,
+                  }))
                 }
                 placeholder={t(
                   "sessions.fields.priceOverridePlaceholder",
@@ -562,9 +662,15 @@ export default function AdminSessionsPage() {
             <Input
               value={form.location_label}
               onChange={(event) =>
-                setForm((prev) => ({ ...prev, location_label: event.target.value }))
+                setForm((prev) => ({
+                  ...prev,
+                  location_label: event.target.value,
+                }))
               }
-              placeholder={t("sessions.fields.locationPlaceholder", "Sala principal")}
+              placeholder={t(
+                "sessions.fields.locationPlaceholder",
+                "Sala principal",
+              )}
             />
           </div>
 

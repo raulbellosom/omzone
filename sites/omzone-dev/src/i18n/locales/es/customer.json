@@ -7,7 +7,14 @@
     "bookings": "Mis reservas",
     "orders": "Mis pedidos",
     "packages": "Mis paquetes",
-    "profile": "Mi perfil"
+    "profile": "Mi perfil",
+    "classes": "Clases",
+    "wellness": "Wellness",
+    "shop": "Tienda",
+    "section": {
+      "discover": "Descubrir",
+      "myzone": "Mi zona"
+    }
   },
   "dashboard": {
     "greeting": "Hola, {{name}}",

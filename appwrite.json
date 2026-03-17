@@ -38,6 +38,87 @@
       }
     }
   },
+  "functions": [
+    {
+      "$id": "create-user-profile",
+      "name": "create-user-profile",
+      "runtime": "node-20.0",
+      "path": "appwrite/functions/create-user-profile",
+      "entrypoint": "src/main.js",
+      "ignore": ["node_modules", ".npm"],
+      "execute": [],
+      "events": ["users.*.create"],
+      "schedule": "",
+      "timeout": 15,
+      "enabled": true,
+      "logging": true,
+      "scopes": [
+        "users.read",
+        "users.write",
+        "databases.read",
+        "databases.write"
+      ],
+      "commands": "npm install"
+    },
+    {
+      "$id": "sync-user-profile",
+      "name": "sync-user-profile",
+      "runtime": "node-20.0",
+      "path": "appwrite/functions/sync-user-profile",
+      "entrypoint": "src/main.js",
+      "ignore": ["node_modules", ".npm"],
+      "execute": ["users"],
+      "events": [],
+      "schedule": "",
+      "timeout": 15,
+      "enabled": true,
+      "logging": true,
+      "scopes": [
+        "users.read",
+        "users.write",
+        "databases.read",
+        "databases.write"
+      ],
+      "commands": "npm install"
+    },
+    {
+      "$id": "sync-email-verification",
+      "name": "sync-email-verification",
+      "runtime": "node-20.0",
+      "path": "appwrite/functions/sync-email-verification",
+      "entrypoint": "src/main.js",
+      "ignore": ["node_modules", ".npm"],
+      "execute": ["users"],
+      "events": [],
+      "schedule": "",
+      "timeout": 15,
+      "enabled": true,
+      "logging": true,
+      "scopes": [
+        "users.read",
+        "users.write",
+        "databases.read",
+        "databases.write"
+      ],
+      "commands": "npm install"
+    },
+    {
+      "$id": "admin-write-catalog",
+      "name": "admin-write-catalog",
+      "runtime": "node-20.0",
+      "path": "appwrite/functions/admin-write-catalog",
+      "entrypoint": "src/main.js",
+      "ignore": ["node_modules", ".npm"],
+      "execute": ["users"],
+      "events": [],
+      "schedule": "",
+      "timeout": 15,
+      "enabled": true,
+      "logging": true,
+      "scopes": ["users.read", "databases.read", "databases.write"],
+      "commands": "npm install"
+    }
+  ],
   "sites": [
     {
       "$id": "69b465ef00065194e9d2",
@@ -586,15 +667,6 @@
           "encrypt": false
         },
         {
-          "key": "instructorId",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 64,
-          "default": null,
-          "encrypt": false
-        },
-        {
           "key": "difficulty",
           "type": "string",
           "required": false,
@@ -654,13 +726,6 @@
           "type": "key",
           "status": "available",
           "columns": ["classTypeId"],
-          "orders": ["ASC"]
-        },
-        {
-          "key": "idx_classes_instr",
-          "type": "key",
-          "status": "available",
-          "columns": ["instructorId"],
           "orders": ["ASC"]
         },
         {
@@ -770,6 +835,22 @@
           "required": false,
           "array": false,
           "size": 120,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "maxPerBooking",
+          "type": "integer",
+          "required": false,
+          "array": false,
+          "default": 6
+        },
+        {
+          "key": "coverImageId",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 64,
           "default": null,
           "encrypt": false
         },
@@ -1601,6 +1682,13 @@
           ]
         },
         {
+          "key": "quantity",
+          "type": "integer",
+          "required": false,
+          "array": false,
+          "default": 1
+        },
+        {
           "key": "unitPrice",
           "type": "double",
           "required": false,
@@ -2410,93 +2498,26 @@
       "compression": "none",
       "encryption": true,
       "antivirus": true
+    },
+    {
+      "$id": "stock-images",
+      "$permissions": [
+        "read(\"any\")",
+        "create(\"label:root\")",
+        "read(\"label:root\")",
+        "update(\"label:root\")",
+        "delete(\"label:root\")"
+      ],
+      "fileSecurity": false,
+      "name": "Stock Images",
+      "enabled": true,
+      "maximumFileSize": 10485760,
+      "allowedFileExtensions": ["jpg", "jpeg", "png", "webp", "gif", "svg"],
+      "compression": "none",
+      "encryption": true,
+      "antivirus": true
     }
   ],
   "teams": [],
-  "topics": [],
-  "functions": [
-    {
-      "$id": "create-user-profile",
-      "name": "create-user-profile",
-      "runtime": "node-20.0",
-      "path": "appwrite/functions/create-user-profile",
-      "entrypoint": "src/main.js",
-      "ignore": ["node_modules", ".npm"],
-      "execute": [],
-      "events": ["users.*.create"],
-      "schedule": "",
-      "timeout": 15,
-      "enabled": true,
-      "logging": true,
-      "scopes": [
-        "users.read",
-        "users.write",
-        "databases.read",
-        "databases.write"
-      ],
-      "commands": "npm install"
-    },
-    {
-      "$id": "sync-user-profile",
-      "name": "sync-user-profile",
-      "runtime": "node-20.0",
-      "path": "appwrite/functions/sync-user-profile",
-      "entrypoint": "src/main.js",
-      "ignore": ["node_modules", ".npm"],
-      "execute": ["users"],
-      "events": [],
-      "schedule": "",
-      "timeout": 15,
-      "enabled": true,
-      "logging": true,
-      "scopes": [
-        "users.read",
-        "users.write",
-        "databases.read",
-        "databases.write"
-      ],
-      "commands": "npm install"
-    },
-    {
-      "$id": "sync-email-verification",
-      "name": "sync-email-verification",
-      "runtime": "node-20.0",
-      "path": "appwrite/functions/sync-email-verification",
-      "entrypoint": "src/main.js",
-      "ignore": ["node_modules", ".npm"],
-      "execute": ["users"],
-      "events": [],
-      "schedule": "",
-      "timeout": 15,
-      "enabled": true,
-      "logging": true,
-      "scopes": [
-        "users.read",
-        "users.write",
-        "databases.read",
-        "databases.write"
-      ],
-      "commands": "npm install"
-    },
-    {
-      "$id": "admin-write-catalog",
-      "name": "admin-write-catalog",
-      "runtime": "node-20.0",
-      "path": "appwrite/functions/admin-write-catalog",
-      "entrypoint": "src/main.js",
-      "ignore": ["node_modules", ".npm"],
-      "execute": ["users"],
-      "events": [],
-      "schedule": "",
-      "timeout": 15,
-      "enabled": true,
-      "logging": true,
-      "scopes": [
-        "users.read",
-        "databases.read",
-        "databases.write"
-      ],
-      "commands": "npm install"
-    }
-  ]
+  "topics": []
 }

@@ -2,47 +2,59 @@
  * CustomerBookingsPage — historial de reservas del cliente.
  * Ruta: /account/bookings
  */
-import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import { format } from 'date-fns'
-import { es, enUS } from 'date-fns/locale'
-import { CalendarCheck, MapPin, Clock, User, X, CheckCircle, Ban } from 'lucide-react'
-import { toast } from 'sonner'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Skeleton } from '@/components/ui/skeleton'
-import { Link } from 'react-router-dom'
-import { useMyBookings, useCancelBooking } from '@/hooks/useCustomer'
-import { resolveField } from '@/lib/i18n-data'
-import { formatMXN } from '@/lib/currency'
-import ROUTES from '@/constants/routes'
-import { cn } from '@/lib/utils'
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import CustomerPageLayout from "@/components/shared/CustomerPageLayout";
+import { format } from "date-fns";
+import { es, enUS } from "date-fns/locale";
+import {
+  CalendarCheck,
+  MapPin,
+  Clock,
+  User,
+  X,
+  CheckCircle,
+  Ban,
+} from "lucide-react";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Link } from "react-router-dom";
+import { useMyBookings, useCancelBooking } from "@/hooks/useCustomer";
+import { resolveField } from "@/lib/i18n-data";
+import { formatMXN } from "@/lib/currency";
+import ROUTES from "@/constants/routes";
+import { cn } from "@/lib/utils";
 
 const STATUS_BADGE = {
-  confirmed: 'sage',
-  completed: 'warm',
-  cancelled: 'outline',
-  pending:   'warm',
-}
+  confirmed: "sage",
+  completed: "warm",
+  cancelled: "outline",
+  pending: "warm",
+};
 
 const STATUS_ICON = {
   confirmed: CheckCircle,
   completed: CheckCircle,
   cancelled: Ban,
-  pending:   Clock,
-}
+  pending: Clock,
+};
 
 function BookingCard({ booking, t, dateFnsLocale, onCancel, cancelling }) {
-  const [confirmingCancel, setConfirmingCancel] = useState(false)
-  const cls       = booking.session.class
-  const isUpcoming = booking.status === 'confirmed'
-  const StatusIcon = STATUS_ICON[booking.status] ?? CheckCircle
+  const [confirmingCancel, setConfirmingCancel] = useState(false);
+  const cls = booking.session.class;
+  const isUpcoming = booking.status === "confirmed";
+  const StatusIcon = STATUS_ICON[booking.status] ?? CheckCircle;
 
   async function handleCancel() {
-    if (!confirmingCancel) { setConfirmingCancel(true); return }
-    await onCancel(booking.$id)
-    setConfirmingCancel(false)
+    if (!confirmingCancel) {
+      setConfirmingCancel(true);
+      return;
+    }
+    await onCancel(booking.$id);
+    setConfirmingCancel(false);
   }
 
   return (
@@ -50,25 +62,32 @@ function BookingCard({ booking, t, dateFnsLocale, onCancel, cancelling }) {
       <CardContent className="p-0">
         <div className="flex flex-col sm:flex-row">
           {/* Franja de color izquierda */}
-          <div className={cn(
-            'sm:w-1.5 h-1.5 sm:h-auto rounded-t-xl sm:rounded-l-xl sm:rounded-tr-none shrink-0',
-            booking.status === 'confirmed' ? 'bg-sage'
-            : booking.status === 'completed' ? 'bg-sand'
-            : 'bg-warm-gray-dark'
-          )} />
+          <div
+            className={cn(
+              "sm:w-1.5 h-1.5 sm:h-auto rounded-t-xl sm:rounded-l-xl sm:rounded-tr-none shrink-0",
+              booking.status === "confirmed"
+                ? "bg-sage"
+                : booking.status === "completed"
+                  ? "bg-sand"
+                  : "bg-warm-gray-dark",
+            )}
+          />
 
           <div className="flex-1 p-5">
             {/* Cabecera */}
             <div className="flex items-start justify-between gap-3 mb-3">
               <div>
                 <h3 className="font-semibold text-charcoal leading-tight">
-                  {resolveField(cls, 'title')}
+                  {resolveField(cls, "title")}
                 </h3>
                 <p className="text-[10px] font-mono text-charcoal-subtle mt-0.5 uppercase tracking-wider">
-                  {t('bookings.code')}: {booking.booking_code}
+                  {t("bookings.code")}: {booking.booking_code}
                 </p>
               </div>
-              <Badge variant={STATUS_BADGE[booking.status] ?? 'outline'} className="text-[10px] shrink-0 flex items-center gap-1">
+              <Badge
+                variant={STATUS_BADGE[booking.status] ?? "outline"}
+                className="text-[10px] shrink-0 flex items-center gap-1"
+              >
                 <StatusIcon className="w-3 h-3" />
                 {t(`bookings.status.${booking.status}`)}
               </Badge>
@@ -79,8 +98,13 @@ function BookingCard({ booking, t, dateFnsLocale, onCancel, cancelling }) {
               <div className="flex items-center gap-2 text-charcoal-muted">
                 <CalendarCheck className="w-3.5 h-3.5 text-sage shrink-0" />
                 <span>
-                  {format(new Date(booking.session.session_date), "d MMM, HH:mm", { locale: dateFnsLocale })}
-                  {' · '}{booking.session.start_time}
+                  {format(
+                    new Date(booking.session.session_date),
+                    "d MMM, HH:mm",
+                    { locale: dateFnsLocale },
+                  )}
+                  {" · "}
+                  {booking.session.start_time}
                 </span>
               </div>
               <div className="flex items-center gap-2 text-charcoal-muted">
@@ -93,7 +117,9 @@ function BookingCard({ booking, t, dateFnsLocale, onCancel, cancelling }) {
               </div>
               <div className="flex items-center gap-2 text-charcoal-muted">
                 <Clock className="w-3.5 h-3.5 text-sage shrink-0" />
-                <span>{cls.duration_min} {t('bookings.min')}</span>
+                <span>
+                  {cls.duration_min} {t("bookings.min")}
+                </span>
               </div>
             </div>
 
@@ -101,7 +127,10 @@ function BookingCard({ booking, t, dateFnsLocale, onCancel, cancelling }) {
             {booking.extras_json?.length > 0 && (
               <div className="flex flex-wrap gap-1.5 mb-4">
                 {booking.extras_json.map((ex) => (
-                  <span key={ex.product_id} className="text-[10px] bg-sand/60 text-charcoal-muted px-2 py-0.5 rounded-full">
+                  <span
+                    key={ex.product_id}
+                    className="text-[10px] bg-sand/60 text-charcoal-muted px-2 py-0.5 rounded-full"
+                  >
                     {ex.name} · {formatMXN(ex.price)}
                   </span>
                 ))}
@@ -111,36 +140,58 @@ function BookingCard({ booking, t, dateFnsLocale, onCancel, cancelling }) {
             {/* Footer */}
             <div className="flex items-center justify-between pt-3 border-t border-warm-gray-dark/30">
               <span className="text-xs text-charcoal-subtle">
-                {t('bookings.total')}: <span className="font-semibold text-charcoal">{formatMXN(booking.unit_price + (booking.extras_json?.reduce((s, e) => s + e.price, 0) ?? 0))}</span>
+                {t("bookings.total")}:{" "}
+                <span className="font-semibold text-charcoal">
+                  {formatMXN(
+                    booking.unit_price +
+                      (booking.extras_json?.reduce((s, e) => s + e.price, 0) ??
+                        0),
+                  )}
+                </span>
               </span>
               {isUpcoming && (
                 <div className="flex gap-2">
-                  {confirmingCancel
-                    ? <>
-                        <span className="text-xs text-charcoal-muted self-center">{t('bookings.confirmCancel')}</span>
-                        <Button
-                          size="sm"
-                          variant="destructive"
-                          onClick={handleCancel}
-                          disabled={cancelling}
-                          className="text-xs h-7"
-                        >
-                          {cancelling ? t('bookings.cancelling') : <><X className="w-3 h-3 mr-1" />{t('bookings.cancel')}</>}
-                        </Button>
-                        <Button size="sm" variant="ghost" className="text-xs h-7" onClick={() => setConfirmingCancel(false)}>
-                          No
-                        </Button>
-                      </>
-                    : <Button
+                  {confirmingCancel ? (
+                    <>
+                      <span className="text-xs text-charcoal-muted self-center">
+                        {t("bookings.confirmCancel")}
+                      </span>
+                      <Button
                         size="sm"
-                        variant="outline"
+                        variant="destructive"
+                        onClick={handleCancel}
+                        disabled={cancelling}
                         className="text-xs h-7"
-                        onClick={() => setConfirmingCancel(true)}
                       >
-                        <X className="w-3 h-3 mr-1" />
-                        {t('bookings.cancel')}
+                        {cancelling ? (
+                          t("bookings.cancelling")
+                        ) : (
+                          <>
+                            <X className="w-3 h-3 mr-1" />
+                            {t("bookings.cancel")}
+                          </>
+                        )}
                       </Button>
-                  }
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="text-xs h-7"
+                        onClick={() => setConfirmingCancel(false)}
+                      >
+                        No
+                      </Button>
+                    </>
+                  ) : (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="text-xs h-7"
+                      onClick={() => setConfirmingCancel(true)}
+                    >
+                      <X className="w-3 h-3 mr-1" />
+                      {t("bookings.cancel")}
+                    </Button>
+                  )}
                 </div>
               )}
             </div>
@@ -148,100 +199,95 @@ function BookingCard({ booking, t, dateFnsLocale, onCancel, cancelling }) {
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }
 
 export default function CustomerBookingsPage() {
-  const { t, i18n } = useTranslation('customer')
-  const dateFnsLocale = i18n.language === 'es' ? es : enUS
-  const [tab, setTab] = useState('upcoming')
+  const { t, i18n } = useTranslation("customer");
+  const dateFnsLocale = i18n.language === "es" ? es : enUS;
+  const [tab, setTab] = useState("upcoming");
 
-  const { data: bookings, isLoading } = useMyBookings()
-  const { mutateAsync: cancelBooking, isPending: cancelling } = useCancelBooking()
+  const { data: bookings, isLoading } = useMyBookings();
+  const { mutateAsync: cancelBooking, isPending: cancelling } =
+    useCancelBooking();
 
-  const upcoming = bookings?.filter((b) => b.status === 'confirmed') ?? []
-  const past     = bookings?.filter((b) => b.status !== 'confirmed') ?? []
-  const current  = tab === 'upcoming' ? upcoming : past
+  const upcoming = bookings?.filter((b) => b.status === "confirmed") ?? [];
+  const past = bookings?.filter((b) => b.status !== "confirmed") ?? [];
+  const current = tab === "upcoming" ? upcoming : past;
 
   async function handleCancel(bookingId) {
     try {
-      await cancelBooking(bookingId)
-      toast.success(t('bookings.cancelSuccess'))
+      await cancelBooking(bookingId);
+      toast.success(t("bookings.cancelSuccess"));
     } catch {
-      toast.error(t('common:errors.generic'))
+      toast.error(t("common:errors.generic"));
     }
   }
 
   return (
-    <div className="max-w-3xl mx-auto px-4 md:px-8 py-8 animate-fade-in-up">
-      {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-2xl md:text-3xl font-display font-semibold text-charcoal">
-          {t('bookings.title')}
-        </h1>
-      </div>
-
+    <CustomerPageLayout title={t("bookings.title")}>
       {/* Tabs */}
       <div className="flex gap-1 bg-warm-gray rounded-xl p-1 w-fit mb-6">
-        {['upcoming', 'past'].map((tabKey) => (
+        {["upcoming", "past"].map((tabKey) => (
           <button
             key={tabKey}
             onClick={() => setTab(tabKey)}
             className={cn(
-              'px-5 py-2 rounded-lg text-sm font-medium transition-all duration-150',
+              "px-5 py-2 rounded-lg text-sm font-medium transition-all duration-150",
               tab === tabKey
-                ? 'bg-white text-charcoal shadow-sm'
-                : 'text-charcoal-muted hover:text-charcoal'
+                ? "bg-white text-charcoal shadow-sm"
+                : "text-charcoal-muted hover:text-charcoal",
             )}
           >
             {t(`bookings.${tabKey}`)}
-            <span className={cn(
-              'ml-2 text-[10px] font-mono px-1.5 py-0.5 rounded-full',
-              tab === tabKey ? 'bg-sage-muted text-sage' : 'bg-warm-gray-dark/50 text-charcoal-subtle'
-            )}>
-              {tabKey === 'upcoming' ? upcoming.length : past.length}
+            <span
+              className={cn(
+                "ml-2 text-[10px] font-mono px-1.5 py-0.5 rounded-full",
+                tab === tabKey
+                  ? "bg-sage-muted text-sage"
+                  : "bg-warm-gray-dark/50 text-charcoal-subtle",
+              )}
+            >
+              {tabKey === "upcoming" ? upcoming.length : past.length}
             </span>
           </button>
         ))}
       </div>
 
       {/* Content */}
-      {isLoading
-        ? (
-          <div className="space-y-4">
-            {[1, 2].map((i) => <Skeleton key={i} className="h-44 rounded-2xl" />)}
-          </div>
-        )
-        : current.length === 0
-          ? (
-            <div className="text-center py-16">
-              <CalendarCheck className="w-10 h-10 text-charcoal-subtle mx-auto mb-4" />
-              <p className="text-charcoal-muted mb-6">
-                {tab === 'upcoming' ? t('bookings.empty') : t('bookings.emptyPast')}
-              </p>
-              {tab === 'upcoming' && (
-                <Button asChild size="sm">
-                  <Link to={ROUTES.CLASSES}>{t('dashboard.bookOne')}</Link>
-                </Button>
-              )}
+      {isLoading ? (
+        <div className="space-y-4">
+          {[1, 2].map((i) => (
+            <Skeleton key={i} className="h-44 rounded-2xl" />
+          ))}
+        </div>
+      ) : current.length === 0 ? (
+        <div className="text-center py-16">
+          <CalendarCheck className="w-10 h-10 text-charcoal-subtle mx-auto mb-4" />
+          <p className="text-charcoal-muted mb-6">
+            {tab === "upcoming" ? t("bookings.empty") : t("bookings.emptyPast")}
+          </p>
+          {tab === "upcoming" && (
+            <Button asChild size="sm">
+              <Link to={ROUTES.CLASSES}>{t("dashboard.bookOne")}</Link>
+            </Button>
+          )}
+        </div>
+      ) : (
+        <div className="space-y-4" key={tab}>
+          {current.map((booking, i) => (
+            <div key={booking.$id} style={{ animationDelay: `${i * 60}ms` }}>
+              <BookingCard
+                booking={booking}
+                t={t}
+                dateFnsLocale={dateFnsLocale}
+                onCancel={handleCancel}
+                cancelling={cancelling}
+              />
             </div>
-          )
-          : (
-            <div className="space-y-4" key={tab}>
-              {current.map((booking, i) => (
-                <div key={booking.$id} style={{ animationDelay: `${i * 60}ms` }}>
-                  <BookingCard
-                    booking={booking}
-                    t={t}
-                    dateFnsLocale={dateFnsLocale}
-                    onCancel={handleCancel}
-                    cancelling={cancelling}
-                  />
-                </div>
-              ))}
-            </div>
-          )
-      }
-    </div>
-  )
+          ))}
+        </div>
+      )}
+    </CustomerPageLayout>
+  );
 }

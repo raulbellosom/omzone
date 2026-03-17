@@ -13,8 +13,8 @@ import ROUTES from "@/constants/routes";
 
 // Hero carousel images — beach + yoga in Puerto Vallarta vibes
 const HERO_IMAGES = [
-  // 1. Playa tranquila atardecer
-  "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1920&h=1080&fit=crop&crop=center&q=80",
+  // 1. Hero principal desde Appwrite
+  "https://appwrite.racoondevs.com/v1/storage/buckets/public-media/files/landing-hero-banner/view?project=69b37e1f001cce5d19cc&mode=admin",
   // 2. Yoga grupal en la playa
   "https://images.unsplash.com/photo-1588286840104-8957b019727f?w=1920&h=1080&fit=crop&crop=center&q=80",
   // 3. Meditación playa al amanecer
@@ -43,13 +43,13 @@ export default function HeroSection() {
     <section
       aria-label="Bienvenida a Omzone"
       className="relative flex flex-col overflow-hidden"
-      style={{ minHeight: "calc(100dvh - 4rem)" }}
+      style={{ minHeight: "100dvh" }}
     >
       {/* ── Background carousel ──────────────────────────────────── */}
       <div className="absolute inset-0">
         {HERO_IMAGES.map((src, i) => (
           <img
-            key={i}
+            key={src}
             src={src}
             alt=""
             aria-hidden="true"
@@ -95,7 +95,7 @@ export default function HeroSection() {
                 .split("\n")
                 .map((line, i) => (
                   <span
-                    key={i}
+                    key={line}
                     className={i > 0 ? "block text-sage-light" : "block"}
                   >
                     {line}
@@ -184,9 +184,9 @@ export default function HeroSection() {
             <p className="text-sm font-semibold text-white">Yoga · 8 sesiones</p>
             <p className="text-xs text-white/55 mt-0.5">Vence en 18 días</p>
             <div className="flex gap-1 mt-3">
-              {[...Array(4)].map((_, i) => (
+              {["session-a", "session-b", "session-c", "session-d"].map((id) => (
                 <div
-                  key={i}
+                  key={id}
                   className="w-5 h-5 rounded-full bg-white/20 border border-white/30"
                   aria-hidden="true"
                 />
@@ -222,9 +222,9 @@ export default function HeroSection() {
         aria-hidden="true"
       >
         <div className="flex gap-2">
-          {HERO_IMAGES.map((_, i) => (
+          {HERO_IMAGES.map((src, i) => (
             <button
-              key={i}
+              key={src}
               onClick={() => setCurrent(i)}
               className={`h-1 rounded-full transition-all duration-500 ${
                 i === current

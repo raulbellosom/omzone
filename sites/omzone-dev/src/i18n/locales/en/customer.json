@@ -7,7 +7,14 @@
     "bookings": "My bookings",
     "orders": "My orders",
     "packages": "My packages",
-    "profile": "My profile"
+    "profile": "My profile",
+    "classes": "Classes",
+    "wellness": "Wellness",
+    "shop": "Shop",
+    "section": {
+      "discover": "Discover",
+      "myzone": "My Zone"
+    }
   },
   "dashboard": {
     "greeting": "Hello, {{name}}",

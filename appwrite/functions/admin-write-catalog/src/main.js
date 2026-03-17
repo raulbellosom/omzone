@@ -36,8 +36,9 @@ function toNullableString(value) {
 
 function firstFilled(...values) {
   return (
-    values.find((value) => typeof value === "string" && value.trim().length > 0) ??
-    ""
+    values.find(
+      (value) => typeof value === "string" && value.trim().length > 0,
+    ) ?? ""
   );
 }
 
@@ -108,7 +109,8 @@ function readEnv() {
     missing.push("APPWRITE_COLLECTION_CLASS_TYPES_ID");
   if (!env.collections.instructors)
     missing.push("APPWRITE_COLLECTION_INSTRUCTORS_ID");
-  if (!env.collections.bookings) missing.push("APPWRITE_COLLECTION_BOOKINGS_ID");
+  if (!env.collections.bookings)
+    missing.push("APPWRITE_COLLECTION_BOOKINGS_ID");
 
   if (missing.length > 0) {
     throw Object.assign(
@@ -121,22 +123,27 @@ function readEnv() {
 }
 
 async function classCreate(db, cfg, payload) {
-  return db.createDocument(cfg.databaseId, cfg.collections.classes, ID.unique(), {
-    slug: resolveClassSlug(payload),
-    titleEs: payload.title_es,
-    titleEn: payload.title_en,
-    summaryEs: toNullableString(payload.summary_es),
-    summaryEn: toNullableString(payload.summary_en),
-    descriptionEs: toNullableString(payload.description_es),
-    descriptionEn: toNullableString(payload.description_en),
-    classTypeId: payload.class_type_id,
-    instructorId: payload.instructor_id,
-    difficulty: payload.difficulty,
-    durationMin: toNumber(payload.duration_min, 0),
-    basePrice: toNumber(payload.base_price, 0),
-    isFeatured: toBoolean(payload.is_featured, false),
-    enabled: toBoolean(payload.enabled, true),
-  });
+  return db.createDocument(
+    cfg.databaseId,
+    cfg.collections.classes,
+    ID.unique(),
+    {
+      slug: resolveClassSlug(payload),
+      titleEs: payload.title_es,
+      titleEn: payload.title_en,
+      summaryEs: toNullableString(payload.summary_es),
+      summaryEn: toNullableString(payload.summary_en),
+      descriptionEs: toNullableString(payload.description_es),
+      descriptionEn: toNullableString(payload.description_en),
+      classTypeId: payload.class_type_id,
+      difficulty: payload.difficulty,
+      durationMin: toNumber(payload.duration_min, 0),
+      basePrice: toNumber(payload.base_price, 0),
+      coverImageId: toNullableString(payload.cover_image_id),
+      isFeatured: toBoolean(payload.is_featured, false),
+      enabled: toBoolean(payload.enabled, true),
+    },
+  );
 }
 
 async function classUpdate(db, cfg, payload) {
@@ -156,17 +163,19 @@ async function classUpdate(db, cfg, payload) {
     update.descriptionEs = toNullableString(payload.description_es);
   if (payload.description_en !== undefined)
     update.descriptionEn = toNullableString(payload.description_en);
-  if (payload.class_type_id !== undefined) update.classTypeId = payload.class_type_id;
-  if (payload.instructor_id !== undefined)
-    update.instructorId = payload.instructor_id;
+  if (payload.class_type_id !== undefined)
+    update.classTypeId = payload.class_type_id;
   if (payload.difficulty !== undefined) update.difficulty = payload.difficulty;
   if (payload.duration_min !== undefined)
     update.durationMin = toNumber(payload.duration_min, 0);
   if (payload.base_price !== undefined)
     update.basePrice = toNumber(payload.base_price, 0);
+  if (payload.cover_image_id !== undefined)
+    update.coverImageId = toNullableString(payload.cover_image_id);
   if (payload.is_featured !== undefined)
     update.isFeatured = toBoolean(payload.is_featured, false);
-  if (payload.enabled !== undefined) update.enabled = toBoolean(payload.enabled, true);
+  if (payload.enabled !== undefined)
+    update.enabled = toBoolean(payload.enabled, true);
 
   return db.updateDocument(
     cfg.databaseId,
@@ -181,9 +190,14 @@ async function classToggle(db, cfg, payload) {
     throw Object.assign(new Error("class_id is required"), { status: 400 });
   }
 
-  return db.updateDocument(cfg.databaseId, cfg.collections.classes, payload.class_id, {
-    enabled: toBoolean(payload.enabled, true),
-  });
+  return db.updateDocument(
+    cfg.databaseId,
+    cfg.collections.classes,
+    payload.class_id,
+    {
+      enabled: toBoolean(payload.enabled, true),
+    },
+  );
 }
 
 async function classDelete(db, cfg, payload) {
@@ -191,18 +205,27 @@ async function classDelete(db, cfg, payload) {
     throw Object.assign(new Error("class_id is required"), { status: 400 });
   }
 
-  const sessionsCount = await countDocuments(db, cfg.databaseId, cfg.collections.sessions, [
-    Query.equal("classId", payload.class_id),
-  ]);
+  const sessionsCount = await countDocuments(
+    db,
+    cfg.databaseId,
+    cfg.collections.sessions,
+    [Query.equal("classId", payload.class_id)],
+  );
 
   if (sessionsCount > 0) {
     throw Object.assign(
-      new Error("No se puede eliminar la clase porque tiene sesiones asociadas."),
+      new Error(
+        "No se puede eliminar la clase porque tiene sesiones asociadas.",
+      ),
       { status: 409 },
     );
   }
 
-  await db.deleteDocument(cfg.databaseId, cfg.collections.classes, payload.class_id);
+  await db.deleteDocument(
+    cfg.databaseId,
+    cfg.collections.classes,
+    payload.class_id,
+  );
   return { $id: payload.class_id };
 }
 
@@ -225,7 +248,9 @@ async function instructorCreate(db, cfg, payload) {
 
 async function instructorUpdate(db, cfg, payload) {
   if (!payload.instructor_id) {
-    throw Object.assign(new Error("instructor_id is required"), { status: 400 });
+    throw Object.assign(new Error("instructor_id is required"), {
+      status: 400,
+    });
   }
 
   const update = {};
@@ -233,12 +258,14 @@ async function instructorUpdate(db, cfg, payload) {
   if (payload.full_name !== undefined) update.fullName = payload.full_name;
   if (payload.short_bio !== undefined)
     update.shortBio = toNullableString(payload.short_bio);
-  if (payload.photo_id !== undefined) update.photoId = toNullableString(payload.photo_id);
+  if (payload.photo_id !== undefined)
+    update.photoId = toNullableString(payload.photo_id);
   if (payload.specialties !== undefined)
     update.specialties = toNullableString(payload.specialties);
   if (payload.display_order !== undefined)
     update.displayOrder = toNumber(payload.display_order, 0);
-  if (payload.enabled !== undefined) update.enabled = toBoolean(payload.enabled, true);
+  if (payload.enabled !== undefined)
+    update.enabled = toBoolean(payload.enabled, true);
 
   return db.updateDocument(
     cfg.databaseId,
@@ -250,7 +277,9 @@ async function instructorUpdate(db, cfg, payload) {
 
 async function instructorToggle(db, cfg, payload) {
   if (!payload.instructor_id) {
-    throw Object.assign(new Error("instructor_id is required"), { status: 400 });
+    throw Object.assign(new Error("instructor_id is required"), {
+      status: 400,
+    });
   }
 
   return db.updateDocument(
@@ -265,22 +294,22 @@ async function instructorToggle(db, cfg, payload) {
 
 async function instructorDelete(db, cfg, payload) {
   if (!payload.instructor_id) {
-    throw Object.assign(new Error("instructor_id is required"), { status: 400 });
+    throw Object.assign(new Error("instructor_id is required"), {
+      status: 400,
+    });
   }
 
-  const [classesCount, sessionsCount] = await Promise.all([
-    countDocuments(db, cfg.databaseId, cfg.collections.classes, [
-      Query.equal("instructorId", payload.instructor_id),
-    ]),
-    countDocuments(db, cfg.databaseId, cfg.collections.sessions, [
-      Query.equal("instructorId", payload.instructor_id),
-    ]),
-  ]);
+  const sessionsCount = await countDocuments(
+    db,
+    cfg.databaseId,
+    cfg.collections.sessions,
+    [Query.equal("instructorId", payload.instructor_id)],
+  );
 
-  if (classesCount > 0 || sessionsCount > 0) {
+  if (sessionsCount > 0) {
     throw Object.assign(
       new Error(
-        "No se puede eliminar el instructor porque esta asociado a clases o sesiones.",
+        "No se puede eliminar el instructor porque esta asociado a sesiones activas.",
       ),
       { status: 409 },
     );
@@ -295,18 +324,25 @@ async function instructorDelete(db, cfg, payload) {
 }
 
 async function classTypeCreate(db, cfg, payload) {
-  return db.createDocument(cfg.databaseId, cfg.collections.classTypes, ID.unique(), {
-    slug: resolveClassTypeSlug(payload),
-    nameEs: payload.name_es,
-    nameEn: payload.name_en,
-    description: toNullableString(payload.description),
-    enabled: toBoolean(payload.enabled, true),
-  });
+  return db.createDocument(
+    cfg.databaseId,
+    cfg.collections.classTypes,
+    ID.unique(),
+    {
+      slug: resolveClassTypeSlug(payload),
+      nameEs: payload.name_es,
+      nameEn: payload.name_en,
+      description: toNullableString(payload.description),
+      enabled: toBoolean(payload.enabled, true),
+    },
+  );
 }
 
 async function classTypeUpdate(db, cfg, payload) {
   if (!payload.class_type_id) {
-    throw Object.assign(new Error("class_type_id is required"), { status: 400 });
+    throw Object.assign(new Error("class_type_id is required"), {
+      status: 400,
+    });
   }
 
   const update = {};
@@ -315,7 +351,8 @@ async function classTypeUpdate(db, cfg, payload) {
   if (payload.name_en !== undefined) update.nameEn = payload.name_en;
   if (payload.description !== undefined)
     update.description = toNullableString(payload.description);
-  if (payload.enabled !== undefined) update.enabled = toBoolean(payload.enabled, true);
+  if (payload.enabled !== undefined)
+    update.enabled = toBoolean(payload.enabled, true);
 
   return db.updateDocument(
     cfg.databaseId,
@@ -327,7 +364,9 @@ async function classTypeUpdate(db, cfg, payload) {
 
 async function classTypeToggle(db, cfg, payload) {
   if (!payload.class_type_id) {
-    throw Object.assign(new Error("class_type_id is required"), { status: 400 });
+    throw Object.assign(new Error("class_type_id is required"), {
+      status: 400,
+    });
   }
 
   return db.updateDocument(
@@ -342,16 +381,23 @@ async function classTypeToggle(db, cfg, payload) {
 
 async function classTypeDelete(db, cfg, payload) {
   if (!payload.class_type_id) {
-    throw Object.assign(new Error("class_type_id is required"), { status: 400 });
+    throw Object.assign(new Error("class_type_id is required"), {
+      status: 400,
+    });
   }
 
-  const classesCount = await countDocuments(db, cfg.databaseId, cfg.collections.classes, [
-    Query.equal("classTypeId", payload.class_type_id),
-  ]);
+  const classesCount = await countDocuments(
+    db,
+    cfg.databaseId,
+    cfg.collections.classes,
+    [Query.equal("classTypeId", payload.class_type_id)],
+  );
 
   if (classesCount > 0) {
     throw Object.assign(
-      new Error("No se puede eliminar el tipo porque todavia hay clases que lo usan."),
+      new Error(
+        "No se puede eliminar el tipo porque todavia hay clases que lo usan.",
+      ),
       { status: 409 },
     );
   }
@@ -372,18 +418,25 @@ async function sessionCreate(db, cfg, payload) {
     throw Object.assign(new Error("session_date is required"), { status: 400 });
   }
 
-  return db.createDocument(cfg.databaseId, cfg.collections.sessions, ID.unique(), {
-    classId: payload.class_id,
-    sessionDate: payload.session_date,
-    endDate: payload.end_date || null,
-    capacityTotal: toNumber(payload.capacity_total, 0),
-    capacityTaken: toNumber(payload.capacity_taken, 0),
-    priceOverride: toNullableNumber(payload.price_override),
-    instructorId: toNullableString(payload.instructor_id),
-    status: payload.status || "scheduled",
-    locationLabel: toNullableString(payload.location_label),
-    enabled: toBoolean(payload.enabled, true),
-  });
+  return db.createDocument(
+    cfg.databaseId,
+    cfg.collections.sessions,
+    ID.unique(),
+    {
+      classId: payload.class_id,
+      sessionDate: payload.session_date,
+      endDate: payload.end_date || null,
+      capacityTotal: toNumber(payload.capacity_total, 0),
+      capacityTaken: toNumber(payload.capacity_taken, 0),
+      priceOverride: toNullableNumber(payload.price_override),
+      instructorId: toNullableString(payload.instructor_id),
+      maxPerBooking: toNumber(payload.max_per_booking, 6),
+      coverImageId: toNullableString(payload.cover_image_id),
+      status: payload.status || "scheduled",
+      locationLabel: toNullableString(payload.location_label),
+      enabled: toBoolean(payload.enabled, true),
+    },
+  );
 }
 
 async function sessionUpdate(db, cfg, payload) {
@@ -393,7 +446,8 @@ async function sessionUpdate(db, cfg, payload) {
 
   const update = {};
   if (payload.class_id !== undefined) update.classId = payload.class_id;
-  if (payload.session_date !== undefined) update.sessionDate = payload.session_date;
+  if (payload.session_date !== undefined)
+    update.sessionDate = payload.session_date;
   if (payload.end_date !== undefined) update.endDate = payload.end_date || null;
   if (payload.capacity_total !== undefined)
     update.capacityTotal = toNumber(payload.capacity_total, 0);
@@ -403,10 +457,15 @@ async function sessionUpdate(db, cfg, payload) {
     update.priceOverride = toNullableNumber(payload.price_override);
   if (payload.instructor_id !== undefined)
     update.instructorId = toNullableString(payload.instructor_id);
+  if (payload.max_per_booking !== undefined)
+    update.maxPerBooking = toNumber(payload.max_per_booking, 6);
+  if (payload.cover_image_id !== undefined)
+    update.coverImageId = toNullableString(payload.cover_image_id);
   if (payload.status !== undefined) update.status = payload.status;
   if (payload.location_label !== undefined)
     update.locationLabel = toNullableString(payload.location_label);
-  if (payload.enabled !== undefined) update.enabled = toBoolean(payload.enabled, true);
+  if (payload.enabled !== undefined)
+    update.enabled = toBoolean(payload.enabled, true);
 
   return db.updateDocument(
     cfg.databaseId,
@@ -421,9 +480,14 @@ async function sessionToggle(db, cfg, payload) {
     throw Object.assign(new Error("session_id is required"), { status: 400 });
   }
 
-  return db.updateDocument(cfg.databaseId, cfg.collections.sessions, payload.session_id, {
-    enabled: toBoolean(payload.enabled, true),
-  });
+  return db.updateDocument(
+    cfg.databaseId,
+    cfg.collections.sessions,
+    payload.session_id,
+    {
+      enabled: toBoolean(payload.enabled, true),
+    },
+  );
 }
 
 async function sessionCancel(db, cfg, payload) {
@@ -431,9 +495,14 @@ async function sessionCancel(db, cfg, payload) {
     throw Object.assign(new Error("session_id is required"), { status: 400 });
   }
 
-  return db.updateDocument(cfg.databaseId, cfg.collections.sessions, payload.session_id, {
-    status: "cancelled",
-  });
+  return db.updateDocument(
+    cfg.databaseId,
+    cfg.collections.sessions,
+    payload.session_id,
+    {
+      status: "cancelled",
+    },
+  );
 }
 
 async function sessionDelete(db, cfg, payload) {
@@ -441,18 +510,27 @@ async function sessionDelete(db, cfg, payload) {
     throw Object.assign(new Error("session_id is required"), { status: 400 });
   }
 
-  const bookingCount = await countDocuments(db, cfg.databaseId, cfg.collections.bookings, [
-    Query.equal("sessionId", payload.session_id),
-  ]);
+  const bookingCount = await countDocuments(
+    db,
+    cfg.databaseId,
+    cfg.collections.bookings,
+    [Query.equal("sessionId", payload.session_id)],
+  );
 
   if (bookingCount > 0) {
     throw Object.assign(
-      new Error("No se puede eliminar la sesion porque tiene reservas asociadas."),
+      new Error(
+        "No se puede eliminar la sesion porque tiene reservas asociadas.",
+      ),
       { status: 409 },
     );
   }
 
-  await db.deleteDocument(cfg.databaseId, cfg.collections.sessions, payload.session_id);
+  await db.deleteDocument(
+    cfg.databaseId,
+    cfg.collections.sessions,
+    payload.session_id,
+  );
   return { $id: payload.session_id };
 }
 

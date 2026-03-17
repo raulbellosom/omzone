@@ -51,7 +51,6 @@ function normalizeClass(doc, relations = {}) {
     description_es: doc.descriptionEs,
     description_en: doc.descriptionEn,
     class_type_id: doc.classTypeId,
-    instructor_id: doc.instructorId,
     difficulty: doc.difficulty,
     duration_min: doc.durationMin,
     base_price: doc.basePrice,
@@ -60,9 +59,6 @@ function normalizeClass(doc, relations = {}) {
     enabled: doc.enabled ?? true,
     class_type: relations.classTypeDoc
       ? normalizeClassType(relations.classTypeDoc)
-      : null,
-    instructor: relations.instructorDoc
-      ? normalizeInstructor(relations.instructorDoc)
       : null,
   };
 }
@@ -79,6 +75,8 @@ function normalizeSession(doc, classDoc) {
     capacity_taken: doc.capacityTaken ?? 0,
     price_override: doc.priceOverride ?? null,
     instructor_id: doc.instructorId,
+    max_per_booking: doc.maxPerBooking ?? 6,
+    cover_image_id: doc.coverImageId ?? null,
     status: doc.status ?? "scheduled",
     location_label: doc.locationLabel,
     enabled: doc.enabled ?? true,

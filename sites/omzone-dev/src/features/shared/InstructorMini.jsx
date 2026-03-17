@@ -3,21 +3,21 @@
  * Usada en ClassCard y ClassDetailPage como contenido informativo.
  * El instructor NO es un usuario autenticado en el sistema.
  */
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
-import { cn } from '@/lib/utils'
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { cn } from "@/lib/utils";
 
 export default function InstructorMini({ instructor, className }) {
-  if (!instructor) return null
+  if (!instructor) return null;
 
   const initials = instructor.full_name
-    ?.split(' ')
+    ?.split(" ")
     .map((w) => w[0])
-    .join('')
+    .join("")
     .slice(0, 2)
-    .toUpperCase()
+    .toUpperCase();
 
   return (
-    <div className={cn('flex items-center gap-2.5', className)}>
+    <div className={cn("flex items-center gap-2.5", className)}>
       <Avatar className="h-9 w-9">
         <AvatarFallback className="text-xs bg-sage-muted text-sage-darker">
           {initials}
@@ -29,10 +29,12 @@ export default function InstructorMini({ instructor, className }) {
         </p>
         {instructor.specialties?.length > 0 && (
           <p className="text-xs text-charcoal-muted">
-            {instructor.specialties.join(' · ')}
+            {Array.isArray(instructor.specialties)
+              ? instructor.specialties.join(" · ")
+              : instructor.specialties}
           </p>
         )}
       </div>
     </div>
-  )
+  );
 }

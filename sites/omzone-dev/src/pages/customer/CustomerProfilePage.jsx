@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Eye, EyeOff, UserCircle, Camera } from "lucide-react";
 import { toast } from "sonner";
+import CustomerPageLayout from "@/components/shared/CustomerPageLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -170,32 +171,33 @@ export default function CustomerProfilePage() {
   const nextLang = currentLang === "es" ? "en" : "es";
 
   return (
-    <div className="max-w-2xl mx-auto px-4 md:px-8 py-8 animate-fade-in-up space-y-6">
-      {/* Header */}
-      <div className="flex items-center gap-4 mb-2">
-        {/* Avatar with upload overlay */}
+    <CustomerPageLayout
+      title={t("profile.title")}
+      subtitle={user?.email}
+      actions={
         <label
           className={cn(
-            "relative w-14 h-14 rounded-full cursor-pointer group shrink-0",
+            "relative w-10 h-10 rounded-full cursor-pointer group shrink-0",
             uploadingAvatar && "opacity-60 pointer-events-none",
           )}
         >
-          <Avatar className="w-14 h-14">
-            <AvatarImage src={avatarUrl ?? undefined} alt="" className="object-cover" />
-            <AvatarFallback className="bg-sage-muted text-sage text-lg font-semibold">
-              {initials || <UserCircle className="w-7 h-7 text-sage" />}
+          <Avatar className="w-10 h-10">
+            <AvatarImage
+              src={avatarUrl ?? undefined}
+              alt=""
+              className="object-cover"
+            />
+            <AvatarFallback className="bg-sage-muted text-sage font-semibold">
+              {initials || <UserCircle className="w-5 h-5 text-sage" />}
             </AvatarFallback>
           </Avatar>
           {uploadingAvatar ? (
             <div className="absolute inset-0 rounded-full bg-black/30 flex items-center justify-center">
-              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
             </div>
           ) : (
-            <div
-              className="absolute inset-0 rounded-full bg-black/30 flex items-center justify-center
-                              opacity-0 group-hover:opacity-100 transition-opacity"
-            >
-              <Camera className="w-5 h-5 text-white" />
+            <div className="absolute inset-0 rounded-full bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+              <Camera className="w-4 h-4 text-white" />
             </div>
           )}
           <input
@@ -205,15 +207,9 @@ export default function CustomerProfilePage() {
             onChange={handleAvatarChange}
           />
         </label>
-
-        <div>
-          <h1 className="text-2xl font-display font-semibold text-charcoal">
-            {t("profile.title")}
-          </h1>
-          <p className="text-sm text-charcoal-muted">{user?.email}</p>
-        </div>
-      </div>
-
+      }
+      className="space-y-6"
+    >
       {/* Información personal */}
       <SectionCard title={t("profile.personalInfo")}>
         <form onSubmit={handleSaveProfile} noValidate className="space-y-4">
@@ -370,6 +366,6 @@ export default function CustomerProfilePage() {
           </Button>
         </div>
       </SectionCard>
-    </div>
+    </CustomerPageLayout>
   );
 }

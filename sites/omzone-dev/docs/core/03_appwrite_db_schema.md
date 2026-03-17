@@ -165,7 +165,6 @@ Purpose: entidad principal del catalogo de clases.
 | `descriptionEs` | `string`  | -        | -      | -       | max `6000`                                  | descripcion ES      |
 | `descriptionEn` | `string`  | -        | -      | -       | max `6000`                                  | descripcion EN      |
 | `classTypeId`   | `string`  | -        | -      | -       | max `64`                                    | FK logica           |
-| `instructorId`  | `string`  | -        | -      | -       | max `64`                                    | FK logica           |
 | `difficulty`    | `enum`    | -        | -      | -       | `beginner,intermediate,advanced,all_levels` | dificultad          |
 | `durationMin`   | `integer` | -        | -      | -       | -                                           | duracion en minutos |
 | `basePrice`     | `float`   | -        | -      | -       | -                                           | precio base         |
@@ -175,31 +174,31 @@ Purpose: entidad principal del catalogo de clases.
 
 Indexes:
 
-| Index                 | Keys           | Sort | Notes                 |
-| --------------------- | -------------- | ---- | --------------------- |
-| `uq_classes_slug`     | `slug`         | `↑`  | unique route key      |
-| `idx_classes_type`    | `classTypeId`  | `↑`  | filtro por tipo       |
-| `idx_classes_instr`   | `instructorId` | `↑`  | filtro por instructor |
-| `idx_classes_diff`    | `difficulty`   | `↑`  | filtro por nivel      |
-| `idx_classes_feat`    | `isFeatured`   | `↑`  | destacados            |
-| `idx_classes_enabled` | `enabled`      | `↑`  | filtro publico        |
+| Index                 | Keys          | Sort | Notes            |
+| --------------------- | ------------- | ---- | ---------------- |
+| `uq_classes_slug`     | `slug`        | `↑`  | unique route key |
+| `idx_classes_type`    | `classTypeId` | `↑`  | filtro por tipo  |
+| `idx_classes_diff`    | `difficulty`  | `↑`  | filtro por nivel |
+| `idx_classes_feat`    | `isFeatured`  | `↑`  | destacados       |
+| `idx_classes_enabled` | `enabled`     | `↑`  | filtro publico   |
 
 ### Collection: `class_sessions`
 
 Purpose: sesiones individuales reservables por fecha.
 
-| key             | type       | required | unique | default | constraints                          | notes             |
-| --------------- | ---------- | -------- | ------ | ------- | ------------------------------------ | ----------------- |
-| `classId`       | `string`   | -        | -      | -       | max `64`                             | FK logica         |
-| `sessionDate`   | `datetime` | -        | -      | -       | ISO 8601                             | inicio            |
-| `endDate`       | `datetime` | -        | -      | -       | ISO 8601                             | fin               |
-| `capacityTotal` | `integer`  | -        | -      | -       | -                                    | capacidad total   |
-| `capacityTaken` | `integer`  | -        | -      | -       | -                                    | capacidad ocupada |
-| `priceOverride` | `float`    | -        | -      | -       | nullable                             | precio opcional   |
-| `instructorId`  | `string`   | -        | -      | -       | max `64`                             | instructor sesion |
-| `status`        | `enum`     | -        | -      | -       | `scheduled,full,cancelled,completed` | estado de sesion  |
-| `locationLabel` | `string`   | -        | -      | -       | max `120`                            | sede o ubicacion  |
-| `enabled`       | `boolean`  | -        | -      | -       | -                                    | estado            |
+| key             | type       | required | unique | default | constraints                          | notes               |
+| --------------- | ---------- | -------- | ------ | ------- | ------------------------------------ | ------------------- |
+| `classId`       | `string`   | -        | -      | -       | max `64`                             | FK logica           |
+| `sessionDate`   | `datetime` | -        | -      | -       | ISO 8601                             | inicio              |
+| `endDate`       | `datetime` | -        | -      | -       | ISO 8601                             | fin                 |
+| `capacityTotal` | `integer`  | -        | -      | -       | -                                    | capacidad total     |
+| `capacityTaken` | `integer`  | -        | -      | -       | -                                    | capacidad ocupada   |
+| `priceOverride` | `float`    | -        | -      | -       | nullable                             | precio opcional     |
+| `instructorId`  | `string`   | -        | -      | -       | max `64`                             | instructor sesion   |
+| `status`        | `enum`     | -        | -      | -       | `scheduled,full,cancelled,completed` | estado de sesion    |
+| `locationLabel` | `string`   | -        | -      | -       | max `120`                            | sede o ubicacion    |
+| `maxPerBooking` | `integer`  | -        | -      | `6`     | -                                    | max boletos/reserva |
+| `enabled`       | `boolean`  | -        | -      | -       | -                                    | estado              |
 
 Indexes:
 
@@ -363,6 +362,7 @@ Purpose: reservas del cliente para sesiones de clase.
 | `orderId`      | `string`   | -        | -      | -       | max `64`                                                    | orden origen                |
 | `bookingCode`  | `string`   | -        | yes    | -       | max `40`                                                    | codigo de reserva           |
 | `status`       | `enum`     | -        | -      | -       | `pending,confirmed,cancelled,completed,no_show,rescheduled` | estado                      |
+| `quantity`     | `integer`  | -        | -      | `1`     | -                                                           | numero de spots reservados  |
 | `unitPrice`    | `float`    | -        | -      | -       | -                                                           | precio unitario             |
 | `extrasJson`   | `string`   | -        | -      | -       | max `2000`                                                  | extras serializados en JSON |
 | `reservedAt`   | `datetime` | -        | -      | -       | ISO 8601                                                    | fecha de reserva            |
