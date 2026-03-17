@@ -19,7 +19,7 @@ const PILLAR_VISUALS = [
   {
     // Immersions — retreat, deep reconnection in nature
     image:
-      "https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?w=900&h=1100&fit=crop&crop=center&q=80",
+      "https://appwrite.racoondevs.com/v1/storage/buckets/stock-images/files/69b8efed000a9f40df28/view?project=69b37e1f001cce5d19cc&mode=admin",
     href: ROUTES.PACKAGES,
     tint: "from-indigo-900/30",
     cardHeight: "h-[460px]",
@@ -35,7 +35,7 @@ const PILLAR_VISUALS = [
   {
     // Experiences — surf, ocean, nature
     image:
-      "https://images.unsplash.com/photo-1502680390469-be75c86b636f?w=900&h=1100&fit=crop&crop=center&q=80",
+      "https://appwrite.racoondevs.com/v1/storage/buckets/stock-images/files/69b8ec0e00107c7915ca/view?project=69b37e1f001cce5d19cc&mode=admin",
     href: ROUTES.WELLNESS,
     tint: "from-sky-900/30",
     cardHeight: "h-[600px]",
