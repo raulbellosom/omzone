@@ -49,7 +49,7 @@ export default function Footer() {
             <h3 className="text-sm font-semibold text-white mb-3">{t('footer.account.title')}</h3>
             <ul className="space-y-2 text-sm">
               {[
-                [t('footer.account.dashboard'), ROUTES.ZONE_DASHBOARD],
+                [t('footer.account.dashboard'), ROUTES.ZONE],
                 [t('footer.account.bookings'), ROUTES.ZONE_BOOKINGS],
                 [t('footer.account.orders'), ROUTES.ZONE_ORDERS],
                 [t('footer.account.profile'), ROUTES.ZONE_PROFILE],

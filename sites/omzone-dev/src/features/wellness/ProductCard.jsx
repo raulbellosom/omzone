@@ -14,9 +14,12 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useCurrency } from "@/hooks/useCurrency";
 import { resolveField } from "@/lib/i18n-data";
+import { getLocalizedOtherType } from "@/lib/product-types";
 import { useAuth } from "@/hooks/useAuth";
 import ROUTES from "@/constants/routes";
 import { cn } from "@/lib/utils";
+import { getPreviewUrl } from "@/lib/media";
+import { BUCKET_PUBLIC_MEDIA } from "@/env";
 
 const TYPE_VISUALS = {
   smoothie: {
@@ -44,7 +47,7 @@ const TYPE_VISUALS = {
 };
 
 export default function ProductCard({ product, compact = false }) {
-  const { t } = useTranslation("wellness");
+  const { t, i18n } = useTranslation("wellness");
   const { user } = useAuth();
   const { formatPrice } = useCurrency();
   if (!product) return null;
@@ -52,6 +55,11 @@ export default function ProductCard({ product, compact = false }) {
   const name = resolveField(product, "name");
   const description = resolveField(product, "description");
   const visual = TYPE_VISUALS[product.product_type] ?? TYPE_VISUALS.other;
+  const typeLabel =
+    product.product_type === "other"
+      ? getLocalizedOtherType(product, i18n.resolvedLanguage ?? "es") ||
+        t("types.other")
+      : t(`types.${product.product_type}`);
 
   return (
     <Card
@@ -65,20 +73,34 @@ export default function ProductCard({ product, compact = false }) {
       {/* Área visual */}
       <div
         className={cn(
-          "relative shrink-0 flex items-center justify-center",
-          `bg-gradient-to-br ${visual.gradient}`,
+          "relative shrink-0 flex items-center justify-center overflow-hidden",
+          `bg-linear-to-br ${visual.gradient}`,
           compact ? "w-24 h-full" : "h-36",
         )}
       >
-        <visual.Icon
-          className={cn(
-            "transition-transform duration-300 group-hover:scale-110 text-charcoal/40",
-            compact ? "w-7 h-7" : "w-10 h-10",
-          )}
-          aria-hidden="true"
-        />
+        {product.cover_image_id ? (
+          <img
+            src={getPreviewUrl(
+              product.cover_image_id,
+              product.cover_image_bucket ?? BUCKET_PUBLIC_MEDIA,
+              600,
+              400,
+              80,
+            )}
+            alt=""
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+        ) : (
+          <visual.Icon
+            className={cn(
+              "transition-transform duration-300 group-hover:scale-110 text-charcoal/40",
+              compact ? "w-7 h-7" : "w-10 h-10",
+            )}
+            aria-hidden="true"
+          />
+        )}
         {product.is_addon_only && !compact && (
-          <div className="absolute top-2 right-2">
+          <div className="absolute top-2 right-2 z-10">
             <Badge variant="warm" className="text-[10px]">
               {t("card.addOnly")}
             </Badge>
@@ -96,7 +118,7 @@ export default function ProductCard({ product, compact = false }) {
         {/* Tipo */}
         {!compact && (
           <span className="text-[10px] uppercase tracking-wider font-medium text-charcoal-subtle mb-1">
-            {t(`types.${product.product_type}`)}
+            {typeLabel}
           </span>
         )}
 

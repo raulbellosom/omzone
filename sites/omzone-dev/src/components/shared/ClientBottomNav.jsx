@@ -11,7 +11,7 @@ import ROUTES from "@/constants/routes";
 import { cn } from "@/lib/utils";
 
 const items = [
-  { icon: Home, key: "nav.home", href: ROUTES.ZONE_DASHBOARD },
+  { icon: Home, key: "nav.home", href: ROUTES.ZONE },
   { icon: BookOpen, key: "nav.classes", href: ROUTES.CLASSES },
   { icon: Package, key: "nav.packages", href: ROUTES.PACKAGES },
   { icon: Leaf, key: "nav.wellness", href: ROUTES.WELLNESS },
@@ -26,8 +26,8 @@ export default function ClientBottomNav() {
       <ul className="flex">
         {items.map(({ icon: Icon, key, href }) => {
           const isActive =
-            href === ROUTES.ZONE_DASHBOARD
-              ? location.pathname === "/zone" ||
+            href === ROUTES.ZONE
+              ? location.pathname === ROUTES.ZONE ||
                 location.pathname === ROUTES.ZONE_DASHBOARD
               : location.pathname.startsWith(href);
 

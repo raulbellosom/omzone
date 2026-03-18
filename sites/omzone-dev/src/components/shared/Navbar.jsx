@@ -80,7 +80,7 @@ export default function Navbar() {
   const logoHref = !user
     ? ROUTES.HOME
     : user.role_key === "client"
-      ? ROUTES.ZONE_DASHBOARD
+      ? ROUTES.ZONE
       : ROUTES.ADMIN;
 
   return (
@@ -254,7 +254,10 @@ export default function Navbar() {
           aria-label="Abrir menú"
         >
           <Menu
-            className={cn("h-5 w-5", isOverlay ? "text-white" : "text-charcoal")}
+            className={cn(
+              "h-5 w-5",
+              isOverlay ? "text-white" : "text-charcoal",
+            )}
           />
         </button>
       </nav>

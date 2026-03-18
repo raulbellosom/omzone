@@ -146,6 +146,29 @@
       }
     ]
   },
+  "contact_form": {
+    "title": "¿Tienes preguntas?",
+    "subtitle": "Escríbenos y te responderemos a la brevedad.",
+    "fields": {
+      "fullName": "Nombre completo",
+      "email": "Correo electrónico",
+      "phone": "Teléfono (opcional)",
+      "subject": "Asunto (opcional)",
+      "message": "Tu mensaje"
+    },
+    "placeholders": {
+      "fullName": "Tu nombre",
+      "email": "tu@correo.com",
+      "phone": "+52 55...",
+      "subject": "Ej: Información sobre clases",
+      "message": "Cuéntanos en qué podemos ayudarte..."
+    },
+    "submit": "Enviar mensaje",
+    "sending": "Enviando...",
+    "success": "¡Mensaje enviado! Te contactaremos pronto.",
+    "error": "No se pudo enviar el mensaje. Intenta de nuevo.",
+    "rateLimited": "Has enviado demasiados mensajes. Intenta más tarde."
+  },
   "cta_section": {
     "title": "Empieza hoy tu transformación",
     "subtitle": "Tu primera clase o tu primer paquete están a un clic de distancia.",

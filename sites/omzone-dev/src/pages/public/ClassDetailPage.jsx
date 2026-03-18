@@ -33,7 +33,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { resolveField } from "@/lib/i18n-data";
 import { useCurrency } from "@/hooks/useCurrency";
 import { formatDateTime, formatDuration } from "@/lib/dates";
-import { getMediaPreviewUrl } from "@/lib/media";
+import { getPreviewUrl } from "@/lib/media";
+import { BUCKET_PUBLIC_MEDIA } from "@/env";
 import ROUTES from "@/constants/routes";
 import { cn } from "@/lib/utils";
 import { buildClassStructuredData } from "@/lib/seo";
@@ -94,8 +95,11 @@ export default function ClassDetailPage() {
   // Imagen de portada: sesión activa → clase → null (usa gradiente)
   const coverFileId =
     activeSession?.cover_image_id || cls.cover_image_id || null;
+  const coverBucket = (activeSession?.cover_image_id
+    ? activeSession.cover_image_bucket
+    : cls.cover_image_bucket) ?? BUCKET_PUBLIC_MEDIA;
   const coverImgUrl = coverFileId
-    ? getMediaPreviewUrl(coverFileId, 1400, 640, 88)
+    ? getPreviewUrl(coverFileId, coverBucket, 1400, 640, 88)
     : null;
 
   // Precio total con extras seleccionados

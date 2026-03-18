@@ -15,6 +15,7 @@ import {
   COL_WELLNESS_PRODUCTS,
   COL_WELLNESS_PACKAGES,
 } from "@/env";
+import { parseDescriptionWithOtherType } from "@/lib/product-type-meta";
 
 const DB = APPWRITE_DATABASE_ID;
 
@@ -37,6 +38,7 @@ function normalizeClass(doc, relations = {}) {
     duration_min: doc.durationMin,
     base_price: doc.basePrice,
     cover_image_id: doc.coverImageId,
+    cover_image_bucket: doc.coverImageBucket ?? null,
     is_featured: doc.isFeatured ?? false,
     enabled: doc.enabled ?? true,
     class_type: relations.classTypeDoc
@@ -59,6 +61,7 @@ function normalizeSession(doc, classDoc) {
     instructor_id: doc.instructorId,
     max_per_booking: doc.maxPerBooking ?? 6,
     cover_image_id: doc.coverImageId ?? null,
+    cover_image_bucket: doc.coverImageBucket ?? null,
     status: doc.status ?? "scheduled",
     location_label: doc.locationLabel,
     enabled: doc.enabled ?? true,
@@ -94,17 +97,23 @@ function normalizeClassType(doc) {
 
 function normalizeProduct(doc) {
   if (!doc) return null;
+  const descriptionEsMeta = parseDescriptionWithOtherType(doc.descriptionEs);
+  const descriptionEnMeta = parseDescriptionWithOtherType(doc.descriptionEn);
+
   return {
     $id: doc.$id,
     $createdAt: doc.$createdAt,
     slug: doc.slug,
     name_es: doc.nameEs,
     name_en: doc.nameEn,
-    description_es: doc.descriptionEs,
-    description_en: doc.descriptionEn,
+    description_es: descriptionEsMeta.description,
+    description_en: descriptionEnMeta.description,
+    other_type_es: doc.otherTypeEs ?? descriptionEsMeta.otherType,
+    other_type_en: doc.otherTypeEn ?? descriptionEnMeta.otherType,
     product_type: doc.productType,
     price: doc.price,
-    cover_image_id: doc.coverImageId,
+    cover_image_id: doc.coverImageId ?? null,
+    cover_image_bucket: doc.coverImageBucket ?? null,
     is_addon_only: doc.isAddonOnly ?? false,
     is_featured: doc.isFeatured ?? false,
     enabled: doc.enabled ?? true,
@@ -130,6 +139,8 @@ function normalizePackage(doc) {
     items_json: doc.itemsJson ? _parseJson(doc.itemsJson) : [],
     is_featured: doc.isFeatured ?? false,
     enabled: doc.enabled ?? true,
+    cover_image_id: doc.coverImageId ?? null,
+    cover_image_bucket: doc.coverImageBucket ?? null,
   };
 }
 
@@ -315,4 +326,48 @@ export async function getWellnessPackages({ featured, limit = 50 } = {}) {
 export async function getWellnessPackageById(packageId) {
   const doc = await databases.getDocument(DB, COL_WELLNESS_PACKAGES, packageId);
   return normalizePackage(doc);
+}
+
+// ── Global search ─────────────────────────────────────────────────────────────
+
+/**
+ * Search across classes, wellness products, and wellness packages.
+ * Uses Query.contains() for substring matching on title/name fields.
+ * Returns { classes, products, packages } with normalized items.
+ */
+export async function searchCatalog(term, { locale = "es", limit = 5 } = {}) {
+  const titleField = locale === "en" ? "titleEn" : "titleEs";
+  const nameField = locale === "en" ? "nameEn" : "nameEs";
+
+  const [classesRes, productsRes, packagesRes] = await Promise.all([
+    databases
+      .listDocuments(DB, COL_CLASSES, [
+        Query.equal("enabled", true),
+        Query.contains(titleField, term),
+        Query.limit(limit),
+      ])
+      .catch(() => ({ documents: [] })),
+
+    databases
+      .listDocuments(DB, COL_WELLNESS_PRODUCTS, [
+        Query.equal("enabled", true),
+        Query.contains(nameField, term),
+        Query.limit(limit),
+      ])
+      .catch(() => ({ documents: [] })),
+
+    databases
+      .listDocuments(DB, COL_WELLNESS_PACKAGES, [
+        Query.equal("enabled", true),
+        Query.contains(nameField, term),
+        Query.limit(limit),
+      ])
+      .catch(() => ({ documents: [] })),
+  ]);
+
+  return {
+    classes: await _enrichClasses(classesRes.documents),
+    products: productsRes.documents.map(normalizeProduct),
+    packages: packagesRes.documents.map(normalizePackage),
+  };
 }

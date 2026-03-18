@@ -159,7 +159,7 @@ export default function CustomerSideNav({ mobileOpen = false, onMobileClose }) {
             )}
           >
             <Link
-              to={ROUTES.ZONE_DASHBOARD}
+              to={ROUTES.ZONE}
               tabIndex={collapsed && !isFilterMode ? -1 : 0}
             >
               <img
@@ -211,7 +211,7 @@ export default function CustomerSideNav({ mobileOpen = false, onMobileClose }) {
         <SheetContent side="left" className="w-64 p-0 flex flex-col">
           <SheetHeader className="h-16 flex-row items-center px-4 border-b border-warm-gray-dark/60 shrink-0 space-y-0">
             <SheetTitle asChild>
-              <Link to={ROUTES.ZONE_DASHBOARD} onClick={onMobileClose}>
+              <Link to={ROUTES.ZONE} onClick={onMobileClose}>
                 <img
                   src="/logo.png"
                   alt="Omzone"

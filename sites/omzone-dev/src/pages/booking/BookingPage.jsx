@@ -33,7 +33,8 @@ import { useAuth } from "@/hooks/useAuth.jsx";
 import { resolveField } from "@/lib/i18n-data";
 import { useCurrency } from "@/hooks/useCurrency";
 import { formatDate, formatTime } from "@/lib/dates";
-import { getMediaPreviewUrl } from "@/lib/media";
+import { getPreviewUrl } from "@/lib/media";
+import { BUCKET_PUBLIC_MEDIA } from "@/env";
 import ROUTES from "@/constants/routes";
 import { cn } from "@/lib/utils";
 
@@ -85,8 +86,9 @@ function BookingSidebar({
           {(session?.cover_image_id || cls?.cover_image_id) && (
             <div className="mb-4 rounded-xl overflow-hidden aspect-video bg-warm-gray">
               <img
-                src={getMediaPreviewUrl(
+                src={getPreviewUrl(
                   session.cover_image_id || cls.cover_image_id,
+                  (session.cover_image_id ? session.cover_image_bucket : cls.cover_image_bucket) ?? BUCKET_PUBLIC_MEDIA,
                   480,
                   270,
                   80,
@@ -223,7 +225,7 @@ function Step1({
         <div className="w-16 h-16 rounded-xl bg-sage-muted overflow-hidden shrink-0">
           {cls.cover_image_id ? (
             <img
-              src={getMediaPreviewUrl(cls.cover_image_id, 128, 128, 80)}
+              src={getPreviewUrl(cls.cover_image_id, cls.cover_image_bucket ?? BUCKET_PUBLIC_MEDIA, 128, 128, 80)}
               alt={resolveField(cls, "title")}
               className="w-full h-full object-cover"
             />

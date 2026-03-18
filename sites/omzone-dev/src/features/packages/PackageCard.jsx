@@ -8,6 +8,8 @@ import { useCurrency } from "@/hooks/useCurrency";
 import { resolveField } from "@/lib/i18n-data";
 import { useAuth } from "@/hooks/useAuth";
 import ROUTES from "@/constants/routes";
+import { getPreviewUrl } from "@/lib/media";
+import { BUCKET_PUBLIC_MEDIA } from "@/env";
 
 const TYPE_ICON = { product: Leaf, class: Calendar };
 const TYPE_COLORS = {
@@ -28,10 +30,23 @@ export default function PackageCard({ pkg }) {
   return (
     <Card className="group flex flex-col overflow-hidden hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-300">
       {/* Header visual */}
-      <div
-        className="h-3 bg-linear-to-r from-sage to-olive"
-        aria-hidden="true"
-      />
+      {pkg.cover_image_id ? (
+        <div className="relative h-44 overflow-hidden bg-sand">
+          <img
+            src={getPreviewUrl(
+              pkg.cover_image_id,
+              pkg.cover_image_bucket ?? BUCKET_PUBLIC_MEDIA,
+              600,
+              350,
+              80,
+            )}
+            alt=""
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          />
+        </div>
+      ) : (
+        <div className="h-3 bg-linear-to-r from-sage to-olive" aria-hidden="true" />
+      )}
 
       <CardContent className="flex flex-col flex-1 p-6">
         <div className="flex items-start gap-3 mb-4">

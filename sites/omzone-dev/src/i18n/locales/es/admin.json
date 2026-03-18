@@ -1,7 +1,8 @@
 {
   "nav": {
     "dashboard": "Dashboard",
-    "leads": "Leads",
+    "leads": "Mensajes",
+    "messages": "Mensajes",
     "customers": "Clientes",
     "classes": "Clases",
     "sessions": "Sesiones",
@@ -10,7 +11,7 @@
     "orders": "Órdenes",
     "bookings": "Reservas",
     "passes": "Pases",
-    "content": "Contenido",
+    "stockImages": "Stock de imágenes",
     "settings": "Configuración"
   },
   "dashboard": {
@@ -26,36 +27,51 @@
       "totalBookings": "Total reservas"
     },
     "recentOrders": "Órdenes recientes",
-    "recentLeads": "Leads recientes",
+    "recentLeads": "Mensajes recientes",
+    "recentMessages": "Mensajes recientes",
     "recentBookings": "Reservas recientes",
     "upcomingSessions": "Sesiones próximas",
     "quickActions": "Acciones rápidas",
     "viewAll": "Ver todo"
   },
   "leads": {
-    "title": "Leads",
-    "subtitle": "Prospectos interesados en Omzone.",
-    "new": "Nuevo lead",
+    "title": "Mensajes",
+    "subtitle": "Bandeja de mensajes de contacto."
+  },
+  "messages": {
+    "title": "Mensajes",
+    "subtitle": "Bandeja de mensajes de contacto.",
     "status": {
       "new": "Nuevo",
-      "contacted": "Contactado",
-      "qualified": "Calificado",
-      "won": "Ganado",
-      "lost": "Perdido"
+      "read": "Leído",
+      "archived": "Archivado"
     },
-    "interest": {
-      "class": "Clase",
-      "package": "Paquete",
-      "product": "Producto"
+    "filter": {
+      "all": "Todos",
+      "new": "Nuevos",
+      "read": "Leídos",
+      "archived": "Archivados"
     },
     "fields": {
       "name": "Nombre",
       "email": "Correo",
       "phone": "Teléfono",
-      "interest": "Interés",
-      "notes": "Notas",
+      "subject": "Asunto",
+      "message": "Mensaje",
       "status": "Estado",
       "date": "Fecha"
+    },
+    "markRead": "Marcar leído",
+    "archive": "Archivar",
+    "unarchive": "Desarchivar",
+    "statusChanged": "Estado actualizado",
+    "searchPlaceholder": "Buscar por nombre, correo, asunto o mensaje…",
+    "filters": "Filtros",
+    "dateRange": "Rango de fechas",
+    "clearFilters": "Limpiar filtros",
+    "noResults": "No se encontraron mensajes con esos filtros.",
+    "pagination": {
+      "showing": "Mostrando {{from}}–{{to}} de {{total}}"
     }
   },
   "customers": {
@@ -361,6 +377,10 @@
       "items": "Incluye",
       "featured": "Destacado",
       "enabled": "Habilitado"
+    },
+    "empty": {
+      "title": "Todavía no hay paquetes",
+      "description": "Crea el primer paquete combinando clases y productos para que los clientes puedan comprarlo desde la tienda."
     }
   },
   "products": {
@@ -378,11 +398,22 @@
     },
     "fields": {
       "name": "Nombre",
+      "nameEs": "Nombre ES",
+      "nameEn": "Nombre EN",
+      "descriptionEs": "Descripción ES",
+      "descriptionEn": "Descripción EN",
       "type": "Tipo",
       "price": "Precio",
+      "otherTypeEs": "Tipo personalizado ES",
+      "otherTypeEn": "Tipo personalizado EN",
+      "otherTypeHint": "Este tipo personalizado se mostrará como etiqueta cuando el tipo sea Otro.",
       "addonOnly": "Solo como complemento",
       "featured": "Destacado",
       "enabled": "Habilitado"
+    },
+    "empty": {
+      "title": "Todavía no hay productos",
+      "description": "Añade smoothies, snacks, suplementos u otros extras al catálogo para que los clientes puedan pedirlos con su reserva o comprarlos sueltos."
     }
   },
   "bookings": {
@@ -427,26 +458,6 @@
       "notes": "Notas"
     }
   },
-  "content": {
-    "title": "Contenido",
-    "subtitle": "Edita los textos y bloques del sitio.",
-    "hero": "Hero principal",
-    "faqs": "Preguntas frecuentes",
-    "testimonials": "Testimonios",
-    "save": "Guardar cambios",
-    "saving": "Guardando...",
-    "saved": "Cambios guardados",
-    "fields": {
-      "headline": "Titular",
-      "subheadline": "Subtítulo",
-      "cta": "Texto CTA",
-      "question": "Pregunta",
-      "answer": "Respuesta",
-      "author": "Autor",
-      "role": "Rol",
-      "quote": "Testimonio"
-    }
-  },
   "settings": {
     "title": "Configuración",
     "studio": "Datos del estudio",
@@ -465,6 +476,29 @@
       "timezone": "Zona horaria",
       "currency": "Moneda",
       "defaultLang": "Idioma principal"
+    }
+  },
+  "stockImages": {
+    "title": "Stock de imágenes",
+    "subtitle": "Biblioteca de imágenes disponibles para clases y sesiones.",
+    "upload": "Subir imágenes",
+    "uploading": "Subiendo…",
+    "uploadSuccess": "{{count}} imagen(es) subida(s) correctamente",
+    "uploadError": "Error al subir {{name}}",
+    "deleteConfirm": "¿Eliminar esta imagen del stock?",
+    "deleteWarning": "Esta acción no se puede deshacer. Las clases que la usen mostrarán imagen rota.",
+    "deleteSuccess": "Imagen eliminada del stock",
+    "deleteError": "Error al eliminar la imagen",
+    "empty": "No hay imágenes en el stock",
+    "emptyHint": "Sube imágenes JPG, PNG o WebP para usarlas en clases y sesiones.",
+    "searchPlaceholder": "Buscar por nombre…",
+    "pickTitle": "Elegir imagen del stock",
+    "imageSource": {
+      "upload": "Subir imagen",
+      "stock": "Imagen del stock",
+      "selectFromStock": "Elegir del stock",
+      "currentStock": "Imagen del stock seleccionada",
+      "changeStock": "Cambiar"
     }
   },
   "common": {

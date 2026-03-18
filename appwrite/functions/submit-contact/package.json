@@ -1,0 +1,13 @@
+{
+  "name": "submit-contact",
+  "version": "1.0.0",
+  "description": "Public function to receive contact form submissions and store them in contact_leads.",
+  "main": "src/main.js",
+  "type": "module",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "dependencies": {
+    "node-appwrite": "^14.0.0"
+  }
+}

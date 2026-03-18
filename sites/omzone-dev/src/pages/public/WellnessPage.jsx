@@ -7,33 +7,82 @@ import ProductCard from "@/features/wellness/ProductCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useWellnessProducts } from "@/hooks/useWellness";
 import { resolveField } from "@/lib/i18n-data";
+import { getLocalizedOtherType } from "@/lib/product-types";
 import { cn } from "@/lib/utils";
 import { APP_BASE_URL } from "@/env";
 import { useCurrency } from "@/hooks/useCurrency";
 
 const BASE_URL = APP_BASE_URL;
 
-const PRODUCT_TYPES = [
-  "smoothie",
-  "snack",
-  "supplement",
-  "plan",
-  "addon",
-  "other",
-];
+const BASE_PRODUCT_TYPES = ["smoothie", "snack", "supplement", "plan", "addon"];
 
 export default function WellnessPage() {
-  const { t } = useTranslation("wellness");
+  const { t, i18n } = useTranslation("wellness");
   const { currency } = useCurrency();
   const [activeType, setActiveType] = useState("");
 
   const { data: products, isLoading } = useWellnessProducts();
 
+  const filterOptions = useMemo(() => {
+    const options = BASE_PRODUCT_TYPES.map((type) => ({
+      key: type,
+      label: t(`filters.${type}`),
+      matches: (product) => product.product_type === type,
+    }));
+
+    if (!products?.length) {
+      options.push({
+        key: "other",
+        label: t("filters.other"),
+        matches: (product) => product.product_type === "other",
+      });
+      return options;
+    }
+
+    const otherProducts = products.filter(
+      (product) => product.product_type === "other",
+    );
+
+    const localizedOtherTypes = [...new Set(
+      otherProducts
+        .map((product) =>
+          getLocalizedOtherType(product, i18n.resolvedLanguage ?? "es"),
+        )
+        .filter(Boolean),
+    )];
+
+    const hasUnnamedOther = otherProducts.some(
+      (product) =>
+        !getLocalizedOtherType(product, i18n.resolvedLanguage ?? "es"),
+    );
+
+    if (hasUnnamedOther || localizedOtherTypes.length === 0) {
+      options.push({
+        key: "other",
+        label: t("filters.other"),
+        matches: (product) => product.product_type === "other",
+      });
+    }
+
+    localizedOtherTypes.forEach((label) => {
+      options.push({
+        key: `other:${label.toLowerCase()}`,
+        label,
+        matches: (product) =>
+          product.product_type === "other" &&
+          getLocalizedOtherType(product, i18n.resolvedLanguage ?? "es") === label,
+      });
+    });
+
+    return options;
+  }, [products, i18n.resolvedLanguage, t]);
+
   const filtered = useMemo(() => {
     if (!products) return [];
     if (!activeType) return products;
-    return products.filter((p) => p.product_type === activeType);
-  }, [products, activeType]);
+    const activeOption = filterOptions.find((option) => option.key === activeType);
+    return activeOption ? products.filter(activeOption.matches) : products;
+  }, [products, activeType, filterOptions]);
 
   const itemListSchema = products
     ? {
@@ -89,13 +138,13 @@ export default function WellnessPage() {
           <TypePill active={!activeType} onClick={() => setActiveType("")}>
             {t("filters.all")}
           </TypePill>
-          {PRODUCT_TYPES.map((type) => (
+          {filterOptions.map((option) => (
             <TypePill
-              key={type}
-              active={activeType === type}
-              onClick={() => setActiveType(type)}
+              key={option.key}
+              active={activeType === option.key}
+              onClick={() => setActiveType(option.key)}
             >
-              {t(`filters.${type}`)}
+              {option.label}
             </TypePill>
           ))}
         </div>

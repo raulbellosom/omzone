@@ -140,6 +140,7 @@ async function classCreate(db, cfg, payload) {
       durationMin: toNumber(payload.duration_min, 0),
       basePrice: toNumber(payload.base_price, 0),
       coverImageId: toNullableString(payload.cover_image_id),
+      coverImageBucket: toNullableString(payload.cover_image_bucket),
       isFeatured: toBoolean(payload.is_featured, false),
       enabled: toBoolean(payload.enabled, true),
     },
@@ -172,6 +173,8 @@ async function classUpdate(db, cfg, payload) {
     update.basePrice = toNumber(payload.base_price, 0);
   if (payload.cover_image_id !== undefined)
     update.coverImageId = toNullableString(payload.cover_image_id);
+  if (payload.cover_image_bucket !== undefined)
+    update.coverImageBucket = toNullableString(payload.cover_image_bucket);
   if (payload.is_featured !== undefined)
     update.isFeatured = toBoolean(payload.is_featured, false);
   if (payload.enabled !== undefined)
@@ -432,6 +435,7 @@ async function sessionCreate(db, cfg, payload) {
       instructorId: toNullableString(payload.instructor_id),
       maxPerBooking: toNumber(payload.max_per_booking, 6),
       coverImageId: toNullableString(payload.cover_image_id),
+      coverImageBucket: toNullableString(payload.cover_image_bucket),
       status: payload.status || "scheduled",
       locationLabel: toNullableString(payload.location_label),
       enabled: toBoolean(payload.enabled, true),
@@ -461,6 +465,8 @@ async function sessionUpdate(db, cfg, payload) {
     update.maxPerBooking = toNumber(payload.max_per_booking, 6);
   if (payload.cover_image_id !== undefined)
     update.coverImageId = toNullableString(payload.cover_image_id);
+  if (payload.cover_image_bucket !== undefined)
+    update.coverImageBucket = toNullableString(payload.cover_image_bucket);
   if (payload.status !== undefined) update.status = payload.status;
   if (payload.location_label !== undefined)
     update.locationLabel = toNullableString(payload.location_label);

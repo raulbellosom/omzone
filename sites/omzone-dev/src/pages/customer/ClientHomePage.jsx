@@ -35,7 +35,6 @@ import { useWellnessProducts, useWellnessPackages } from "@/hooks/useWellness";
 import { useMyBookings, useMyOrders } from "@/hooks/useCustomer";
 import { resolveField } from "@/lib/i18n-data";
 import { useCurrency } from "@/hooks/useCurrency";
-import { getMediaPreviewUrl } from "@/lib/media";
 import { getStockPreviewUrl, STOCK } from "@/lib/stock-images";
 import ROUTES from "@/constants/routes";
 import ClassCard from "@/features/classes/ClassCard";

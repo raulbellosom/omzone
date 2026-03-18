@@ -64,8 +64,8 @@ const AdminProductsPage = lazy(() => import("@/pages/admin/AdminProductsPage"));
 const AdminOrdersPage = lazy(() => import("@/pages/admin/AdminOrdersPage"));
 const AdminBookingsPage = lazy(() => import("@/pages/admin/AdminBookingsPage"));
 const AdminPassesPage = lazy(() => import("@/pages/admin/AdminPassesPage"));
-const AdminContentPage = lazy(() => import("@/pages/admin/AdminContentPage"));
 const AdminSettingsPage = lazy(() => import("@/pages/admin/AdminSettingsPage"));
+const AdminStockImagesPage = lazy(() => import("@/pages/admin/AdminStockImagesPage"));
 
 // Loading fallback
 function PageLoader() {
@@ -143,7 +143,11 @@ export default function App() {
           <Route element={<AdminLayout />}>
             <Route path="app" element={<AdminDashboardPage />} />
             <Route path="app/leads" element={<AdminLeadsPage />} />
-            <Route path="app/customers" element={<AdminCustomersPage />} />
+            <Route path="app/clients" element={<AdminCustomersPage />} />
+            <Route
+              path="app/customers"
+              element={<Navigate to="/app/clients" replace />}
+            />
             <Route path="app/classes" element={<AdminClassesPage />} />
             <Route path="app/sessions" element={<AdminSessionsPage />} />
             <Route path="app/packages" element={<AdminPackagesPage />} />
@@ -151,9 +155,9 @@ export default function App() {
             <Route path="app/orders" element={<AdminOrdersPage />} />
             <Route path="app/bookings" element={<AdminBookingsPage />} />
             <Route path="app/passes" element={<AdminPassesPage />} />
-            <Route path="app/content" element={<AdminContentPage />} />
             {/* ── Root-only: configuración del estudio ─────────────── */}
             <Route element={<RequireAuth roles={["root"]} fallback="/app" />}>
+              <Route path="app/stock-images" element={<AdminStockImagesPage />} />
               <Route path="app/settings" element={<AdminSettingsPage />} />
             </Route>
           </Route>

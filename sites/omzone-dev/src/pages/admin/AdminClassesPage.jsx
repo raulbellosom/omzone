@@ -25,7 +25,7 @@ import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import AdminFormDialog from "@/components/admin/AdminFormDialog";
-import MediaUpload from "@/components/shared/MediaUpload";
+import ImageSourceSelector from "@/components/shared/ImageSourceSelector";
 import SearchCombobox from "@/components/shared/SearchCombobox";
 import AdminPageHeader from "@/components/shared/AdminPageHeader";
 import {
@@ -62,6 +62,7 @@ const EMPTY_CLASS_FORM = {
   duration_min: 60,
   base_price: 0,
   cover_image_id: "",
+  cover_image_bucket: "",
   is_featured: false,
   enabled: true,
 };
@@ -314,6 +315,7 @@ export default function AdminClassesPage() {
       duration_min: item.duration_min ?? 60,
       base_price: item.base_price ?? 0,
       cover_image_id: item.cover_image_id ?? "",
+      cover_image_bucket: item.cover_image_bucket ?? "",
       is_featured: item.is_featured ?? false,
       enabled: item.enabled ?? true,
     });
@@ -1275,70 +1277,68 @@ export default function AdminClassesPage() {
             </div>
           </div>
 
-          <div className="grid gap-3 md:grid-cols-2">
-            <div className="space-y-1.5">
-              <Label>{t("classes.fields.basePrice", "Precio base")}</Label>
-              <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-medium text-charcoal-muted select-none pointer-events-none z-10">
-                  {currency}
-                </span>
-                <Input
-                  type="number"
-                  min="0"
-                  step="10"
-                  className="pl-12"
-                  value={classForm.base_price}
-                  onChange={(event) =>
-                    setClassForm((current) => ({
-                      ...current,
-                      base_price: event.target.value,
-                    }))
-                  }
-                />
-              </div>
-            </div>
-            <div className="space-y-3">
-              <MediaUpload
-                value={classForm.cover_image_id}
-                onChange={(id) =>
+          <div className="space-y-1.5">
+            <Label>{t("classes.fields.basePrice", "Precio base")}</Label>
+            <div className="relative max-w-xs">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-medium text-charcoal-muted select-none pointer-events-none z-10">
+                {currency}
+              </span>
+              <Input
+                type="number"
+                min="0"
+                step="10"
+                className="pl-12"
+                value={classForm.base_price}
+                onChange={(event) =>
                   setClassForm((current) => ({
                     ...current,
-                    cover_image_id: id ?? "",
-                  }))
-                }
-                label={t("classes.fields.coverImage", "Imagen de portada")}
-                hint={t(
-                  "classes.hints.coverImage",
-                  "JPG, PNG o WebP. Recomendado 1200×900 px.",
-                )}
-                aspectRatio="4/3"
-              />
-              <SettingRow
-                label={t("classes.fields.featured", "Destacada")}
-                description={t(
-                  "classes.hints.featured",
-                  "Las clases destacadas tienen prioridad visual en el catálogo.",
-                )}
-                checked={classForm.is_featured}
-                onCheckedChange={(checked) =>
-                  setClassForm((current) => ({
-                    ...current,
-                    is_featured: checked,
+                    base_price: event.target.value,
                   }))
                 }
               />
-              <SettingRow
-                label={t("common.enabled", "Activa")}
-                description={t(
-                  "classes.hints.enabled",
-                  "Al desactivarla se oculta del flujo público sin perder información.",
-                )}
-                checked={classForm.enabled}
-                onCheckedChange={(checked) =>
-                  setClassForm((current) => ({ ...current, enabled: checked }))
-                }
-              />
             </div>
+          </div>
+
+          <ImageSourceSelector
+            fileId={classForm.cover_image_id}
+            bucketId={classForm.cover_image_bucket}
+            onFileChange={(fileId, bucketId) =>
+              setClassForm((current) => ({
+                ...current,
+                cover_image_id: fileId,
+                cover_image_bucket: bucketId,
+              }))
+            }
+            label={t("classes.fields.coverImage", "Imagen de portada")}
+            aspectRatio="16/9"
+          />
+
+          <div className="space-y-2 pt-1">
+            <SettingRow
+              label={t("classes.fields.featured", "Destacada")}
+              description={t(
+                "classes.hints.featured",
+                "Las clases destacadas tienen prioridad visual en el catálogo.",
+              )}
+              checked={classForm.is_featured}
+              onCheckedChange={(checked) =>
+                setClassForm((current) => ({
+                  ...current,
+                  is_featured: checked,
+                }))
+              }
+            />
+            <SettingRow
+              label={t("common.enabled", "Activa")}
+              description={t(
+                "classes.hints.enabled",
+                "Al desactivarla se oculta del flujo público sin perder información.",
+              )}
+              checked={classForm.enabled}
+              onCheckedChange={(checked) =>
+                setClassForm((current) => ({ ...current, enabled: checked }))
+              }
+            />
           </div>
         </div>
       </AdminFormDialog>

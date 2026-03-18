@@ -4,8 +4,26 @@
     "full_name": "María López",
     "email": "maria@example.com",
     "phone": "3220000000",
-    "interest_type": "membership",
-    "notes": "Quiere plan mensual y asesoría nutricional.",
+    "subject": "Horarios de yoga",
+    "message": "Hola, me gustaría saber los horarios disponibles para las clases de yoga y si tienen paquetes para principiantes.",
     "status": "new"
+  },
+  {
+    "$id": "lead_002",
+    "full_name": "Carlos Martín",
+    "email": "carlos.m@example.com",
+    "phone": null,
+    "subject": "",
+    "message": "Quisiera información sobre los productos de bienestar que tienen disponibles en la tienda.",
+    "status": "read"
+  },
+  {
+    "$id": "lead_003",
+    "full_name": "Ana García",
+    "email": "ana.garcia@example.com",
+    "phone": "5541234567",
+    "subject": "Eventos privados",
+    "message": "Buenos días, estoy interesada en organizar un evento privado de meditación para mi empresa. ¿Tienen paquetes corporativos?",
+    "status": "archived"
   }
 ]

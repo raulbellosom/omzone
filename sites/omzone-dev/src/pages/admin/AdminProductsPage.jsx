@@ -12,6 +12,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
   useAdminProducts,
   useToggleProduct,
@@ -19,23 +20,39 @@ import {
   useUpdateProduct,
 } from "@/hooks/useAdmin";
 import { resolveField } from "@/lib/i18n-data";
+import { getLocalizedOtherType } from "@/lib/product-types";
 import { useCurrency } from "@/hooks/useCurrency";
 import AdminPageHeader from "@/components/shared/AdminPageHeader";
 import AdminFormDialog from "@/components/admin/AdminFormDialog";
+import ImageSourceSelector from "@/components/shared/ImageSourceSelector";
+import { getPreviewUrl } from "@/lib/media";
+import { BUCKET_PUBLIC_MEDIA } from "@/env";
 
 const EMPTY_FORM = {
   name_es: "",
   name_en: "",
   description_es: "",
   description_en: "",
+  other_type_es: "",
+  other_type_en: "",
   product_type: "snack",
   price: 0,
+  cover_image_id: "",
+  cover_image_bucket: "",
   is_addon_only: false,
   is_featured: false,
   enabled: true,
 };
 
-const ALL_TYPES = ["all", "smoothie", "snack", "supplement", "plan", "addon"];
+const ALL_TYPES = [
+  "all",
+  "smoothie",
+  "snack",
+  "supplement",
+  "plan",
+  "addon",
+  "other",
+];
 
 function Toggle({ enabled, onChange, loading }) {
   return (
@@ -54,7 +71,7 @@ function Toggle({ enabled, onChange, loading }) {
 }
 
 export default function AdminProductsPage() {
-  const { t } = useTranslation("admin");
+  const { t, i18n } = useTranslation("admin");
   const { formatPrice, currency } = useCurrency();
   const [activeType, setActiveType] = useState("all");
   const [pendingId, setPendingId] = useState(null);
@@ -79,8 +96,12 @@ export default function AdminProductsPage() {
       name_en: p.name_en ?? "",
       description_es: p.description_es ?? "",
       description_en: p.description_en ?? "",
+      other_type_es: p.other_type_es ?? "",
+      other_type_en: p.other_type_en ?? "",
       product_type: p.product_type ?? "snack",
       price: p.price ?? 0,
+      cover_image_id: p.cover_image_id ?? "",
+      cover_image_bucket: p.cover_image_bucket ?? "",
       is_addon_only: p.is_addon_only ?? false,
       is_featured: p.is_featured ?? false,
       enabled: p.enabled ?? true,
@@ -88,10 +109,19 @@ export default function AdminProductsPage() {
     setDialogOpen(true);
   }
   function handleSubmit() {
+    const payloadData = {
+      ...form,
+      other_type_es:
+        form.product_type === "other" ? form.other_type_es : "",
+      other_type_en:
+        form.product_type === "other" ? form.other_type_en : "",
+      price: Number(form.price),
+    };
+
     const mut = editing ? updateProduct : createProduct;
     const payload = editing
-      ? { productId: editing.$id, data: { ...form, price: Number(form.price) } }
-      : { ...form, price: Number(form.price) };
+      ? { productId: editing.$id, data: payloadData }
+      : payloadData;
     mut.mutate(payload, {
       onSuccess: () => {
         setDialogOpen(false);
@@ -165,12 +195,26 @@ export default function AdminProductsPage() {
       ) : filtered.length > 0 ? (
         <div className="space-y-3">
           {filtered.map((product, idx) => (
+            // Show the custom type label when product_type is "other".
+            // We store it per locale inside description metadata to avoid schema changes.
             <Card
               key={product.$id}
               className={`animate-fade-in-up transition-opacity ${!product.enabled ? "opacity-60" : ""}`}
               style={{ animationDelay: `${idx * 30}ms` }}
             >
               <CardContent className="p-4 flex items-center gap-4">
+                {/* Thumbnail */}
+                <div className="w-12 h-12 rounded-lg shrink-0 overflow-hidden bg-sand/40 flex items-center justify-center">
+                  {product.cover_image_id ? (
+                    <img
+                      src={getPreviewUrl(product.cover_image_id, product.cover_image_bucket ?? BUCKET_PUBLIC_MEDIA, 96, 96, 75)}
+                      alt=""
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <Leaf className="w-4 h-4 text-charcoal/30" />
+                  )}
+                </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-0.5">
                     <p className="font-semibold text-charcoal text-sm">
@@ -192,7 +236,12 @@ export default function AdminProductsPage() {
                   </div>
                   <div className="flex items-center gap-2 text-xs text-charcoal-muted">
                     <Badge variant="default" className="text-[10px]">
-                      {t(`products.types.${product.product_type}`)}
+                      {product.product_type === "other"
+                        ? getLocalizedOtherType(
+                            product,
+                            i18n.resolvedLanguage ?? "es",
+                          ) || t("products.types.other")
+                        : t(`products.types.${product.product_type}`)}
                     </Badge>
                     <span>{formatPrice(product.price)}</span>
                   </div>
@@ -217,10 +266,23 @@ export default function AdminProductsPage() {
           ))}
         </div>
       ) : (
-        <Card>
-          <CardContent className="p-10 text-center">
-            <Leaf className="w-10 h-10 text-charcoal-subtle mx-auto mb-3" />
-            <p className="text-sm text-charcoal-muted">{t("common.noData")}</p>
+        <Card className="border-dashed border-warm-gray-dark/50 bg-white/70">
+          <CardContent className="flex flex-col items-center gap-3 px-6 py-12 text-center">
+            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-warm-gray text-charcoal-subtle">
+              <Leaf className="h-6 w-6" />
+            </div>
+            <div>
+              <p className="text-base font-medium text-charcoal">
+                {t("products.empty.title")}
+              </p>
+              <p className="mt-1 max-w-md text-sm text-charcoal-muted">
+                {t("products.empty.description")}
+              </p>
+            </div>
+            <Button size="sm" onClick={openCreate} className="gap-1.5 mt-1">
+              <Plus className="w-4 h-4" />
+              {t("products.new")}
+            </Button>
           </CardContent>
         </Card>
       )}
@@ -236,7 +298,16 @@ export default function AdminProductsPage() {
         onSubmit={handleSubmit}
         isSubmitting={createProduct.isPending || updateProduct.isPending}
       >
-        <div className="grid grid-cols-2 gap-3">
+        <ImageSourceSelector
+          fileId={form.cover_image_id}
+          bucketId={form.cover_image_bucket}
+          onFileChange={(fid, bid) =>
+            setForm((f) => ({ ...f, cover_image_id: fid, cover_image_bucket: bid }))
+          }
+          label={t("stockImages.imageSource.upload", "Imagen")}
+          aspectRatio="4/3"
+        />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-1">
             <Label>{t("products.fields.nameEs", "Nombre ES")}</Label>
             <Input
@@ -260,7 +331,9 @@ export default function AdminProductsPage() {
             <Label>
               {t("products.fields.descriptionEs", "Descripción ES")}
             </Label>
-            <Input
+            <Textarea
+              rows={4}
+              className="min-h-24"
               value={form.description_es}
               onChange={(e) =>
                 setForm((f) => ({ ...f, description_es: e.target.value }))
@@ -271,7 +344,9 @@ export default function AdminProductsPage() {
             <Label>
               {t("products.fields.descriptionEn", "Descripción EN")}
             </Label>
-            <Input
+            <Textarea
+              rows={4}
+              className="min-h-24"
               value={form.description_en}
               onChange={(e) =>
                 setForm((f) => ({ ...f, description_en: e.target.value }))
@@ -287,13 +362,18 @@ export default function AdminProductsPage() {
                 setForm((f) => ({ ...f, product_type: e.target.value }))
               }
             >
-              {["smoothie", "snack", "supplement", "plan", "addon"].map(
-                (type) => (
-                  <option key={type} value={type}>
-                    {t(`products.types.${type}`, type)}
-                  </option>
-                ),
-              )}
+              {[
+                "smoothie",
+                "snack",
+                "supplement",
+                "plan",
+                "addon",
+                "other",
+              ].map((type) => (
+                <option key={type} value={type}>
+                  {t(`products.types.${type}`, type)}
+                </option>
+              ))}
             </select>
           </div>
           <div className="space-y-1">
@@ -314,37 +394,68 @@ export default function AdminProductsPage() {
               />
             </div>
           </div>
-          <div className="col-span-2 flex items-center gap-4">
-            <label className="flex items-center gap-2 text-sm text-charcoal cursor-pointer">
-              <input
-                type="checkbox"
-                checked={form.is_addon_only}
-                onChange={(e) =>
-                  setForm((f) => ({ ...f, is_addon_only: e.target.checked }))
-                }
-                className="accent-sage"
+
+          {form.product_type === "other" && (
+            <>
+              <div className="space-y-1">
+                <Label>
+                  {t("products.fields.otherTypeEs", "Tipo personalizado ES")}
+                </Label>
+                <Input
+                  value={form.other_type_es}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, other_type_es: e.target.value }))
+                  }
+                  placeholder={t(
+                    "products.fields.otherTypeEs",
+                    "Tipo personalizado ES",
+                  )}
+                  required
+                />
+              </div>
+              <div className="space-y-1">
+                <Label>
+                  {t("products.fields.otherTypeEn", "Custom type EN")}
+                </Label>
+                <Input
+                  value={form.other_type_en}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, other_type_en: e.target.value }))
+                  }
+                  placeholder={t(
+                    "products.fields.otherTypeEn",
+                    "Custom type EN",
+                  )}
+                />
+              </div>
+              <p className="md:col-span-2 text-xs text-charcoal-muted">
+                {t(
+                  "products.fields.otherTypeHint",
+                  "Este tipo personalizado se mostrará como etiqueta para productos de tipo Otro/Other.",
+                )}
+              </p>
+            </>
+          )}
+
+          <div className="md:col-span-2 flex flex-wrap items-center gap-5">
+            <label className="flex items-center gap-2.5 text-sm text-charcoal cursor-pointer select-none">
+              <Toggle
+                enabled={form.is_addon_only}
+                onChange={() => setForm((f) => ({ ...f, is_addon_only: !f.is_addon_only }))}
               />
               {t("products.fields.addonOnly", "Solo add-on")}
             </label>
-            <label className="flex items-center gap-2 text-sm text-charcoal cursor-pointer">
-              <input
-                type="checkbox"
-                checked={form.is_featured}
-                onChange={(e) =>
-                  setForm((f) => ({ ...f, is_featured: e.target.checked }))
-                }
-                className="accent-sage"
+            <label className="flex items-center gap-2.5 text-sm text-charcoal cursor-pointer select-none">
+              <Toggle
+                enabled={form.is_featured}
+                onChange={() => setForm((f) => ({ ...f, is_featured: !f.is_featured }))}
               />
               {t("products.fields.featured", "Destacado")}
             </label>
-            <label className="flex items-center gap-2 text-sm text-charcoal cursor-pointer">
-              <input
-                type="checkbox"
-                checked={form.enabled}
-                onChange={(e) =>
-                  setForm((f) => ({ ...f, enabled: e.target.checked }))
-                }
-                className="accent-sage"
+            <label className="flex items-center gap-2.5 text-sm text-charcoal cursor-pointer select-none">
+              <Toggle
+                enabled={form.enabled}
+                onChange={() => setForm((f) => ({ ...f, enabled: !f.enabled }))}
               />
               {t("common.enabled", "Activo")}
             </label>

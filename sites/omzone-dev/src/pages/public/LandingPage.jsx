@@ -8,6 +8,7 @@ import PackagesPreviewSection from "@/features/marketing/PackagesPreviewSection"
 import WellnessPreviewSection from "@/features/marketing/WellnessPreviewSection";
 import StudioSection from "@/features/marketing/StudioSection";
 import FaqSection from "@/features/marketing/FaqSection";
+import ContactFormSection from "@/features/marketing/ContactFormSection";
 import CtaSection from "@/features/marketing/CtaSection";
 import { APP_BASE_URL } from "@/env";
 
@@ -62,6 +63,7 @@ export default function LandingPage() {
         <WellnessPreviewSection />
         <FaqSection />
         <BenefitsSection />
+        <ContactFormSection />
         <CtaSection />
       </main>
     </>

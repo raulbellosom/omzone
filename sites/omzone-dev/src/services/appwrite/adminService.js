@@ -9,7 +9,7 @@
  *   wellness_products, wellness_packages,
  *   contact_leads, users_profile (read),
  *   orders, order_items, bookings,
- *   access_passes, site_content, app_settings
+ *   access_passes, app_settings
  *
  * Membresías/plans: gestionadas por mock únicamente (sin colección en schema).
  */
@@ -29,10 +29,10 @@ import {
   COL_ORDER_ITEMS,
   COL_BOOKINGS,
   COL_ACCESS_PASSES,
-  COL_SITE_CONTENT,
   COL_APP_SETTINGS,
   FN_ADMIN_WRITE_CATALOG,
 } from "@/env";
+import { parseDescriptionWithOtherType } from "@/lib/product-type-meta";
 
 const DB = APPWRITE_DATABASE_ID;
 
@@ -55,6 +55,7 @@ function normalizeClass(doc, relations = {}) {
     duration_min: doc.durationMin,
     base_price: doc.basePrice,
     cover_image_id: doc.coverImageId,
+    cover_image_bucket: doc.coverImageBucket ?? null,
     is_featured: doc.isFeatured ?? false,
     enabled: doc.enabled ?? true,
     class_type: relations.classTypeDoc
@@ -77,6 +78,7 @@ function normalizeSession(doc, classDoc) {
     instructor_id: doc.instructorId,
     max_per_booking: doc.maxPerBooking ?? 6,
     cover_image_id: doc.coverImageId ?? null,
+    cover_image_bucket: doc.coverImageBucket ?? null,
     status: doc.status ?? "scheduled",
     location_label: doc.locationLabel,
     enabled: doc.enabled ?? true,
@@ -112,17 +114,23 @@ function normalizeClassType(doc) {
 
 function normalizeProduct(doc) {
   if (!doc) return null;
+  const descriptionEsMeta = parseDescriptionWithOtherType(doc.descriptionEs);
+  const descriptionEnMeta = parseDescriptionWithOtherType(doc.descriptionEn);
+
   return {
     $id: doc.$id,
     $createdAt: doc.$createdAt,
     slug: doc.slug,
     name_es: doc.nameEs,
     name_en: doc.nameEn,
-    description_es: doc.descriptionEs,
-    description_en: doc.descriptionEn,
+    description_es: descriptionEsMeta.description,
+    description_en: descriptionEnMeta.description,
+    other_type_es: doc.otherTypeEs ?? descriptionEsMeta.otherType,
+    other_type_en: doc.otherTypeEn ?? descriptionEnMeta.otherType,
     product_type: doc.productType,
     price: doc.price,
-    cover_image_id: doc.coverImageId,
+    cover_image_id: doc.coverImageId ?? null,
+    cover_image_bucket: doc.coverImageBucket ?? null,
     is_addon_only: doc.isAddonOnly ?? false,
     is_featured: doc.isFeatured ?? false,
     enabled: doc.enabled ?? true,
@@ -149,6 +157,8 @@ function normalizePackage(doc) {
     items_json: doc.itemsJson ? _parseJson(doc.itemsJson) : [],
     is_featured: doc.isFeatured ?? false,
     enabled: doc.enabled ?? true,
+    cover_image_id: doc.coverImageId ?? null,
+    cover_image_bucket: doc.coverImageBucket ?? null,
   };
 }
 
@@ -160,8 +170,8 @@ function normalizeLead(doc) {
     full_name: doc.fullName,
     email: doc.email,
     phone: doc.phone,
-    interest_type: doc.interestType,
-    notes: doc.notes,
+    subject: doc.subject ?? "",
+    message: doc.message,
     status: doc.status ?? "new",
   };
 }
@@ -641,8 +651,12 @@ export async function createProduct(data) {
       nameEn: data.name_en,
       descriptionEs: data.description_es,
       descriptionEn: data.description_en,
+      otherTypeEs: data.other_type_es?.trim() || null,
+      otherTypeEn: data.other_type_en?.trim() || null,
       productType: data.product_type,
       price: data.price,
+      coverImageId: data.cover_image_id || null,
+      coverImageBucket: data.cover_image_bucket || null,
       isAddonOnly: data.is_addon_only ?? false,
       isFeatured: data.is_featured ?? false,
       enabled: data.enabled ?? true,
@@ -660,8 +674,14 @@ export async function updateProduct(productId, data) {
     update.descriptionEs = data.description_es;
   if (data.description_en !== undefined)
     update.descriptionEn = data.description_en;
+  if (data.other_type_es !== undefined)
+    update.otherTypeEs = data.other_type_es?.trim() || null;
+  if (data.other_type_en !== undefined)
+    update.otherTypeEn = data.other_type_en?.trim() || null;
   if (data.product_type !== undefined) update.productType = data.product_type;
   if (data.price !== undefined) update.price = data.price;
+  if (data.cover_image_id !== undefined) update.coverImageId = data.cover_image_id || null;
+  if (data.cover_image_bucket !== undefined) update.coverImageBucket = data.cover_image_bucket || null;
   if (data.is_addon_only !== undefined) update.isAddonOnly = data.is_addon_only;
   if (data.is_featured !== undefined) update.isFeatured = data.is_featured;
   if (data.enabled !== undefined) update.enabled = data.enabled;
@@ -707,6 +727,8 @@ export async function createPackage(data) {
       expirationDays: data.expiration_days ?? 0,
       itemsJson: data.items_json ? JSON.stringify(data.items_json) : null,
       rulesJson: data.rules_json ? JSON.stringify(data.rules_json) : null,
+      coverImageId: data.cover_image_id || null,
+      coverImageBucket: data.cover_image_bucket || null,
       isFeatured: data.is_featured ?? false,
       enabled: data.enabled ?? true,
     },
@@ -737,6 +759,8 @@ export async function updatePackage(packageId, data) {
     update.itemsJson = data.items_json ? JSON.stringify(data.items_json) : null;
   if (data.rules_json !== undefined)
     update.rulesJson = data.rules_json ? JSON.stringify(data.rules_json) : null;
+  if (data.cover_image_id !== undefined) update.coverImageId = data.cover_image_id || null;
+  if (data.cover_image_bucket !== undefined) update.coverImageBucket = data.cover_image_bucket || null;
   if (data.is_featured !== undefined) update.isFeatured = data.is_featured;
   if (data.enabled !== undefined) update.enabled = data.enabled;
   const doc = await databases.updateDocument(
@@ -770,8 +794,8 @@ export async function createLead(data) {
       fullName: data.full_name,
       email: data.email,
       phone: data.phone ?? null,
-      interestType: data.interest_type,
-      notes: data.notes ?? null,
+      subject: data.subject ?? "",
+      message: data.message,
       status: data.status ?? "new",
     },
   );
@@ -783,9 +807,8 @@ export async function updateLead(leadId, data) {
   if (data.full_name !== undefined) update.fullName = data.full_name;
   if (data.email !== undefined) update.email = data.email;
   if (data.phone !== undefined) update.phone = data.phone;
-  if (data.interest_type !== undefined)
-    update.interestType = data.interest_type;
-  if (data.notes !== undefined) update.notes = data.notes;
+  if (data.subject !== undefined) update.subject = data.subject;
+  if (data.message !== undefined) update.message = data.message;
   if (data.status !== undefined) update.status = data.status;
   const doc = await databases.updateDocument(
     DB,
@@ -798,10 +821,6 @@ export async function updateLead(leadId, data) {
 
 export async function updateLeadStatus(leadId, status) {
   return updateLead(leadId, { status });
-}
-
-export async function addLeadNote(leadId, note) {
-  return updateLead(leadId, { notes: note });
 }
 
 // ── CRM — Clients ─────────────────────────────────────────────────────────────
@@ -888,54 +907,6 @@ export async function cancelPass(passId) {
     status: "cancelled",
   });
   return normalizePass(doc);
-}
-
-// ── Site Content ──────────────────────────────────────────────────────────────
-
-/**
- * Get a site_content document by its contentKey.
- * Returns null if not found.
- */
-export async function getSiteContent(contentKey) {
-  try {
-    const res = await databases.listDocuments(DB, COL_SITE_CONTENT, [
-      Query.equal("contentKey", contentKey),
-      Query.limit(10),
-    ]);
-    return res.documents.length > 0 ? res.documents[0] : null;
-  } catch {
-    return null;
-  }
-}
-
-/**
- * Create or update a site_content entry (keyed by contentKey + locale).
- * metaJson stores the page-specific content as a JSON string.
- */
-export async function upsertSiteContent(contentKey, locale, metaJson) {
-  const existing = await databases.listDocuments(DB, COL_SITE_CONTENT, [
-    Query.equal("contentKey", contentKey),
-    Query.equal("locale", locale),
-    Query.limit(1),
-  ]);
-
-  const payload = {
-    contentKey,
-    locale,
-    metaJson:
-      typeof metaJson === "string" ? metaJson : JSON.stringify(metaJson),
-    enabled: true,
-  };
-
-  if (existing.documents.length > 0) {
-    return databases.updateDocument(
-      DB,
-      COL_SITE_CONTENT,
-      existing.documents[0].$id,
-      payload,
-    );
-  }
-  return databases.createDocument(DB, COL_SITE_CONTENT, ID.unique(), payload);
 }
 
 // ── App Settings ──────────────────────────────────────────────────────────────

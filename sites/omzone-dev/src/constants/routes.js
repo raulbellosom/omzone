@@ -44,7 +44,7 @@ export const ROUTES = {
   ADMIN_ORDERS: "/app/orders",
   ADMIN_BOOKINGS: "/app/bookings",
   ADMIN_PASSES: "/app/passes",
-  ADMIN_CONTENT: "/app/content",
+ADMIN_STOCK_IMAGES: "/app/stock-images",
   ADMIN_SETTINGS: "/app/settings",
 };
 

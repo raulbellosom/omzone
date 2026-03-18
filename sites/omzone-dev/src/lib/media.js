@@ -10,6 +10,7 @@ import {
   APPWRITE_ENDPOINT,
   APPWRITE_PROJECT_ID,
   BUCKET_PUBLIC_MEDIA,
+  BUCKET_STOCK_IMAGES,
 } from "@/env";
 
 /**
@@ -68,4 +69,63 @@ export async function deleteMediaFile(fileId) {
   } catch {
     // silenciar — el archivo puede haber sido eliminado externamente
   }
+}
+
+/**
+ * URL de preview bucket-aware (soporta public-media y stock-images).
+ * @param {string|null} fileId
+ * @param {string} bucketId — ID del bucket (BUCKET_PUBLIC_MEDIA | BUCKET_STOCK_IMAGES)
+ * @param {number} width
+ * @param {number} height  — 0 = proporcional
+ * @param {number} quality
+ * @returns {string|null}
+ */
+export function getPreviewUrl(
+  fileId,
+  bucketId,
+  width = 800,
+  height = 600,
+  quality = 80,
+) {
+  if (!fileId || !bucketId) return null;
+  const params = new URLSearchParams({
+    project: APPWRITE_PROJECT_ID,
+    width: String(width),
+    ...(height > 0 && { height: String(height) }),
+    quality: String(quality),
+    output: "webp",
+  });
+  return `${APPWRITE_ENDPOINT}/storage/buckets/${bucketId}/files/${fileId}/preview?${params}`;
+}
+
+/**
+ * Sube un File al bucket stock-images (requiere label:root).
+ * @param {File} file
+ * @returns {Promise<string>} fileId
+ */
+export async function uploadStockImage(file) {
+  const doc = await storage.createFile(BUCKET_STOCK_IMAGES, ID.unique(), file);
+  return doc.$id;
+}
+
+/**
+ * Elimina un archivo del bucket stock-images (requiere label:root).
+ * Silencia errores.
+ */
+export async function deleteStockImage(fileId) {
+  if (!fileId) return;
+  try {
+    await storage.deleteFile(BUCKET_STOCK_IMAGES, fileId);
+  } catch {
+    // silenciar
+  }
+}
+
+/**
+ * Lista todos los archivos del bucket stock-images.
+ * @returns {Promise<import("appwrite").Models.File[]>}
+ */
+export async function listStockImages() {
+  const result = await storage.listFiles(BUCKET_STOCK_IMAGES);
+  return result.files ?? [];
 }

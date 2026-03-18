@@ -4,7 +4,7 @@
  */
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Star, Plus, Pencil } from "lucide-react";
+import { Star, Plus, Pencil, Package } from "lucide-react";
 import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -12,6 +12,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
   useAdminPackages,
   useTogglePackage,
@@ -22,6 +23,9 @@ import { resolveField } from "@/lib/i18n-data";
 import { useCurrency } from "@/hooks/useCurrency";
 import AdminPageHeader from "@/components/shared/AdminPageHeader";
 import AdminFormDialog from "@/components/admin/AdminFormDialog";
+import ImageSourceSelector from "@/components/shared/ImageSourceSelector";
+import { getPreviewUrl } from "@/lib/media";
+import { BUCKET_PUBLIC_MEDIA } from "@/env";
 
 const EMPTY_FORM = {
   name_es: "",
@@ -29,6 +33,8 @@ const EMPTY_FORM = {
   description_es: "",
   description_en: "",
   price: 0,
+  cover_image_id: "",
+  cover_image_bucket: "",
   is_featured: false,
   enabled: true,
 };
@@ -75,6 +81,8 @@ export default function AdminPackagesPage() {
       description_es: pkg.description_es ?? "",
       description_en: pkg.description_en ?? "",
       price: pkg.price ?? 0,
+      cover_image_id: pkg.cover_image_id ?? "",
+      cover_image_bucket: pkg.cover_image_bucket ?? "",
       is_featured: pkg.is_featured ?? false,
       enabled: pkg.enabled ?? true,
     });
@@ -131,6 +139,26 @@ export default function AdminPackagesPage() {
             <Skeleton key={i} className="h-52 rounded-2xl" />
           ))}
         </div>
+      ) : packages?.length === 0 ? (
+        <Card className="border-dashed border-warm-gray-dark/50 bg-white/70">
+          <CardContent className="flex flex-col items-center gap-3 px-6 py-12 text-center">
+            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-warm-gray text-charcoal-subtle">
+              <Package className="h-6 w-6" />
+            </div>
+            <div>
+              <p className="text-base font-medium text-charcoal">
+                {t("packages.empty.title")}
+              </p>
+              <p className="mt-1 max-w-md text-sm text-charcoal-muted">
+                {t("packages.empty.description")}
+              </p>
+            </div>
+            <Button size="sm" onClick={openCreate} className="gap-1.5 mt-1">
+              <Plus className="w-4 h-4" />
+              {t("packages.new")}
+            </Button>
+          </CardContent>
+        </Card>
       ) : (
         <div className="grid sm:grid-cols-2 gap-4">
           {packages?.map((pkg, idx) => (
@@ -139,7 +167,20 @@ export default function AdminPackagesPage() {
               className={`animate-fade-in-up transition-opacity ${!pkg.enabled ? "opacity-60" : ""}`}
               style={{ animationDelay: `${idx * 50}ms` }}
             >
-              <CardContent className="p-5">
+              <CardContent className="p-0">
+                {/* Thumbnail */}
+                {pkg.cover_image_id ? (
+                  <div className="relative h-36 overflow-hidden rounded-t-xl bg-sand">
+                    <img
+                      src={getPreviewUrl(pkg.cover_image_id, pkg.cover_image_bucket ?? BUCKET_PUBLIC_MEDIA, 480, 200, 75)}
+                      alt=""
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                ) : (
+                  <div className="h-2 bg-linear-to-r from-sage to-olive rounded-t-xl" />
+                )}
+                <div className="p-5">
                 <div className="flex items-start justify-between gap-2 mb-2">
                   <p className="font-semibold text-charcoal leading-tight">
                     {resolveField(pkg, "name")}
@@ -185,6 +226,7 @@ export default function AdminPackagesPage() {
                     loading={pendingId === pkg.$id}
                   />
                 </div>
+                </div>
               </CardContent>
             </Card>
           ))}
@@ -202,6 +244,15 @@ export default function AdminPackagesPage() {
         onSubmit={handleSubmit}
         isSubmitting={createPackage.isPending || updatePackage.isPending}
       >
+        <ImageSourceSelector
+          fileId={form.cover_image_id}
+          bucketId={form.cover_image_bucket}
+          onFileChange={(fid, bid) =>
+            setForm((f) => ({ ...f, cover_image_id: fid, cover_image_bucket: bid }))
+          }
+          label={t("stockImages.imageSource.upload", "Imagen")}
+          aspectRatio="16/9"
+        />
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-1">
             <Label>{t("packages.fields.nameEs", "Nombre ES")}</Label>
@@ -226,7 +277,9 @@ export default function AdminPackagesPage() {
             <Label>
               {t("packages.fields.descriptionEs", "Descripción ES")}
             </Label>
-            <Input
+            <Textarea
+              rows={3}
+              className="min-h-20"
               value={form.description_es}
               onChange={(e) =>
                 setForm((f) => ({ ...f, description_es: e.target.value }))
@@ -237,7 +290,9 @@ export default function AdminPackagesPage() {
             <Label>
               {t("packages.fields.descriptionEn", "Descripción EN")}
             </Label>
-            <Input
+            <Textarea
+              rows={3}
+              className="min-h-20"
               value={form.description_en}
               onChange={(e) =>
                 setForm((f) => ({ ...f, description_en: e.target.value }))
@@ -262,26 +317,18 @@ export default function AdminPackagesPage() {
               />
             </div>
           </div>
-          <div className="flex items-center gap-4 pt-5">
-            <label className="flex items-center gap-2 text-sm text-charcoal cursor-pointer">
-              <input
-                type="checkbox"
-                checked={form.is_featured}
-                onChange={(e) =>
-                  setForm((f) => ({ ...f, is_featured: e.target.checked }))
-                }
-                className="accent-sage"
+          <div className="flex flex-wrap items-center gap-5 pt-2">
+            <label className="flex items-center gap-2.5 text-sm text-charcoal cursor-pointer select-none">
+              <Toggle
+                enabled={form.is_featured}
+                onChange={() => setForm((f) => ({ ...f, is_featured: !f.is_featured }))}
               />
               {t("packages.fields.featured", "Destacado")}
             </label>
-            <label className="flex items-center gap-2 text-sm text-charcoal cursor-pointer">
-              <input
-                type="checkbox"
-                checked={form.enabled}
-                onChange={(e) =>
-                  setForm((f) => ({ ...f, enabled: e.target.checked }))
-                }
-                className="accent-sage"
+            <label className="flex items-center gap-2.5 text-sm text-charcoal cursor-pointer select-none">
+              <Toggle
+                enabled={form.enabled}
+                onChange={() => setForm((f) => ({ ...f, enabled: !f.enabled }))}
               />
               {t("common.enabled", "Activo")}
             </label>

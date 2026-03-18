@@ -9,7 +9,7 @@ import ROUTES from '@/constants/routes'
 import { cn } from '@/lib/utils'
 
 const items = [
-  { icon: LayoutDashboard, key: 'nav.dashboard', href: ROUTES.ZONE_DASHBOARD },
+  { icon: LayoutDashboard, key: 'nav.dashboard', href: ROUTES.ZONE },
   { icon: Calendar, key: 'nav.bookings', href: ROUTES.ZONE_BOOKINGS },
   { icon: ShoppingBag, key: 'nav.orders', href: ROUTES.ZONE_ORDERS },
   { icon: Package, key: 'nav.packages', href: ROUTES.ZONE_PACKAGES },
@@ -26,7 +26,7 @@ export default function BottomNav() {
           <li key={href} className="flex-1">
             <NavLink
               to={href}
-              end={href === ROUTES.ZONE_DASHBOARD}
+              end={href === ROUTES.ZONE}
               className={({ isActive }) =>
                 cn(
                   'relative flex flex-col items-center gap-0.5 py-2.5 px-1 text-[10px] font-medium',

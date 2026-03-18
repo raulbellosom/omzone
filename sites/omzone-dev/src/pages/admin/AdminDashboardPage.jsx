@@ -65,10 +65,8 @@ function KpiCard({ icon: Icon, label, value, loading, accent = "sage" }) {
 
 const STATUS_COLORS = {
   new: "default",
-  contacted: "outline",
-  qualified: "sage",
-  won: "sage",
-  lost: "destructive",
+  read: "outline",
+  archived: "sage",
 };
 
 const PAYMENT_COLORS = {
@@ -200,11 +198,11 @@ export default function AdminDashboardPage() {
           )}
         </section>
 
-        {/* Recent leads */}
+        {/* Recent messages */}
         <section>
           <div className="flex items-center justify-between mb-3">
             <h2 className="font-semibold text-charcoal text-sm">
-              {t("dashboard.recentLeads")}
+              {t("dashboard.recentMessages")}
             </h2>
             <Link
               to={ROUTES.ADMIN_LEADS}
@@ -229,14 +227,14 @@ export default function AdminDashboardPage() {
                           {l.full_name}
                         </p>
                         <p className="text-[10px] text-charcoal-muted">
-                          {t(`leads.interest.${l.interest_type}`)}
+                          {l.subject || l.email}
                         </p>
                       </div>
                       <Badge
                         variant={STATUS_COLORS[l.status] ?? "default"}
                         className="text-[10px] shrink-0"
                       >
-                        {t(`leads.status.${l.status}`)}
+                        {t(`messages.status.${l.status}`)}
                       </Badge>
                     </li>
                   ))}

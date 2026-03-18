@@ -24,7 +24,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Switch } from "@/components/ui/switch";
 import AdminFormDialog from "@/components/admin/AdminFormDialog";
 import AdminPageHeader from "@/components/shared/AdminPageHeader";
-import MediaUpload from "@/components/shared/MediaUpload";
+import ImageSourceSelector from "@/components/shared/ImageSourceSelector";
 import SearchCombobox from "@/components/shared/SearchCombobox";
 import {
   useAdminClasses,
@@ -36,7 +36,8 @@ import {
   useUpdateSession,
 } from "@/hooks/useAdmin";
 import { resolveField } from "@/lib/i18n-data";
-import { getMediaPreviewUrl } from "@/lib/media";
+import { getPreviewUrl } from "@/lib/media";
+import { BUCKET_PUBLIC_MEDIA } from "@/env";
 import { cn } from "@/lib/utils";
 import { useCurrency } from "@/hooks/useCurrency";
 
@@ -59,6 +60,7 @@ const EMPTY_FORM = {
   status: "scheduled",
   location_label: "",
   cover_image_id: "",
+  cover_image_bucket: "",
   enabled: true,
 };
 
@@ -237,6 +239,7 @@ export default function AdminSessionsPage() {
       status: item.status ?? "scheduled",
       location_label: item.location_label ?? "",
       cover_image_id: item.cover_image_id ?? "",
+      cover_image_bucket: item.cover_image_bucket ?? "",
       enabled: item.enabled ?? true,
     });
     setDialogOpen(true);
@@ -431,8 +434,11 @@ export default function AdminSessionsPage() {
                       {/* Thumbnail de portada (sesión o clase) */}
                       {(item.cover_image_id || item.class?.cover_image_id) && (
                         <img
-                          src={getMediaPreviewUrl(
+                          src={getPreviewUrl(
                             item.cover_image_id || item.class?.cover_image_id,
+                            (item.cover_image_id
+                              ? item.cover_image_bucket
+                              : item.class?.cover_image_bucket) ?? BUCKET_PUBLIC_MEDIA,
                             120,
                             120,
                             80,
@@ -553,18 +559,19 @@ export default function AdminSessionsPage() {
             />
           </div>
 
-          <MediaUpload
-            value={form.cover_image_id}
-            onChange={(id) =>
-              setForm((prev) => ({ ...prev, cover_image_id: id ?? "" }))
+          <ImageSourceSelector
+            fileId={form.cover_image_id}
+            bucketId={form.cover_image_bucket}
+            onFileChange={(fileId, bucketId) =>
+              setForm((prev) => ({
+                ...prev,
+                cover_image_id: fileId,
+                cover_image_bucket: bucketId,
+              }))
             }
             label={t(
               "sessions.fields.coverImage",
               "Imagen de portada (opcional)",
-            )}
-            hint={t(
-              "sessions.hints.coverImage",
-              "Sobreescribe la imagen de la clase para esta sesión.",
             )}
             aspectRatio="4/3"
           />

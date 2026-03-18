@@ -115,7 +115,7 @@ export default function ConfirmationPage() {
         {/* CTAs */}
         <div className="flex flex-col sm:flex-row gap-3 animate-fade-in">
           <Button asChild size="lg" className="flex-1 gap-2">
-            <Link to={ROUTES.ZONE_DASHBOARD}>
+            <Link to={ROUTES.ZONE}>
               {t("confirmation.cta")}
               <ArrowRight className="w-4 h-4" />
             </Link>

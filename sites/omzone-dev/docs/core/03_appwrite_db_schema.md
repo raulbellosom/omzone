@@ -30,7 +30,7 @@ Fuente de verdad para el esquema Appwrite del MVP.
 | Collection ID       | Purpose                                          | Row security |
 | ------------------- | ------------------------------------------------ | ------------ |
 | `users_profile`     | perfil extendido por usuario Appwrite            | off          |
-| `contact_leads`     | prospectos desde landing o formularios           | off          |
+| `contact_leads`     | mensajes de contacto desde formularios           | off          |
 | `instructors`       | instructores como entidad de contenido           | off          |
 | `class_types`       | categorias de clases                             | off          |
 | `classes`           | ficha principal de clase                         | off          |
@@ -91,24 +91,23 @@ Indexes:
 
 ### Collection: `contact_leads`
 
-Purpose: prospectos capturados desde formularios publicos.
+Purpose: mensajes de contacto enviados desde formularios publicos.
 
-| key            | type     | required | unique | default | constraints                        | notes             |
-| -------------- | -------- | -------- | ------ | ------- | ---------------------------------- | ----------------- |
-| `fullName`     | `string` | -        | -      | -       | max `120`                          | nombre completo   |
-| `email`        | `email`  | -        | -      | -       | valid email                        | contacto          |
-| `phone`        | `string` | -        | -      | -       | max `20`                           | contacto          |
-| `interestType` | `enum`   | -        | -      | -       | `class,package,wellness,other`     | interes principal |
-| `notes`        | `string` | -        | -      | -       | max `4000`                         | detalle libre     |
-| `status`       | `enum`   | -        | -      | -       | `new,contacted,qualified,won,lost` | estado CRM        |
+| key        | type     | required | unique | default | constraints         | notes              |
+| ---------- | -------- | -------- | ------ | ------- | ------------------- | ------------------ |
+| `fullName` | `string` | -        | -      | -       | max `120`           | nombre completo    |
+| `email`    | `email`  | -        | -      | -       | valid email         | contacto           |
+| `phone`    | `string` | -        | -      | -       | max `20`            | contacto           |
+| `subject`  | `string` | -        | -      | -       | max `200`           | asunto del mensaje |
+| `message`  | `string` | -        | -      | -       | max `4000`          | cuerpo del mensaje |
+| `status`   | `enum`   | -        | -      | `new`   | `new,read,archived` | estado del mensaje |
 
 Indexes:
 
-| Index                | Keys           | Sort | Notes               |
-| -------------------- | -------------- | ---- | ------------------- |
-| `idx_leads_email`    | `email`        | `↑`  | lookup por contacto |
-| `idx_leads_interest` | `interestType` | `↑`  | filtro por interes  |
-| `idx_leads_status`   | `status`       | `↑`  | pipeline comercial  |
+| Index              | Keys     | Sort | Notes               |
+| ------------------ | -------- | ---- | ------------------- |
+| `idx_leads_email`  | `email`  | `↑`  | lookup por contacto |
+| `idx_leads_status` | `status` | `↑`  | filtro por estado   |
 
 ### Collection: `instructors`
 
@@ -221,6 +220,8 @@ Purpose: productos y extras wellness kitchen.
 | `nameEn`        | `string`  | -        | -      | -       | max `120`                                    | nombre EN        |
 | `descriptionEs` | `string`  | -        | -      | -       | max `2500`                                   | descripcion ES   |
 | `descriptionEn` | `string`  | -        | -      | -       | max `2500`                                   | descripcion EN   |
+| `otherTypeEs`   | `string`  | -        | -      | -       | max `120`, nullable                          | etiqueta custom ES para `productType=other` |
+| `otherTypeEn`   | `string`  | -        | -      | -       | max `120`, nullable                          | etiqueta custom EN para `productType=other` |
 | `productType`   | `enum`    | -        | -      | -       | `smoothie,snack,supplement,plan,addon,other` | tipo de producto |
 | `price`         | `float`   | -        | -      | -       | -                                            | precio           |
 | `coverImageId`  | `string`  | -        | -      | -       | max `64`                                     | imagen principal |

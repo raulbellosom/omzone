@@ -89,7 +89,7 @@ export default function TopbarUserMenu({ context = "client" }) {
 
         {showClientLink && (
           <DropdownMenuItem asChild>
-            <Link to={ROUTES.ZONE_DASHBOARD} className="flex items-center gap-2">
+            <Link to={ROUTES.ZONE} className="flex items-center gap-2">
               <LayoutDashboard className="w-4 h-4 text-charcoal-muted" />
               Mi área de cliente
             </Link>

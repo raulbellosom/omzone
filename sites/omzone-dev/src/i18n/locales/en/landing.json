@@ -146,6 +146,29 @@
       }
     ]
   },
+  "contact_form": {
+    "title": "Have questions?",
+    "subtitle": "Write to us and we'll get back to you shortly.",
+    "fields": {
+      "fullName": "Full name",
+      "email": "Email address",
+      "phone": "Phone (optional)",
+      "subject": "Subject (optional)",
+      "message": "Your message"
+    },
+    "placeholders": {
+      "fullName": "Your name",
+      "email": "you@email.com",
+      "phone": "+52 55...",
+      "subject": "E.g.: Class information",
+      "message": "Tell us how we can help you..."
+    },
+    "submit": "Send message",
+    "sending": "Sending...",
+    "success": "Message sent! We'll contact you soon.",
+    "error": "Could not send message. Please try again.",
+    "rateLimited": "Too many messages sent. Please try later."
+  },
   "cta_section": {
     "title": "Start your transformation today",
     "subtitle": "Your first class or your first package is just one click away.",

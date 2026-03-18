@@ -2,7 +2,7 @@ import { NavLink, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import {
   LayoutDashboard,
-  Users,
+  MessageSquare,
   UserCheck,
   BookOpen,
   Calendar,
@@ -11,7 +11,7 @@ import {
   ShoppingCart,
   BookMarked,
   QrCode,
-  FileText,
+  Images,
   Settings,
   ChevronLeft,
 } from "lucide-react";
@@ -29,8 +29,8 @@ import { useState } from "react";
 
 const navItems = [
   { icon: LayoutDashboard, key: "nav.dashboard", href: ROUTES.ADMIN_DASHBOARD },
-  { icon: Users, key: "nav.leads", href: ROUTES.ADMIN_LEADS },
-  { icon: UserCheck, key: "nav.customers", href: ROUTES.ADMIN_CUSTOMERS },
+  { icon: MessageSquare, key: "nav.messages", href: ROUTES.ADMIN_LEADS },
+  { icon: UserCheck, key: "nav.customers", href: ROUTES.ADMIN_CLIENTS },
   null, // separator
   { icon: BookOpen, key: "nav.classes", href: ROUTES.ADMIN_CLASSES },
   { icon: Calendar, key: "nav.sessions", href: ROUTES.ADMIN_SESSIONS },
@@ -42,7 +42,12 @@ const navItems = [
   { icon: BookMarked, key: "nav.bookings", href: ROUTES.ADMIN_BOOKINGS },
   { icon: QrCode, key: "nav.passes", href: ROUTES.ADMIN_PASSES },
   null,
-  { icon: FileText, key: "nav.content", href: ROUTES.ADMIN_CONTENT },
+  {
+    icon: Images,
+    key: "nav.stockImages",
+    href: ROUTES.ADMIN_STOCK_IMAGES,
+    rootOnly: true,
+  },
   {
     icon: Settings,
     key: "nav.settings",

@@ -83,10 +83,7 @@ export default function ClientNavbar({ onMenuClick }) {
             >
               <Menu className="w-5 h-5" />
             </button>
-            <Link
-              to={ROUTES.ZONE_DASHBOARD}
-              className="flex shrink-0 items-center"
-            >
+            <Link to={ROUTES.ZONE} className="flex shrink-0 items-center">
               <img
                 src="/logo.png"
                 alt="Omzone"

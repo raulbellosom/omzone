@@ -16,7 +16,8 @@ import {
   Zap,
 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getMediaPreviewUrl } from "@/lib/media";
+import { getPreviewUrl } from "@/lib/media";
+import { BUCKET_PUBLIC_MEDIA } from "@/env";
 import { resolveField } from "@/lib/i18n-data";
 import { formatDuration } from "@/lib/dates";
 import { useClasses } from "@/hooks/useClasses";
@@ -102,7 +103,7 @@ function FeaturedClassBlock({ cls, t }) {
   const summary = resolveField(cls, "summary");
   const typeLabel = resolveField(cls.class_type, "name") || typeSlug;
   const imgUrl = cls.cover_image_id
-    ? getMediaPreviewUrl(cls.cover_image_id, 1200, 800, 85)
+    ? getPreviewUrl(cls.cover_image_id, cls.cover_image_bucket ?? BUCKET_PUBLIC_MEDIA, 1200, 800, 85)
     : null;
 
   return (

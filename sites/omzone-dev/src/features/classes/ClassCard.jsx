@@ -28,7 +28,8 @@ import { Button } from "@/components/ui/button";
 import DifficultyBadge from "./DifficultyBadge";
 import { useCurrency } from "@/hooks/useCurrency";
 import { formatDuration } from "@/lib/dates";
-import { getMediaPreviewUrl } from "@/lib/media";
+import { getPreviewUrl } from "@/lib/media";
+import { BUCKET_PUBLIC_MEDIA } from "@/env";
 import { resolveField } from "@/lib/i18n-data";
 import { useAuth } from "@/hooks/useAuth";
 import ROUTES from "@/constants/routes";
@@ -100,8 +101,12 @@ function useCardData(cls, session) {
 
   // Imagen: sesión → clase → null (usa gradiente)
   const imgFileId = session?.cover_image_id || cls.cover_image_id || null;
+  const imgBucket =
+    (session?.cover_image_id
+      ? session.cover_image_bucket
+      : cls.cover_image_bucket) ?? null;
   const imgUrl = imgFileId
-    ? getMediaPreviewUrl(imgFileId, 900, 1200, 85)
+    ? getPreviewUrl(imgFileId, imgBucket ?? BUCKET_PUBLIC_MEDIA, 900, 1200, 85)
     : null;
 
   const spotsLeft = session

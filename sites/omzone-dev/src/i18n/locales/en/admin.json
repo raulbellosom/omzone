@@ -1,7 +1,8 @@
 {
   "nav": {
     "dashboard": "Dashboard",
-    "leads": "Leads",
+    "leads": "Messages",
+    "messages": "Messages",
     "customers": "Customers",
     "classes": "Classes",
     "sessions": "Sessions",
@@ -10,7 +11,7 @@
     "orders": "Orders",
     "bookings": "Bookings",
     "passes": "Passes",
-    "content": "Content",
+    "stockImages": "Image Stock",
     "settings": "Settings"
   },
   "dashboard": {
@@ -26,37 +27,51 @@
       "totalBookings": "Total bookings"
     },
     "recentOrders": "Recent orders",
-    "recentLeads": "Recent leads",
+    "recentLeads": "Recent messages",
+    "recentMessages": "Recent messages",
     "recentBookings": "Recent bookings",
     "upcomingSessions": "Upcoming sessions",
     "quickActions": "Quick actions",
     "viewAll": "View all"
   },
   "leads": {
-    "title": "Leads",
-    "subtitle": "Prospective customers interested in Omzone.",
-    "new": "New lead",
+    "title": "Messages",
+    "subtitle": "Contact message inbox."
+  },
+  "messages": {
+    "title": "Messages",
+    "subtitle": "Contact message inbox.",
     "status": {
       "new": "New",
-      "contacted": "Contacted",
-      "qualified": "Qualified",
-      "won": "Won",
-      "lost": "Lost"
+      "read": "Read",
+      "archived": "Archived"
     },
-    "interest": {
-      "class": "Class",
-
-      "package": "Package",
-      "product": "Product"
+    "filter": {
+      "all": "All",
+      "new": "New",
+      "read": "Read",
+      "archived": "Archived"
     },
     "fields": {
       "name": "Name",
       "email": "Email",
       "phone": "Phone",
-      "interest": "Interest",
-      "notes": "Notes",
+      "subject": "Subject",
+      "message": "Message",
       "status": "Status",
       "date": "Date"
+    },
+    "markRead": "Mark as read",
+    "archive": "Archive",
+    "unarchive": "Unarchive",
+    "statusChanged": "Status updated",
+    "searchPlaceholder": "Search by name, email, subject or message…",
+    "filters": "Filters",
+    "dateRange": "Date range",
+    "clearFilters": "Clear filters",
+    "noResults": "No messages found matching those filters.",
+    "pagination": {
+      "showing": "Showing {{from}}–{{to}} of {{total}}"
     }
   },
   "customers": {
@@ -339,6 +354,10 @@
       "items": "Includes",
       "featured": "Featured",
       "enabled": "Enabled"
+    },
+    "empty": {
+      "title": "No packages yet",
+      "description": "Create your first package by combining classes and products so customers can purchase it from the store."
     }
   },
   "products": {
@@ -356,11 +375,22 @@
     },
     "fields": {
       "name": "Name",
+      "nameEs": "Name ES",
+      "nameEn": "Name EN",
+      "descriptionEs": "Description ES",
+      "descriptionEn": "Description EN",
       "type": "Type",
       "price": "Price",
+      "otherTypeEs": "Custom type ES",
+      "otherTypeEn": "Custom type EN",
+      "otherTypeHint": "This custom type will be shown as the label when type is Other.",
       "addonOnly": "Add-on only",
       "featured": "Featured",
       "enabled": "Enabled"
+    },
+    "empty": {
+      "title": "No products yet",
+      "description": "Add smoothies, snacks, supplements, or other extras to the catalog so customers can order them with their booking or buy them separately."
     }
   },
   "bookings": {
@@ -428,26 +458,6 @@
       "notes": "Notes"
     }
   },
-  "content": {
-    "title": "Content",
-    "subtitle": "Edit the site's texts and blocks.",
-    "hero": "Main hero",
-    "faqs": "Frequently asked questions",
-    "testimonials": "Testimonials",
-    "save": "Save changes",
-    "saving": "Saving...",
-    "saved": "Changes saved",
-    "fields": {
-      "headline": "Headline",
-      "subheadline": "Subheadline",
-      "cta": "CTA text",
-      "question": "Question",
-      "answer": "Answer",
-      "author": "Author",
-      "role": "Role",
-      "quote": "Quote"
-    }
-  },
   "settings": {
     "title": "Settings",
     "studio": "Studio info",
@@ -466,6 +476,29 @@
       "timezone": "Timezone",
       "currency": "Currency",
       "defaultLang": "Default language"
+    }
+  },
+  "stockImages": {
+    "title": "Image Stock",
+    "subtitle": "Shared image library available for classes and sessions.",
+    "upload": "Upload images",
+    "uploading": "Uploading…",
+    "uploadSuccess": "{{count}} image(s) uploaded successfully",
+    "uploadError": "Error uploading {{name}}",
+    "deleteConfirm": "Delete this stock image?",
+    "deleteWarning": "This action cannot be undone. Classes using this image will show a broken image.",
+    "deleteSuccess": "Image deleted from stock",
+    "deleteError": "Error deleting image",
+    "empty": "No images in stock",
+    "emptyHint": "Upload JPG, PNG or WebP images to use in classes and sessions.",
+    "searchPlaceholder": "Search by name…",
+    "pickTitle": "Choose from image stock",
+    "imageSource": {
+      "upload": "Upload image",
+      "stock": "From stock",
+      "selectFromStock": "Choose from stock",
+      "currentStock": "Stock image selected",
+      "changeStock": "Change"
     }
   },
   "common": {

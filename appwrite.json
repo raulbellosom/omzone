@@ -117,6 +117,22 @@
       "logging": true,
       "scopes": ["users.read", "databases.read", "databases.write"],
       "commands": "npm install"
+    },
+    {
+      "$id": "submit-contact",
+      "name": "submit-contact",
+      "runtime": "node-20.0",
+      "path": "appwrite/functions/submit-contact",
+      "entrypoint": "src/main.js",
+      "ignore": ["node_modules", ".npm"],
+      "execute": ["any"],
+      "events": [],
+      "schedule": "",
+      "timeout": 15,
+      "enabled": true,
+      "logging": true,
+      "scopes": ["databases.read", "databases.write"],
+      "commands": "npm install"
     }
   ],
   "sites": [
@@ -309,12 +325,11 @@
     {
       "$id": "contact_leads",
       "$permissions": [
+        "create(\"any\")",
         "read(\"label:admin\")",
-        "create(\"label:admin\")",
         "update(\"label:admin\")",
         "delete(\"label:admin\")",
         "read(\"label:root\")",
-        "create(\"label:root\")",
         "update(\"label:root\")",
         "delete(\"label:root\")"
       ],
@@ -350,16 +365,16 @@
           "encrypt": false
         },
         {
-          "key": "interestType",
+          "key": "subject",
           "type": "string",
           "required": false,
           "array": false,
+          "size": 200,
           "default": null,
-          "format": "enum",
-          "elements": ["class", "package", "wellness", "other"]
+          "encrypt": false
         },
         {
-          "key": "notes",
+          "key": "message",
           "type": "string",
           "required": false,
           "array": false,
@@ -372,9 +387,9 @@
           "type": "string",
           "required": false,
           "array": false,
-          "default": null,
+          "default": "new",
           "format": "enum",
-          "elements": ["new", "contacted", "qualified", "won", "lost"]
+          "elements": ["new", "read", "archived"]
         }
       ],
       "indexes": [
@@ -383,13 +398,6 @@
           "type": "key",
           "status": "available",
           "columns": ["email"],
-          "orders": ["ASC"]
-        },
-        {
-          "key": "idx_leads_interest",
-          "type": "key",
-          "status": "available",
-          "columns": ["interestType"],
           "orders": ["ASC"]
         },
         {
@@ -699,6 +707,15 @@
           "encrypt": false
         },
         {
+          "key": "coverImageBucket",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 32,
+          "default": null,
+          "encrypt": false
+        },
+        {
           "key": "isFeatured",
           "type": "boolean",
           "required": false,
@@ -855,6 +872,15 @@
           "encrypt": false
         },
         {
+          "key": "coverImageBucket",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 32,
+          "default": null,
+          "encrypt": false
+        },
+        {
           "key": "enabled",
           "type": "boolean",
           "required": false,
@@ -962,6 +988,24 @@
           "encrypt": false
         },
         {
+          "key": "otherTypeEs",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 120,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "otherTypeEn",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 120,
+          "default": null,
+          "encrypt": false
+        },
+        {
           "key": "productType",
           "type": "string",
           "required": false,
@@ -990,6 +1034,15 @@
           "required": false,
           "array": false,
           "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "coverImageBucket",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 32,
           "default": null,
           "encrypt": false
         },
@@ -1187,6 +1240,24 @@
           "required": false,
           "array": false,
           "default": null
+        },
+        {
+          "key": "coverImageId",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "coverImageBucket",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 32,
+          "default": null,
+          "encrypt": false
         }
       ],
       "indexes": [
@@ -2124,98 +2195,6 @@
           "type": "key",
           "status": "available",
           "columns": ["validUntil"],
-          "orders": ["ASC"]
-        }
-      ]
-    },
-    {
-      "$id": "site_content",
-      "$permissions": [
-        "read(\"any\")",
-        "create(\"label:admin\")",
-        "update(\"label:admin\")",
-        "create(\"label:root\")",
-        "update(\"label:root\")",
-        "delete(\"label:root\")"
-      ],
-      "databaseId": "main",
-      "name": "site_content",
-      "enabled": true,
-      "rowSecurity": false,
-      "columns": [
-        {
-          "key": "contentKey",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 80,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "locale",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 10,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "title",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 200,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "body",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 4000,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "metaJson",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 2000,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "enabled",
-          "type": "boolean",
-          "required": false,
-          "array": false,
-          "default": null
-        }
-      ],
-      "indexes": [
-        {
-          "key": "idx_content_key",
-          "type": "key",
-          "status": "available",
-          "columns": ["contentKey"],
-          "orders": ["ASC"]
-        },
-        {
-          "key": "idx_content_locale",
-          "type": "key",
-          "status": "available",
-          "columns": ["locale"],
-          "orders": ["ASC"]
-        },
-        {
-          "key": "idx_content_enabled",
-          "type": "key",
-          "status": "available",
-          "columns": ["enabled"],
           "orders": ["ASC"]
         }
       ]

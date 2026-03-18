@@ -1,6 +1,6 @@
 /**
  * AdminCustomersPage — tabla de clientes con búsqueda y filtro por estado.
- * Ruta: /app/customers
+ * Ruta: /app/clients
  */
 import { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";

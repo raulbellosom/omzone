@@ -37,7 +37,12 @@ export default function CustomerPageLayout({
   const hasToolbar = !!toolbar;
 
   return (
-    <div className={cn("animate-fade-in-up", className)}>
+    <div
+      className={cn(
+        "mx-auto w-full max-w-5xl px-4 sm:px-6 lg:px-8 py-6 animate-fade-in-up",
+        className,
+      )}
+    >
       {/* ── Page header ──────────────────────────────────────────────── */}
       {hasHeader && (
         <div className="flex items-start justify-between gap-4 mb-5">
