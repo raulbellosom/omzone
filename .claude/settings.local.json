@@ -20,7 +20,26 @@
       "Bash(find /d/RacoonDevs/omzone/sites/omzone-dev/src -type f \\\\\\(-name *MockBadge* -o -name *mock-badge* \\\\\\))",
       "Bash(python3 -m json.tool)",
       "Bash(appwrite push:*)",
-      "Bash(node -e \":*)"
+      "Bash(node -e \":*)",
+      "Bash(wc -l \"d:\\\\RacoonDevs\\\\omzone\\\\sites\\\\omzone-dev\\\\src\\\\pages\\\\admin\"/*.jsx)",
+      "WebFetch(domain:appwrite.io)",
+      "WebSearch",
+      "WebFetch(domain:github.com)",
+      "Bash(appwrite --version)",
+      "Bash(ls d:/RacoonDevs/omzone/*.json)",
+      "Bash(ls d:/RacoonDevs/omzone/*.config*)",
+      "Bash(appwrite client:*)",
+      "Bash(node -e \"const d=require\\(''./appwrite.json''\\); d.functions.forEach\\(f=>console.log\\(f[''$id''], ''-'', f.name\\)\\)\")",
+      "Bash(appwrite functions:*)",
+      "Bash(appwrite databases:*)",
+      "Bash(npx vite:*)",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\(''''functions:'''', [f[''''$id''''] for f in d.get\\(''''functions'''',[]\\)]\\); print\\(''''sites:'''', [s[''''$id''''] for s in d.get\\(''''sites'''',[]\\)]\\); print\\(''''tables:'''', [t[''''$id''''] for t in d.get\\(''''tables'''',[]\\)]\\)\")",
+      "Bash(1:*)",
+      "Bash(appwrite sites:*)",
+      "Bash(grep -E \"\\($id|name|status|deploymentId|updatedAt\\)\")",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)"
     ]
   }
 }
