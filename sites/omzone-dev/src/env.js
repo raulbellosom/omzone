@@ -4,7 +4,9 @@
  * Variables APPWRITE_* → sin prefijo VITE_ (mismo nombre en frontend, functions y Appwrite Console).
  * Variables VITE_*     → exclusivas del frontend (feature flags, config de app).
  *
- * vite.config.js expone envPrefix: ['APPWRITE_', 'VITE_'] al browser.
+ * vite.config.js carga APPWRITE_* desde .env vía loadEnv y los expone con define,
+ * evitando que el build tome variables de sistema del entorno de Appwrite Sites
+ * que pueden tener guiones en el nombre y romper esbuild.
  * APPWRITE_API_KEY nunca aparece aquí ni en .env — solo en Appwrite Console server-side.
  */
 
