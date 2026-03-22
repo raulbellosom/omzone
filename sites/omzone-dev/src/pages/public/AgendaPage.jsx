@@ -218,7 +218,7 @@ function SlotRow({ slot, locale }) {
       <div className="shrink-0 text-right flex flex-col items-end gap-2">
         {price && (
           <span className="text-sm font-bold text-sage">
-            {formatPrice(price)}
+            {formatPrice(price, offering.currency)}
           </span>
         )}
         <Button asChild size="sm" variant="outline" className="text-xs">

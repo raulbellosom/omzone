@@ -102,9 +102,9 @@ function useCardData(offering) {
   // Price display
   let priceLabel = null;
   if (offering.pricing_mode === "fixed_price" && offering.base_price) {
-    priceLabel = formatPrice(offering.base_price);
+    priceLabel = formatPrice(offering.base_price, offering.currency);
   } else if (offering.pricing_mode === "from_price" && offering.base_price) {
-    priceLabel = `${t("card.from")} ${formatPrice(offering.base_price)}`;
+    priceLabel = `${t("card.from")} ${formatPrice(offering.base_price, offering.currency)}`;
   } else if (offering.pricing_mode === "request_quote") {
     priceLabel = t("card.requestQuote");
   }

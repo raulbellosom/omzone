@@ -13,6 +13,7 @@ export function useCurrency() {
 
   return {
     currency,
-    formatPrice: (amount) => formatCurrency(amount, currency),
+    formatPrice: (amount, overrideCurrency) =>
+      formatCurrency(amount, overrideCurrency || currency),
   };
 }

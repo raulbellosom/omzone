@@ -185,9 +185,9 @@ function InfoSidebar({ offering, t, locale }) {
 
   let priceDisplay = null;
   if (offering.pricing_mode === "fixed_price" && price) {
-    priceDisplay = formatPrice(price);
+    priceDisplay = formatPrice(price, offering.currency);
   } else if (offering.pricing_mode === "from_price" && price) {
-    priceDisplay = `${t("card.from")} ${formatPrice(price)}`;
+    priceDisplay = `${t("card.from")} ${formatPrice(price, offering.currency)}`;
   } else if (offering.pricing_mode === "request_quote") {
     priceDisplay = t("card.requestQuote");
   }
@@ -359,7 +359,7 @@ function ScheduleSection({ offering, t, locale }) {
                 <div className="shrink-0 flex items-center gap-3">
                   {price && (
                     <span className="text-sm font-bold text-sage">
-                      {formatPrice(price)}
+                      {formatPrice(price, offering.currency)}
                     </span>
                   )}
                   <Button

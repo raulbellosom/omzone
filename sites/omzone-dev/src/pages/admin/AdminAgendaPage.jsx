@@ -202,7 +202,7 @@ export default function AdminAgendaPage() {
                     )}
                     {slot.price_override != null && (
                       <span className="font-medium text-sage">
-                        {formatPrice(slot.price_override)}
+                        {formatPrice(slot.price_override, offeringMap[slot.offering_id]?.currency)}
                       </span>
                     )}
                   </div>

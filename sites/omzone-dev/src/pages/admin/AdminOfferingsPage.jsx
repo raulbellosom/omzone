@@ -162,7 +162,7 @@ export default function AdminOfferingsPage() {
                         {t("offerings.fields.basePrice")}
                       </p>
                       <p className="mt-1 text-lg font-semibold text-charcoal">
-                        {formatPrice(item.base_price)}
+                        {formatPrice(item.base_price, item.currency)}
                       </p>
                     </div>
                   )}
