@@ -119,11 +119,13 @@ export async function getOfferings({
   return res.documents.map(normalizeOffering);
 }
 
-export async function getOfferingBySlug(slug) {
-  const res = await databases.listDocuments(DB, COL_OFFERINGS, [
-    Query.equal("slug", slug),
-    Query.limit(1),
-  ]);
+export async function getOfferingBySlug(slug, { publicOnly = true } = {}) {
+  const q = [Query.equal("slug", slug), Query.limit(1)];
+  if (publicOnly) {
+    q.push(Query.equal("enabled", true));
+    q.push(Query.equal("status", "published"));
+  }
+  const res = await databases.listDocuments(DB, COL_OFFERINGS, q);
   return res.documents.length > 0 ? normalizeOffering(res.documents[0]) : null;
 }
 
@@ -198,6 +200,12 @@ export async function getAllUpcomingSlots({ category, limit = 50 } = {}) {
 
   let slots = res.documents.map((d) =>
     normalizeSlot(d, offeringsMap[d.offeringId] ?? null),
+  );
+
+  // Only show slots whose parent offering is published and enabled
+  slots = slots.filter(
+    (s) =>
+      s.offering && s.offering.enabled && s.offering.status === "published",
   );
 
   // Filter by category if specified (post-fetch since slots don't store category)

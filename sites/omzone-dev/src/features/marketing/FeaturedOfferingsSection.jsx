@@ -25,7 +25,7 @@ const CATEGORY_GRADIENT = {
 
 export default function FeaturedOfferingsSection() {
   const { t } = useTranslation("landing");
-  const { data: offerings, isLoading } = useOfferings({ featured: true });
+  const { data: offerings, isLoading } = useOfferings({ showOnHome: true });
 
   if (!isLoading && (!offerings || offerings.length === 0)) return null;
 
