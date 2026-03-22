@@ -8,6 +8,7 @@
  *   4. Schedule section (for scheduled offerings) or request CTA
  *   5. Related offerings (same category)
  */
+import { useMemo } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import {
@@ -291,9 +292,14 @@ function InfoRow({ icon: Icon, label, value }) {
 // ── Schedule Section ────────────────────────────────────────────────────────
 
 function ScheduleSection({ offering, t, locale }) {
-  const now = new Date().toISOString();
+  // Truncate to the current minute so the queryKey stays stable across renders
+  const fromDate = useMemo(() => {
+    const d = new Date();
+    d.setSeconds(0, 0);
+    return d.toISOString();
+  }, []);
   const { data: slots, isLoading } = useOfferingSlots(offering.$id, {
-    fromDate: now,
+    fromDate,
     status: "open",
   });
   const { formatPrice } = useCurrency();
