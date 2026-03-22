@@ -2,8 +2,8 @@
   "hero": {
     "headline": "Tu bienestar,\ntu ritmo.",
     "subheadline": "Wellness Studio, Immersions, Stays y Experiences. Un universo diseñado para reconectar cuerpo, mente y espíritu en un mismo lugar.",
-    "ctaMain": "Reservar clase",
-    "ctaSecondary": "Ver paquetes",
+    "ctaMain": "Explorar sesiones",
+    "ctaSecondary": "Descubre más",
     "badge": "Studio · Immersions · Stays · Experiences"
   },
   "pillars": {
@@ -68,6 +68,15 @@
     "title": "Clases destacadas",
     "subtitle": "Explora nuestra selección de clases diseñadas para todos los niveles y momentos del día.",
     "cta": "Ver todas las clases"
+  },
+  "featured": {
+    "title": "Destacados",
+    "subtitle": "Lo mejor de Omzone, seleccionado para ti.",
+    "cta": "Explorar todo"
+  },
+  "editorial": {
+    "defaultTitle": "Descubre más",
+    "defaultSubtitle": "Contenido editorial dinámico."
   },
   "packages": {
     "eyebrow": "Paquetes prepagados",
@@ -172,7 +181,7 @@
   "cta_section": {
     "title": "Empieza hoy tu transformación",
     "subtitle": "Tu primera clase o tu primer paquete están a un clic de distancia.",
-    "ctaMain": "Reservar mi primera clase",
-    "ctaSecondary": "Ver paquetes"
+    "ctaMain": "Explorar sesiones",
+    "ctaSecondary": "Descubre más"
   }
 }

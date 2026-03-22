@@ -5,6 +5,12 @@
   },
   "nav": {
     "home": "Inicio",
+    "sessions": "Sesiones",
+    "immersions": "Inmersiones",
+    "stays": "Estancias",
+    "services": "Servicios",
+    "experiences": "Experiencias",
+    "agenda": "Agenda",
     "classes": "Clases",
     "packages": "Paquetes",
     "wellness": "Wellness Kitchen",
@@ -17,6 +23,8 @@
     "myProfile": "Mi perfil",
     "userMenu": "Menú de usuario",
     "dashboard": "Mi dashboard",
+    "myBookings": "Mis reservas",
+    "myOrders": "Mis pedidos",
     "bookings": "Mis reservas",
     "orders": "Mis pedidos",
     "profile": "Mi perfil"
@@ -31,7 +39,12 @@
     "madeWith": "Hecho con",
     "forWellness": "para tu bienestar",
     "links": {
-      "title": "Plataforma",
+      "title": "Explora",
+      "sessions": "Sesiones",
+      "immersions": "Inmersiones",
+      "stays": "Estancias",
+      "services": "Servicios",
+      "agenda": "Agenda",
       "classes": "Clases",
       "packages": "Paquetes",
       "wellness": "Wellness Kitchen"
@@ -53,6 +66,8 @@
   },
   "actions": {
     "bookClass": "Reservar clase",
+    "bookNow": "Reservar ahora",
+    "explore": "Explorar",
     "explorePlans": "Explorar planes",
     "viewPackages": "Ver paquetes",
     "viewDetails": "Ver detalle",

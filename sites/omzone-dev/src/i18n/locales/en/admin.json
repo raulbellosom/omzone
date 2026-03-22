@@ -4,6 +4,9 @@
     "leads": "Messages",
     "messages": "Messages",
     "customers": "Customers",
+    "offerings": "Offerings",
+    "agenda": "Schedule",
+    "content": "Content",
     "classes": "Classes",
     "sessions": "Sessions",
     "packages": "Packages",
@@ -499,6 +502,170 @@
       "selectFromStock": "Choose from stock",
       "currentStock": "Stock image selected",
       "changeStock": "Change"
+    }
+  },
+  "offerings": {
+    "title": "Offerings",
+    "subtitle": "Manage sessions, immersions, stays, services and experiences.",
+    "tabs": {
+      "all": "All",
+      "wellness_studio": "Studio",
+      "immersion": "Immersions",
+      "service": "Services",
+      "stay": "Stays",
+      "experience": "Experiences"
+    },
+    "actions": {
+      "new": "New offering",
+      "save": "Save",
+      "create": "Create"
+    },
+    "dialog": {
+      "createTitle": "New offering",
+      "editTitle": "Edit offering"
+    },
+    "fields": {
+      "titleEs": "Title ES",
+      "titleEn": "Title EN",
+      "slug": "Slug",
+      "slugPlaceholder": "Generated if left empty",
+      "summaryEs": "Summary ES",
+      "summaryEn": "Summary EN",
+      "descriptionEs": "Description ES",
+      "descriptionEn": "Description EN",
+      "category": "Category",
+      "type": "Type",
+      "yogaStyle": "Yoga style",
+      "bookingMode": "Booking mode",
+      "pricingMode": "Pricing model",
+      "basePrice": "Base price",
+      "currency": "Currency",
+      "duration": "Duration (min)",
+      "minGuests": "Min guests",
+      "maxGuests": "Max guests",
+      "location": "Location",
+      "ctaLabelEs": "CTA ES",
+      "ctaLabelEn": "CTA EN",
+      "featured": "Featured",
+      "showOnHome": "Show on home",
+      "displayOrder": "Order",
+      "status": "Status",
+      "enabled": "Enabled"
+    },
+    "searchPlaceholder": "Search by title, category or slug",
+    "feedback": {
+      "created": "Offering created",
+      "updated": "Offering updated",
+      "deleted": "Offering deleted",
+      "enabled": "Offering enabled",
+      "disabled": "Offering disabled",
+      "saveError": "Could not save",
+      "deleteError": "Could not delete",
+      "toggleError": "Could not update status"
+    },
+    "empty": {
+      "title": "No offerings yet",
+      "description": "Create the first offering to start publishing your catalog."
+    },
+    "delete": {
+      "title": "Confirm deletion",
+      "description": "This action cannot be undone. If there are associated slots or bookings, deletion will be blocked.",
+      "confirm": "Delete offering"
+    }
+  },
+  "offeringSlots": {
+    "title": "Schedule",
+    "subtitle": "Manage schedules, capacity and availability for offerings.",
+    "actions": {
+      "new": "New slot",
+      "save": "Save",
+      "create": "Create slot"
+    },
+    "dialog": {
+      "createTitle": "New slot",
+      "editTitle": "Edit slot"
+    },
+    "fields": {
+      "offering": "Offering",
+      "startAt": "Start",
+      "endAt": "End",
+      "dateLabel": "Date label",
+      "capacity": "Total capacity",
+      "taken": "Booked",
+      "priceOverride": "Special price",
+      "priceOverridePlaceholder": "Empty = offering base price",
+      "location": "Location",
+      "status": "Status",
+      "notes": "Notes",
+      "enabled": "Enabled"
+    },
+    "feedback": {
+      "created": "Slot created",
+      "updated": "Slot updated",
+      "deleted": "Slot deleted",
+      "cancelled": "Slot cancelled",
+      "saveError": "Could not save slot",
+      "deleteError": "Could not delete slot"
+    },
+    "empty": {
+      "title": "No slots scheduled",
+      "description": "Create a slot so customers can book."
+    }
+  },
+  "blocks": {
+    "title": "Blocks",
+    "subtitle": "Block dates or unavailability periods.",
+    "actions": {
+      "new": "New block",
+      "save": "Save"
+    },
+    "fields": {
+      "offering": "Offering (optional)",
+      "startAt": "From",
+      "endAt": "Until",
+      "reason": "Reason",
+      "blockType": "Type"
+    },
+    "feedback": {
+      "created": "Block created",
+      "updated": "Block updated",
+      "deleted": "Block deleted"
+    }
+  },
+  "contentSections": {
+    "title": "Editorial content",
+    "subtitle": "Dynamic sections for the landing page.",
+    "actions": {
+      "new": "New section",
+      "save": "Save"
+    },
+    "dialog": {
+      "createTitle": "New section",
+      "editTitle": "Edit section"
+    },
+    "fields": {
+      "sectionKey": "Section key",
+      "titleEs": "Title ES",
+      "titleEn": "Title EN",
+      "subtitleEs": "Subtitle ES",
+      "subtitleEn": "Subtitle EN",
+      "bodyEs": "Body ES",
+      "bodyEn": "Body EN",
+      "ctaLabelEs": "CTA ES",
+      "ctaLabelEn": "CTA EN",
+      "ctaUrl": "CTA URL",
+      "displayOrder": "Order",
+      "enabled": "Enabled"
+    },
+    "feedback": {
+      "created": "Section created",
+      "updated": "Section updated",
+      "deleted": "Section deleted",
+      "saveError": "Could not save section"
+    },
+    "empty": {
+      "title": "No editorial sections",
+      "description": "Create dynamic content sections for the landing page."
     }
   },
   "common": {

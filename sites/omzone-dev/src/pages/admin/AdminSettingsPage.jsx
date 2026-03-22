@@ -14,17 +14,8 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAppSettings, useUpsertAppSettings } from "@/hooks/useAdmin";
 import AdminPageHeader from "@/components/shared/AdminPageHeader";
-
-const CURRENCIES = [
-  { value: "MXN", label: "MXN — Peso mexicano" },
-  { value: "USD", label: "USD — Dólar estadounidense" },
-  { value: "EUR", label: "EUR — Euro" },
-  { value: "GBP", label: "GBP — Libra esterlina" },
-  { value: "COP", label: "COP — Peso colombiano" },
-  { value: "ARS", label: "ARS — Peso argentino" },
-  { value: "CLP", label: "CLP — Peso chileno" },
-  { value: "BRL", label: "BRL — Real brasileño" },
-];
+import SearchCombobox from "@/components/shared/SearchCombobox";
+import { CURRENCY_OPTIONS } from "@/lib/currency";
 
 const TIMEZONES = [
   {
@@ -49,6 +40,11 @@ const TIMEZONES = [
   { value: "Europe/Madrid", label: "Europe/Madrid (España)" },
   { value: "Europe/London", label: "Europe/London (Reino Unido)" },
   { value: "UTC", label: "UTC" },
+];
+
+const LANGUAGE_OPTIONS = [
+  { value: "es", label: "Español" },
+  { value: "en", label: "English" },
 ];
 
 const EMPTY_SETTINGS = {
@@ -236,17 +232,14 @@ export default function AdminSettingsPage() {
                 <Label className="text-xs font-medium text-charcoal-muted">
                   {t("settings.fields.timezone")}
                 </Label>
-                <select
+                <SearchCombobox
                   value={settings.timezone}
-                  onChange={(e) => set("timezone")(e.target.value)}
-                  className="w-full text-sm rounded-xl border border-warm-gray-dark/40 bg-white px-3 py-2 h-10 focus:outline-none focus:ring-2 focus:ring-sage/30"
-                >
-                  {TIMEZONES.map((tz) => (
-                    <option key={tz.value} value={tz.value}>
-                      {tz.label}
-                    </option>
-                  ))}
-                </select>
+                  onValueChange={set("timezone")}
+                  options={TIMEZONES}
+                  placeholder={t("settings.fields.timezone")}
+                  searchPlaceholder={t("common.search")}
+                  emptyMessage={t("common.noData")}
+                />
               </div>
 
               {/* Currency */}
@@ -254,17 +247,14 @@ export default function AdminSettingsPage() {
                 <Label className="text-xs font-medium text-charcoal-muted">
                   {t("settings.fields.currency")}
                 </Label>
-                <select
+                <SearchCombobox
                   value={settings.currency}
-                  onChange={(e) => set("currency")(e.target.value)}
-                  className="w-full text-sm rounded-xl border border-warm-gray-dark/40 bg-white px-3 py-2 h-10 focus:outline-none focus:ring-2 focus:ring-sage/30"
-                >
-                  {CURRENCIES.map((c) => (
-                    <option key={c.value} value={c.value}>
-                      {c.label}
-                    </option>
-                  ))}
-                </select>
+                  onValueChange={set("currency")}
+                  options={CURRENCY_OPTIONS}
+                  placeholder={t("settings.fields.currency")}
+                  searchPlaceholder={t("common.search")}
+                  emptyMessage={t("common.noData")}
+                />
               </div>
 
               {/* Language */}
@@ -272,14 +262,14 @@ export default function AdminSettingsPage() {
                 <Label className="text-xs font-medium text-charcoal-muted">
                   {t("settings.fields.defaultLang")}
                 </Label>
-                <select
+                <SearchCombobox
                   value={settings.defaultLang}
-                  onChange={(e) => set("defaultLang")(e.target.value)}
-                  className="w-full text-sm rounded-xl border border-warm-gray-dark/40 bg-white px-3 py-2 h-10 focus:outline-none focus:ring-2 focus:ring-sage/30"
-                >
-                  <option value="es">Español</option>
-                  <option value="en">English</option>
-                </select>
+                  onValueChange={set("defaultLang")}
+                  options={LANGUAGE_OPTIONS}
+                  placeholder={t("settings.fields.defaultLang")}
+                  searchPlaceholder={t("common.search")}
+                  emptyMessage={t("common.noData")}
+                />
               </div>
             </div>
           </CardContent>

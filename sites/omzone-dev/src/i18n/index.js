@@ -12,6 +12,7 @@ import esPackages from './locales/es/packages.json'
 import esWellness from './locales/es/wellness.json'
 import esCustomer from './locales/es/customer.json'
 import esAdmin from './locales/es/admin.json'
+import esOfferings from './locales/es/offerings.json'
 import esValidation from './locales/es/validation.json'
 
 // ── English ───────────────────────────────────────────────────────────────────
@@ -24,6 +25,7 @@ import enPackages from './locales/en/packages.json'
 import enWellness from './locales/en/wellness.json'
 import enCustomer from './locales/en/customer.json'
 import enAdmin from './locales/en/admin.json'
+import enOfferings from './locales/en/offerings.json'
 import enValidation from './locales/en/validation.json'
 
 i18n
@@ -41,6 +43,7 @@ i18n
         wellness: esWellness,
         customer: esCustomer,
         admin: esAdmin,
+        offerings: esOfferings,
         validation: esValidation,
       },
       en: {
@@ -53,6 +56,7 @@ i18n
         wellness: enWellness,
         customer: enCustomer,
         admin: enAdmin,
+        offerings: enOfferings,
         validation: enValidation,
       },
     },

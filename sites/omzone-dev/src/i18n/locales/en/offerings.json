@@ -1,0 +1,130 @@
+{
+  "categories": {
+    "all": "All",
+    "wellness_studio": "Wellness Studio",
+    "immersion": "Immersions",
+    "service": "Services",
+    "stay": "Stays",
+    "experience": "Experiences"
+  },
+  "types": {
+    "session": "Session",
+    "program": "Program",
+    "immersion": "Immersion",
+    "service": "Service",
+    "stay": "Stay",
+    "experience": "Experience"
+  },
+  "bookingMode": {
+    "scheduled": "Scheduled",
+    "request_only": "By request",
+    "always_available": "Always available",
+    "date_range": "Date range"
+  },
+  "pricingMode": {
+    "fixed_price": "Fixed price",
+    "from_price": "From",
+    "request_quote": "Request quote"
+  },
+  "status": {
+    "draft": "Draft",
+    "published": "Published",
+    "archived": "Archived"
+  },
+  "slotStatus": {
+    "open": "Open",
+    "full": "Full",
+    "cancelled": "Cancelled",
+    "completed": "Completed"
+  },
+  "blockType": {
+    "holiday": "Holiday",
+    "maintenance": "Maintenance",
+    "private_event": "Private event",
+    "custom": "Custom"
+  },
+  "card": {
+    "from": "From",
+    "perPerson": "per person",
+    "requestQuote": "Request quote",
+    "spotsLeft": "{{count}} spot left",
+    "spotsLeft_plural": "{{count}} spots left",
+    "full": "No availability",
+    "duration": "{{min}} min",
+    "guests": "{{min}}–{{max}} guests",
+    "viewDetails": "View details",
+    "book": "Book",
+    "requestInfo": "Request info",
+    "checkAvailability": "Check availability"
+  },
+  "detail": {
+    "about": "About",
+    "schedule": "Available schedule",
+    "noSlots": "No schedule available at this time.",
+    "location": "Location",
+    "duration": "Duration",
+    "price": "Price",
+    "guests": "Guests",
+    "includes": "Includes",
+    "yogaStyle": "Style",
+    "bookNow": "Book now",
+    "requestBooking": "Request booking",
+    "contactUs": "Contact us",
+    "selectDate": "Select a date",
+    "spotsAvailable": "{{available}} of {{total}} spots available",
+    "relatedOfferings": "You may also like"
+  },
+  "filters": {
+    "category": "Category",
+    "type": "Type",
+    "yogaStyle": "Style",
+    "priceRange": "Price range",
+    "allStyles": "All styles"
+  },
+  "agenda": {
+    "title": "Schedule",
+    "subtitle": "Upcoming sessions and available events.",
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "thisWeek": "This week",
+    "noUpcoming": "No upcoming events scheduled.",
+    "filterByCategory": "Filter by category"
+  },
+  "search": {
+    "placeholder": "Search sessions, immersions, stays...",
+    "noResults": "No results found for \"{{term}}\"",
+    "hint": "Try another term or explore our categories."
+  },
+  "pages": {
+    "sessions": {
+      "title": "Sessions",
+      "subtitle": "Yoga, breathwork and conscious movement classes.",
+      "metaTitle": "Sessions | Omzone",
+      "metaDescription": "Book your yoga, breathwork or conscious movement class at Omzone."
+    },
+    "immersions": {
+      "title": "Immersions",
+      "subtitle": "Retreats and intensive transformation programs.",
+      "metaTitle": "Immersions | Omzone",
+      "metaDescription": "Immersion programs and wellness retreats at Omzone."
+    },
+    "stays": {
+      "title": "Stays",
+      "subtitle": "Exclusive spaces for rest and regeneration.",
+      "metaTitle": "Stays | Omzone",
+      "metaDescription": "Private wellness stays and regeneration at Omzone."
+    },
+    "services": {
+      "title": "Services",
+      "subtitle": "Massages, therapies and personalized wellness.",
+      "metaTitle": "Services | Omzone",
+      "metaDescription": "Personalized wellness services, massages and therapies at Omzone."
+    },
+    "experiences": {
+      "title": "Experiences",
+      "subtitle": "Conscious adventures in nature.",
+      "metaTitle": "Experiences | Omzone",
+      "metaDescription": "Surf, freediving and conscious adventure experiences at Omzone."
+    }
+  }
+}

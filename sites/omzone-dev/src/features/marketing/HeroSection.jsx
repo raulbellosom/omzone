@@ -114,7 +114,7 @@ export default function HeroSection() {
                 size="xl"
                 className="group shadow-lg shadow-sage/30"
               >
-                <Link to={ROUTES.CLASSES}>
+                <Link to={ROUTES.SESSIONS}>
                   {t("hero.ctaMain")}
                   <ArrowRight
                     className="w-4 h-4 transition-transform group-hover:translate-x-1"
@@ -128,7 +128,7 @@ export default function HeroSection() {
                 variant="outline"
                 className="border-white/25 text-white hover:bg-white/10 backdrop-blur-sm"
               >
-                <Link to={ROUTES.PACKAGES}>{t("hero.ctaSecondary")}</Link>
+                <Link to={ROUTES.AGENDA}>{t("hero.ctaSecondary")}</Link>
               </Button>
             </div>
 

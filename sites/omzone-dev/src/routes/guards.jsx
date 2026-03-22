@@ -42,10 +42,12 @@ export function RequireAuth({ roles = [], fallback = "/" }) {
  * RedirectIfAuthenticated — redirige usuarios verificados fuera de páginas
  * públicas (landing, login, register) hacia su panel.
  */
-export function RedirectIfAuthenticated({ to = "/zone" }) {
+export function RedirectIfAuthenticated({ to } = {}) {
   const { user, loading } = useAuth();
 
   if (loading) return <LoadingSpinner />;
-  if (user) return <Navigate to={to} replace />;
+  // Admin/root → admin panel; clients → home
+  const defaultRedirect = to ?? (["admin", "root"].includes(user?.role_key) ? "/app" : "/");
+  if (user) return <Navigate to={defaultRedirect} replace />;
   return <Outlet />;
 }

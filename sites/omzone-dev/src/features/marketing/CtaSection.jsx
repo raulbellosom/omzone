@@ -45,7 +45,7 @@ export default function CtaSection() {
                 size="xl"
                 className="bg-sage hover:bg-sage-dark text-white group shadow-lg shadow-sage/25"
               >
-                <Link to={ROUTES.CLASSES}>
+                <Link to={ROUTES.SESSIONS}>
                   {t("cta_section.ctaMain")}
                   <ArrowRight
                     className="w-4 h-4 transition-transform group-hover:translate-x-1"
@@ -59,7 +59,7 @@ export default function CtaSection() {
                 variant="outline"
                 className="border-white/20 text-white hover:bg-white/8"
               >
-                <Link to={ROUTES.PACKAGES}>
+                <Link to={ROUTES.AGENDA}>
                   {t("cta_section.ctaSecondary")}
                 </Link>
               </Button>

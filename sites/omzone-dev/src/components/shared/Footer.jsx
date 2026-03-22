@@ -26,14 +26,16 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Plataforma */}
+          {/* Explora */}
           <div>
             <h3 className="text-sm font-semibold text-white mb-3">{t('footer.links.title')}</h3>
             <ul className="space-y-2 text-sm">
               {[
-                [t('footer.links.classes'), ROUTES.CLASSES],
-                [t('footer.links.packages'), ROUTES.PACKAGES],
-                [t('footer.links.wellness'), ROUTES.WELLNESS],
+                [t('footer.links.sessions'), ROUTES.SESSIONS],
+                [t('footer.links.immersions'), ROUTES.IMMERSIONS],
+                [t('footer.links.stays'), ROUTES.STAYS],
+                [t('footer.links.services'), ROUTES.SERVICES],
+                [t('footer.links.agenda'), ROUTES.AGENDA],
               ].map(([label, href]) => (
                 <li key={href}>
                   <Link to={href} className="hover:text-white transition-colors">
@@ -49,10 +51,9 @@ export default function Footer() {
             <h3 className="text-sm font-semibold text-white mb-3">{t('footer.account.title')}</h3>
             <ul className="space-y-2 text-sm">
               {[
-                [t('footer.account.dashboard'), ROUTES.ZONE],
-                [t('footer.account.bookings'), ROUTES.ZONE_BOOKINGS],
-                [t('footer.account.orders'), ROUTES.ZONE_ORDERS],
-                [t('footer.account.profile'), ROUTES.ZONE_PROFILE],
+                [t('footer.account.bookings'), ROUTES.ACCOUNT_BOOKINGS],
+                [t('footer.account.orders'), ROUTES.ACCOUNT_ORDERS],
+                [t('footer.account.profile'), ROUTES.ACCOUNT_PROFILE],
               ].map(([label, href]) => (
                 <li key={href}>
                   <Link to={href} className="hover:text-white transition-colors">

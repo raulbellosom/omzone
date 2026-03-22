@@ -119,6 +119,22 @@
       "commands": "npm install"
     },
     {
+      "$id": "admin-write-offerings",
+      "name": "admin-write-offerings",
+      "runtime": "node-20.0",
+      "path": "appwrite/functions/admin-write-offerings",
+      "entrypoint": "src/main.js",
+      "ignore": ["node_modules", ".npm"],
+      "execute": ["users"],
+      "events": [],
+      "schedule": "",
+      "timeout": 15,
+      "enabled": true,
+      "logging": true,
+      "scopes": ["users.read", "databases.read", "databases.write"],
+      "commands": "npm install"
+    },
+    {
       "$id": "submit-contact",
       "name": "submit-contact",
       "runtime": "node-20.0",
@@ -1480,7 +1496,7 @@
           "array": false,
           "default": null,
           "format": "enum",
-          "elements": ["class_session", "wellness_package", "product", "addon"]
+          "elements": ["class_session", "wellness_package", "product", "addon", "offering"]
         },
         {
           "key": "referenceId",
@@ -1781,6 +1797,62 @@
           "required": false,
           "array": false,
           "default": null
+        },
+        {
+          "key": "offeringId",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "slotId",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "bookingType",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "default": null,
+          "format": "enum",
+          "elements": [
+            "session",
+            "immersion",
+            "service",
+            "stay",
+            "experience"
+          ]
+        },
+        {
+          "key": "guestCount",
+          "type": "integer",
+          "required": false,
+          "array": false,
+          "default": 1
+        },
+        {
+          "key": "requestDataJson",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 3000,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "confirmedAt",
+          "type": "datetime",
+          "required": false,
+          "array": false,
+          "default": null
         }
       ],
       "indexes": [
@@ -1817,6 +1889,27 @@
           "type": "key",
           "status": "available",
           "columns": ["status"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_bookings_offering",
+          "type": "key",
+          "status": "available",
+          "columns": ["offeringId"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_bookings_slot",
+          "type": "key",
+          "status": "available",
+          "columns": ["slotId"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_bookings_type",
+          "type": "key",
+          "status": "available",
+          "columns": ["bookingType"],
           "orders": ["ASC"]
         }
       ]
@@ -2085,7 +2178,7 @@
           "array": false,
           "default": null,
           "format": "enum",
-          "elements": ["booking", "order", "package"]
+          "elements": ["booking", "order", "package", "offering"]
         },
         {
           "key": "referenceId",
@@ -2420,6 +2513,814 @@
         }
       ],
       "indexes": []
+    },
+    {
+      "$id": "offerings",
+      "$permissions": [
+        "read(\"any\")",
+        "create(\"label:admin\")",
+        "update(\"label:admin\")",
+        "delete(\"label:admin\")",
+        "create(\"label:root\")",
+        "update(\"label:root\")",
+        "delete(\"label:root\")"
+      ],
+      "databaseId": "main",
+      "name": "offerings",
+      "enabled": true,
+      "rowSecurity": false,
+      "columns": [
+        {
+          "key": "slug",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 150,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "titleEs",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 200,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "titleEn",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 200,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "summaryEs",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 500,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "summaryEn",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 500,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "descriptionEs",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 4000,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "descriptionEn",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 4000,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "category",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "default": null,
+          "format": "enum",
+          "elements": [
+            "wellness_studio",
+            "immersion",
+            "service",
+            "stay",
+            "experience"
+          ]
+        },
+        {
+          "key": "type",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "default": null,
+          "format": "enum",
+          "elements": [
+            "session",
+            "program",
+            "immersion",
+            "service",
+            "stay",
+            "experience"
+          ]
+        },
+        {
+          "key": "yogaStyle",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 100,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "bookingMode",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "default": null,
+          "format": "enum",
+          "elements": [
+            "scheduled",
+            "request_only",
+            "always_available",
+            "date_range"
+          ]
+        },
+        {
+          "key": "pricingMode",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "default": null,
+          "format": "enum",
+          "elements": ["fixed_price", "from_price", "request_quote"]
+        },
+        {
+          "key": "basePrice",
+          "type": "double",
+          "required": false,
+          "array": false,
+          "default": null
+        },
+        {
+          "key": "currency",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 3,
+          "default": "MXN",
+          "encrypt": false
+        },
+        {
+          "key": "durationMin",
+          "type": "integer",
+          "required": false,
+          "array": false,
+          "default": null
+        },
+        {
+          "key": "minGuests",
+          "type": "integer",
+          "required": false,
+          "array": false,
+          "default": 1
+        },
+        {
+          "key": "maxGuests",
+          "type": "integer",
+          "required": false,
+          "array": false,
+          "default": 1
+        },
+        {
+          "key": "locationLabel",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 200,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "coverImageId",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "coverImageBucket",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 32,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "ctaLabelEs",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 60,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "ctaLabelEn",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 60,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "badgesJson",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 500,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "isFeatured",
+          "type": "boolean",
+          "required": false,
+          "array": false,
+          "default": false
+        },
+        {
+          "key": "showOnHome",
+          "type": "boolean",
+          "required": false,
+          "array": false,
+          "default": false
+        },
+        {
+          "key": "displayOrder",
+          "type": "integer",
+          "required": false,
+          "array": false,
+          "default": 0
+        },
+        {
+          "key": "status",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "default": "draft",
+          "format": "enum",
+          "elements": ["draft", "published", "archived"]
+        },
+        {
+          "key": "enabled",
+          "type": "boolean",
+          "required": false,
+          "array": false,
+          "default": true
+        },
+        {
+          "key": "createdAt",
+          "type": "datetime",
+          "required": false,
+          "array": false,
+          "default": null
+        },
+        {
+          "key": "updatedAt",
+          "type": "datetime",
+          "required": false,
+          "array": false,
+          "default": null
+        }
+      ],
+      "indexes": [
+        {
+          "key": "uq_offering_slug",
+          "type": "unique",
+          "status": "available",
+          "columns": ["slug"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_offering_category",
+          "type": "key",
+          "status": "available",
+          "columns": ["category"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_offering_type",
+          "type": "key",
+          "status": "available",
+          "columns": ["type"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_offering_status",
+          "type": "key",
+          "status": "available",
+          "columns": ["status"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_offering_featured",
+          "type": "key",
+          "status": "available",
+          "columns": ["isFeatured"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_offering_enabled",
+          "type": "key",
+          "status": "available",
+          "columns": ["enabled"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_offering_display",
+          "type": "key",
+          "status": "available",
+          "columns": ["displayOrder"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_offering_home",
+          "type": "key",
+          "status": "available",
+          "columns": ["showOnHome"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_offering_booking_mode",
+          "type": "key",
+          "status": "available",
+          "columns": ["bookingMode"],
+          "orders": ["ASC"]
+        }
+      ]
+    },
+    {
+      "$id": "offering_slots",
+      "$permissions": [
+        "read(\"any\")",
+        "create(\"label:admin\")",
+        "update(\"label:admin\")",
+        "delete(\"label:admin\")",
+        "create(\"label:root\")",
+        "update(\"label:root\")",
+        "delete(\"label:root\")"
+      ],
+      "databaseId": "main",
+      "name": "offering_slots",
+      "enabled": true,
+      "rowSecurity": false,
+      "columns": [
+        {
+          "key": "offeringId",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "startAt",
+          "type": "datetime",
+          "required": false,
+          "array": false,
+          "default": null
+        },
+        {
+          "key": "endAt",
+          "type": "datetime",
+          "required": false,
+          "array": false,
+          "default": null
+        },
+        {
+          "key": "dateLabel",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 100,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "capacityTotal",
+          "type": "integer",
+          "required": false,
+          "array": false,
+          "default": 0
+        },
+        {
+          "key": "capacityTaken",
+          "type": "integer",
+          "required": false,
+          "array": false,
+          "default": 0
+        },
+        {
+          "key": "priceOverride",
+          "type": "double",
+          "required": false,
+          "array": false,
+          "default": null
+        },
+        {
+          "key": "status",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "default": "open",
+          "format": "enum",
+          "elements": ["open", "full", "cancelled", "completed"]
+        },
+        {
+          "key": "locationLabel",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 200,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "notes",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 500,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "enabled",
+          "type": "boolean",
+          "required": false,
+          "array": false,
+          "default": true
+        }
+      ],
+      "indexes": [
+        {
+          "key": "idx_slot_offering",
+          "type": "key",
+          "status": "available",
+          "columns": ["offeringId"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_slot_start",
+          "type": "key",
+          "status": "available",
+          "columns": ["startAt"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_slot_status",
+          "type": "key",
+          "status": "available",
+          "columns": ["status"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_slot_enabled",
+          "type": "key",
+          "status": "available",
+          "columns": ["enabled"],
+          "orders": ["ASC"]
+        }
+      ]
+    },
+    {
+      "$id": "offering_availability_rules",
+      "$permissions": [
+        "create(\"label:admin\")",
+        "read(\"label:admin\")",
+        "update(\"label:admin\")",
+        "delete(\"label:admin\")",
+        "create(\"label:root\")",
+        "read(\"label:root\")",
+        "update(\"label:root\")",
+        "delete(\"label:root\")"
+      ],
+      "databaseId": "main",
+      "name": "offering_availability_rules",
+      "enabled": true,
+      "rowSecurity": false,
+      "columns": [
+        {
+          "key": "offeringId",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "ruleType",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "default": null,
+          "format": "enum",
+          "elements": ["recurrence", "blackout", "capacity_override"]
+        },
+        {
+          "key": "valueJson",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 2000,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "enabled",
+          "type": "boolean",
+          "required": false,
+          "array": false,
+          "default": true
+        }
+      ],
+      "indexes": [
+        {
+          "key": "idx_avail_offering",
+          "type": "key",
+          "status": "available",
+          "columns": ["offeringId"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_avail_type",
+          "type": "key",
+          "status": "available",
+          "columns": ["ruleType"],
+          "orders": ["ASC"]
+        }
+      ]
+    },
+    {
+      "$id": "availability_blocks",
+      "$permissions": [
+        "create(\"label:admin\")",
+        "read(\"label:admin\")",
+        "update(\"label:admin\")",
+        "delete(\"label:admin\")",
+        "create(\"label:root\")",
+        "read(\"label:root\")",
+        "update(\"label:root\")",
+        "delete(\"label:root\")"
+      ],
+      "databaseId": "main",
+      "name": "availability_blocks",
+      "enabled": true,
+      "rowSecurity": false,
+      "columns": [
+        {
+          "key": "offeringId",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "startAt",
+          "type": "datetime",
+          "required": false,
+          "array": false,
+          "default": null
+        },
+        {
+          "key": "endAt",
+          "type": "datetime",
+          "required": false,
+          "array": false,
+          "default": null
+        },
+        {
+          "key": "reason",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 300,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "blockType",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "default": null,
+          "format": "enum",
+          "elements": ["holiday", "maintenance", "private_event", "custom"]
+        },
+        {
+          "key": "enabled",
+          "type": "boolean",
+          "required": false,
+          "array": false,
+          "default": true
+        }
+      ],
+      "indexes": [
+        {
+          "key": "idx_block_offering",
+          "type": "key",
+          "status": "available",
+          "columns": ["offeringId"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_block_start",
+          "type": "key",
+          "status": "available",
+          "columns": ["startAt"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_block_end",
+          "type": "key",
+          "status": "available",
+          "columns": ["endAt"],
+          "orders": ["ASC"]
+        }
+      ]
+    },
+    {
+      "$id": "content_sections",
+      "$permissions": [
+        "read(\"any\")",
+        "create(\"label:admin\")",
+        "update(\"label:admin\")",
+        "delete(\"label:admin\")",
+        "create(\"label:root\")",
+        "update(\"label:root\")",
+        "delete(\"label:root\")"
+      ],
+      "databaseId": "main",
+      "name": "content_sections",
+      "enabled": true,
+      "rowSecurity": false,
+      "columns": [
+        {
+          "key": "sectionKey",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 80,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "titleEs",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 200,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "titleEn",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 200,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "subtitleEs",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 400,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "subtitleEn",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 400,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "bodyEs",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 5000,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "bodyEn",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 5000,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "ctaLabelEs",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 60,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "ctaLabelEn",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 60,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "ctaUrl",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 300,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "imageId",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "imageBucket",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 32,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "displayOrder",
+          "type": "integer",
+          "required": false,
+          "array": false,
+          "default": 0
+        },
+        {
+          "key": "enabled",
+          "type": "boolean",
+          "required": false,
+          "array": false,
+          "default": true
+        }
+      ],
+      "indexes": [
+        {
+          "key": "uq_section_key",
+          "type": "unique",
+          "status": "available",
+          "columns": ["sectionKey"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_section_order",
+          "type": "key",
+          "status": "available",
+          "columns": ["displayOrder"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_section_enabled",
+          "type": "key",
+          "status": "available",
+          "columns": ["enabled"],
+          "orders": ["ASC"]
+        }
+      ]
     }
   ],
   "buckets": [

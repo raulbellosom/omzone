@@ -1,12 +1,22 @@
 /**
  * SearchModal — search overlay with live results.
  * Mobile: fullscreen. Desktop (sm+): centered card.
- * Searches classes, wellness products, and packages via Appwrite.
+ * Searches offerings via Appwrite.
  */
 import { useState, useRef, useEffect, useDeferredValue } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Search, X, ArrowRight, Sparkles, BookOpen, Leaf, Package, Loader2 } from "lucide-react";
+import {
+  Search,
+  X,
+  ArrowRight,
+  Sparkles,
+  Calendar,
+  Compass,
+  Home,
+  Heart,
+  Loader2,
+} from "lucide-react";
 import {
   Dialog,
   DialogPortal,
@@ -21,10 +31,29 @@ import { getPreviewUrl } from "@/lib/media";
 import { BUCKET_PUBLIC_MEDIA } from "@/env";
 
 const QUICK_LINKS = [
-  { key: "classes", href: ROUTES.CLASSES, icon: BookOpen },
-  { key: "packages", href: ROUTES.PACKAGES, icon: Package },
-  { key: "wellness", href: ROUTES.WELLNESS, icon: Leaf },
+  { key: "sessions", href: ROUTES.SESSIONS, icon: Calendar },
+  { key: "immersions", href: ROUTES.IMMERSIONS, icon: Compass },
+  { key: "stays", href: ROUTES.STAYS, icon: Home },
+  { key: "services", href: ROUTES.SERVICES, icon: Heart },
+  { key: "agenda", href: ROUTES.AGENDA, icon: Calendar },
 ];
+
+/** Map offering category → public listing route */
+function offeringHref(offering) {
+  const slug = offering.slug;
+  switch (offering.category) {
+    case "wellness_studio":
+      return ROUTES.SESSION_DETAIL(slug);
+    case "immersion":
+      return ROUTES.IMMERSION_DETAIL(slug);
+    case "stay":
+      return ROUTES.STAY_DETAIL(slug);
+    case "service":
+      return ROUTES.SERVICE_DETAIL(slug);
+    default:
+      return ROUTES.SESSION_DETAIL(slug);
+  }
+}
 
 export default function SearchModal({ open, onOpenChange }) {
   const { t } = useTranslation("common");
@@ -33,7 +62,7 @@ export default function SearchModal({ open, onOpenChange }) {
   const [query, setQuery] = useState("");
   const deferredQuery = useDeferredValue(query);
   const locale = getActiveLang();
-  const { data, isFetching } = useSearch(deferredQuery, { locale });
+  const { data: offerings, isFetching } = useSearch(deferredQuery, { locale });
 
   useEffect(() => {
     if (open) {
@@ -52,15 +81,11 @@ export default function SearchModal({ open, onOpenChange }) {
     e.preventDefault();
     if (!query.trim()) return;
     onOpenChange(false);
-    navigate(`${ROUTES.CLASSES}?q=${encodeURIComponent(query.trim())}`);
+    navigate(`${ROUTES.SESSIONS}?q=${encodeURIComponent(query.trim())}`);
   }
 
   const hasQuery = deferredQuery.trim().length >= 2;
-  const hasResults =
-    data &&
-    (data.classes.length > 0 ||
-      data.products.length > 0 ||
-      data.packages.length > 0);
+  const hasResults = Array.isArray(offerings) && offerings.length > 0;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -104,13 +129,13 @@ export default function SearchModal({ open, onOpenChange }) {
           <div className="flex-1 overflow-y-auto px-4 sm:px-5 py-4">
             {hasQuery && hasResults ? (
               <SearchResults
-                data={data}
+                offerings={offerings}
                 onGo={handleGo}
                 t={t}
               />
             ) : hasQuery && !isFetching && !hasResults ? (
               <p className="text-sm text-charcoal-subtle text-center py-8">
-                {t("actions.search")} — {t("badges.soldOut", { defaultValue: "Sin resultados" })}
+                {t("empty.noResults")}
               </p>
             ) : (
               <QuickLinks onGo={handleGo} t={t} />
@@ -153,72 +178,32 @@ function QuickLinks({ onGo, t }) {
 
 /* ── Search results ──────────────────────────────────────────────── */
 
-function SearchResults({ data, onGo, t }) {
-  return (
-    <div className="space-y-5">
-      {data.classes.length > 0 && (
-        <ResultSection
-          title={t("nav.classes")}
-          icon={BookOpen}
-          items={data.classes.map((c) => ({
-            id: c.$id,
-            label: resolveField(c, "title"),
-            sub: resolveField(c, "summary"),
-            thumb: getPreviewUrl(c.cover_image_id, c.cover_image_bucket ?? BUCKET_PUBLIC_MEDIA, 80, 80, 70),
-            href: ROUTES.CLASS_DETAIL(c.slug),
-          }))}
-          onGo={onGo}
-        />
-      )}
-      {data.products.length > 0 && (
-        <ResultSection
-          title={t("nav.wellness")}
-          icon={Leaf}
-          items={data.products.map((p) => ({
-            id: p.$id,
-            label: resolveField(p, "name"),
-            sub: resolveField(p, "description"),
-            thumb: getPreviewUrl(p.cover_image_id, p.cover_image_bucket ?? BUCKET_PUBLIC_MEDIA, 80, 80, 70),
-            href: ROUTES.WELLNESS,
-          }))}
-          onGo={onGo}
-        />
-      )}
-      {data.packages.length > 0 && (
-        <ResultSection
-          title={t("nav.packages")}
-          icon={Package}
-          items={data.packages.map((p) => ({
-            id: p.$id,
-            label: resolveField(p, "name"),
-            sub: resolveField(p, "description"),
-            thumb: null,
-            href: ROUTES.PACKAGES,
-          }))}
-          onGo={onGo}
-        />
-      )}
-    </div>
-  );
-}
-
-function ResultSection({ title, icon: Icon, items, onGo }) {
+function SearchResults({ offerings, onGo, t }) {
   return (
     <div>
       <p className="text-xs font-semibold text-charcoal-subtle uppercase tracking-widest mb-2 flex items-center gap-1.5">
-        <Icon className="w-3 h-3" />
-        {title}
+        <Sparkles className="w-3 h-3" />
+        {t("empty.noResults", { defaultValue: "Resultados" }).replace(
+          t("empty.noResults"),
+          "Resultados",
+        )}
       </p>
       <ul className="space-y-0.5">
-        {items.map((item) => (
-          <li key={item.id}>
+        {offerings.map((item) => (
+          <li key={item.$id}>
             <button
-              onClick={() => onGo(item.href)}
+              onClick={() => onGo(offeringHref(item))}
               className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left hover:bg-warm-gray transition-colors"
             >
-              {item.thumb ? (
+              {item.cover_image_id ? (
                 <img
-                  src={item.thumb}
+                  src={getPreviewUrl(
+                    item.cover_image_id,
+                    item.cover_image_bucket ?? BUCKET_PUBLIC_MEDIA,
+                    80,
+                    80,
+                    70,
+                  )}
                   alt=""
                   className="w-10 h-10 rounded-lg object-cover shrink-0 bg-warm-gray"
                 />
@@ -227,11 +212,11 @@ function ResultSection({ title, icon: Icon, items, onGo }) {
               )}
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-charcoal truncate">
-                  {item.label}
+                  {resolveField(item, "title")}
                 </p>
-                {item.sub && (
+                {resolveField(item, "summary") && (
                   <p className="text-xs text-charcoal-subtle truncate">
-                    {item.sub}
+                    {resolveField(item, "summary")}
                   </p>
                 )}
               </div>

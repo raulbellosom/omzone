@@ -4,6 +4,9 @@
     "leads": "Mensajes",
     "messages": "Mensajes",
     "customers": "Clientes",
+    "offerings": "Offerings",
+    "agenda": "Agenda",
+    "content": "Contenido",
     "classes": "Clases",
     "sessions": "Sesiones",
     "packages": "Paquetes",
@@ -499,6 +502,170 @@
       "selectFromStock": "Elegir del stock",
       "currentStock": "Imagen del stock seleccionada",
       "changeStock": "Cambiar"
+    }
+  },
+  "offerings": {
+    "title": "Offerings",
+    "subtitle": "Gestiona sesiones, inmersiones, estancias, servicios y experiencias.",
+    "tabs": {
+      "all": "Todos",
+      "wellness_studio": "Studio",
+      "immersion": "Inmersiones",
+      "service": "Servicios",
+      "stay": "Estancias",
+      "experience": "Experiencias"
+    },
+    "actions": {
+      "new": "Nuevo offering",
+      "save": "Guardar",
+      "create": "Crear"
+    },
+    "dialog": {
+      "createTitle": "Nuevo offering",
+      "editTitle": "Editar offering"
+    },
+    "fields": {
+      "titleEs": "Título ES",
+      "titleEn": "Título EN",
+      "slug": "Slug",
+      "slugPlaceholder": "Se genera si lo dejas vacío",
+      "summaryEs": "Resumen ES",
+      "summaryEn": "Resumen EN",
+      "descriptionEs": "Descripción ES",
+      "descriptionEn": "Descripción EN",
+      "category": "Categoría",
+      "type": "Tipo",
+      "yogaStyle": "Estilo de yoga",
+      "bookingMode": "Modo de reserva",
+      "pricingMode": "Modelo de precio",
+      "basePrice": "Precio base",
+      "currency": "Moneda",
+      "duration": "Duración (min)",
+      "minGuests": "Mín. personas",
+      "maxGuests": "Máx. personas",
+      "location": "Ubicación",
+      "ctaLabelEs": "CTA ES",
+      "ctaLabelEn": "CTA EN",
+      "featured": "Destacado",
+      "showOnHome": "Mostrar en home",
+      "displayOrder": "Orden",
+      "status": "Estado",
+      "enabled": "Habilitado"
+    },
+    "searchPlaceholder": "Buscar por título, categoría o slug",
+    "feedback": {
+      "created": "Offering creado",
+      "updated": "Offering actualizado",
+      "deleted": "Offering eliminado",
+      "enabled": "Offering habilitado",
+      "disabled": "Offering deshabilitado",
+      "saveError": "No se pudo guardar",
+      "deleteError": "No se pudo eliminar",
+      "toggleError": "No se pudo actualizar el estado"
+    },
+    "empty": {
+      "title": "Todavía no hay offerings",
+      "description": "Crea el primer offering para empezar a publicar tu catálogo."
+    },
+    "delete": {
+      "title": "Confirmar eliminación",
+      "description": "Esta acción no se puede deshacer. Si hay slots o reservas asociadas, el borrado será bloqueado.",
+      "confirm": "Eliminar offering"
+    }
+  },
+  "offeringSlots": {
+    "title": "Agenda",
+    "subtitle": "Gestiona horarios, capacidad y disponibilidad de los offerings.",
+    "actions": {
+      "new": "Nuevo horario",
+      "save": "Guardar",
+      "create": "Crear horario"
+    },
+    "dialog": {
+      "createTitle": "Nuevo horario",
+      "editTitle": "Editar horario"
+    },
+    "fields": {
+      "offering": "Offering",
+      "startAt": "Inicio",
+      "endAt": "Fin",
+      "dateLabel": "Etiqueta de fecha",
+      "capacity": "Cupo total",
+      "taken": "Reservados",
+      "priceOverride": "Precio especial",
+      "priceOverridePlaceholder": "Vacío = precio base del offering",
+      "location": "Ubicación",
+      "status": "Estado",
+      "notes": "Notas",
+      "enabled": "Habilitado"
+    },
+    "feedback": {
+      "created": "Horario creado",
+      "updated": "Horario actualizado",
+      "deleted": "Horario eliminado",
+      "cancelled": "Horario cancelado",
+      "saveError": "No se pudo guardar el horario",
+      "deleteError": "No se pudo eliminar el horario"
+    },
+    "empty": {
+      "title": "Sin horarios programados",
+      "description": "Crea un horario para que los clientes puedan reservar."
+    }
+  },
+  "blocks": {
+    "title": "Bloqueos",
+    "subtitle": "Bloquea fechas o periodos de no disponibilidad.",
+    "actions": {
+      "new": "Nuevo bloqueo",
+      "save": "Guardar"
+    },
+    "fields": {
+      "offering": "Offering (opcional)",
+      "startAt": "Desde",
+      "endAt": "Hasta",
+      "reason": "Motivo",
+      "blockType": "Tipo"
+    },
+    "feedback": {
+      "created": "Bloqueo creado",
+      "updated": "Bloqueo actualizado",
+      "deleted": "Bloqueo eliminado"
+    }
+  },
+  "contentSections": {
+    "title": "Contenido editorial",
+    "subtitle": "Secciones dinámicas de la landing page.",
+    "actions": {
+      "new": "Nueva sección",
+      "save": "Guardar"
+    },
+    "dialog": {
+      "createTitle": "Nueva sección",
+      "editTitle": "Editar sección"
+    },
+    "fields": {
+      "sectionKey": "Clave de sección",
+      "titleEs": "Título ES",
+      "titleEn": "Título EN",
+      "subtitleEs": "Subtítulo ES",
+      "subtitleEn": "Subtítulo EN",
+      "bodyEs": "Cuerpo ES",
+      "bodyEn": "Cuerpo EN",
+      "ctaLabelEs": "CTA ES",
+      "ctaLabelEn": "CTA EN",
+      "ctaUrl": "URL del CTA",
+      "displayOrder": "Orden",
+      "enabled": "Habilitada"
+    },
+    "feedback": {
+      "created": "Sección creada",
+      "updated": "Sección actualizada",
+      "deleted": "Sección eliminada",
+      "saveError": "No se pudo guardar la sección"
+    },
+    "empty": {
+      "title": "Sin secciones editoriales",
+      "description": "Crea secciones de contenido dinámico para la landing page."
     }
   },
   "common": {

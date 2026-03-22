@@ -3,9 +3,8 @@ import StructuredData from "@/components/seo/StructuredData";
 import HeroSection from "@/features/marketing/HeroSection";
 import FourPillarsSection from "@/features/marketing/FourPillarsSection";
 import BenefitsSection from "@/features/marketing/BenefitsSection";
-import FeaturedClassesSection from "@/features/marketing/FeaturedClassesSection";
-import PackagesPreviewSection from "@/features/marketing/PackagesPreviewSection";
-import WellnessPreviewSection from "@/features/marketing/WellnessPreviewSection";
+import FeaturedOfferingsSection from "@/features/marketing/FeaturedOfferingsSection";
+import EditorialSection from "@/features/marketing/EditorialSection";
 import StudioSection from "@/features/marketing/StudioSection";
 import FaqSection from "@/features/marketing/FaqSection";
 import ContactFormSection from "@/features/marketing/ContactFormSection";
@@ -19,7 +18,7 @@ const organizationSchema = {
   "@type": "Organization",
   name: "Omzone",
   description:
-    "Plataforma de yoga y wellness kitchen. Clases, paquetes y complementos de bienestar en un solo lugar.",
+    "Plataforma de bienestar integral. Sesiones, inmersiones, estancias y experiencias en un solo lugar.",
   url: BASE_URL,
   logo: `${BASE_URL}/logo.png`,
   sameAs: [],
@@ -37,7 +36,7 @@ const websiteSchema = {
   url: BASE_URL,
   potentialAction: {
     "@type": "SearchAction",
-    target: `${BASE_URL}/classes?q={search_term_string}`,
+    target: `${BASE_URL}/sessions?q={search_term_string}`,
     "query-input": "required name=search_term_string",
   },
 };
@@ -47,7 +46,7 @@ export default function LandingPage() {
     <>
       <PageMeta
         title={null}
-        description="Clases de yoga, paquetes y complementos wellness en un solo lugar. Reserva tu clase, elige tu paquete y transforma tu bienestar con Omzone."
+        description="Sesiones de yoga, inmersiones, estancias y experiencias de bienestar en un solo lugar. Reserva tu sesión y transforma tu bienestar con Omzone."
         canonical={BASE_URL}
         locale="es"
       />
@@ -58,9 +57,8 @@ export default function LandingPage() {
         <HeroSection />
         <FourPillarsSection />
         <StudioSection />
-        <FeaturedClassesSection />
-        <PackagesPreviewSection />
-        <WellnessPreviewSection />
+        <FeaturedOfferingsSection />
+        <EditorialSection />
         <FaqSection />
         <BenefitsSection />
         <ContactFormSection />

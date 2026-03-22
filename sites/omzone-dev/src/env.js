@@ -56,6 +56,18 @@ export const COL_AUDIT_LOGS = import.meta.env.APPWRITE_COLLECTION_AUDIT_LOGS_ID;
 export const COL_APP_SETTINGS = import.meta.env
   .APPWRITE_COLLECTION_APP_SETTINGS_ID;
 
+// ── Appwrite — colecciones (Offerings model) ────────────────────────────────
+export const COL_OFFERINGS = import.meta.env
+  .APPWRITE_COLLECTION_OFFERINGS_ID;
+export const COL_OFFERING_SLOTS = import.meta.env
+  .APPWRITE_COLLECTION_OFFERING_SLOTS_ID;
+export const COL_OFFERING_AVAILABILITY_RULES = import.meta.env
+  .APPWRITE_COLLECTION_OFFERING_AVAILABILITY_RULES_ID;
+export const COL_AVAILABILITY_BLOCKS = import.meta.env
+  .APPWRITE_COLLECTION_AVAILABILITY_BLOCKS_ID;
+export const COL_CONTENT_SECTIONS = import.meta.env
+  .APPWRITE_COLLECTION_CONTENT_SECTIONS_ID;
+
 // ── Appwrite — buckets ────────────────────────────────────────────────────────
 export const BUCKET_PUBLIC_MEDIA = import.meta.env
   .APPWRITE_BUCKET_PUBLIC_MEDIA_ID;
@@ -74,5 +86,7 @@ export const FN_SYNC_EMAIL_VERIFICATION = import.meta.env
   .APPWRITE_FUNCTION_SYNC_EMAIL_VERIFICATION_ID;
 export const FN_ADMIN_WRITE_CATALOG = import.meta.env
   .APPWRITE_FUNCTION_ADMIN_WRITE_CATALOG_ID;
+export const FN_ADMIN_WRITE_OFFERINGS = import.meta.env
+  .APPWRITE_FUNCTION_ADMIN_WRITE_OFFERINGS_ID;
 export const FN_SUBMIT_CONTACT = import.meta.env
   .APPWRITE_FUNCTION_SUBMIT_CONTACT_ID;

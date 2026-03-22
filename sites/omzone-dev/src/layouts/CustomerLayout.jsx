@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import CustomerSideNav from "@/components/shared/CustomerSideNav";
 import CustomerTopbar from "@/components/shared/CustomerTopbar";
@@ -7,9 +7,18 @@ import { SidebarProvider } from "@/contexts/SidebarContext";
 export default function CustomerLayout() {
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
+  useEffect(() => {
+    document.documentElement.style.overflow = "hidden";
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.documentElement.style.overflow = "";
+      document.body.style.overflow = "";
+    };
+  }, []);
+
   return (
     <SidebarProvider>
-      <div className="h-screen flex overflow-hidden bg-cream">
+      <div className="h-dvh flex overflow-hidden bg-cream">
         <CustomerSideNav
           mobileOpen={mobileSidebarOpen}
           onMobileClose={() => setMobileSidebarOpen(false)}

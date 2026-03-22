@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import AdminSidebar from "@/components/shared/AdminSidebar";
 import AdminTopbar from "@/components/shared/AdminTopbar";
@@ -6,8 +6,17 @@ import AdminTopbar from "@/components/shared/AdminTopbar";
 export default function AdminLayout() {
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
+  useEffect(() => {
+    document.documentElement.style.overflow = "hidden";
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.documentElement.style.overflow = "";
+      document.body.style.overflow = "";
+    };
+  }, []);
+
   return (
-    <div className="h-screen flex overflow-hidden bg-warm-gray">
+    <div className="h-dvh flex overflow-hidden bg-warm-gray">
       <AdminSidebar
         mobileOpen={mobileSidebarOpen}
         onMobileClose={() => setMobileSidebarOpen(false)}

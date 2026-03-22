@@ -12,6 +12,8 @@ import {
   COL_BOOKINGS,
   COL_CLASS_SESSIONS,
   COL_CLASSES,
+  COL_OFFERINGS,
+  COL_OFFERING_SLOTS,
 } from '@/env'
 
 const DB = APPWRITE_DATABASE_ID
@@ -54,8 +56,10 @@ function normalizeOrder(doc, items) {
   }
 }
 
-function normalizeBooking(doc, sessionDoc, classDoc) {
+function normalizeBooking(doc, { sessionDoc, classDoc, offeringDoc, slotDoc } = {}) {
   if (!doc) return null
+
+  // Legacy session shape
   const session = sessionDoc
     ? {
         $id: sessionDoc.$id,
@@ -73,18 +77,55 @@ function normalizeBooking(doc, sessionDoc, classDoc) {
           : null,
       }
     : null
+
+  // New offerings shape
+  const offering = offeringDoc
+    ? {
+        $id: offeringDoc.$id,
+        slug: offeringDoc.slug,
+        title_es: offeringDoc.titleEs,
+        title_en: offeringDoc.titleEn,
+        category: offeringDoc.category,
+        type: offeringDoc.type,
+        cover_image_id: offeringDoc.coverImageId ?? null,
+        cover_image_bucket: offeringDoc.coverImageBucket ?? null,
+        duration_min: offeringDoc.durationMin ?? null,
+        base_price: offeringDoc.basePrice ?? null,
+      }
+    : null
+
+  const slot = slotDoc
+    ? {
+        $id: slotDoc.$id,
+        start_at: slotDoc.startAt,
+        end_at: slotDoc.endAt ?? null,
+        location_label: slotDoc.locationLabel ?? null,
+        capacity_total: slotDoc.capacityTotal ?? 0,
+        capacity_taken: slotDoc.capacityTaken ?? 0,
+      }
+    : null
+
   return {
     $id: doc.$id,
     $createdAt: doc.$createdAt,
     client_user_id: doc.clientUserId,
-    session_id: doc.sessionId,
+    session_id: doc.sessionId ?? null,
+    offering_id: doc.offeringId ?? null,
+    slot_id: doc.slotId ?? null,
+    booking_type: doc.bookingType ?? null,
+    guest_count: doc.guestCount ?? 1,
     order_id: doc.orderId,
     booking_code: doc.bookingCode,
     status: doc.status ?? 'confirmed',
     unit_price: doc.unitPrice ?? 0,
     extras_json: doc.extrasJson ? _parseJson(doc.extrasJson) : null,
+    request_data_json: doc.requestDataJson ? _parseJson(doc.requestDataJson) : null,
     reserved_at: doc.reservedAt,
+    confirmed_at: doc.confirmedAt ?? null,
+    // Attach related entities
     session,
+    offering,
+    slot,
   }
 }
 
@@ -133,7 +174,7 @@ export async function getMyBookings(userId) {
   ])
   const bookings = res.documents
 
-  // Batch-fetch sessions
+  // Batch-fetch legacy sessions
   const sessionIds = [...new Set(bookings.map(b => b.sessionId).filter(Boolean))]
   let sessionMap = {}
   if (sessionIds.length > 0) {
@@ -144,7 +185,7 @@ export async function getMyBookings(userId) {
     sessionMap = Object.fromEntries(sessRes.documents.map(s => [s.$id, s]))
   }
 
-  // Batch-fetch classes
+  // Batch-fetch legacy classes
   const classIds = [
     ...new Set(Object.values(sessionMap).map(s => s.classId).filter(Boolean)),
   ]
@@ -157,10 +198,34 @@ export async function getMyBookings(userId) {
     classMap = Object.fromEntries(classRes.documents.map(c => [c.$id, c]))
   }
 
+  // Batch-fetch new offerings
+  const offeringIds = [...new Set(bookings.map(b => b.offeringId).filter(Boolean))]
+  let offeringMap = {}
+  if (offeringIds.length > 0) {
+    const offRes = await databases.listDocuments(DB, COL_OFFERINGS, [
+      Query.equal('$id', offeringIds),
+      Query.limit(offeringIds.length),
+    ])
+    offeringMap = Object.fromEntries(offRes.documents.map(o => [o.$id, o]))
+  }
+
+  // Batch-fetch new slots
+  const slotIds = [...new Set(bookings.map(b => b.slotId).filter(Boolean))]
+  let slotMap = {}
+  if (slotIds.length > 0) {
+    const slotRes = await databases.listDocuments(DB, COL_OFFERING_SLOTS, [
+      Query.equal('$id', slotIds),
+      Query.limit(slotIds.length),
+    ])
+    slotMap = Object.fromEntries(slotRes.documents.map(s => [s.$id, s]))
+  }
+
   return bookings.map(b => {
-    const session = sessionMap[b.sessionId] ?? null
-    const classDoc = session ? (classMap[session.classId] ?? null) : null
-    return normalizeBooking(b, session, classDoc)
+    const sessionDoc = sessionMap[b.sessionId] ?? null
+    const classDoc = sessionDoc ? (classMap[sessionDoc.classId] ?? null) : null
+    const offeringDoc = offeringMap[b.offeringId] ?? null
+    const slotDoc = slotMap[b.slotId] ?? null
+    return normalizeBooking(b, { sessionDoc, classDoc, offeringDoc, slotDoc })
   })
 }
 
@@ -168,7 +233,7 @@ export async function cancelBooking(bookingId) {
   const doc = await databases.updateDocument(DB, COL_BOOKINGS, bookingId, {
     status: 'cancelled',
   })
-  return normalizeBooking(doc, null, null)
+  return normalizeBooking(doc)
 }
 
 // ── Checkout — Create Order ───────────────────────────────────────────────────
@@ -179,7 +244,7 @@ export async function cancelBooking(bookingId) {
  * @param {Array}  data.items          — [{ id, title, price, ... }]
  * @param {string} data.customer_email
  * @param {number} data.grand_total
- * @param {string} data.intent         — 'booking' | 'package' | 'product'
+ * @param {string} data.intent         — 'booking' | 'package' | 'product' | 'offering'
  * @param {string} [data.user_id]
  * @param {string} [data.promo_code]
  */

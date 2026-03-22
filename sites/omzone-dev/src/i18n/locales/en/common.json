@@ -5,6 +5,12 @@
   },
   "nav": {
     "home": "Home",
+    "sessions": "Sessions",
+    "immersions": "Immersions",
+    "stays": "Stays",
+    "services": "Services",
+    "experiences": "Experiences",
+    "agenda": "Schedule",
     "classes": "Classes",
     "packages": "Packages",
     "wellness": "Wellness Kitchen",
@@ -17,6 +23,8 @@
     "myProfile": "My profile",
     "userMenu": "User menu",
     "dashboard": "My dashboard",
+    "myBookings": "My bookings",
+    "myOrders": "My orders",
     "bookings": "My bookings",
     "orders": "My orders",
     "profile": "My profile"
@@ -31,7 +39,12 @@
     "madeWith": "Made with",
     "forWellness": "for your wellbeing",
     "links": {
-      "title": "Platform",
+      "title": "Explore",
+      "sessions": "Sessions",
+      "immersions": "Immersions",
+      "stays": "Stays",
+      "services": "Services",
+      "agenda": "Schedule",
       "classes": "Classes",
       "packages": "Packages",
       "wellness": "Wellness Kitchen"
@@ -53,6 +66,8 @@
   },
   "actions": {
     "bookClass": "Book a class",
+    "bookNow": "Book now",
+    "explore": "Explore",
     "explorePlans": "Explore plans",
     "viewPackages": "View packages",
     "viewDetails": "View details",

@@ -12,7 +12,7 @@ const PILLAR_VISUALS = [
     // Wellness Studio — yoga movement, natural light
     image:
       "https://images.unsplash.com/photo-1545205597-3d9d02c29597?w=900&h=1100&fit=crop&crop=center&q=80",
-    href: ROUTES.CLASSES,
+    href: ROUTES.SESSIONS,
     tint: "from-sage/25",
     cardHeight: "h-[600px]",
   },
@@ -20,7 +20,7 @@ const PILLAR_VISUALS = [
     // Immersions — retreat, deep reconnection in nature
     image:
       "https://appwrite.racoondevs.com/v1/storage/buckets/stock-images/files/69b8efed000a9f40df28/view?project=69b37e1f001cce5d19cc&mode=admin",
-    href: ROUTES.PACKAGES,
+    href: ROUTES.IMMERSIONS,
     tint: "from-indigo-900/30",
     cardHeight: "h-[460px]",
   },
@@ -28,7 +28,7 @@ const PILLAR_VISUALS = [
     // Stays — luxury private retreat, serenity
     image:
       "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=900&h=1100&fit=crop&crop=center&q=80",
-    href: ROUTES.WELLNESS,
+    href: ROUTES.STAYS,
     tint: "from-amber-800/25",
     cardHeight: "h-[460px]",
   },
@@ -36,7 +36,7 @@ const PILLAR_VISUALS = [
     // Experiences — surf, ocean, nature
     image:
       "https://appwrite.racoondevs.com/v1/storage/buckets/stock-images/files/69b8ec0e00107c7915ca/view?project=69b37e1f001cce5d19cc&mode=admin",
-    href: ROUTES.WELLNESS,
+    href: ROUTES.EXPERIENCES,
     tint: "from-sky-900/30",
     cardHeight: "h-[600px]",
   },

@@ -1,0 +1,130 @@
+{
+  "categories": {
+    "all": "Todos",
+    "wellness_studio": "Wellness Studio",
+    "immersion": "Inmersiones",
+    "service": "Servicios",
+    "stay": "Estancias",
+    "experience": "Experiencias"
+  },
+  "types": {
+    "session": "Sesión",
+    "program": "Programa",
+    "immersion": "Inmersión",
+    "service": "Servicio",
+    "stay": "Estancia",
+    "experience": "Experiencia"
+  },
+  "bookingMode": {
+    "scheduled": "Con agenda",
+    "request_only": "Bajo solicitud",
+    "always_available": "Siempre disponible",
+    "date_range": "Rango de fechas"
+  },
+  "pricingMode": {
+    "fixed_price": "Precio fijo",
+    "from_price": "Desde",
+    "request_quote": "Cotizar"
+  },
+  "status": {
+    "draft": "Borrador",
+    "published": "Publicado",
+    "archived": "Archivado"
+  },
+  "slotStatus": {
+    "open": "Abierto",
+    "full": "Lleno",
+    "cancelled": "Cancelado",
+    "completed": "Completado"
+  },
+  "blockType": {
+    "holiday": "Día festivo",
+    "maintenance": "Mantenimiento",
+    "private_event": "Evento privado",
+    "custom": "Personalizado"
+  },
+  "card": {
+    "from": "Desde",
+    "perPerson": "por persona",
+    "requestQuote": "Solicitar cotización",
+    "spotsLeft": "{{count}} lugar disponible",
+    "spotsLeft_plural": "{{count}} lugares disponibles",
+    "full": "Sin disponibilidad",
+    "duration": "{{min}} min",
+    "guests": "{{min}}–{{max}} personas",
+    "viewDetails": "Ver detalle",
+    "book": "Reservar",
+    "requestInfo": "Solicitar información",
+    "checkAvailability": "Ver disponibilidad"
+  },
+  "detail": {
+    "about": "Acerca de",
+    "schedule": "Horarios disponibles",
+    "noSlots": "No hay horarios disponibles en este momento.",
+    "location": "Ubicación",
+    "duration": "Duración",
+    "price": "Precio",
+    "guests": "Personas",
+    "includes": "Incluye",
+    "yogaStyle": "Estilo",
+    "bookNow": "Reservar ahora",
+    "requestBooking": "Solicitar reserva",
+    "contactUs": "Contáctanos",
+    "selectDate": "Selecciona una fecha",
+    "spotsAvailable": "{{available}} de {{total}} lugares disponibles",
+    "relatedOfferings": "También te puede interesar"
+  },
+  "filters": {
+    "category": "Categoría",
+    "type": "Tipo",
+    "yogaStyle": "Estilo",
+    "priceRange": "Rango de precio",
+    "allStyles": "Todos los estilos"
+  },
+  "agenda": {
+    "title": "Agenda",
+    "subtitle": "Próximas sesiones y eventos disponibles.",
+    "today": "Hoy",
+    "tomorrow": "Mañana",
+    "thisWeek": "Esta semana",
+    "noUpcoming": "No hay eventos próximos programados.",
+    "filterByCategory": "Filtrar por categoría"
+  },
+  "search": {
+    "placeholder": "Buscar sesiones, inmersiones, estancias...",
+    "noResults": "No encontramos resultados para \"{{term}}\"",
+    "hint": "Intenta con otro término o explora nuestras categorías."
+  },
+  "pages": {
+    "sessions": {
+      "title": "Sesiones",
+      "subtitle": "Clases de yoga, breathwork y movimiento consciente.",
+      "metaTitle": "Sesiones | Omzone",
+      "metaDescription": "Reserva tu clase de yoga, breathwork o movimiento consciente en Omzone."
+    },
+    "immersions": {
+      "title": "Inmersiones",
+      "subtitle": "Retiros y programas intensivos de transformación.",
+      "metaTitle": "Inmersiones | Omzone",
+      "metaDescription": "Programas de inmersión y retiros de bienestar en Omzone."
+    },
+    "stays": {
+      "title": "Estancias",
+      "subtitle": "Espacios exclusivos para descanso y regeneración.",
+      "metaTitle": "Estancias | Omzone",
+      "metaDescription": "Estancias privadas de bienestar y regeneración en Omzone."
+    },
+    "services": {
+      "title": "Servicios",
+      "subtitle": "Masajes, terapias y bienestar personalizado.",
+      "metaTitle": "Servicios | Omzone",
+      "metaDescription": "Servicios de bienestar personalizado, masajes y terapias en Omzone."
+    },
+    "experiences": {
+      "title": "Experiencias",
+      "subtitle": "Aventuras conscientes en la naturaleza.",
+      "metaTitle": "Experiencias | Omzone",
+      "metaDescription": "Experiencias de surf, apnea y aventura consciente en Omzone."
+    }
+  }
+}

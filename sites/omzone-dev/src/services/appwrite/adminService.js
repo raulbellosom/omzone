@@ -30,7 +30,12 @@ import {
   COL_BOOKINGS,
   COL_ACCESS_PASSES,
   COL_APP_SETTINGS,
+  COL_OFFERINGS,
+  COL_OFFERING_SLOTS,
+  COL_AVAILABILITY_BLOCKS,
+  COL_CONTENT_SECTIONS,
   FN_ADMIN_WRITE_CATALOG,
+  FN_ADMIN_WRITE_OFFERINGS,
 } from "@/env";
 import { parseDescriptionWithOtherType } from "@/lib/product-type-meta";
 
@@ -960,4 +965,278 @@ export async function upsertAppSettings(data) {
     );
   }
   return databases.createDocument(DB, COL_APP_SETTINGS, ID.unique(), payload);
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// OFFERINGS MODEL
+// ══════════════════════════════════════════════════════════════════════════════
+
+// ── Normalizers (offerings) ──────────────────────────────────────────────────
+
+function normalizeAdminOffering(doc) {
+  if (!doc) return null;
+  return {
+    $id: doc.$id,
+    $createdAt: doc.$createdAt,
+    slug: doc.slug,
+    title_es: doc.titleEs,
+    title_en: doc.titleEn,
+    summary_es: doc.summaryEs,
+    summary_en: doc.summaryEn,
+    description_es: doc.descriptionEs,
+    description_en: doc.descriptionEn,
+    category: doc.category,
+    type: doc.type,
+    yoga_style: doc.yogaStyle ?? null,
+    booking_mode: doc.bookingMode,
+    pricing_mode: doc.pricingMode,
+    base_price: doc.basePrice ?? null,
+    currency: doc.currency ?? "MXN",
+    duration_min: doc.durationMin ?? null,
+    min_guests: doc.minGuests ?? 1,
+    max_guests: doc.maxGuests ?? 1,
+    location_label: doc.locationLabel ?? null,
+    cover_image_id: doc.coverImageId ?? null,
+    cover_image_bucket: doc.coverImageBucket ?? null,
+    cta_label_es: doc.ctaLabelEs ?? null,
+    cta_label_en: doc.ctaLabelEn ?? null,
+    badges_json: doc.badgesJson ?? null,
+    is_featured: doc.isFeatured ?? false,
+    show_on_home: doc.showOnHome ?? false,
+    display_order: doc.displayOrder ?? 0,
+    status: doc.status ?? "draft",
+    enabled: doc.enabled ?? true,
+    created_at: doc.createdAt ?? doc.$createdAt,
+    updated_at: doc.updatedAt ?? null,
+  };
+}
+
+function normalizeAdminSlot(doc) {
+  if (!doc) return null;
+  return {
+    $id: doc.$id,
+    $createdAt: doc.$createdAt,
+    offering_id: doc.offeringId,
+    start_at: doc.startAt,
+    end_at: doc.endAt ?? null,
+    date_label: doc.dateLabel ?? null,
+    capacity_total: doc.capacityTotal ?? 0,
+    capacity_taken: doc.capacityTaken ?? 0,
+    price_override: doc.priceOverride ?? null,
+    status: doc.status ?? "open",
+    location_label: doc.locationLabel ?? null,
+    notes: doc.notes ?? null,
+    enabled: doc.enabled ?? true,
+  };
+}
+
+function normalizeAdminBlock(doc) {
+  if (!doc) return null;
+  return {
+    $id: doc.$id,
+    $createdAt: doc.$createdAt,
+    offering_id: doc.offeringId ?? null,
+    start_at: doc.startAt,
+    end_at: doc.endAt,
+    reason: doc.reason ?? null,
+    block_type: doc.blockType,
+    enabled: doc.enabled ?? true,
+  };
+}
+
+function normalizeAdminContentSection(doc) {
+  if (!doc) return null;
+  return {
+    $id: doc.$id,
+    section_key: doc.sectionKey,
+    title_es: doc.titleEs ?? null,
+    title_en: doc.titleEn ?? null,
+    subtitle_es: doc.subtitleEs ?? null,
+    subtitle_en: doc.subtitleEn ?? null,
+    body_es: doc.bodyEs ?? null,
+    body_en: doc.bodyEn ?? null,
+    cta_label_es: doc.ctaLabelEs ?? null,
+    cta_label_en: doc.ctaLabelEn ?? null,
+    cta_url: doc.ctaUrl ?? null,
+    image_id: doc.imageId ?? null,
+    image_bucket: doc.imageBucket ?? null,
+    display_order: doc.displayOrder ?? 0,
+    enabled: doc.enabled ?? true,
+  };
+}
+
+// ── Helper ───────────────────────────────────────────────────────────────────
+
+async function _invokeAdminOfferingsWrite(operation, payload = {}) {
+  if (!FN_ADMIN_WRITE_OFFERINGS) {
+    throw new Error(
+      "La Function admin-write-offerings no esta configurada en el entorno.",
+    );
+  }
+
+  const execution = await functions.createExecution(
+    FN_ADMIN_WRITE_OFFERINGS,
+    JSON.stringify({ operation, payload }),
+    false,
+    "/",
+    "POST",
+    { "Content-Type": "application/json" },
+  );
+
+  let parsed = null;
+  try {
+    parsed = execution?.responseBody
+      ? JSON.parse(execution.responseBody)
+      : null;
+  } catch {
+    throw new Error("Respuesta invalida de admin-write-offerings.");
+  }
+
+  if (!parsed?.ok) {
+    throw new Error(parsed?.message || "No se pudo completar la operacion.");
+  }
+
+  return parsed.data ?? null;
+}
+
+// ── Offerings CRUD ───────────────────────────────────────────────────────────
+
+export async function listOfferings({ category, status } = {}) {
+  const queries = [Query.orderAsc("displayOrder"), Query.limit(200)];
+  if (category) queries.push(Query.equal("category", category));
+  if (status) queries.push(Query.equal("status", status));
+  const res = await databases.listDocuments(DB, COL_OFFERINGS, queries);
+  return res.documents.map(normalizeAdminOffering);
+}
+
+export async function createOffering(data) {
+  const doc = await _invokeAdminOfferingsWrite("offering.create", data);
+  return normalizeAdminOffering(doc);
+}
+
+export async function updateOffering(offeringId, data) {
+  const doc = await _invokeAdminOfferingsWrite("offering.update", {
+    offering_id: offeringId,
+    ...data,
+  });
+  return normalizeAdminOffering(doc);
+}
+
+export async function toggleOffering(offeringId, enabled) {
+  const doc = await _invokeAdminOfferingsWrite("offering.toggle", {
+    offering_id: offeringId,
+    enabled,
+  });
+  return normalizeAdminOffering(doc);
+}
+
+export async function deleteOffering(offeringId) {
+  return _invokeAdminOfferingsWrite("offering.delete", {
+    offering_id: offeringId,
+  });
+}
+
+// ── Offering Slots CRUD ──────────────────────────────────────────────────────
+
+export async function listSlots({ offeringId, status } = {}) {
+  const queries = [Query.orderAsc("startAt"), Query.limit(200)];
+  if (offeringId) queries.push(Query.equal("offeringId", offeringId));
+  if (status) queries.push(Query.equal("status", status));
+  const res = await databases.listDocuments(DB, COL_OFFERING_SLOTS, queries);
+  return res.documents.map(normalizeAdminSlot);
+}
+
+export async function createSlot(data) {
+  const doc = await _invokeAdminOfferingsWrite("slot.create", data);
+  return normalizeAdminSlot(doc);
+}
+
+export async function updateSlot(slotId, data) {
+  const doc = await _invokeAdminOfferingsWrite("slot.update", {
+    slot_id: slotId,
+    ...data,
+  });
+  return normalizeAdminSlot(doc);
+}
+
+export async function toggleSlot(slotId, enabled) {
+  const doc = await _invokeAdminOfferingsWrite("slot.toggle", {
+    slot_id: slotId,
+    enabled,
+  });
+  return normalizeAdminSlot(doc);
+}
+
+export async function cancelSlot(slotId) {
+  const doc = await _invokeAdminOfferingsWrite("slot.cancel", {
+    slot_id: slotId,
+  });
+  return normalizeAdminSlot(doc);
+}
+
+export async function deleteSlot(slotId) {
+  return _invokeAdminOfferingsWrite("slot.delete", { slot_id: slotId });
+}
+
+// ── Availability Blocks CRUD ─────────────────────────────────────────────────
+
+export async function listBlocks({ offeringId } = {}) {
+  const queries = [Query.orderAsc("startAt"), Query.limit(100)];
+  if (offeringId) queries.push(Query.equal("offeringId", offeringId));
+  const res = await databases.listDocuments(DB, COL_AVAILABILITY_BLOCKS, queries);
+  return res.documents.map(normalizeAdminBlock);
+}
+
+export async function createBlock(data) {
+  const doc = await _invokeAdminOfferingsWrite("block.create", data);
+  return normalizeAdminBlock(doc);
+}
+
+export async function updateBlock(blockId, data) {
+  const doc = await _invokeAdminOfferingsWrite("block.update", {
+    block_id: blockId,
+    ...data,
+  });
+  return normalizeAdminBlock(doc);
+}
+
+export async function deleteBlock(blockId) {
+  return _invokeAdminOfferingsWrite("block.delete", { block_id: blockId });
+}
+
+// ── Content Sections CRUD ────────────────────────────────────────────────────
+
+export async function listContentSections() {
+  const res = await databases.listDocuments(DB, COL_CONTENT_SECTIONS, [
+    Query.orderAsc("displayOrder"),
+    Query.limit(100),
+  ]);
+  return res.documents.map(normalizeAdminContentSection);
+}
+
+export async function createContentSection(data) {
+  const doc = await _invokeAdminOfferingsWrite("content.create", data);
+  return normalizeAdminContentSection(doc);
+}
+
+export async function updateContentSection(sectionId, data) {
+  const doc = await _invokeAdminOfferingsWrite("content.update", {
+    section_id: sectionId,
+    ...data,
+  });
+  return normalizeAdminContentSection(doc);
+}
+
+export async function toggleContentSection(sectionId, enabled) {
+  const doc = await _invokeAdminOfferingsWrite("content.toggle", {
+    section_id: sectionId,
+    enabled,
+  });
+  return normalizeAdminContentSection(doc);
+}
+
+export async function deleteContentSection(sectionId) {
+  return _invokeAdminOfferingsWrite("content.delete", {
+    section_id: sectionId,
+  });
 }

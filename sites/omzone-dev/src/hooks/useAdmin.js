@@ -373,6 +373,178 @@ export function useUpsertAppSettings() {
   });
 }
 
+// ── Offerings ─────────────────────────────────────────────────────────────────
+
+export function useAdminOfferings(options = {}) {
+  return useQuery({
+    queryKey: ["adminOfferings", options],
+    queryFn: () => admin.listOfferings(options),
+  });
+}
+
+export function useCreateOffering() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (data) => admin.createOffering(data),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["adminOfferings"] }),
+  });
+}
+
+export function useUpdateOffering() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ offeringId, data }) =>
+      admin.updateOffering(offeringId, data),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["adminOfferings"] }),
+  });
+}
+
+export function useToggleOffering() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ offeringId, enabled }) =>
+      admin.toggleOffering(offeringId, enabled),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["adminOfferings"] }),
+  });
+}
+
+export function useDeleteOffering() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (offeringId) => admin.deleteOffering(offeringId),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["adminOfferings"] }),
+  });
+}
+
+// ── Offering Slots ────────────────────────────────────────────────────────────
+
+export function useAdminSlots(options = {}) {
+  return useQuery({
+    queryKey: ["adminSlots", options],
+    queryFn: () => admin.listSlots(options),
+  });
+}
+
+export function useCreateSlot() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (data) => admin.createSlot(data),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["adminSlots"] }),
+  });
+}
+
+export function useUpdateSlot() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ slotId, data }) => admin.updateSlot(slotId, data),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["adminSlots"] }),
+  });
+}
+
+export function useToggleSlot() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ slotId, enabled }) => admin.toggleSlot(slotId, enabled),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["adminSlots"] }),
+  });
+}
+
+export function useCancelSlot() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (slotId) => admin.cancelSlot(slotId),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["adminSlots"] }),
+  });
+}
+
+export function useDeleteSlot() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (slotId) => admin.deleteSlot(slotId),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["adminSlots"] }),
+  });
+}
+
+// ── Availability Blocks ──────────────────────────────────────────────────────
+
+export function useAdminBlocks(options = {}) {
+  return useQuery({
+    queryKey: ["adminBlocks", options],
+    queryFn: () => admin.listBlocks(options),
+  });
+}
+
+export function useCreateBlock() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (data) => admin.createBlock(data),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["adminBlocks"] }),
+  });
+}
+
+export function useUpdateBlock() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ blockId, data }) => admin.updateBlock(blockId, data),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["adminBlocks"] }),
+  });
+}
+
+export function useDeleteBlock() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (blockId) => admin.deleteBlock(blockId),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["adminBlocks"] }),
+  });
+}
+
+// ── Content Sections ─────────────────────────────────────────────────────────
+
+export function useAdminContentSections() {
+  return useQuery({
+    queryKey: ["adminContentSections"],
+    queryFn: admin.listContentSections,
+  });
+}
+
+export function useCreateContentSection() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (data) => admin.createContentSection(data),
+    onSuccess: () =>
+      qc.invalidateQueries({ queryKey: ["adminContentSections"] }),
+  });
+}
+
+export function useUpdateContentSection() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ sectionId, data }) =>
+      admin.updateContentSection(sectionId, data),
+    onSuccess: () =>
+      qc.invalidateQueries({ queryKey: ["adminContentSections"] }),
+  });
+}
+
+export function useToggleContentSection() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ sectionId, enabled }) =>
+      admin.toggleContentSection(sectionId, enabled),
+    onSuccess: () =>
+      qc.invalidateQueries({ queryKey: ["adminContentSections"] }),
+  });
+}
+
+export function useDeleteContentSection() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (sectionId) => admin.deleteContentSection(sectionId),
+    onSuccess: () =>
+      qc.invalidateQueries({ queryKey: ["adminContentSections"] }),
+  });
+}
+
 // ── Stock Images (root-only) ──────────────────────────────────────────────────
 
 export function useStockImages() {

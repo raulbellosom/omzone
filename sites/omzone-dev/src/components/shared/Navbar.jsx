@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Menu, LogOut, LayoutDashboard, Globe, User } from "lucide-react";
+import { Menu, LogOut, LayoutDashboard, Globe, User, BookMarked, ShoppingBag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -27,9 +27,11 @@ import ROUTES from "@/constants/routes";
 import { cn } from "@/lib/utils";
 
 const navLinks = [
-  { key: "nav.classes", href: ROUTES.CLASSES },
-  { key: "nav.packages", href: ROUTES.PACKAGES },
-  { key: "nav.wellness", href: ROUTES.WELLNESS },
+  { key: "nav.sessions", href: ROUTES.SESSIONS },
+  { key: "nav.immersions", href: ROUTES.IMMERSIONS },
+  { key: "nav.stays", href: ROUTES.STAYS },
+  { key: "nav.services", href: ROUTES.SERVICES },
+  { key: "nav.agenda", href: ROUTES.AGENDA },
 ];
 
 export default function Navbar() {
@@ -77,11 +79,7 @@ export default function Navbar() {
 
   const avatarUrl = user?.avatar_id ? getAvatarUrl(user.avatar_id, 64) : null;
 
-  const logoHref = !user
-    ? ROUTES.HOME
-    : user.role_key === "client"
-      ? ROUTES.ZONE
-      : ROUTES.ADMIN;
+  const logoHref = ROUTES.HOME;
 
   return (
     <header
@@ -173,7 +171,25 @@ export default function Navbar() {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
                   <Link
-                    to={ROUTES.ZONE_PROFILE}
+                    to={ROUTES.ACCOUNT_BOOKINGS}
+                    className="flex items-center gap-2"
+                  >
+                    <BookMarked className="h-4 w-4 text-charcoal-muted" />
+                    {t("nav.myBookings")}
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link
+                    to={ROUTES.ACCOUNT_ORDERS}
+                    className="flex items-center gap-2"
+                  >
+                    <ShoppingBag className="h-4 w-4 text-charcoal-muted" />
+                    {t("nav.myOrders")}
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link
+                    to={ROUTES.ACCOUNT_PROFILE}
                     className="flex items-center gap-2"
                   >
                     <User className="h-4 w-4 text-charcoal-muted" />
@@ -239,7 +255,7 @@ export default function Navbar() {
                     "bg-white/92 text-charcoal shadow-lg shadow-charcoal/10 hover:bg-white",
                 )}
               >
-                <Link to={ROUTES.CLASSES}>{t("actions.bookClass")}</Link>
+                <Link to={ROUTES.SESSIONS}>{t("actions.explore")}</Link>
               </Button>
             </>
           )}
@@ -325,7 +341,7 @@ export default function Navbar() {
 
                 <SheetClose asChild>
                   <Link
-                    to={ROUTES.ZONE_PROFILE}
+                    to={ROUTES.ACCOUNT_PROFILE}
                     className="flex items-center gap-2 rounded-xl px-3 py-3 text-sm text-charcoal hover:bg-warm-gray"
                   >
                     <User className="h-4 w-4 text-charcoal-muted" />
@@ -374,8 +390,8 @@ export default function Navbar() {
                   </Link>
                 </SheetClose>
                 <SheetClose asChild>
-                  <Link to={ROUTES.CLASSES}>
-                    <Button className="w-full">{t("actions.bookClass")}</Button>
+                  <Link to={ROUTES.SESSIONS}>
+                    <Button className="w-full">{t("actions.explore")}</Button>
                   </Link>
                 </SheetClose>
               </>

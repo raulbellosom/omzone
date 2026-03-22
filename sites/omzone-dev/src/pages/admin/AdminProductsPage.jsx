@@ -24,9 +24,19 @@ import { getLocalizedOtherType } from "@/lib/product-types";
 import { useCurrency } from "@/hooks/useCurrency";
 import AdminPageHeader from "@/components/shared/AdminPageHeader";
 import AdminFormDialog from "@/components/admin/AdminFormDialog";
+import SearchCombobox from "@/components/shared/SearchCombobox";
 import ImageSourceSelector from "@/components/shared/ImageSourceSelector";
 import { getPreviewUrl } from "@/lib/media";
 import { BUCKET_PUBLIC_MEDIA } from "@/env";
+
+const PRODUCT_TYPE_OPTIONS = [
+  "smoothie",
+  "snack",
+  "supplement",
+  "plan",
+  "addon",
+  "other",
+];
 
 const EMPTY_FORM = {
   name_es: "",
@@ -355,26 +365,19 @@ export default function AdminProductsPage() {
           </div>
           <div className="space-y-1">
             <Label>{t("products.fields.type", "Tipo")}</Label>
-            <select
-              className="w-full h-9 rounded-lg border border-sand bg-white px-3 text-sm focus:outline-none focus:ring-2 focus:ring-sage/30"
+            <SearchCombobox
               value={form.product_type}
-              onChange={(e) =>
-                setForm((f) => ({ ...f, product_type: e.target.value }))
+              onValueChange={(v) =>
+                setForm((f) => ({ ...f, product_type: v }))
               }
-            >
-              {[
-                "smoothie",
-                "snack",
-                "supplement",
-                "plan",
-                "addon",
-                "other",
-              ].map((type) => (
-                <option key={type} value={type}>
-                  {t(`products.types.${type}`, type)}
-                </option>
-              ))}
-            </select>
+              options={PRODUCT_TYPE_OPTIONS.map((type) => ({
+                value: type,
+                label: t(`products.types.${type}`, type),
+              }))}
+              placeholder={t("products.fields.type", "Tipo")}
+              searchPlaceholder={t("common.search", "Buscar...")}
+              emptyMessage={t("common.noData", "Sin datos")}
+            />
           </div>
           <div className="space-y-1">
             <Label>{t("products.fields.price", "Precio")}</Label>
