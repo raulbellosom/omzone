@@ -1,5 +1,5 @@
-import { Routes, Route, Navigate } from "react-router-dom";
-import { Suspense, lazy } from "react";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { Suspense, lazy, useEffect } from "react";
 
 // Layouts
 import PublicLayout from "@/layouts/PublicLayout";
@@ -94,6 +94,11 @@ function PageLoader() {
 }
 
 export default function App() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
   return (
     <Suspense fallback={<PageLoader />}>
       <Routes>
