@@ -5,7 +5,7 @@ export default function ServicesPage() {
     <OfferingSectionsLayout
       category="service"
       pageKey="services"
-      heroVariant="dark"
+      heroVariant="light"
     />
   );
 }

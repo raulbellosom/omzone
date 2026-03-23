@@ -5,7 +5,7 @@ export default function SessionsPage() {
     <OfferingSectionsLayout
       category="wellness_studio"
       pageKey="sessions"
-      heroVariant="dark"
+      heroVariant="light"
     />
   );
 }

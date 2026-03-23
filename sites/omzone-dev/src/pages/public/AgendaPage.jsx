@@ -65,12 +65,20 @@ export default function AgendaPage() {
       />
 
       {/* Hero */}
-      <section className="bg-charcoal pt-28 pb-16 md:pt-32 md:pb-20">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="font-display text-4xl md:text-5xl lg:text-6xl text-white font-semibold leading-tight mb-4">
+      <section className="relative bg-cream pt-28 pb-20 md:pt-36 md:pb-28 overflow-hidden">
+        <div
+          className="absolute top-0 right-0 w-96 h-96 rounded-full blur-3xl -translate-y-1/3 translate-x-1/3 bg-sage/20"
+          aria-hidden="true"
+        />
+        <div
+          className="absolute bottom-0 left-0 w-80 h-80 rounded-full blur-3xl translate-y-1/2 -translate-x-1/3 bg-amber-200/30"
+          aria-hidden="true"
+        />
+        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h1 className="font-display text-5xl md:text-6xl lg:text-7xl text-charcoal font-semibold leading-[0.92] tracking-tight mb-6 max-w-4xl">
             {t("agenda.title")}
           </h1>
-          <p className="text-white/55 text-lg max-w-xl">
+          <p className="text-xl md:text-2xl leading-relaxed max-w-2xl text-charcoal-muted">
             {t("agenda.subtitle")}
           </p>
         </div>
