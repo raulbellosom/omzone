@@ -1,11 +1,11 @@
-import OfferingListingLayout from "@/features/offerings/OfferingListingLayout";
+import OfferingSectionsLayout from "@/features/offerings/OfferingSectionsLayout";
 
 export default function StaysPage() {
   return (
-    <OfferingListingLayout
+    <OfferingSectionsLayout
       category="stay"
       pageKey="stays"
-      cardLayout="overlay"
+      heroVariant="light"
     />
   );
 }

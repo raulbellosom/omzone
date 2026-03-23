@@ -11,7 +11,7 @@ import { getPreviewUrl } from "@/lib/media";
 
 export default function EditorialSection() {
   const { t } = useTranslation("landing");
-  const { data: sections } = useContentSections();
+  const { data: sections } = useContentSections({ scope: "global" });
 
   if (!sections || sections.length === 0) return null;
 

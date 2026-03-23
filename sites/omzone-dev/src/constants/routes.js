@@ -14,7 +14,9 @@ export const ROUTES = {
   SERVICES: "/services",
   SERVICE_DETAIL: (slug) => `/services/${slug}`,
   EXPERIENCES: "/experiences",
+  EXPERIENCE_DETAIL: (slug) => `/experiences/${slug}`,
   AGENDA: "/agenda",
+  CLASSES: "/sessions",
 
   // ── Autenticación ──────────────────────────────────────────────────────────
   LOGIN: "/login",

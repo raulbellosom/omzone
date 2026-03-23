@@ -123,6 +123,7 @@ export default function App() {
           <Route path="services" element={<ServicesPage />} />
           <Route path="services/:slug" element={<OfferingDetailPage />} />
           <Route path="experiences" element={<ExperiencesPage />} />
+          <Route path="experiences/:slug" element={<OfferingDetailPage />} />
           <Route path="agenda" element={<AgendaPage />} />
         </Route>
 

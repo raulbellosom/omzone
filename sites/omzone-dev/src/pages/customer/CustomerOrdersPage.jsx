@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import { format } from "date-fns";
 import CustomerPageLayout from "@/components/shared/CustomerPageLayout";
 import { es, enUS } from "date-fns/locale";
-import { ShoppingBag, Dumbbell, Package, Leaf } from "lucide-react";
+import { ShoppingBag } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -18,9 +18,7 @@ import ROUTES from "@/constants/routes";
 import { cn } from "@/lib/utils";
 
 const TYPE_ICON = {
-  class_session: Dumbbell,
-  product: Leaf,
-  package: Package,
+  offering: ShoppingBag,
 };
 
 const PAYMENT_BADGE = {
@@ -81,7 +79,9 @@ function OrderCard({ order, t, dateFnsLocale }) {
                       {item.title_snapshot}
                     </p>
                     <p className="text-[10px] text-charcoal-subtle mt-0.5 capitalize">
-                      {t(`orders.types.${item.item_type}`)}
+                      {t(`orders.types.${item.item_type}`, {
+                        defaultValue: item.item_type,
+                      })}
                     </p>
                   </div>
                 </div>

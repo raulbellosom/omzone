@@ -399,6 +399,8 @@
   "bookings": {
     "title": "Bookings",
     "subtitle": "Class bookings from all customers.",
+    "guestCount_one": "{{count}} guest",
+    "guestCount_other": "{{count}} guests",
     "fields": {
       "code": "Code",
       "customer": "Customer",
@@ -413,7 +415,8 @@
       "confirmed": "Confirmed",
       "completed": "Completed",
       "cancelled": "Cancelled"
-    }
+    },
+    "guestCount": "{{count}} guests"
   },
   "orders": {
     "title": "Orders",
@@ -504,6 +507,15 @@
       "changeStock": "Change"
     }
   },
+  "multiImage": {
+    "clearAll": "Clear all",
+    "modeLockedStock": "All images must be from stock",
+    "modeLockedUpload": "All images must be uploaded",
+    "counter": "{{count}} of {{max}} images",
+    "replace": "Replace",
+    "addImage": "Add",
+    "selectStock": "From stock"
+  },
   "offerings": {
     "title": "Offerings",
     "subtitle": "Manage sessions, immersions, stays, services and experiences.",
@@ -518,7 +530,16 @@
     "actions": {
       "new": "New offering",
       "save": "Save",
-      "create": "Create"
+      "create": "Create",
+      "createLocationAndAssign": "Create and assign"
+    },
+    "sections": {
+      "identity": "Identity",
+      "flow": "Flow",
+      "terms": "Terms",
+      "cta": "CTA",
+      "images": "Images",
+      "quickCreateLocation": "Quick create location"
     },
     "dialog": {
       "createTitle": "New offering",
@@ -528,6 +549,7 @@
       "titleEs": "Title ES",
       "titleEn": "Title EN",
       "slug": "Slug",
+      "images": "Images (up to 3)",
       "slugPlaceholder": "Generated if left empty",
       "summaryEs": "Summary ES",
       "summaryEn": "Summary EN",
@@ -544,6 +566,16 @@
       "minGuests": "Min guests",
       "maxGuests": "Max guests",
       "location": "Location",
+      "locationProfile": "Location profile",
+      "locationProfilePlaceholder": "Select location profile",
+      "locationFallbackLabel": "Fallback label",
+      "locationFallbackPlaceholder": "Used when slot/location profile is missing",
+      "locationName": "Location name",
+      "locationAddress": "Address",
+      "locationMapUrl": "Map URL",
+      "locationNotes": "Notes",
+      "cancellationEs": "Cancellation ES",
+      "cancellationEn": "Cancellation EN",
       "ctaLabelEs": "CTA ES",
       "ctaLabelEn": "CTA EN",
       "featured": "Featured",
@@ -560,9 +592,15 @@
       "enabled": "Offering enabled",
       "disabled": "Offering disabled",
       "saveError": "Could not save",
+      "locationCreated": "Location profile created",
+      "locationCreateError": "Could not create location",
       "deleteError": "Could not delete",
       "toggleError": "Could not update status"
     },
+    "validation": {
+      "locationNameRequired": "Location name is required"
+    },
+    "fallbackLabel": "Offering",
     "empty": {
       "title": "No offerings yet",
       "description": "Create the first offering to start publishing your catalog."
@@ -621,6 +659,7 @@
     },
     "fields": {
       "offering": "Offering (optional)",
+      "offeringGlobalOption": "-- Global --",
       "startAt": "From",
       "endAt": "Until",
       "reason": "Reason",
@@ -643,8 +682,12 @@
       "createTitle": "New section",
       "editTitle": "Edit section"
     },
+    "sections": {
+      "images": "Images"
+    },
     "fields": {
       "sectionKey": "Section key",
+      "sectionKeyPlaceholder": "hero, about, testimonials...",
       "titleEs": "Title ES",
       "titleEn": "Title EN",
       "subtitleEs": "Subtitle ES",
@@ -654,8 +697,24 @@
       "ctaLabelEs": "CTA ES",
       "ctaLabelEn": "CTA EN",
       "ctaUrl": "CTA URL",
+      "ctaUrlPlaceholder": "https://...",
+      "ctaSection": "CTA",
+      "scope": "Scope",
+      "scopePlaceholder": "Scope",
+      "offeringOptional": "Offering (optional)",
+      "offeringPlaceholder": "Select offering",
       "displayOrder": "Order",
-      "enabled": "Enabled"
+      "enabled": "Enabled",
+      "images": "Images (up to 3)"
+    },
+    "scope": {
+      "global": "Global",
+      "offering": "Per offering"
+    },
+    "chips": {
+      "scope": "Scope",
+      "offering": "Offering",
+      "cta": "CTA"
     },
     "feedback": {
       "created": "Section created",

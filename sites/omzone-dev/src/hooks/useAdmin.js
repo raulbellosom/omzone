@@ -1,6 +1,7 @@
-/**
- * useAdmin — hooks de datos para el panel administrativo.
- * Conectado directamente a Appwrite vía adminService.js.
+﻿/**
+ * useAdmin - admin data hooks.
+ *
+ * Legacy classes/wellness hooks were removed in the offerings-only cut.
  */
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import * as admin from "@/services/appwrite/adminService";
@@ -10,283 +11,12 @@ import {
   deleteStockImage,
 } from "@/lib/media";
 
-// ── Dashboard ─────────────────────────────────────────────────────────────────
-
 export function useAdminOverview() {
   return useQuery({
     queryKey: ["adminOverview"],
     queryFn: admin.getDashboardMetrics,
   });
 }
-
-// ── Classes ───────────────────────────────────────────────────────────────────
-
-export function useAdminClasses() {
-  return useQuery({
-    queryKey: ["adminClasses"],
-    queryFn: admin.listClasses,
-  });
-}
-
-export function useToggleClass() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: ({ classId, enabled }) => admin.toggleClass(classId, enabled),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["adminClasses"] }),
-  });
-}
-
-export function useCreateClass() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: (data) => admin.createClass(data),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["adminClasses"] }),
-  });
-}
-
-export function useUpdateClass() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: ({ classId, data }) => admin.updateClass(classId, data),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["adminClasses"] }),
-  });
-}
-
-export function useDeleteClass() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: (classId) => admin.deleteClass(classId),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["adminClasses"] }),
-  });
-}
-
-// ── Instructors & Class Types ─────────────────────────────────────────────────
-
-export function useAdminInstructors() {
-  return useQuery({
-    queryKey: ["adminInstructors"],
-    queryFn: admin.listInstructors,
-  });
-}
-
-export function useCreateInstructor() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: (data) => admin.createInstructor(data),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["adminInstructors"] });
-      qc.invalidateQueries({ queryKey: ["adminClasses"] });
-    },
-  });
-}
-
-export function useUpdateInstructor() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: ({ instructorId, data }) =>
-      admin.updateInstructor(instructorId, data),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["adminInstructors"] });
-      qc.invalidateQueries({ queryKey: ["adminClasses"] });
-    },
-  });
-}
-
-export function useToggleInstructor() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: ({ instructorId, enabled }) =>
-      admin.toggleInstructor(instructorId, enabled),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["adminInstructors"] });
-      qc.invalidateQueries({ queryKey: ["adminClasses"] });
-    },
-  });
-}
-
-export function useDeleteInstructor() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: (instructorId) => admin.deleteInstructor(instructorId),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["adminInstructors"] });
-      qc.invalidateQueries({ queryKey: ["adminClasses"] });
-    },
-  });
-}
-
-export function useAdminClassTypes() {
-  return useQuery({
-    queryKey: ["adminClassTypes"],
-    queryFn: admin.listClassTypes,
-  });
-}
-
-export function useCreateClassType() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: (data) => admin.createClassType(data),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["adminClassTypes"] });
-      qc.invalidateQueries({ queryKey: ["adminClasses"] });
-    },
-  });
-}
-
-export function useUpdateClassType() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: ({ classTypeId, data }) =>
-      admin.updateClassType(classTypeId, data),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["adminClassTypes"] });
-      qc.invalidateQueries({ queryKey: ["adminClasses"] });
-    },
-  });
-}
-
-export function useToggleClassType() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: ({ classTypeId, enabled }) =>
-      admin.toggleClassType(classTypeId, enabled),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["adminClassTypes"] });
-      qc.invalidateQueries({ queryKey: ["adminClasses"] });
-    },
-  });
-}
-
-export function useDeleteClassType() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: (classTypeId) => admin.deleteClassType(classTypeId),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["adminClassTypes"] });
-      qc.invalidateQueries({ queryKey: ["adminClasses"] });
-    },
-  });
-}
-
-// ── Sessions ──────────────────────────────────────────────────────────────────
-
-export function useAdminSessions() {
-  return useQuery({
-    queryKey: ["adminSessions"],
-    queryFn: () => admin.listSessions(),
-  });
-}
-
-export function useCancelSession() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: (sessionId) => admin.cancelSession(sessionId),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["adminSessions"] }),
-  });
-}
-
-export function useCreateSession() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: (data) => admin.createSession(data),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["adminSessions"] }),
-  });
-}
-
-export function useUpdateSession() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: ({ sessionId, data }) => admin.updateSession(sessionId, data),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["adminSessions"] }),
-  });
-}
-
-export function useToggleSession() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: ({ sessionId, enabled }) =>
-      admin.toggleSession(sessionId, enabled),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["adminSessions"] }),
-  });
-}
-
-export function useDeleteSession() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: (sessionId) => admin.deleteSession(sessionId),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["adminSessions"] }),
-  });
-}
-
-// ── Packages ──────────────────────────────────────────────────────────────────
-
-export function useAdminPackages() {
-  return useQuery({
-    queryKey: ["adminPackages"],
-    queryFn: admin.listPackages,
-  });
-}
-
-export function useTogglePackage() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: ({ packageId, enabled }) =>
-      admin.togglePackage(packageId, enabled),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["adminPackages"] }),
-  });
-}
-
-export function useCreatePackage() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: (data) => admin.createPackage(data),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["adminPackages"] }),
-  });
-}
-
-export function useUpdatePackage() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: ({ packageId, data }) => admin.updatePackage(packageId, data),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["adminPackages"] }),
-  });
-}
-
-// ── Products (Wellness) ───────────────────────────────────────────────────────
-
-export function useAdminProducts() {
-  return useQuery({
-    queryKey: ["adminProducts"],
-    queryFn: admin.listProducts,
-  });
-}
-
-export function useToggleProduct() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: ({ productId, enabled }) =>
-      admin.toggleProduct(productId, enabled),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["adminProducts"] }),
-  });
-}
-
-export function useCreateProduct() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: (data) => admin.createProduct(data),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["adminProducts"] }),
-  });
-}
-
-export function useUpdateProduct() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: ({ productId, data }) => admin.updateProduct(productId, data),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["adminProducts"] }),
-  });
-}
-
-// ── Customers ─────────────────────────────────────────────────────────────────
 
 export function useAdminCustomers() {
   return useQuery({
@@ -295,12 +25,10 @@ export function useAdminCustomers() {
   });
 }
 
-// ── Leads ─────────────────────────────────────────────────────────────────────
-
 export function useAdminLeads() {
   return useQuery({
     queryKey: ["adminLeads"],
-    queryFn: () => admin.listLeads(),
+    queryFn: admin.listLeads,
   });
 }
 
@@ -320,8 +48,6 @@ export function useCreateLead() {
   });
 }
 
-// ── Orders ────────────────────────────────────────────────────────────────────
-
 export function useAdminOrders() {
   return useQuery({
     queryKey: ["adminOrders"],
@@ -329,16 +55,12 @@ export function useAdminOrders() {
   });
 }
 
-// ── Bookings ──────────────────────────────────────────────────────────────────
-
 export function useAdminBookings() {
   return useQuery({
     queryKey: ["adminBookings"],
     queryFn: admin.listBookings,
   });
 }
-
-// ── Access Passes ─────────────────────────────────────────────────────────────
 
 export function useAdminPasses({ clientUserId, status } = {}) {
   return useQuery({
@@ -355,8 +77,6 @@ export function useCancelPass() {
   });
 }
 
-// ── App Settings ──────────────────────────────────────────────────────────────
-
 export function useAppSettings() {
   return useQuery({
     queryKey: ["appSettings"],
@@ -372,8 +92,6 @@ export function useUpsertAppSettings() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ["appSettings"] }),
   });
 }
-
-// ── Offerings ─────────────────────────────────────────────────────────────────
 
 export function useAdminOfferings(options = {}) {
   return useQuery({
@@ -393,8 +111,7 @@ export function useCreateOffering() {
 export function useUpdateOffering() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({ offeringId, data }) =>
-      admin.updateOffering(offeringId, data),
+    mutationFn: ({ offeringId, data }) => admin.updateOffering(offeringId, data),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["adminOfferings"] }),
   });
 }
@@ -416,12 +133,54 @@ export function useDeleteOffering() {
   });
 }
 
-// ── Offering Slots ────────────────────────────────────────────────────────────
-
 export function useAdminSlots(options = {}) {
   return useQuery({
     queryKey: ["adminSlots", options],
     queryFn: () => admin.listSlots(options),
+  });
+}
+
+export function useAdminLocationProfiles(options = {}) {
+  return useQuery({
+    queryKey: ["adminLocationProfiles", options],
+    queryFn: () => admin.listLocationProfiles(options),
+  });
+}
+
+export function useCreateLocationProfile() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (data) => admin.createLocationProfile(data),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["adminLocationProfiles"] });
+      qc.invalidateQueries({ queryKey: ["adminOfferings"] });
+    },
+  });
+}
+
+export function useUpdateLocationProfile() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ locationProfileId, data }) =>
+      admin.updateLocationProfile(locationProfileId, data),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["adminLocationProfiles"] });
+      qc.invalidateQueries({ queryKey: ["adminOfferings"] });
+      qc.invalidateQueries({ queryKey: ["adminSlots"] });
+    },
+  });
+}
+
+export function useDeleteLocationProfile() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (locationProfileId) =>
+      admin.deleteLocationProfile(locationProfileId),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["adminLocationProfiles"] });
+      qc.invalidateQueries({ queryKey: ["adminOfferings"] });
+      qc.invalidateQueries({ queryKey: ["adminSlots"] });
+    },
   });
 }
 
@@ -465,8 +224,6 @@ export function useDeleteSlot() {
   });
 }
 
-// ── Availability Blocks ──────────────────────────────────────────────────────
-
 export function useAdminBlocks(options = {}) {
   return useQuery({
     queryKey: ["adminBlocks", options],
@@ -498,12 +255,10 @@ export function useDeleteBlock() {
   });
 }
 
-// ── Content Sections ─────────────────────────────────────────────────────────
-
-export function useAdminContentSections() {
+export function useAdminContentSections(options = {}) {
   return useQuery({
-    queryKey: ["adminContentSections"],
-    queryFn: admin.listContentSections,
+    queryKey: ["adminContentSections", options],
+    queryFn: () => admin.listContentSections(options),
   });
 }
 
@@ -511,18 +266,15 @@ export function useCreateContentSection() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (data) => admin.createContentSection(data),
-    onSuccess: () =>
-      qc.invalidateQueries({ queryKey: ["adminContentSections"] }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["adminContentSections"] }),
   });
 }
 
 export function useUpdateContentSection() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({ sectionId, data }) =>
-      admin.updateContentSection(sectionId, data),
-    onSuccess: () =>
-      qc.invalidateQueries({ queryKey: ["adminContentSections"] }),
+    mutationFn: ({ sectionId, data }) => admin.updateContentSection(sectionId, data),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["adminContentSections"] }),
   });
 }
 
@@ -531,8 +283,7 @@ export function useToggleContentSection() {
   return useMutation({
     mutationFn: ({ sectionId, enabled }) =>
       admin.toggleContentSection(sectionId, enabled),
-    onSuccess: () =>
-      qc.invalidateQueries({ queryKey: ["adminContentSections"] }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["adminContentSections"] }),
   });
 }
 
@@ -540,12 +291,9 @@ export function useDeleteContentSection() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (sectionId) => admin.deleteContentSection(sectionId),
-    onSuccess: () =>
-      qc.invalidateQueries({ queryKey: ["adminContentSections"] }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["adminContentSections"] }),
   });
 }
-
-// ── Stock Images (root-only) ──────────────────────────────────────────────────
 
 export function useStockImages() {
   return useQuery({

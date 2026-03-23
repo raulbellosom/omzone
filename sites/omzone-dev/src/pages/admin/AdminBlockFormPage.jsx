@@ -122,7 +122,7 @@ export default function AdminBlockFormPage() {
   }
 
   const offeringOptions = [
-    { value: "", label: "— Global —" },
+    { value: "", label: t("blocks.fields.offeringGlobalOption") },
     ...offerings.map((o) => ({
       value: o.$id,
       label: resolveField(o, "title") || o.slug,

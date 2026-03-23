@@ -10,8 +10,6 @@ import {
   ChevronDown,
   ChevronRight,
   ShoppingBag,
-  Leaf,
-  Package,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -33,9 +31,7 @@ const FULFILL_BADGE = {
   pending: "default",
 };
 const TYPE_ICON = {
-  class_session: ShoppingBag,
-  product: Leaf,
-  package: Package,
+  offering: ShoppingBag,
 };
 
 function OrderRow({ order, t, dateFnsLocale }) {

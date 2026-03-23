@@ -59,6 +59,8 @@ function offeringHref(offering) {
       return ROUTES.STAY_DETAIL(slug);
     case "service":
       return ROUTES.SERVICE_DETAIL(slug);
+    case "experience":
+      return ROUTES.EXPERIENCE_DETAIL(slug);
     default:
       return ROUTES.SESSION_DETAIL(slug);
   }
@@ -99,17 +101,16 @@ function useCardData(offering) {
 
   const href = offeringHref(offering);
 
-  // Price display
+  // Price display - only show actual prices, not labels for request_quote
   let priceLabel = null;
   if (offering.pricing_mode === "fixed_price" && offering.base_price) {
     priceLabel = formatPrice(offering.base_price, offering.currency);
   } else if (offering.pricing_mode === "from_price" && offering.base_price) {
     priceLabel = `${t("card.from")} ${formatPrice(offering.base_price, offering.currency)}`;
-  } else if (offering.pricing_mode === "request_quote") {
-    priceLabel = t("card.requestQuote");
   }
+  // request_quote mode: no price shown, only CTA button from offering
 
-  // CTA label
+  // CTA label - prioritize offering field
   let ctaLabel = resolveField(offering, "cta_label");
   if (!ctaLabel) {
     switch (offering.booking_mode) {
@@ -185,9 +186,7 @@ function OfferingCardOverlay({ offering }) {
         />
       ) : (
         <>
-          <div
-            className={cn("absolute inset-0 bg-linear-to-br", gradient)}
-          />
+          <div className={cn("absolute inset-0 bg-linear-to-br", gradient)} />
           <CategoryIcon
             className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-36 h-36 text-white/6"
             aria-hidden="true"
@@ -292,9 +291,7 @@ function OfferingCardSplit({ offering }) {
           />
         ) : (
           <>
-            <div
-              className={cn("absolute inset-0 bg-linear-to-br", gradient)}
-            />
+            <div className={cn("absolute inset-0 bg-linear-to-br", gradient)} />
             <CategoryIcon
               className="absolute inset-0 m-auto w-14 h-14 text-white/15"
               aria-hidden="true"

@@ -18,6 +18,7 @@ import SearchCombobox from "@/components/shared/SearchCombobox";
 import {
   useAdminOfferings,
   useAdminSlots,
+  useAdminLocationProfiles,
   useCreateSlot,
   useUpdateSlot,
 } from "@/hooks/useAdmin";
@@ -33,7 +34,7 @@ const EMPTY_FORM = {
   capacity_total: 0,
   capacity_taken: 0,
   price_override: "",
-  location_label: "",
+  location_profile_id: "",
   status: "open",
   notes: "",
   enabled: true,
@@ -59,6 +60,7 @@ export default function AdminSlotFormPage() {
   const isEditing = !!id;
 
   const { data: offerings = [] } = useAdminOfferings();
+  const { data: locationProfiles = [] } = useAdminLocationProfiles();
   const { data: slots = [], isLoading: slotsLoading } = useAdminSlots();
   const createMutation = useCreateSlot();
   const updateMutation = useUpdateSlot();
@@ -78,7 +80,7 @@ export default function AdminSlotFormPage() {
         capacity_total: existing.capacity_total ?? 0,
         capacity_taken: existing.capacity_taken ?? 0,
         price_override: existing.price_override ?? "",
-        location_label: existing.location_label ?? "",
+        location_profile_id: existing.location_profile_id ?? "",
         status: existing.status ?? "open",
         notes: existing.notes ?? "",
         enabled: existing.enabled ?? true,
@@ -146,6 +148,12 @@ export default function AdminSlotFormPage() {
   const statusOptions = SLOT_STATUS_OPTIONS.map((s) => ({
     value: s,
     label: tOff(`slotStatus.${s}`),
+  }));
+
+  const locationOptions = locationProfiles.map((item) => ({
+    value: item.$id,
+    label: item.name || item.address || item.$id,
+    description: item.address || "",
   }));
 
   const isBusy = createMutation.isPending || updateMutation.isPending;
@@ -261,9 +269,13 @@ export default function AdminSlotFormPage() {
               </div>
               <div className="space-y-1.5">
                 <Label>{t("offeringSlots.fields.location")}</Label>
-                <Input
-                  value={form.location_label}
-                  onChange={(e) => setField("location_label", e.target.value)}
+                <SearchCombobox
+                  value={form.location_profile_id}
+                  onValueChange={(v) => setField("location_profile_id", v)}
+                  options={locationOptions}
+                  placeholder={t("offeringSlots.fields.location")}
+                  searchPlaceholder={t("common.search")}
+                  emptyMessage={t("common.noData")}
                 />
               </div>
             </div>

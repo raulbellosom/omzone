@@ -1,11 +1,11 @@
-import OfferingListingLayout from "@/features/offerings/OfferingListingLayout";
+import OfferingSectionsLayout from "@/features/offerings/OfferingSectionsLayout";
 
 export default function ExperiencesPage() {
   return (
-    <OfferingListingLayout
+    <OfferingSectionsLayout
       category="experience"
       pageKey="experiences"
-      cardLayout="overlay"
+      heroVariant="light"
     />
   );
 }

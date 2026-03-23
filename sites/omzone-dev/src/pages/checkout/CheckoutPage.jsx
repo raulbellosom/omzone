@@ -1,10 +1,7 @@
-/**
- * CheckoutPage — checkout unificado para booking, paquetes y productos.
- * Ruta: /checkout
- * Recibe via location.state:
- *   - Booking:  { intent:'booking', items, customerInfo, total }
- *   - Paquete:  { packageId }
- *   - Producto: { productId }
+﻿/**
+ * CheckoutPage - checkout for offerings booking.
+ * Route: /checkout
+ * Expects location.state from BookingPage with intentType='offering_booking'.
  */
 import { useState } from "react";
 import { useLocation, useNavigate, Link } from "react-router-dom";
@@ -20,15 +17,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
 import PageMeta from "@/components/seo/PageMeta";
 import {
-  useWellnessPackageById,
-  useWellnessProductById,
-} from "@/hooks/useWellness";
-import { createOrder, confirmOrder } from "@/services/appwrite/customerService";
+  createOrder,
+  confirmOrder,
+  createOfferingBooking,
+} from "@/services/appwrite/customerService";
 import { useAuth } from "@/hooks/useAuth.jsx";
-import { resolveField } from "@/lib/i18n-data";
 import { useCurrency } from "@/hooks/useCurrency";
 import ROUTES from "@/constants/routes";
 import { cn } from "@/lib/utils";
@@ -40,31 +35,38 @@ function fmtCard(v) {
     .replace(/(.{4})/g, "$1 ")
     .trim();
 }
+
 function fmtExp(v) {
   const d = v.replace(/\D/g, "").slice(0, 4);
   return d.length >= 3 ? `${d.slice(0, 2)} / ${d.slice(2)}` : d;
 }
 
 function validateForm(billing, card, tv) {
-  const b = {},
-    c = {};
+  const b = {};
+  const c = {};
+
   if (!billing.firstName.trim()) b.firstName = tv("required");
   if (!billing.lastName.trim()) b.lastName = tv("required");
   if (!billing.email.trim()) b.email = tv("required");
-  else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(billing.email))
+  else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(billing.email)) {
     b.email = tv("email");
+  }
+
   if (!card.holder.trim()) c.holder = tv("required");
   if (card.number.replace(/\s/g, "").length < 16) c.number = tv("cardNumber");
   if (!/^\d{2} \/ \d{2}$/.test(card.expiry)) c.expiry = tv("expiry");
   if (card.cvv.length < 3) c.cvv = tv("cvv");
+
   return Object.keys(b).length || Object.keys(c).length ? { b, c } : null;
 }
 
-// ── Summary sidebar ───────────────────────────────────────────────────────────
-function OrderSummary({ items, t, loading }) {
+function OrderSummary({ items, t }) {
   const { formatPrice } = useCurrency();
-  if (loading) return <Skeleton className="h-52 w-full rounded-2xl" />;
-  const total = items.reduce((s, i) => s + i.price, 0);
+  const total = items.reduce(
+    (sum, item) => sum + Number(item.price ?? 0) * Number(item.quantity ?? 1),
+    0,
+  );
+
   return (
     <aside className="lg:sticky lg:top-24 space-y-4">
       <Card className="overflow-hidden">
@@ -73,9 +75,7 @@ function OrderSummary({ items, t, loading }) {
           aria-hidden="true"
         />
         <CardContent className="p-5">
-          <h3 className="font-semibold text-charcoal mb-4">
-            {t("orderSummary")}
-          </h3>
+          <h3 className="font-semibold text-charcoal mb-4">{t("orderSummary")}</h3>
           <ul className="space-y-3 pb-4 border-b border-warm-gray-dark/50">
             {items.map((item, i) => (
               <li
@@ -83,9 +83,7 @@ function OrderSummary({ items, t, loading }) {
                 className="flex items-start justify-between gap-3 text-sm"
               >
                 <div className="flex-1">
-                  <p className="font-medium text-charcoal leading-tight">
-                    {item.title}
-                  </p>
+                  <p className="font-medium text-charcoal leading-tight">{item.title}</p>
                   {item.subtitle && (
                     <p className="text-xs text-charcoal-muted mt-0.5 line-clamp-2">
                       {item.subtitle}
@@ -93,7 +91,9 @@ function OrderSummary({ items, t, loading }) {
                   )}
                 </div>
                 <span className="font-semibold text-charcoal shrink-0">
-                  {formatPrice(item.price)}
+                  {formatPrice(
+                    Number(item.price ?? 0) * Number(item.quantity ?? 1) || 0,
+                  )}
                 </span>
               </li>
             ))}
@@ -126,7 +126,6 @@ function OrderSummary({ items, t, loading }) {
   );
 }
 
-// ── Componente principal ──────────────────────────────────────────────────────
 export default function CheckoutPage() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -135,44 +134,11 @@ export default function CheckoutPage() {
   const { user } = useAuth();
   const state = location.state ?? {};
 
-  const intentType = state.items
-    ? "booking"
-    : state.packageId
-      ? "package"
-      : state.productId
-        ? "product"
-        : null;
-
-  const { data: pkg, isLoading: lPkg } = useWellnessPackageById(
-    state.packageId,
-  );
-  const { data: prod, isLoading: lProd } = useWellnessProductById(
-    state.productId,
-  );
-  const isLoadingData = lPkg || lProd;
-
-  const items = (() => {
-    if (intentType === "booking") return state.items ?? [];
-    if (intentType === "package" && pkg)
-      return [
-        {
-          id: pkg.$id,
-          title: resolveField(pkg, "name"),
-          subtitle: resolveField(pkg, "description"),
-          price: pkg.price,
-        },
-      ];
-    if (intentType === "product" && prod)
-      return [
-        {
-          id: prod.$id,
-          title: resolveField(prod, "name"),
-          subtitle: resolveField(prod, "description"),
-          price: prod.price,
-        },
-      ];
-    return [];
-  })();
+  const intentType =
+    state.intentType === "offering_booking" && Array.isArray(state.items)
+      ? "offering_booking"
+      : null;
+  const items = intentType ? state.items ?? [] : [];
 
   const [billing, setBilling] = useState({
     firstName: state.customerInfo?.firstName ?? user?.first_name ?? "",
@@ -195,34 +161,63 @@ export default function CheckoutPage() {
     setBilling((p) => ({ ...p, [k]: v }));
     if (errs.b[k]) setErrs((p) => ({ ...p, b: { ...p.b, [k]: undefined } }));
   }
+
   function onCard(k, v) {
     setCard((p) => ({ ...p, [k]: v }));
     if (errs.c[k]) setErrs((p) => ({ ...p, c: { ...p.c, [k]: undefined } }));
   }
 
   function applyPromo() {
-    setPromoState(
-      promoCode.toUpperCase() === "WELLNESS20" ? "applied" : "invalid",
-    );
+    setPromoState(promoCode.toUpperCase() === "OMZONE20" ? "applied" : "invalid");
   }
 
   async function handleSubmit(e) {
     e.preventDefault();
-    const v = validateForm(billing, card, tv);
-    if (v) {
-      setErrs(v);
+
+    if (!state.offeringId) {
       return;
     }
+
+    const validation = validateForm(billing, card, tv);
+    if (validation) {
+      setErrs(validation);
+      return;
+    }
+
     setSubmitting(true);
     try {
-      const total = items.reduce((s, i) => s + i.price, 0);
+      const total = items.reduce(
+        (sum, item) => sum + Number(item.price ?? 0) * Number(item.quantity ?? 1),
+        0,
+      );
+
       const order = await createOrder({
         items,
         customer_email: billing.email,
         grand_total: total,
-        intent: intentType,
+        intent: "offering_booking",
+        user_id: user?.$id,
       });
+
       await confirmOrder(order.$id);
+
+      await createOfferingBooking({
+        offering_id: state.offeringId,
+        slot_id: state.slotId ?? null,
+        order_id: order.$id,
+        booking_type: state.bookingType ?? null,
+        guest_count: state.guestCount ?? 1,
+        unit_price: state.unitPrice ?? null,
+        extras_json: state.extrasJson ?? null,
+        request_data: {
+          customer_info: billing,
+          source: "checkout",
+          ...state.requestData,
+        },
+        pricing_snapshot: state.pricingSnapshot ?? null,
+        custom_answers: state.customAnswers ?? null,
+      });
+
       navigate(ROUTES.CHECKOUT_CONFIRMATION, {
         replace: true,
         state: {
@@ -230,7 +225,7 @@ export default function CheckoutPage() {
           email: billing.email,
           items,
           total,
-          intentType,
+          intentType: "offering_booking",
         },
       });
     } finally {
@@ -241,12 +236,9 @@ export default function CheckoutPage() {
   if (!intentType) {
     return (
       <div className="min-h-[60vh] flex flex-col items-center justify-center gap-4 px-4 text-center">
-        <span className="text-4xl" aria-hidden="true">
-          🛒
-        </span>
-        <p className="text-charcoal-muted">No hay ningún pedido activo.</p>
+        <p className="text-charcoal-muted">{t("empty.noActiveOrder")}</p>
         <Button asChild variant="outline">
-          <Link to={ROUTES.CLASSES}>Explorar clases</Link>
+          <Link to={ROUTES.SESSIONS}>{t("empty.exploreOfferings")}</Link>
         </Button>
       </div>
     );
@@ -255,8 +247,8 @@ export default function CheckoutPage() {
   return (
     <>
       <PageMeta
-        title={`${t("title")} — Omzone`}
-        description="Completa tu compra de forma segura."
+        title={`${t("title")} - Omzone`}
+        description={t("meta.description")}
         noindex
       />
       <main className="max-w-5xl mx-auto px-4 py-8 md:py-12 min-h-[calc(100vh-4rem)]">
@@ -275,11 +267,8 @@ export default function CheckoutPage() {
         <form onSubmit={handleSubmit} noValidate>
           <div className="grid lg:grid-cols-[1fr_360px] gap-8 items-start">
             <div className="space-y-6">
-              {/* Datos de facturación */}
               <section className="bg-white rounded-2xl border border-warm-gray-dark/40 p-6 shadow-card space-y-4">
-                <h3 className="font-semibold text-charcoal">
-                  {t("billing.title")}
-                </h3>
+                <h3 className="font-semibold text-charcoal">{t("billing.title")}</h3>
                 <div className="grid sm:grid-cols-2 gap-4">
                   {[
                     {
@@ -334,163 +323,123 @@ export default function CheckoutPage() {
                 </div>
               </section>
 
-              {/* Pago */}
               <section className="bg-white rounded-2xl border border-warm-gray-dark/40 p-6 shadow-card space-y-4">
                 <h3 className="font-semibold text-charcoal flex items-center gap-2">
-                  <CreditCard
-                    className="w-4 h-4 text-sage"
-                    aria-hidden="true"
-                  />
+                  <CreditCard className="w-4 h-4 text-sage" aria-hidden="true" />
                   {t("payment.title")}
                 </h3>
                 <div className="flex items-center gap-2 flex-wrap">
                   {["VISA", "MC", "AMEX"].map((n) => (
                     <span
                       key={n}
-                      className="px-2 py-0.5 rounded border border-warm-gray-dark text-[10px] font-bold tracking-widest text-charcoal-subtle"
+                      className="text-[10px] font-medium px-2.5 py-1 rounded-full border border-warm-gray-dark/40 text-charcoal-muted"
                     >
                       {n}
                     </span>
                   ))}
-                  <span className="text-xs text-charcoal-subtle">
-                    {t("payment.methods")}
-                  </span>
                 </div>
-                {/* Titular */}
-                <div>
-                  <Label htmlFor="cc-holder">{t("payment.cardHolder")}</Label>
-                  <Input
-                    id="cc-holder"
-                    value={card.holder}
-                    onChange={(e) => onCard("holder", e.target.value)}
-                    autoComplete="cc-name"
-                    placeholder="Nombre Apellido"
-                    className={cn("mt-1.5", errs.c.holder && "border-red-400")}
-                  />
-                  {errs.c.holder && (
-                    <p className="text-xs text-red-500 mt-1">{errs.c.holder}</p>
-                  )}
-                </div>
-                {/* Número */}
-                <div>
-                  <Label htmlFor="cc-num">{t("payment.cardNumber")}</Label>
-                  <Input
-                    id="cc-num"
-                    value={card.number}
-                    onChange={(e) => onCard("number", fmtCard(e.target.value))}
-                    autoComplete="cc-number"
-                    placeholder="1234 5678 9012 3456"
-                    inputMode="numeric"
-                    className={cn(
-                      "mt-1.5 font-mono tracking-wider",
-                      errs.c.number && "border-red-400",
-                    )}
-                  />
-                  {errs.c.number && (
-                    <p className="text-xs text-red-500 mt-1">{errs.c.number}</p>
-                  )}
-                </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-3">
                   <div>
-                    <Label htmlFor="cc-exp">{t("payment.expiry")}</Label>
+                    <Label htmlFor="c-holder">{t("payment.cardHolder")}</Label>
                     <Input
-                      id="cc-exp"
-                      value={card.expiry}
-                      onChange={(e) => onCard("expiry", fmtExp(e.target.value))}
-                      autoComplete="cc-exp"
-                      placeholder="MM / AA"
+                      id="c-holder"
+                      value={card.holder}
+                      onChange={(e) => onCard("holder", e.target.value)}
+                      className={cn(
+                        "mt-1.5",
+                        errs.c.holder && "border-red-400 focus:border-red-400",
+                      )}
+                    />
+                    {errs.c.holder && (
+                      <p className="text-xs text-red-500 mt-1">{errs.c.holder}</p>
+                    )}
+                  </div>
+                  <div>
+                    <Label htmlFor="c-number">{t("payment.cardNumber")}</Label>
+                    <Input
+                      id="c-number"
                       inputMode="numeric"
+                      value={card.number}
+                      onChange={(e) => onCard("number", fmtCard(e.target.value))}
                       className={cn(
-                        "mt-1.5 font-mono",
-                        errs.c.expiry && "border-red-400",
+                        "mt-1.5",
+                        errs.c.number && "border-red-400 focus:border-red-400",
                       )}
                     />
-                    {errs.c.expiry && (
-                      <p className="text-xs text-red-500 mt-1">
-                        {errs.c.expiry}
-                      </p>
+                    {errs.c.number && (
+                      <p className="text-xs text-red-500 mt-1">{errs.c.number}</p>
                     )}
                   </div>
-                  <div>
-                    <Label htmlFor="cc-cvv">{t("payment.cvv")}</Label>
-                    <Input
-                      id="cc-cvv"
-                      type="password"
-                      value={card.cvv}
-                      onChange={(e) =>
-                        onCard(
-                          "cvv",
-                          e.target.value.replace(/\D/g, "").slice(0, 4),
-                        )
-                      }
-                      autoComplete="cc-csc"
-                      placeholder="•••"
-                      className={cn(
-                        "mt-1.5 font-mono",
-                        errs.c.cvv && "border-red-400",
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="c-expiry">{t("payment.expiry")}</Label>
+                      <Input
+                        id="c-expiry"
+                        inputMode="numeric"
+                        value={card.expiry}
+                        onChange={(e) => onCard("expiry", fmtExp(e.target.value))}
+                        className={cn(
+                          "mt-1.5",
+                          errs.c.expiry && "border-red-400 focus:border-red-400",
+                        )}
+                      />
+                      {errs.c.expiry && (
+                        <p className="text-xs text-red-500 mt-1">{errs.c.expiry}</p>
                       )}
-                    />
-                    {errs.c.cvv && (
-                      <p className="text-xs text-red-500 mt-1">{errs.c.cvv}</p>
-                    )}
+                    </div>
+                    <div>
+                      <Label htmlFor="c-cvv">{t("payment.cvv")}</Label>
+                      <Input
+                        id="c-cvv"
+                        inputMode="numeric"
+                        type="password"
+                        value={card.cvv}
+                        onChange={(e) =>
+                          onCard("cvv", e.target.value.replace(/\D/g, "").slice(0, 4))
+                        }
+                        className={cn(
+                          "mt-1.5",
+                          errs.c.cvv && "border-red-400 focus:border-red-400",
+                        )}
+                      />
+                      {errs.c.cvv && (
+                        <p className="text-xs text-red-500 mt-1">{errs.c.cvv}</p>
+                      )}
+                    </div>
                   </div>
                 </div>
-                <p className="text-xs text-charcoal-subtle flex items-center gap-1.5">
-                  <Lock className="w-3.5 h-3.5 text-sage" aria-hidden="true" />{" "}
-                  {t("payment.secure")}
-                </p>
               </section>
 
-              {/* Código promo */}
-              <section className="bg-white rounded-2xl border border-warm-gray-dark/40 p-5 shadow-card">
-                <p className="text-sm font-medium text-charcoal mb-3">
+              <section className="bg-white rounded-2xl border border-warm-gray-dark/40 p-6 shadow-card space-y-3">
+                <h3 className="font-semibold text-charcoal">
                   {t("promoCode.label")}
-                </p>
+                </h3>
                 <div className="flex gap-2">
                   <Input
                     value={promoCode}
-                    onChange={(e) => {
-                      setPromoCode(e.target.value);
-                      setPromoState(null);
-                    }}
+                    onChange={(e) => setPromoCode(e.target.value)}
                     placeholder={t("promoCode.placeholder")}
-                    className="flex-1"
-                    disabled={promoState === "applied"}
                   />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="md"
-                    onClick={applyPromo}
-                    disabled={!promoCode.trim() || promoState === "applied"}
-                  >
+                  <Button type="button" variant="outline" onClick={applyPromo}>
                     {t("promoCode.apply")}
                   </Button>
                 </div>
                 {promoState === "applied" && (
-                  <p className="text-xs text-sage mt-2 animate-fade-in">
-                    {t("promoCode.applied")}
-                  </p>
+                  <p className="text-xs text-sage">{t("promoCode.applied")}</p>
                 )}
                 {promoState === "invalid" && (
-                  <p className="text-xs text-red-500 mt-2 animate-fade-in">
-                    {t("promoCode.invalid")}
-                  </p>
+                  <p className="text-xs text-red-500">{t("promoCode.invalid")}</p>
                 )}
               </section>
 
-              {/* Botón pagar */}
-              <Button
-                type="submit"
-                size="xl"
-                disabled={submitting || isLoadingData}
-                className="w-full"
-              >
-                {submitting ? t("processing") : t("submit")}
-              </Button>
+              <div className="flex justify-end">
+                <Button type="submit" size="lg" disabled={submitting}>
+                  {submitting ? t("processing") : t("submit")}
+                </Button>
+              </div>
             </div>
 
-            <OrderSummary items={items} t={t} loading={isLoadingData} />
+            <OrderSummary items={items} t={t} />
           </div>
         </form>
       </main>

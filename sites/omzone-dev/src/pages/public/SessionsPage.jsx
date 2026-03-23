@@ -1,12 +1,11 @@
-import OfferingListingLayout from "@/features/offerings/OfferingListingLayout";
+import OfferingSectionsLayout from "@/features/offerings/OfferingSectionsLayout";
 
 export default function SessionsPage() {
   return (
-    <OfferingListingLayout
+    <OfferingSectionsLayout
       category="wellness_studio"
       pageKey="sessions"
-      showYogaStyles
-      cardLayout="split"
+      heroVariant="dark"
     />
   );
 }

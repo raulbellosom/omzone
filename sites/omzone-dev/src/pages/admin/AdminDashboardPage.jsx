@@ -22,7 +22,8 @@ import {
   useAdminOverview,
   useAdminOrders,
   useAdminLeads,
-  useAdminSessions,
+  useAdminSlots,
+  useAdminOfferings,
 } from "@/hooks/useAdmin";
 import { useCurrency } from "@/hooks/useCurrency";
 import { resolveField } from "@/lib/i18n-data";
@@ -84,12 +85,14 @@ export default function AdminDashboardPage() {
   const { data: metrics, isLoading: lMetrics } = useAdminOverview();
   const { data: orders, isLoading: lOrders } = useAdminOrders();
   const { data: leads, isLoading: lLeads } = useAdminLeads();
-  const { data: sessions, isLoading: lSessions } = useAdminSessions();
+  const { data: slots, isLoading: lSlots } = useAdminSlots({ status: "open" });
+  const { data: offerings = [] } = useAdminOfferings();
 
   const recentOrders = orders?.slice(0, 4) ?? [];
   const recentLeads = leads?.slice(0, 4) ?? [];
-  const upcomingSessions =
-    sessions?.filter((s) => s.status !== "cancelled").slice(0, 4) ?? [];
+  const offeringMap = Object.fromEntries(offerings.map((o) => [o.$id, o]));
+  const upcomingSlots =
+    slots?.filter((slot) => slot.status !== "cancelled").slice(0, 4) ?? [];
 
   return (
     <div className="max-w-6xl mx-auto px-4 md:px-8 py-8 animate-fade-in-up">
@@ -124,7 +127,7 @@ export default function AdminDashboardPage() {
         <KpiCard
           icon={Award}
           label={t("dashboard.metrics.activePackages")}
-          value={metrics?.active_packages ?? "—"}
+          value={metrics?.active_offerings ?? metrics?.active_packages ?? "—"}
           loading={lMetrics}
           accent="olive"
         />
@@ -252,28 +255,33 @@ export default function AdminDashboardPage() {
             {t("dashboard.upcomingSessions")}
           </h2>
           <Link
-            to={ROUTES.ADMIN_SESSIONS}
+            to={ROUTES.ADMIN_AGENDA}
             className="text-xs text-sage hover:underline font-medium flex items-center gap-1"
           >
             {t("dashboard.viewAll")} <ArrowRight className="w-3 h-3" />
           </Link>
         </div>
-        {lSessions ? (
+        {lSlots ? (
           <Skeleton className="h-32 rounded-2xl" />
         ) : (
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
-            {upcomingSessions.map((s) => {
+            {upcomingSlots.map((slot) => {
+              const offering = offeringMap[slot.offering_id] ?? null;
               const pct = Math.round(
-                (s.capacity_taken / s.capacity_total) * 100,
+                slot.capacity_total > 0
+                  ? (slot.capacity_taken / slot.capacity_total) * 100
+                  : 0,
               );
               return (
-                <Card key={s.$id}>
+                <Card key={slot.$id}>
                   <CardContent className="p-4">
                     <p className="text-sm font-semibold text-charcoal leading-tight mb-1">
-                      {resolveField(s.class, "title")}
+                      {resolveField(offering, "title") ||
+                        offering?.slug ||
+                        t("offerings.fallbackLabel")}
                     </p>
                     <p className="text-[10px] text-charcoal-muted mb-3">
-                      {format(new Date(s.session_date), "EEE d MMM · HH:mm", {
+                      {format(new Date(slot.start_at), "EEE d MMM · HH:mm", {
                         locale: dateFnsLocale,
                       })}
                     </p>
@@ -284,7 +292,7 @@ export default function AdminDashboardPage() {
                       />
                     </div>
                     <p className="text-[10px] text-charcoal-muted">
-                      {s.capacity_taken}/{s.capacity_total}
+                      {slot.capacity_taken}/{slot.capacity_total}
                     </p>
                   </CardContent>
                 </Card>

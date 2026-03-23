@@ -436,7 +436,10 @@
       "confirmed": "Confirmada",
       "completed": "Completada",
       "cancelled": "Cancelada"
-    }
+    },
+    "guestCount_one": "{{count}} persona",
+    "guestCount_other": "{{count}} personas",
+    "guestCount": "{{count}} personas"
   },
   "passes": {
     "title": "Pases de Acceso",
@@ -504,6 +507,15 @@
       "changeStock": "Cambiar"
     }
   },
+  "multiImage": {
+    "clearAll": "Quitar todas",
+    "modeLockedStock": "Todas las imágenes deben ser del stock",
+    "modeLockedUpload": "Todas las imágenes deben ser subidas",
+    "counter": "{{count}} de {{max}} imágenes",
+    "replace": "Cambiar",
+    "addImage": "Agregar",
+    "selectStock": "Del stock"
+  },
   "offerings": {
     "title": "Offerings",
     "subtitle": "Gestiona sesiones, inmersiones, estancias, servicios y experiencias.",
@@ -518,7 +530,8 @@
     "actions": {
       "new": "Nuevo offering",
       "save": "Guardar",
-      "create": "Crear"
+      "create": "Crear",
+      "createLocationAndAssign": "Crear y asignar"
     },
     "dialog": {
       "createTitle": "Nuevo offering",
@@ -547,10 +560,21 @@
       "ctaLabelEs": "CTA ES",
       "ctaLabelEn": "CTA EN",
       "featured": "Destacado",
+      "images": "Imágenes (hasta 3)",
       "showOnHome": "Mostrar en home",
       "displayOrder": "Orden",
       "status": "Estado",
-      "enabled": "Habilitado"
+      "enabled": "Habilitado",
+      "locationProfile": "Perfil de ubicacion",
+      "locationProfilePlaceholder": "Selecciona un perfil de ubicacion",
+      "locationFallbackLabel": "Etiqueta de respaldo",
+      "locationFallbackPlaceholder": "Se usa cuando falta slot/perfil de ubicacion",
+      "locationName": "Nombre de ubicacion",
+      "locationAddress": "Direccion",
+      "locationMapUrl": "URL de mapa",
+      "locationNotes": "Notas",
+      "cancellationEs": "Cancelacion ES",
+      "cancellationEn": "Cancelacion EN"
     },
     "searchPlaceholder": "Buscar por título, categoría o slug",
     "feedback": {
@@ -561,7 +585,9 @@
       "disabled": "Offering deshabilitado",
       "saveError": "No se pudo guardar",
       "deleteError": "No se pudo eliminar",
-      "toggleError": "No se pudo actualizar el estado"
+      "toggleError": "No se pudo actualizar el estado",
+      "locationCreated": "Perfil de ubicacion creado",
+      "locationCreateError": "No se pudo crear la ubicacion"
     },
     "empty": {
       "title": "Todavía no hay offerings",
@@ -571,7 +597,19 @@
       "title": "Confirmar eliminación",
       "description": "Esta acción no se puede deshacer. Si hay slots o reservas asociadas, el borrado será bloqueado.",
       "confirm": "Eliminar offering"
-    }
+    },
+    "sections": {
+      "identity": "Identidad",
+      "flow": "Flujo",
+      "terms": "Terminos",
+      "cta": "CTA",
+      "images": "Imágenes",
+      "quickCreateLocation": "Crear ubicacion rapida"
+    },
+    "validation": {
+      "locationNameRequired": "El nombre de la ubicacion es obligatorio"
+    },
+    "fallbackLabel": "Oferta"
   },
   "offeringSlots": {
     "title": "Agenda",
@@ -624,7 +662,8 @@
       "startAt": "Desde",
       "endAt": "Hasta",
       "reason": "Motivo",
-      "blockType": "Tipo"
+      "blockType": "Tipo",
+      "offeringGlobalOption": "-- Global --"
     },
     "feedback": {
       "created": "Bloqueo creado",
@@ -643,6 +682,9 @@
       "createTitle": "Nueva sección",
       "editTitle": "Editar sección"
     },
+    "sections": {
+      "images": "Imágenes"
+    },
     "fields": {
       "sectionKey": "Clave de sección",
       "titleEs": "Título ES",
@@ -655,7 +697,15 @@
       "ctaLabelEn": "CTA EN",
       "ctaUrl": "URL del CTA",
       "displayOrder": "Orden",
-      "enabled": "Habilitada"
+      "enabled": "Habilitada",
+      "sectionKeyPlaceholder": "hero, about, testimonials...",
+      "ctaUrlPlaceholder": "https://...",
+      "ctaSection": "CTA",
+      "scope": "Alcance",
+      "scopePlaceholder": "Alcance",
+      "offeringOptional": "Offering (opcional)",
+      "offeringPlaceholder": "Selecciona un offering",
+      "images": "Imágenes (hasta 3)"
     },
     "feedback": {
       "created": "Sección creada",
@@ -666,6 +716,15 @@
     "empty": {
       "title": "Sin secciones editoriales",
       "description": "Crea secciones de contenido dinámico para la landing page."
+    },
+    "scope": {
+      "global": "Global",
+      "offering": "Por offering"
+    },
+    "chips": {
+      "scope": "Alcance",
+      "offering": "Offering",
+      "cta": "CTA"
     }
   },
   "common": {

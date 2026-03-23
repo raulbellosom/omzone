@@ -1,7 +1,7 @@
 /**
- * offeringService.js — Public queries for the unified offerings model.
+ * offeringService.js - Public queries for offerings model.
  *
- * Covers: offerings, offering_slots, content_sections, search.
+ * Covers: offerings, offering_slots, location_profiles, content_sections, search.
  */
 import { Query } from "appwrite";
 import { databases } from "./client";
@@ -9,15 +9,57 @@ import {
   APPWRITE_DATABASE_ID,
   COL_OFFERINGS,
   COL_OFFERING_SLOTS,
+  COL_LOCATION_PROFILES,
   COL_CONTENT_SECTIONS,
 } from "@/env";
+import { ensureOfferingFlow, offeringDerivedFields } from "@/lib/offering-flow";
 
 const DB = APPWRITE_DATABASE_ID;
 
-// ── Normalizers ───────────────────────────────────────────────────────────────
+function parseJsonSafe(value) {
+  if (!value) return null;
+  if (typeof value === "object") return value;
+  try {
+    return JSON.parse(value);
+  } catch {
+    return null;
+  }
+}
 
-export function normalizeOffering(doc) {
+export function normalizeLocationProfile(doc) {
   if (!doc) return null;
+  return {
+    $id: doc.$id,
+    name: doc.name ?? null,
+    address: doc.address ?? null,
+    map_url: doc.mapUrl ?? null,
+    geo_json: parseJsonSafe(doc.geoJson),
+    notes: doc.notes ?? null,
+    capacity_hints_json: parseJsonSafe(doc.capacityHintsJson),
+    enabled: doc.enabled ?? true,
+  };
+}
+
+export function normalizeOffering(doc, locationProfile = null) {
+  if (!doc) return null;
+
+  const flow = ensureOfferingFlow({
+    category: doc.category,
+    type: doc.type,
+    flow_key: doc.flowKey,
+    flow_version: doc.flowVersion,
+    flow_config: doc.flowConfig,
+    terms_config: doc.termsConfig,
+  });
+  const derived = offeringDerivedFields({
+    category: doc.category,
+    type: doc.type,
+    flow_key: flow.flow_key,
+    flow_version: flow.flow_version,
+    flow_config: flow.flow_config,
+    terms_config: flow.terms_config,
+  });
+
   return {
     $id: doc.$id,
     $createdAt: doc.$createdAt,
@@ -31,14 +73,27 @@ export function normalizeOffering(doc) {
     category: doc.category,
     type: doc.type,
     yoga_style: doc.yogaStyle ?? null,
-    booking_mode: doc.bookingMode,
-    pricing_mode: doc.pricingMode,
-    base_price: doc.basePrice ?? null,
     currency: doc.currency ?? "MXN",
-    duration_min: doc.durationMin ?? null,
-    min_guests: doc.minGuests ?? 1,
-    max_guests: doc.maxGuests ?? 1,
-    location_label: doc.locationLabel ?? null,
+    flow_key: flow.flow_key,
+    flow_version: flow.flow_version,
+    flow_config: flow.flow_config,
+    terms_config: flow.terms_config,
+    default_location_profile_id:
+      doc.defaultLocationProfileId ?? derived.location_profile_id ?? null,
+    booking_mode: derived.booking_mode,
+    pricing_mode: derived.pricing_mode,
+    base_price: derived.base_price,
+    duration_min: derived.duration_min,
+    min_guests: derived.min_guests,
+    max_guests: derived.max_guests,
+    requires_schedule: derived.requires_schedule,
+    supports_date_range: derived.supports_date_range,
+    location_label:
+      locationProfile?.name ??
+      locationProfile?.address ??
+      derived.location_label ??
+      null,
+    location_profile: normalizeLocationProfile(locationProfile),
     cover_image_id: doc.coverImageId ?? null,
     cover_image_bucket: doc.coverImageBucket ?? null,
     cta_label_es: doc.ctaLabelEs ?? null,
@@ -54,7 +109,7 @@ export function normalizeOffering(doc) {
   };
 }
 
-export function normalizeSlot(doc, offering = null) {
+export function normalizeSlot(doc, offering = null, locationProfile = null) {
   if (!doc) return null;
   return {
     $id: doc.$id,
@@ -67,10 +122,12 @@ export function normalizeSlot(doc, offering = null) {
     capacity_taken: doc.capacityTaken ?? 0,
     price_override: doc.priceOverride ?? null,
     status: doc.status ?? "open",
-    location_label: doc.locationLabel ?? null,
+    location_profile_id: doc.locationProfileId ?? null,
+    location_label: locationProfile?.name ?? locationProfile?.address ?? null,
+    location_profile: normalizeLocationProfile(locationProfile),
     notes: doc.notes ?? null,
     enabled: doc.enabled ?? true,
-    offering: offering ? normalizeOffering(offering) : null,
+    offering,
   };
 }
 
@@ -90,12 +147,22 @@ export function normalizeContentSection(doc) {
     cta_url: doc.ctaUrl ?? null,
     image_id: doc.imageId ?? null,
     image_bucket: doc.imageBucket ?? null,
+    scope: doc.scope ?? "global",
+    offering_id: doc.offeringId ?? null,
     display_order: doc.displayOrder ?? 0,
     enabled: doc.enabled ?? true,
   };
 }
 
-// ── Offerings ─────────────────────────────────────────────────────────────────
+async function fetchLocationMap(ids = []) {
+  const unique = [...new Set(ids.filter(Boolean))];
+  if (unique.length === 0) return {};
+  const res = await databases.listDocuments(DB, COL_LOCATION_PROFILES, [
+    Query.equal("$id", unique),
+    Query.limit(unique.length),
+  ]);
+  return Object.fromEntries(res.documents.map((doc) => [doc.$id, doc]));
+}
 
 export async function getOfferings({
   category,
@@ -116,7 +183,12 @@ export async function getOfferings({
   if (showOnHome) q.push(Query.equal("showOnHome", true));
 
   const res = await databases.listDocuments(DB, COL_OFFERINGS, q);
-  return res.documents.map(normalizeOffering);
+  const locationMap = await fetchLocationMap(
+    res.documents.map((d) => d.defaultLocationProfileId),
+  );
+  return res.documents.map((doc) =>
+    normalizeOffering(doc, locationMap[doc.defaultLocationProfileId] ?? null),
+  );
 }
 
 export async function getOfferingBySlug(slug, { publicOnly = true } = {}) {
@@ -126,15 +198,18 @@ export async function getOfferingBySlug(slug, { publicOnly = true } = {}) {
     q.push(Query.equal("status", "published"));
   }
   const res = await databases.listDocuments(DB, COL_OFFERINGS, q);
-  return res.documents.length > 0 ? normalizeOffering(res.documents[0]) : null;
+  if (res.documents.length === 0) return null;
+
+  const doc = res.documents[0];
+  const locationMap = await fetchLocationMap([doc.defaultLocationProfileId]);
+  return normalizeOffering(doc, locationMap[doc.defaultLocationProfileId] ?? null);
 }
 
 export async function getOfferingById(id) {
   const doc = await databases.getDocument(DB, COL_OFFERINGS, id);
-  return normalizeOffering(doc);
+  const locationMap = await fetchLocationMap([doc.defaultLocationProfileId]);
+  return normalizeOffering(doc, locationMap[doc.defaultLocationProfileId] ?? null);
 }
-
-// ── Offering Slots ────────────────────────────────────────────────────────────
 
 export async function getOfferingSlots(
   offeringId,
@@ -149,28 +224,41 @@ export async function getOfferingSlots(
   if (fromDate) q.push(Query.greaterThanEqual("startAt", fromDate));
   if (status) q.push(Query.equal("status", status));
 
-  const res = await databases.listDocuments(DB, COL_OFFERING_SLOTS, q);
-  return res.documents.map((d) => normalizeSlot(d));
+  const [res, offeringDoc] = await Promise.all([
+    databases.listDocuments(DB, COL_OFFERING_SLOTS, q),
+    databases.getDocument(DB, COL_OFFERINGS, offeringId),
+  ]);
+
+  const locationMap = await fetchLocationMap([
+    ...res.documents.map((d) => d.locationProfileId),
+    offeringDoc.defaultLocationProfileId,
+  ]);
+  const offering = normalizeOffering(
+    offeringDoc,
+    locationMap[offeringDoc.defaultLocationProfileId] ?? null,
+  );
+
+  return res.documents.map((doc) =>
+    normalizeSlot(doc, offering, locationMap[doc.locationProfileId] ?? null),
+  );
 }
 
 export async function getSlotById(slotId) {
-  const doc = await databases.getDocument(DB, COL_OFFERING_SLOTS, slotId);
-
-  let offering = null;
-  if (doc.offeringId) {
-    try {
-      const offeringDoc = await databases.getDocument(
-        DB,
-        COL_OFFERINGS,
-        doc.offeringId,
-      );
-      offering = offeringDoc;
-    } catch {
-      /* offering may have been deleted */
-    }
+  let doc = null;
+  try {
+    doc = await databases.getDocument(DB, COL_OFFERING_SLOTS, slotId);
+  } catch {
+    return null;
   }
+  const [offeringDoc, locationMap] = await Promise.all([
+    doc.offeringId
+      ? databases.getDocument(DB, COL_OFFERINGS, doc.offeringId).catch(() => null)
+      : Promise.resolve(null),
+    fetchLocationMap([doc.locationProfileId]),
+  ]);
 
-  return normalizeSlot(doc, offering);
+  const offering = offeringDoc ? normalizeOffering(offeringDoc) : null;
+  return normalizeSlot(doc, offering, locationMap[doc.locationProfileId] ?? null);
 }
 
 export async function getAllUpcomingSlots({ category, limit = 50 } = {}) {
@@ -184,61 +272,76 @@ export async function getAllUpcomingSlots({ category, limit = 50 } = {}) {
   ];
 
   const res = await databases.listDocuments(DB, COL_OFFERING_SLOTS, q);
-
-  // Batch-fetch parent offerings
-  const offeringIds = [...new Set(res.documents.map((d) => d.offeringId))];
-  const offeringsMap = {};
-
-  for (const id of offeringIds) {
-    try {
-      const doc = await databases.getDocument(DB, COL_OFFERINGS, id);
-      offeringsMap[id] = doc;
-    } catch {
-      /* skip deleted */
-    }
-  }
-
-  let slots = res.documents.map((d) =>
-    normalizeSlot(d, offeringsMap[d.offeringId] ?? null),
+  const offeringIds = [...new Set(res.documents.map((d) => d.offeringId).filter(Boolean))];
+  const offeringDocs = await Promise.all(
+    offeringIds.map((id) =>
+      databases.getDocument(DB, COL_OFFERINGS, id).catch(() => null),
+    ),
+  );
+  const offeringMap = Object.fromEntries(
+    offeringDocs.filter(Boolean).map((doc) => [doc.$id, doc]),
   );
 
-  // Only show slots whose parent offering is published and enabled
+  const locationMap = await fetchLocationMap(
+    res.documents.map((d) => d.locationProfileId),
+  );
+
+  let slots = res.documents.map((doc) =>
+    normalizeSlot(doc, normalizeOffering(offeringMap[doc.offeringId] ?? null), locationMap[doc.locationProfileId] ?? null),
+  );
+
   slots = slots.filter(
-    (s) =>
-      s.offering && s.offering.enabled && s.offering.status === "published",
+    (slot) => slot.offering && slot.offering.enabled && slot.offering.status === "published",
   );
 
-  // Filter by category if specified (post-fetch since slots don't store category)
   if (category) {
-    slots = slots.filter((s) => s.offering?.category === category);
+    slots = slots.filter((slot) => slot.offering?.category === category);
   }
-
   return slots;
 }
 
-// ── Content Sections ──────────────────────────────────────────────────────────
+export async function getContentSections({
+  enabled = true,
+  scope,
+  offeringId,
+  mergeOffering = false,
+} = {}) {
+  const base = [Query.orderAsc("displayOrder"), Query.limit(100)];
+  if (enabled) base.push(Query.equal("enabled", true));
 
-export async function getContentSections({ enabled = true } = {}) {
-  const q = [Query.orderAsc("displayOrder"), Query.limit(100)];
-  if (enabled) q.push(Query.equal("enabled", true));
+  if (offeringId && mergeOffering) {
+    const [globalRes, offeringRes] = await Promise.all([
+      databases.listDocuments(DB, COL_CONTENT_SECTIONS, [
+        ...base,
+        Query.equal("scope", "global"),
+      ]),
+      databases.listDocuments(DB, COL_CONTENT_SECTIONS, [
+        ...base,
+        Query.equal("scope", "offering"),
+        Query.equal("offeringId", offeringId),
+      ]),
+    ]);
+    const map = new Map();
+    globalRes.documents.forEach((doc) => map.set(doc.sectionKey, normalizeContentSection(doc)));
+    offeringRes.documents.forEach((doc) => map.set(doc.sectionKey, normalizeContentSection(doc)));
+    return [...map.values()].sort((a, b) => a.display_order - b.display_order);
+  }
 
+  const q = [...base];
+  if (scope) q.push(Query.equal("scope", scope));
+  if (offeringId) q.push(Query.equal("offeringId", offeringId));
   const res = await databases.listDocuments(DB, COL_CONTENT_SECTIONS, q);
   return res.documents.map(normalizeContentSection);
 }
 
-// ── Search ────────────────────────────────────────────────────────────────────
-
 export async function searchOfferings(term, { locale = "es", limit = 20 } = {}) {
   if (!term || term.length < 2) return [];
-
   const titleField = locale === "en" ? "titleEn" : "titleEs";
-
   const res = await databases.listDocuments(DB, COL_OFFERINGS, [
     Query.equal("enabled", true),
     Query.equal("status", "published"),
     Query.contains(titleField, term),
     Query.limit(limit),
   ]);
-
-  return res.documents.map(normalizeOffering);
+  return res.documents.map((doc) => normalizeOffering(doc));
 }

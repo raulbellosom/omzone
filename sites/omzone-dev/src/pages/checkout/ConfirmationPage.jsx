@@ -26,8 +26,8 @@ export default function ConfirmationPage() {
   return (
     <>
       <PageMeta
-        title={`${t("confirmation.title")} — Omzone`}
-        description="Tu pago ha sido confirmado."
+        title={`${t("confirmation.title")} - Omzone`}
+        description={t("confirmation.metaDescription")}
         noindex
       />
 
@@ -95,7 +95,7 @@ export default function ConfirmationPage() {
         </div>
 
         {/* Siguiente paso según intent */}
-        {intentType === "booking" && (
+        {intentType === "offering_booking" && (
           <div className="bg-sage-muted/40 rounded-xl p-4 flex items-start gap-3 mb-6 animate-fade-in">
             <Calendar
               className="w-5 h-5 text-sage shrink-0 mt-0.5"
@@ -103,10 +103,10 @@ export default function ConfirmationPage() {
             />
             <div>
               <p className="text-sm font-semibold text-charcoal">
-                Tu reserva está confirmada
+                {t("confirmation.bookingConfirmedTitle")}
               </p>
               <p className="text-sm text-charcoal-muted mt-0.5">
-                Puedes ver el detalle y el código de tu reserva en tu dashboard.
+                {t("confirmation.bookingConfirmedBody")}
               </p>
             </div>
           </div>
@@ -115,16 +115,17 @@ export default function ConfirmationPage() {
         {/* CTAs */}
         <div className="flex flex-col sm:flex-row gap-3 animate-fade-in">
           <Button asChild size="lg" className="flex-1 gap-2">
-            <Link to={ROUTES.ZONE}>
+            <Link to={ROUTES.ACCOUNT_BOOKINGS}>
               {t("confirmation.cta")}
               <ArrowRight className="w-4 h-4" />
             </Link>
           </Button>
           <Button asChild variant="outline" size="lg" className="flex-1">
-            <Link to={ROUTES.CLASSES}>Explorar más clases</Link>
+            <Link to={ROUTES.SESSIONS}>{t("confirmation.exploreOfferings")}</Link>
           </Button>
         </div>
       </main>
     </>
   );
 }
+

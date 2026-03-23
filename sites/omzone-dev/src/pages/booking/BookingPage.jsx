@@ -1,812 +1,193 @@
 /**
- * BookingPage — wizard de reserva de clase (4 pasos).
- * Ruta: /booking/:sessionId
- * Recibe via location.state: { classId, extraIds }
- * Al finalizar, navega a /checkout con el estado de la reserva.
+ * BookingPage - unified offerings booking flow.
+ * Route: /booking/:id (id can be slotId or offeringId).
  */
-import { useState, useEffect } from "react";
-import { useParams, useLocation, useNavigate, Link } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { useLocation, useNavigate, useParams, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import {
-  ArrowLeft,
-  ArrowRight,
-  MapPin,
-  Clock,
-  Users,
-  Check,
-  ShoppingCart,
-  Activity,
-  Minus,
-  Plus,
-} from "lucide-react";
+import { ArrowLeft, ArrowRight, Calendar, Loader2, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import StepIndicator from "@/components/shared/StepIndicator";
+import { Textarea } from "@/components/ui/textarea";
 import PageMeta from "@/components/seo/PageMeta";
-import { useSessionById, useSessionsByClass } from "@/hooks/useClasses";
-import { useClassExtras } from "@/hooks/useWellness";
-import { useAuth } from "@/hooks/useAuth.jsx";
-import { resolveField } from "@/lib/i18n-data";
+import StepIndicator from "@/components/shared/StepIndicator";
+import {
+  useSlotById,
+  useOfferingById,
+  useOfferingSlots,
+} from "@/hooks/useOfferings";
+import { useAuth } from "@/hooks/useAuth";
 import { useCurrency } from "@/hooks/useCurrency";
-import { formatDate, formatTime } from "@/lib/dates";
-import { getPreviewUrl } from "@/lib/media";
-import { BUCKET_PUBLIC_MEDIA } from "@/env";
+import { resolveField } from "@/lib/i18n-data";
+import { formatDateTime } from "@/lib/dates";
 import ROUTES from "@/constants/routes";
-import { cn } from "@/lib/utils";
 
-// ── Utilidad de validación ────────────────────────────────────────────────────
-function validateStep3(info, t) {
-  const errs = {};
-  if (!info.firstName.trim())
-    errs.firstName = t("required", { ns: "validation" });
-  if (!info.lastName.trim())
-    errs.lastName = t("required", { ns: "validation" });
-  if (!info.email.trim()) errs.email = t("required", { ns: "validation" });
-  else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(info.email))
-    errs.email = t("email", { ns: "validation" });
-  return errs;
+function parseQuestions(offering) {
+  const questions = offering?.flow_config?.custom_answers;
+  return Array.isArray(questions) ? questions : [];
 }
 
-// ── Resumen lateral ───────────────────────────────────────────────────────────
-function BookingSidebar({
-  session,
-  cls,
-  selectedExtras,
-  extraItems,
-  quantity,
-  t,
-}) {
-  if (!session || !cls) return null;
-
-  const basePrice = session.price_override ?? cls.base_price ?? 0;
-  const extrasTotal = selectedExtras.reduce((sum, id) => {
-    const extra = extraItems.find((e) => e.$id === id);
-    return sum + (extra?.price ?? 0);
-  }, 0);
-  const total = basePrice * quantity + extrasTotal;
-  const { formatPrice } = useCurrency();
-
-  return (
-    <aside className="lg:sticky lg:top-24">
-      <Card className="overflow-hidden">
-        <div
-          className="h-1.5 bg-linear-to-r from-sage to-olive"
-          aria-hidden="true"
-        />
-        <CardContent className="p-5">
-          <h3 className="font-semibold text-charcoal mb-4">
-            {t("summary.title")}
-          </h3>
-
-          {/* Miniatura de la clase */}
-          {(session?.cover_image_id || cls?.cover_image_id) && (
-            <div className="mb-4 rounded-xl overflow-hidden aspect-video bg-warm-gray">
-              <img
-                src={getPreviewUrl(
-                  session.cover_image_id || cls.cover_image_id,
-                  (session.cover_image_id ? session.cover_image_bucket : cls.cover_image_bucket) ?? BUCKET_PUBLIC_MEDIA,
-                  480,
-                  270,
-                  80,
-                )}
-                alt={resolveField(cls, "title")}
-                className="w-full h-full object-cover"
-              />
-            </div>
-          )}
-
-          {/* Clase */}
-          <div className="space-y-2 text-sm pb-4 border-b border-warm-gray-dark/50">
-            <div className="flex justify-between gap-2">
-              <span className="text-charcoal-muted">{t("summary.class")}</span>
-              <span className="font-medium text-charcoal text-right">
-                {resolveField(cls, "title")}
-              </span>
-            </div>
-            <div className="flex justify-between gap-2">
-              <span className="text-charcoal-muted">
-                {t("summary.session")}
-              </span>
-              <span className="text-charcoal text-right">
-                {formatDate(session.session_date)},{" "}
-                {formatTime(session.session_date)}
-              </span>
-            </div>
-            {session.location_label && (
-              <div className="flex items-center gap-1 text-charcoal-subtle">
-                <MapPin className="w-3 h-3 shrink-0" />
-                {session.location_label}
-              </div>
-            )}
-            <div className="flex justify-between">
-              <span className="text-charcoal-muted">
-                {t("summary.subtotal")}
-              </span>
-              <span className="font-medium">
-                {formatPrice(basePrice)}
-                {quantity > 1 && (
-                  <span className="text-charcoal-subtle text-xs">
-                    {" "}
-                    ×{quantity}
-                  </span>
-                )}
-              </span>
-            </div>
-          </div>
-
-          {/* Extras */}
-          {selectedExtras.length > 0 && (
-            <div className="space-y-1.5 py-3 border-b border-warm-gray-dark/50 text-sm">
-              <p className="text-xs text-charcoal-subtle uppercase tracking-wider mb-2">
-                {t("summary.extras")}
-              </p>
-              {selectedExtras.map((id) => {
-                const extra = extraItems.find((e) => e.$id === id);
-                if (!extra) return null;
-                return (
-                  <div key={id} className="flex justify-between gap-2">
-                    <span className="text-charcoal-muted">
-                      {resolveField(extra, "name")}
-                    </span>
-                    <span className="font-medium">
-                      {formatPrice(extra.price)}
-                    </span>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-
-          {/* Total */}
-          <div className="flex justify-between items-center pt-3">
-            <span className="font-bold text-charcoal">
-              {t("summary.total")}
-            </span>
-            <span className="text-xl font-bold text-sage font-display">
-              {formatPrice(total)}
-            </span>
-          </div>
-        </CardContent>
-      </Card>
-
-      <p className="text-xs text-charcoal-subtle text-center mt-3 leading-relaxed">
-        {t("detail.noFees", { ns: "classes" })}
-      </p>
-    </aside>
-  );
-}
-
-// ── Paso 1 — Confirmar sesión ─────────────────────────────────────────────────
-function Step1({
-  session,
-  cls,
-  allSessions,
-  selectedSession,
-  onSelect,
-  quantity,
-  onQuantity,
-  t,
-}) {
-  if (!session || !cls) {
-    return (
-      <div className="space-y-3">
-        {[...Array(3)].map((_, i) => (
-          <Skeleton key={i} className="h-20 w-full" />
-        ))}
-      </div>
-    );
-  }
-
-  const sessions = allSessions ?? [session];
-  const spotsLeft = selectedSession
-    ? selectedSession.capacity_total - selectedSession.capacity_taken
-    : 0;
-  const maxQty = selectedSession
-    ? Math.min(spotsLeft, selectedSession.max_per_booking ?? 6)
-    : 1;
-
-  return (
-    <div className="space-y-4 animate-fade-in">
-      <div>
-        <h2 className="text-xl font-semibold text-charcoal font-display">
-          {t("step1.title")}
-        </h2>
-        <p className="text-sm text-charcoal-muted mt-1">
-          {t("step1.subtitle")}
-        </p>
-      </div>
-
-      {/* Info de la clase */}
-      <div className="flex items-center gap-3 p-3 bg-sage-muted/30 rounded-xl text-sm">
-        <div className="w-16 h-16 rounded-xl bg-sage-muted overflow-hidden shrink-0">
-          {cls.cover_image_id ? (
-            <img
-              src={getPreviewUrl(cls.cover_image_id, cls.cover_image_bucket ?? BUCKET_PUBLIC_MEDIA, 128, 128, 80)}
-              alt={resolveField(cls, "title")}
-              className="w-full h-full object-cover"
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center">
-              <Activity className="w-5 h-5 text-sage" aria-hidden="true" />
-            </div>
-          )}
-        </div>
-        <div>
-          <p className="font-semibold text-charcoal">
-            {resolveField(cls, "title")}
-          </p>
-          <p className="text-charcoal-muted text-xs">
-            {resolveField(cls, "summary")}
-          </p>
-        </div>
-      </div>
-
-      {/* Selector de sesiones */}
-      <fieldset>
-        <legend className="sr-only">{t("step1.title")}</legend>
-        <div className="space-y-2">
-          {sessions.map((s) => {
-            const isFull =
-              s.status === "full" || s.capacity_total - s.capacity_taken === 0;
-            const isSelected = selectedSession?.$id === s.$id;
-            const spots = s.capacity_total - s.capacity_taken;
-
-            return (
-              <button
-                key={s.$id}
-                type="button"
-                disabled={isFull}
-                onClick={() => onSelect(s)}
-                aria-pressed={isSelected}
-                className={cn(
-                  "w-full text-left p-4 rounded-xl border transition-all duration-200",
-                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sage",
-                  isFull
-                    ? "opacity-50 cursor-not-allowed bg-warm-gray border-warm-gray-dark"
-                    : isSelected
-                      ? "border-sage bg-sage-muted/30 shadow-sm"
-                      : "border-warm-gray-dark hover:border-sage/50 hover:bg-warm-gray/50 bg-white",
-                )}
-              >
-                <div className="flex items-center justify-between gap-3">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="text-sm font-semibold text-charcoal">
-                        {formatDate(s.session_date)}
-                      </span>
-                      <span className="text-sm text-charcoal-muted">·</span>
-                      <span className="text-sm text-charcoal-muted">
-                        {formatTime(s.session_date)}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-3 text-xs text-charcoal-subtle">
-                      {s.location_label && (
-                        <span className="flex items-center gap-1">
-                          <MapPin className="w-3 h-3" /> {s.location_label}
-                        </span>
-                      )}
-                      <span className="flex items-center gap-1">
-                        <Clock className="w-3 h-3" /> {cls.duration_min} min
-                      </span>
-                      {!isFull && (
-                        <span className="flex items-center gap-1">
-                          <Users className="w-3 h-3" /> {spots} lugares
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2 shrink-0">
-                    {isFull ? (
-                      <Badge variant="warm">Llena</Badge>
-                    ) : isSelected ? (
-                      <div className="w-5 h-5 rounded-full bg-sage flex items-center justify-center">
-                        <Check className="w-3 h-3 text-white" />
-                      </div>
-                    ) : (
-                      <div className="w-5 h-5 rounded-full border-2 border-warm-gray-dark" />
-                    )}
-                  </div>
-                </div>
-              </button>
-            );
-          })}
-        </div>
-      </fieldset>
-
-      {/* Selector de cantidad */}
-      {selectedSession && maxQty > 1 && (
-        <div className="pt-2">
-          <p className="text-sm font-medium text-charcoal mb-3">
-            {t("step1.quantity", "Número de lugares")}
-          </p>
-          <div className="flex items-center gap-3">
-            <button
-              type="button"
-              disabled={quantity <= 1}
-              onClick={() => onQuantity(Math.max(1, quantity - 1))}
-              className="w-9 h-9 rounded-full border border-warm-gray-dark/50 flex items-center justify-center text-charcoal disabled:opacity-40 hover:border-sage/60 transition-colors"
-            >
-              <Minus className="w-4 h-4" />
-            </button>
-            <span className="text-lg font-semibold text-charcoal min-w-[2ch] text-center">
-              {quantity}
-            </span>
-            <button
-              type="button"
-              disabled={quantity >= maxQty}
-              onClick={() => onQuantity(Math.min(maxQty, quantity + 1))}
-              className="w-9 h-9 rounded-full border border-warm-gray-dark/50 flex items-center justify-center text-charcoal disabled:opacity-40 hover:border-sage/60 transition-colors"
-            >
-              <Plus className="w-4 h-4" />
-            </button>
-            <span className="text-sm text-charcoal-subtle">
-              {t("step1.maxSpots", "máx. {{n}} por reserva", { n: maxQty })}
-            </span>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-// ── Paso 2 — Extras ───────────────────────────────────────────────────────────
-function Step2({ extras, selectedExtras, onToggle, t }) {
-  const { formatPrice } = useCurrency();
-  return (
-    <div className="space-y-4 animate-fade-in">
-      <div>
-        <h2 className="text-xl font-semibold text-charcoal font-display">
-          {t("step2.title")}
-        </h2>
-        <p className="text-sm text-charcoal-muted mt-1">
-          {t("step2.subtitle")}
-        </p>
-      </div>
-
-      <div className="grid sm:grid-cols-2 gap-3">
-        {extras.map((extra) => {
-          const isSelected = selectedExtras.includes(extra.$id);
-          const name = resolveField(extra, "name");
-          const desc = resolveField(extra, "description");
-
-          return (
-            <button
-              key={extra.$id}
-              type="button"
-              onClick={() => onToggle(extra.$id)}
-              aria-pressed={isSelected}
-              className={cn(
-                "text-left p-4 rounded-xl border transition-all duration-200",
-                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sage",
-                isSelected
-                  ? "border-sage bg-sage-muted/30 shadow-sm"
-                  : "border-warm-gray-dark hover:border-sage/40 hover:bg-warm-gray/40 bg-white",
-              )}
-            >
-              <div className="flex items-start justify-between gap-2">
-                <div className="flex-1">
-                  <p className="text-sm font-semibold text-charcoal">{name}</p>
-                  <p className="text-xs text-charcoal-muted mt-0.5 line-clamp-2">
-                    {desc}
-                  </p>
-                  <p className="text-sm font-bold text-sage mt-2">
-                    {formatPrice(extra.price)}
-                  </p>
-                </div>
-                <div
-                  className={cn(
-                    "w-5 h-5 rounded-full border-2 shrink-0 mt-0.5 flex items-center justify-center transition-all duration-200",
-                    isSelected
-                      ? "border-sage bg-sage"
-                      : "border-warm-gray-dark",
-                  )}
-                >
-                  {isSelected && <Check className="w-3 h-3 text-white" />}
-                </div>
-              </div>
-            </button>
-          );
-        })}
-      </div>
-
-      {extras.length === 0 && (
-        <p className="text-sm text-charcoal-muted text-center py-6">
-          {t("step2.skip")}
-        </p>
-      )}
-    </div>
-  );
-}
-
-// ── Paso 3 — Datos del cliente ────────────────────────────────────────────────
-function Step3({ customerInfo, onChange, errors, user, t }) {
-  const fields = [
-    {
-      key: "firstName",
-      label: t("step3.firstName"),
-      autoComplete: "given-name",
-      type: "text",
-    },
-    {
-      key: "lastName",
-      label: t("step3.lastName"),
-      autoComplete: "family-name",
-      type: "text",
-    },
-    {
-      key: "email",
-      label: t("step3.email"),
-      autoComplete: "email",
-      type: "email",
-    },
-    { key: "phone", label: t("step3.phone"), autoComplete: "tel", type: "tel" },
-  ];
-
-  return (
-    <div className="space-y-5 animate-fade-in">
-      <div>
-        <h2 className="text-xl font-semibold text-charcoal font-display">
-          {t("step3.title")}
-        </h2>
-        <p className="text-sm text-charcoal-muted mt-1">
-          {t("step3.subtitle")}
-        </p>
-      </div>
-
-      {!user && (
-        <p className="text-sm text-charcoal-muted bg-warm-gray rounded-xl px-4 py-3">
-          {t("step3.loginPrompt")}{" "}
-          <Link
-            to={ROUTES.LOGIN}
-            className="text-sage font-medium hover:underline"
-          >
-            {t("step3.loginLink")}
-          </Link>
-        </p>
-      )}
-
-      <div className="grid sm:grid-cols-2 gap-4">
-        {fields.map(({ key, label, autoComplete, type }) => (
-          <div key={key} className={key === "email" ? "sm:col-span-2" : ""}>
-            <Label htmlFor={key} className="mb-1.5">
-              {label}
-            </Label>
-            <Input
-              id={key}
-              type={type}
-              autoComplete={autoComplete}
-              value={customerInfo[key]}
-              onChange={(e) => onChange(key, e.target.value)}
-              className={
-                errors[key]
-                  ? "border-red-400 focus:border-red-400 focus:ring-red-400/20"
-                  : ""
-              }
-            />
-            {errors[key] && (
-              <p className="text-xs text-red-500 mt-1 animate-fade-in">
-                {errors[key]}
-              </p>
-            )}
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-// ── Paso 4 — Revisión final ───────────────────────────────────────────────────
-function Step4({
-  session,
-  cls,
-  selectedExtras,
-  extraItems,
-  customerInfo,
-  quantity,
-  onEdit,
-  t,
-}) {
-  const basePrice = session?.price_override ?? cls?.base_price ?? 0;
-  const extrasTotal = selectedExtras.reduce((sum, id) => {
-    const extra = extraItems.find((e) => e.$id === id);
-    return sum + (extra?.price ?? 0);
-  }, 0);
-  const { formatPrice } = useCurrency();
-
-  return (
-    <div className="space-y-5 animate-fade-in">
-      <div>
-        <h2 className="text-xl font-semibold text-charcoal font-display">
-          {t("step4.title")}
-        </h2>
-        <p className="text-sm text-charcoal-muted mt-1">
-          {t("step4.subtitle")}
-        </p>
-      </div>
-
-      {/* Sesión */}
-      <div className="bg-white rounded-xl border border-warm-gray-dark/50 p-4">
-        <div className="flex items-center justify-between mb-2">
-          <p className="text-xs font-semibold text-charcoal-subtle uppercase tracking-wider">
-            {t("summary.session")}
-          </p>
-          <button
-            onClick={() => onEdit(1)}
-            className="text-xs text-sage hover:underline"
-          >
-            {t("step4.editSession")}
-          </button>
-        </div>
-        <p className="font-semibold text-charcoal">
-          {resolveField(cls, "title")}
-        </p>
-        <p className="text-sm text-charcoal-muted mt-0.5">
-          {formatDate(session.session_date)} ·{" "}
-          {formatTime(session.session_date)} · {session.location_label}
-        </p>
-        <p className="text-sm font-medium text-sage mt-1">
-          {formatPrice(basePrice)}
-          {quantity > 1 && (
-            <span className="text-charcoal-subtle"> × {quantity} boletos</span>
-          )}
-        </p>
-      </div>
-
-      {/* Extras */}
-      {selectedExtras.length > 0 && (
-        <div className="bg-white rounded-xl border border-warm-gray-dark/50 p-4">
-          <div className="flex items-center justify-between mb-2">
-            <p className="text-xs font-semibold text-charcoal-subtle uppercase tracking-wider">
-              {t("summary.extras")}
-            </p>
-            <button
-              onClick={() => onEdit(2)}
-              className="text-xs text-sage hover:underline"
-            >
-              {t("step4.editExtras")}
-            </button>
-          </div>
-          <ul className="space-y-1">
-            {selectedExtras.map((id) => {
-              const extra = extraItems.find((e) => e.$id === id);
-              if (!extra) return null;
-              return (
-                <li
-                  key={id}
-                  className="flex justify-between text-sm text-charcoal"
-                >
-                  <span>{resolveField(extra, "name")}</span>
-                  <span className="font-medium">
-                    {formatPrice(extra.price)}
-                  </span>
-                </li>
-              );
-            })}
-          </ul>
-        </div>
-      )}
-
-      {/* Datos */}
-      <div className="bg-white rounded-xl border border-warm-gray-dark/50 p-4">
-        <div className="flex items-center justify-between mb-2">
-          <p className="text-xs font-semibold text-charcoal-subtle uppercase tracking-wider">
-            {t("step3.title")}
-          </p>
-          <button
-            onClick={() => onEdit(3)}
-            className="text-xs text-sage hover:underline"
-          >
-            {t("step4.editInfo")}
-          </button>
-        </div>
-        <p className="text-sm text-charcoal">
-          {customerInfo.firstName} {customerInfo.lastName}
-        </p>
-        <p className="text-sm text-charcoal-muted">{customerInfo.email}</p>
-        {customerInfo.phone && (
-          <p className="text-sm text-charcoal-muted">{customerInfo.phone}</p>
-        )}
-      </div>
-
-      {/* Total final */}
-      <div className="flex items-center justify-between px-1">
-        <span className="font-bold text-charcoal">{t("summary.total")}</span>
-        <span className="text-2xl font-bold text-sage font-display">
-          {formatPrice(basePrice * quantity + extrasTotal)}
-        </span>
-      </div>
-    </div>
-  );
-}
-
-// ── Componente principal ──────────────────────────────────────────────────────
 export default function BookingPage() {
-  const { sessionId } = useParams();
-  const location = useLocation();
+  const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const { t } = useTranslation("booking");
   const { user } = useAuth();
+  const { formatPrice } = useCurrency();
 
-  const initialExtraIds = location.state?.extraIds ?? [];
+  const slotQuery = useSlotById(id);
+  const slotFromId = slotQuery.data ?? null;
+  const offeringId =
+    slotFromId?.offering_id ?? (!slotQuery.isLoading ? id : null);
 
-  // Datos remotos
-  const { data: sessionData, isLoading: loadingSession } =
-    useSessionById(sessionId);
-  const { data: allSessionsForClass = [] } = useSessionsByClass(
-    sessionData?.class_id,
-  );
-  const { data: extraItems = [], isLoading: loadingExtras } = useClassExtras();
+  const offeringQuery = useOfferingById(offeringId);
+  const offering = offeringQuery.data ?? null;
 
-  // Estado del wizard
-  const [step, setStep] = useState(1);
-  const [selectedSession, setSelectedSession] = useState(null);
-  const [quantity, setQuantity] = useState(1);
-  const [selectedExtras, setSelectedExtras] = useState(initialExtraIds);
+  const [selectedSlotId, setSelectedSlotId] = useState("");
+  const [guestCount, setGuestCount] = useState(1);
+  const [customAnswers, setCustomAnswers] = useState({});
+  const [dateRange, setDateRange] = useState({ checkin: "", checkout: "" });
   const [customerInfo, setCustomerInfo] = useState({
     firstName: user?.first_name ?? "",
     lastName: user?.last_name ?? "",
     email: user?.email ?? "",
     phone: "",
+    notes: "",
   });
-  const [errors, setErrors] = useState({});
+  const [step, setStep] = useState(1);
 
-  // Pre-cargar sesión cuando llega del backend
+  const requiresSchedule = offering?.requires_schedule === true;
+  const supportsDateRange = offering?.supports_date_range === true;
+
+  const { data: slots = [], isLoading: loadingSlots } = useOfferingSlots(
+    offering?.$id,
+    {
+      fromDate: new Date().toISOString(),
+      status: "open",
+    },
+  );
+
   useEffect(() => {
-    if (sessionData && !selectedSession) setSelectedSession(sessionData);
-  }, [sessionData]);
+    if (!offering) return;
+    const minGuests = offering.min_guests ?? 1;
+    setGuestCount((prev) => (prev < minGuests ? minGuests : prev));
+  }, [offering]);
 
-  // Resetear cantidad si cambia la sesión
-  function handleSelectSession(s) {
-    setSelectedSession(s);
-    setQuantity(1);
-  }
+  useEffect(() => {
+    if (slotFromId?.$id) {
+      setSelectedSlotId(slotFromId.$id);
+    }
+  }, [slotFromId]);
 
-  // Pre-cargar datos de usuario si está logueado
   useEffect(() => {
     if (user) {
       setCustomerInfo((prev) => ({
+        ...prev,
         firstName: prev.firstName || user.first_name || "",
         lastName: prev.lastName || user.last_name || "",
         email: prev.email || user.email || "",
-        phone: prev.phone,
       }));
     }
   }, [user]);
 
-  // Restaurar estado del booking pendiente tras login/registro
-  useEffect(() => {
-    if (!user || !sessionId) return;
-    const raw = sessionStorage.getItem("pendingBooking");
-    if (!raw) return;
-    try {
-      const pending = JSON.parse(raw);
-      if (pending.sessionId === sessionId) {
-        if (pending.selectedExtras?.length)
-          setSelectedExtras(pending.selectedExtras);
-        sessionStorage.removeItem("pendingBooking");
-        setStep(3);
-      }
-    } catch {
-      sessionStorage.removeItem("pendingBooking");
-    }
-  }, [user, sessionId]);
+  const selectedSlot =
+    slots.find((slot) => slot.$id === selectedSlotId) ?? slotFromId ?? null;
+  const unitPrice = selectedSlot?.price_override ?? offering?.base_price ?? 0;
+  const title = resolveField(offering, "title");
+  const questions = parseQuestions(offering);
+  const hasScheduleStep = requiresSchedule;
+  const stepLabels = hasScheduleStep
+    ? [t("steps.schedule"), t("steps.info"), t("step4.title")]
+    : [t("steps.info"), t("step4.title")];
 
-  const cls = selectedSession?.class ?? sessionData?.class ?? null;
+  if (slotQuery.isLoading || offeringQuery.isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <Loader2 className="w-8 h-8 text-sage animate-spin" />
+      </div>
+    );
+  }
 
-  const stepLabels = [
-    t("steps.schedule"),
-    t("steps.extras"),
-    t("steps.info"),
-    t("step4.title"),
-  ];
+  if (!offering) {
+    return (
+      <div className="min-h-[60vh] flex flex-col items-center justify-center gap-4">
+        <p className="text-charcoal-muted">{t("errors.offeringNotFound")}</p>
+        <Button asChild variant="outline">
+          <Link to={ROUTES.SESSIONS}>{t("actions.backToOfferings")}</Link>
+        </Button>
+      </div>
+    );
+  }
 
-  // Navigación entre pasos
+  const maxGuests = Math.max(offering.max_guests ?? 1, offering.min_guests ?? 1);
+  const minGuests = Math.max(1, offering.min_guests ?? 1);
+  const isReviewStep = step === stepLabels.length;
+  const isInfoStep = step === (hasScheduleStep ? 2 : 1);
+
   function goNext() {
-    if (step === 1 && !selectedSession) return;
-
-    // Gate: paso 2→3 requiere autenticación
-    if (step === 2 && !user) {
-      sessionStorage.setItem(
-        "pendingBooking",
-        JSON.stringify({
-          sessionId,
-          selectedExtras,
-          selectedSessionId: selectedSession?.$id ?? null,
-        }),
-      );
-      navigate(`/register?redirect=/booking/${sessionId}`);
-      return;
-    }
-
-    if (step === 3) {
-      const errs = validateStep3(customerInfo, t);
-      if (Object.keys(errs).length > 0) {
-        setErrors(errs);
+    if (hasScheduleStep && step === 1 && !selectedSlotId) return;
+    if (isInfoStep) {
+      if (!customerInfo.firstName || !customerInfo.lastName || !customerInfo.email) {
         return;
       }
-      setErrors({});
+      if (!user) {
+        navigate(`/register?redirect=/booking/${id}`);
+        return;
+      }
     }
-    if (step < 4) {
-      setStep(step + 1);
-      window.scrollTo({ top: 0, behavior: "smooth" });
+    if (!isReviewStep) {
+      setStep((prev) => prev + 1);
       return;
     }
-
-    // Paso 4 → ir a checkout
-    const basePrice = selectedSession.price_override ?? cls.base_price ?? 0;
-    const extrasTotal = selectedExtras.reduce((sum, id) => {
-      const extra = extraItems.find((e) => e.$id === id);
-      return sum + (extra?.price ?? 0);
-    }, 0);
-
-    const items = [
-      {
-        type: "class_session",
-        id: selectedSession.$id,
-        title: resolveField(cls, "title"),
-        price: basePrice,
-        quantity,
-      },
-      ...selectedExtras.map((id) => {
-        const extra = extraItems.find((e) => e.$id === id);
-        return {
-          type: "product",
-          id,
-          title: resolveField(extra, "name"),
-          price: extra?.price ?? 0,
-          quantity: 1,
-        };
-      }),
-    ];
 
     navigate(ROUTES.CHECKOUT, {
       state: {
-        intent: "booking",
-        sessionId: selectedSession.$id,
-        classId: cls.$id,
-        quantity,
-        items,
-        customerInfo,
-        total: basePrice * quantity + extrasTotal,
+        intentType: "offering_booking",
+        offeringId: offering.$id,
+        slotId: selectedSlotId || null,
+        bookingType: offering.type,
+        guestCount,
+        unitPrice,
+        requestData: {
+          dateRange: supportsDateRange ? dateRange : null,
+          notes: customerInfo.notes,
+          sourcePath: location.pathname,
+        },
+        pricingSnapshot: {
+          booking_mode: offering.booking_mode,
+          pricing_mode: offering.pricing_mode,
+          currency: offering.currency,
+          unit_price: unitPrice,
+        },
+        customAnswers,
+        items: [
+          {
+            id: selectedSlot?.$id ?? offering.$id,
+            item_type: "offering",
+            title,
+            subtitle: selectedSlot ? formatDateTime(selectedSlot.start_at) : null,
+            price: unitPrice,
+            quantity: guestCount,
+          },
+        ],
       },
     });
   }
 
   function goBack() {
     if (step > 1) {
-      setStep(step - 1);
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    } else navigate(-1);
+      setStep((prev) => prev - 1);
+      return;
+    }
+    navigate(-1);
   }
-
-  function toggleExtra(id) {
-    setSelectedExtras((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
-    );
-  }
-
-  function setField(key, value) {
-    setCustomerInfo((prev) => ({ ...prev, [key]: value }));
-    if (errors[key]) setErrors((prev) => ({ ...prev, [key]: undefined }));
-  }
-
-  const isLoading = loadingSession || loadingExtras;
-  const canNext = step === 1 ? !!selectedSession : true;
 
   return (
     <>
-      <PageMeta
-        title={`${t("title")} — Omzone`}
-        description="Reserva tu clase de yoga en Omzone. Elige horario, complementos y confirma tu reserva."
-        noindex
-      />
-
+      <PageMeta title={`${t("title")} - Omzone`} noindex />
       <main className="max-w-5xl mx-auto px-4 py-8 md:py-12 min-h-[calc(100vh-4rem)]">
-        {/* Header */}
         <div className="mb-8">
           <button
             onClick={goBack}
@@ -816,103 +197,179 @@ export default function BookingPage() {
             {t("common:actions.back")}
           </button>
           <h1 className="text-2xl md:text-3xl font-display font-semibold text-charcoal">
-            {t("title")}
+            {title}
           </h1>
         </div>
 
-        {/* StepIndicator */}
-        <StepIndicator
-          steps={stepLabels}
-          current={step}
-          className="mb-8 md:mb-12"
-        />
+        <StepIndicator steps={stepLabels} current={step} className="mb-8 md:mb-12" />
 
-        {isLoading ? (
-          <div className="grid lg:grid-cols-[1fr_340px] gap-8">
-            <div className="space-y-3">
-              {[...Array(4)].map((_, i) => (
-                <Skeleton key={i} className="h-20 w-full" />
-              ))}
+        <div className="grid lg:grid-cols-[1fr_340px] gap-8 items-start">
+          <div className="space-y-6">
+            {hasScheduleStep && step === 1 && (
+              <Card className="border-warm-gray-dark/40">
+                <CardContent className="p-6 space-y-3">
+                  <h2 className="text-lg font-semibold text-charcoal flex items-center gap-2">
+                    <Calendar className="w-4 h-4" />
+                    {t("step1.title")}
+                  </h2>
+                  {loadingSlots ? (
+                    <Loader2 className="w-5 h-5 animate-spin text-sage" />
+                  ) : slots.length === 0 ? (
+                    <p className="text-sm text-charcoal-muted">
+                      {t("step1.noSessions")}
+                    </p>
+                  ) : (
+                    <div className="space-y-2">
+                      {slots.map((slot) => (
+                        <button
+                          key={slot.$id}
+                          type="button"
+                          onClick={() => setSelectedSlotId(slot.$id)}
+                          className={`w-full text-left rounded-xl border p-3 transition ${
+                            selectedSlotId === slot.$id
+                              ? "border-sage bg-sage-muted/20"
+                              : "border-warm-gray-dark/40 hover:border-sage/50"
+                          }`}
+                        >
+                          <p className="text-sm font-medium text-charcoal">
+                            {formatDateTime(slot.start_at)}
+                          </p>
+                          <p className="text-xs text-charcoal-muted mt-1">
+                            {slot.location_label || offering.location_label || "-"}
+                          </p>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+
+            {isInfoStep && (
+              <Card className="border-warm-gray-dark/40">
+                <CardContent className="p-6 space-y-4">
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <div className="space-y-1.5">
+                      <Label>{t("step3.firstName")}</Label>
+                      <Input value={customerInfo.firstName} onChange={(e) => setCustomerInfo((prev) => ({ ...prev, firstName: e.target.value }))} />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label>{t("step3.lastName")}</Label>
+                      <Input value={customerInfo.lastName} onChange={(e) => setCustomerInfo((prev) => ({ ...prev, lastName: e.target.value }))} />
+                    </div>
+                  </div>
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <div className="space-y-1.5">
+                      <Label>{t("step3.email")}</Label>
+                      <Input type="email" value={customerInfo.email} onChange={(e) => setCustomerInfo((prev) => ({ ...prev, email: e.target.value }))} />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label>{t("step3.phone")}</Label>
+                      <Input value={customerInfo.phone} onChange={(e) => setCustomerInfo((prev) => ({ ...prev, phone: e.target.value }))} />
+                    </div>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <Label className="flex items-center gap-2">
+                      <Users className="w-4 h-4" />
+                      {t("detail.guests", { ns: "offerings" })}
+                    </Label>
+                    <Input
+                      type="number"
+                      min={minGuests}
+                      max={maxGuests}
+                      value={guestCount}
+                      onChange={(e) =>
+                        setGuestCount(
+                          Math.min(maxGuests, Math.max(minGuests, Number(e.target.value) || minGuests)),
+                        )
+                      }
+                    />
+                  </div>
+
+                  {supportsDateRange && !hasScheduleStep && (
+                    <div className="grid gap-4 md:grid-cols-2">
+                      <div className="space-y-1.5">
+                        <Label>{t("fields.checkIn")}</Label>
+                        <Input type="date" value={dateRange.checkin} onChange={(e) => setDateRange((prev) => ({ ...prev, checkin: e.target.value }))} />
+                      </div>
+                      <div className="space-y-1.5">
+                        <Label>{t("fields.checkOut")}</Label>
+                        <Input type="date" value={dateRange.checkout} onChange={(e) => setDateRange((prev) => ({ ...prev, checkout: e.target.value }))} />
+                      </div>
+                    </div>
+                  )}
+
+                  {questions.length > 0 && (
+                    <div className="space-y-3">
+                      {questions.map((question, index) => {
+                        const key = question.key || `q_${index}`;
+                        const label = question.label_es || question.label_en || key;
+                        return (
+                          <div key={key} className="space-y-1.5">
+                            <Label>{label}</Label>
+                            <Input value={customAnswers[key] ?? ""} onChange={(e) => setCustomAnswers((prev) => ({ ...prev, [key]: e.target.value }))} />
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+
+                  <div className="space-y-1.5">
+                    <Label>{t("fields.notes")}</Label>
+                    <Textarea value={customerInfo.notes} onChange={(e) => setCustomerInfo((prev) => ({ ...prev, notes: e.target.value }))} />
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {isReviewStep && (
+              <Card className="border-warm-gray-dark/40">
+                <CardContent className="p-6 space-y-3">
+                  <h2 className="text-lg font-semibold text-charcoal">{t("step4.title")}</h2>
+                  <p className="text-sm text-charcoal-muted">{title}</p>
+                  {selectedSlot && (
+                    <p className="text-sm text-charcoal-muted">
+                      {formatDateTime(selectedSlot.start_at)}
+                    </p>
+                  )}
+                  <p className="text-sm text-charcoal-muted">
+                    {t("review.guests", { count: guestCount })}
+                  </p>
+                  <p className="text-lg font-semibold text-sage">
+                    {formatPrice(unitPrice * guestCount, offering.currency)}
+                  </p>
+                </CardContent>
+              </Card>
+            )}
+
+            <div className="flex items-center justify-between">
+              <Button variant="ghost" onClick={goBack}>
+                <ArrowLeft className="w-4 h-4" />
+                {t("common:actions.back")}
+              </Button>
+              <Button onClick={goNext}>
+                {isReviewStep ? t("step4.proceedToPayment") : t("common:actions.next")}
+                {!isReviewStep && <ArrowRight className="w-4 h-4" />}
+              </Button>
             </div>
-            <Skeleton className="h-64 w-full" />
           </div>
-        ) : (
-          <div className="grid lg:grid-cols-[1fr_340px] gap-8 items-start">
-            {/* Contenido del paso */}
-            <div key={step}>
-              {step === 1 && (
-                <Step1
-                  session={sessionData}
-                  cls={cls}
-                  allSessions={allSessionsForClass}
-                  selectedSession={selectedSession}
-                  onSelect={handleSelectSession}
-                  quantity={quantity}
-                  onQuantity={setQuantity}
-                  t={t}
-                />
-              )}
-              {step === 2 && (
-                <Step2
-                  extras={extraItems}
-                  selectedExtras={selectedExtras}
-                  onToggle={toggleExtra}
-                  t={t}
-                />
-              )}
-              {step === 3 && (
-                <Step3
-                  customerInfo={customerInfo}
-                  onChange={setField}
-                  errors={errors}
-                  user={user}
-                  t={t}
-                />
-              )}
-              {step === 4 && (
-                <Step4
-                  session={selectedSession}
-                  cls={cls}
-                  selectedExtras={selectedExtras}
-                  extraItems={extraItems}
-                  customerInfo={customerInfo}
-                  quantity={quantity}
-                  onEdit={(s) => setStep(s)}
-                  t={t}
-                />
-              )}
 
-              {/* Navegación */}
-              <div className="flex items-center justify-between mt-8 pt-6 border-t border-warm-gray-dark/50">
-                <Button variant="ghost" onClick={goBack} className="gap-1.5">
-                  <ArrowLeft className="w-4 h-4" />
-                  {t("common:actions.back")}
-                </Button>
-                <Button
-                  onClick={goNext}
-                  disabled={!canNext}
-                  className="gap-1.5 min-w-40"
-                  size="lg"
-                >
-                  {step === 4
-                    ? t("step4.proceedToPayment")
-                    : t("common:actions.next")}
-                  {step < 4 && <ArrowRight className="w-4 h-4" />}
-                </Button>
-              </div>
-            </div>
-
-            {/* Sidebar */}
-            <BookingSidebar
-              session={selectedSession ?? sessionData}
-              cls={cls}
-              selectedExtras={selectedExtras}
-              extraItems={extraItems}
-              quantity={quantity}
-              t={t}
-            />
-          </div>
-        )}
+          <Card className="border-warm-gray-dark/40">
+            <CardContent className="p-5 space-y-2">
+              <p className="text-sm font-semibold text-charcoal">{title}</p>
+              <p className="text-xs text-charcoal-muted">
+                {offering.location_label || "-"}
+              </p>
+              <p className="text-sm text-charcoal-muted">
+                {formatPrice(unitPrice, offering.currency)} x {guestCount}
+              </p>
+              <p className="text-lg font-bold text-sage">
+                {formatPrice(unitPrice * guestCount, offering.currency)}
+              </p>
+            </CardContent>
+          </Card>
+        </div>
       </main>
     </>
   );

@@ -1,12 +1,14 @@
 /**
- * FeaturedOfferingsSection — editorial blocks for featured offerings.
- * Replaces FeaturedClassesSection with the unified offerings model.
+ * FeaturedOfferingsSection — full-width editorial sections for featured offerings.
+ * Displays each featured offering as its own alternating section (not cards).
  */
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { ArrowRight, Clock, MapPin } from "lucide-react";
+import { ArrowRight, Clock, MapPin, Sparkles } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
 import { useOfferings } from "@/hooks/useOfferings";
+import { useCurrency } from "@/hooks/useCurrency";
 import { resolveField } from "@/lib/i18n-data";
 import { getPreviewUrl } from "@/lib/media";
 import { BUCKET_PUBLIC_MEDIA } from "@/env";
@@ -15,152 +17,199 @@ import { offeringHref } from "@/features/offerings/OfferingCard";
 import ROUTES from "@/constants/routes";
 import { cn } from "@/lib/utils";
 
-const CATEGORY_GRADIENT = {
-  wellness_studio: "from-teal-900 via-teal-800 to-emerald-900",
-  immersion: "from-indigo-950 via-violet-900 to-slate-900",
-  stay: "from-amber-900 via-orange-900 to-stone-900",
-  service: "from-rose-900 via-pink-900 to-stone-900",
-  experience: "from-sky-900 via-cyan-800 to-slate-900",
-};
-
 export default function FeaturedOfferingsSection() {
   const { t } = useTranslation("landing");
+  const { t: tOfferings } = useTranslation("offerings");
   const { data: offerings, isLoading } = useOfferings({ showOnHome: true });
 
   if (!isLoading && (!offerings || offerings.length === 0)) return null;
 
   return (
-    <section
-      aria-labelledby="featured-offerings-heading"
-      className="bg-cream py-20 md:py-28"
-    >
-      <div className="max-w-6xl mx-auto px-4 sm:px-6">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-12">
-          <div className="max-w-lg">
-            <h2
-              id="featured-offerings-heading"
-              className="font-display text-3xl md:text-4xl text-charcoal font-semibold mb-3 text-balance"
-            >
-              {t("featured.title")}
-            </h2>
-            <p className="text-charcoal-muted leading-relaxed">
-              {t("featured.subtitle")}
-            </p>
-          </div>
-          <Link
-            to={ROUTES.SESSIONS}
-            className="inline-flex items-center gap-2 text-sm text-charcoal-muted hover:text-charcoal border border-warm-gray-dark/40 hover:border-charcoal/30 rounded-full px-5 py-2.5 transition-colors shrink-0 self-start sm:self-auto"
+    <section aria-labelledby="featured-offerings-heading">
+      {/* Section intro */}
+      <div className="bg-charcoal py-16 md:py-20">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
+          <span className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.22em] text-sage font-semibold mb-4">
+            <Sparkles className="w-4 h-4" aria-hidden="true" />
+            {t("featured.badge", { defaultValue: "Destacados" })}
+          </span>
+          <h2
+            id="featured-offerings-heading"
+            className="font-display text-4xl md:text-5xl lg:text-6xl text-white font-semibold mb-5 text-balance leading-tight"
           >
-            {t("featured.cta")}
-            <ArrowRight className="w-4 h-4" aria-hidden="true" />
-          </Link>
+            {t("featured.title")}
+          </h2>
+          <p className="text-white/60 text-lg md:text-xl leading-relaxed max-w-2xl mx-auto">
+            {t("featured.subtitle")}
+          </p>
         </div>
+      </div>
 
-        {/* Editorial blocks */}
-        {isLoading ? (
-          <div className="space-y-8">
+      {/* Offerings as alternating full-width sections */}
+      {isLoading ? (
+        <div className="bg-cream py-20">
+          <div className="max-w-6xl mx-auto px-4 space-y-8">
             {[...Array(2)].map((_, i) => (
-              <Skeleton key={i} className="h-105 w-full rounded-3xl" />
+              <Skeleton key={i} className="h-80 w-full rounded-3xl" />
             ))}
           </div>
-        ) : (
-          <div className="space-y-8">
-            {offerings.map((offering) => (
-              <FeaturedBlock key={offering.$id} offering={offering} />
-            ))}
-          </div>
-        )}
+        </div>
+      ) : (
+        <div>
+          {offerings.map((offering, index) => (
+            <FeaturedSection
+              key={offering.$id}
+              offering={offering}
+              index={index}
+              t={tOfferings}
+            />
+          ))}
+        </div>
+      )}
+
+      {/* Bottom CTA */}
+      <div className="bg-sage py-14 md:py-18">
+        <div className="max-w-4xl mx-auto px-4 text-center">
+          <p className="text-white/80 text-lg mb-6">
+            {t("featured.exploreMore", {
+              defaultValue: "Descubre todas nuestras experiencias",
+            })}
+          </p>
+          <Button
+            asChild
+            size="lg"
+            variant="outline"
+            className="border-white text-white hover:bg-white/10 rounded-full px-8"
+          >
+            <Link to={ROUTES.SESSIONS}>
+              {t("featured.cta")}
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </Button>
+        </div>
       </div>
     </section>
   );
 }
 
-function FeaturedBlock({ offering }) {
-  const { t } = useTranslation("offerings");
+// ── Individual Featured Section ──────────────────────────────────────────────
+
+function FeaturedSection({ offering, index, t }) {
+  const { formatPrice } = useCurrency();
   const title = resolveField(offering, "title");
   const summary = resolveField(offering, "summary");
-  const categoryLabel = t(`categories.${offering.category}`);
   const href = offeringHref(offering);
 
-  const gradient =
-    CATEGORY_GRADIENT[offering.category] ?? CATEGORY_GRADIENT.wellness_studio;
-
-  const imgUrl = offering.cover_image_id
+  const coverUrl = offering.cover_image_id
     ? getPreviewUrl(
         offering.cover_image_id,
         offering.cover_image_bucket ?? BUCKET_PUBLIC_MEDIA,
-        1200,
-        800,
+        1400,
+        900,
         85,
       )
     : null;
 
+  // Price display
+  let priceLabel = null;
+  if (offering.pricing_mode === "fixed_price" && offering.base_price) {
+    priceLabel = formatPrice(offering.base_price, offering.currency);
+  } else if (offering.pricing_mode === "from_price" && offering.base_price) {
+    priceLabel = `${t("card.from")} ${formatPrice(offering.base_price, offering.currency)}`;
+  }
+
+  const ctaLabel = resolveField(offering, "cta_label") || t("card.viewDetails");
+  const categoryLabel = t(`categories.${offering.category}`, {
+    defaultValue: offering.category,
+  });
+
+  // Alternate layout direction
+  const isReversed = index % 2 === 1;
+
   return (
-    <article className="group grid grid-cols-1 md:grid-cols-[3fr_2fr] min-h-105 md:min-h-120 rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-shadow duration-500">
-      {/* Image */}
-      <div
-        className="relative block overflow-hidden min-h-65 md:min-h-0"
-        aria-hidden="true"
-      >
-        {imgUrl ? (
-          <img
-            src={imgUrl}
-            alt=""
-            aria-hidden="true"
-            className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-            loading="lazy"
-          />
-        ) : (
-          <div className={cn("absolute inset-0 bg-linear-to-br", gradient)} />
-        )}
-        <div className="absolute inset-0 bg-black/10 pointer-events-none" />
-        <span className="absolute top-5 left-5 text-[10px] uppercase tracking-[0.18em] font-semibold text-white bg-black/30 backdrop-blur-md border border-white/15 rounded-full px-3 py-1.5 leading-none pointer-events-none">
-          {categoryLabel}
-        </span>
-      </div>
-
-      {/* Content */}
-      <div className="flex flex-col justify-center bg-white px-8 py-10 md:px-10 md:py-12">
-        <p className="text-xs uppercase tracking-[0.22em] text-sage font-semibold mb-4">
-          {categoryLabel}
-        </p>
-
-        <Link to={href} className="block mb-4">
-          <h3 className="font-display text-2xl md:text-3xl lg:text-4xl text-charcoal font-bold leading-tight group-hover:text-sage transition-colors duration-300">
-            {title}
-          </h3>
-        </Link>
-
-        {summary && (
-          <p className="text-charcoal-muted leading-relaxed mb-6 line-clamp-3 text-sm md:text-base">
-            {summary}
-          </p>
-        )}
-
-        <div className="flex items-center gap-4 text-sm text-charcoal-subtle mb-8">
-          {offering.duration_min && (
-            <span className="flex items-center gap-2">
-              <Clock className="w-4 h-4 shrink-0" aria-hidden="true" />
-              {formatDuration(offering.duration_min)}
-            </span>
+    <section
+      className={cn(
+        "py-16 md:py-24",
+        index % 2 === 0 ? "bg-cream" : "bg-white",
+      )}
+    >
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div
+          className={cn(
+            "grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center",
+            isReversed && "lg:[direction:rtl] lg:*:[direction:ltr]",
           )}
-          {offering.location_label && (
-            <span className="flex items-center gap-2">
-              <MapPin className="w-4 h-4 shrink-0" aria-hidden="true" />
-              {offering.location_label}
-            </span>
-          )}
-        </div>
-
-        <Link
-          to={href}
-          className="inline-flex items-center gap-2 self-start bg-charcoal text-white rounded-2xl px-7 py-3.5 text-sm font-semibold hover:bg-charcoal/85 active:scale-[0.98] transition-all duration-200"
         >
-          {t("card.viewDetails")}
-          <ArrowRight className="w-4 h-4" aria-hidden="true" />
-        </Link>
+          {/* Image */}
+          <div className="relative aspect-4/3 rounded-3xl overflow-hidden shadow-xl group">
+            {coverUrl ? (
+              <img
+                src={coverUrl}
+                alt=""
+                aria-hidden="true"
+                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                loading="lazy"
+              />
+            ) : (
+              <div className="absolute inset-0 bg-linear-to-br from-sage via-sage-dark to-emerald-700" />
+            )}
+            <div className="absolute inset-0 bg-black/5 pointer-events-none" />
+
+            {/* Category badge */}
+            <span className="absolute top-5 left-5 text-[10px] uppercase tracking-[0.18em] font-semibold text-white bg-black/30 backdrop-blur-md border border-white/15 rounded-full px-4 py-2 leading-none">
+              {categoryLabel}
+            </span>
+          </div>
+
+          {/* Content */}
+          <div className="space-y-6">
+            <p className="text-xs uppercase tracking-[0.22em] text-sage font-semibold">
+              {categoryLabel}
+            </p>
+
+            <h3 className="font-display text-3xl md:text-4xl lg:text-5xl text-charcoal font-semibold leading-tight">
+              {title}
+            </h3>
+
+            {summary && (
+              <p className="text-charcoal-muted text-lg leading-relaxed">
+                {summary}
+              </p>
+            )}
+
+            {/* Meta info */}
+            <div className="flex flex-wrap items-center gap-4 text-sm text-charcoal-subtle">
+              {offering.duration_min && (
+                <span className="flex items-center gap-2">
+                  <Clock className="w-4 h-4" />
+                  {formatDuration(offering.duration_min)}
+                </span>
+              )}
+              {offering.location_label && (
+                <span className="flex items-center gap-2">
+                  <MapPin className="w-4 h-4" />
+                  {offering.location_label}
+                </span>
+              )}
+            </div>
+
+            {/* Price + CTA */}
+            <div className="flex flex-wrap items-center gap-4 pt-4">
+              {priceLabel && (
+                <span className="text-2xl font-bold text-charcoal">
+                  {priceLabel}
+                </span>
+              )}
+              <Button asChild size="lg" className="shadow-lg shadow-sage/20">
+                <Link to={href}>
+                  {ctaLabel}
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+              </Button>
+            </div>
+          </div>
+        </div>
       </div>
-    </article>
+    </section>
   );
 }

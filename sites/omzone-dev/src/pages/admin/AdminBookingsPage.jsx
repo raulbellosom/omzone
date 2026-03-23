@@ -18,6 +18,7 @@ const STATUS_BADGE = {
   confirmed: "sage",
   completed: "outline",
   cancelled: "destructive",
+  pending: "default",
 };
 
 export default function AdminBookingsPage() {
@@ -54,21 +55,25 @@ export default function AdminBookingsPage() {
                     </div>
                     <div className="min-w-0">
                       <p className="text-sm font-semibold text-charcoal truncate">
-                        {resolveField(b.session?.class ?? {}, "title")}
+                        {resolveField(b.offering ?? {}, "title") ||
+                          b.offering?.slug ||
+                          b.booking_type ||
+                          t("offerings.fallbackLabel")}
                       </p>
                       <p className="text-[10px] font-mono text-charcoal-subtle">
                         {b.booking_code}
                       </p>
                       <p className="text-xs text-charcoal-muted">
-                        {b.session?.session_date
+                        {b.slot?.start_at
                           ? format(
-                              new Date(b.session.session_date),
+                              new Date(b.slot.start_at),
                               "d MMM yyyy · HH:mm",
                               { locale: dateFnsLocale },
                             )
                           : "—"}
-                        {b.session?.location_label &&
-                          ` · ${b.session.location_label}`}
+                        {(b.slot?.location_label || b.offering?.location_label) &&
+                          ` · ${b.slot?.location_label || b.offering?.location_label}`}
+                        {b.guest_count > 1 && ` � ${t("bookings.guestCount", { count: b.guest_count })}`}
                       </p>
                     </div>
                   </div>
@@ -80,7 +85,7 @@ export default function AdminBookingsPage() {
                       {t(`bookings.status.${b.status}`)}
                     </Badge>
                     <span className="font-semibold text-charcoal text-sm hidden sm:inline">
-                      {formatPrice(b.unit_price)}
+                      {formatPrice((b.unit_price ?? 0) * (b.guest_count ?? 1))}
                     </span>
                   </div>
                 </li>
@@ -99,3 +104,4 @@ export default function AdminBookingsPage() {
     </div>
   );
 }
+

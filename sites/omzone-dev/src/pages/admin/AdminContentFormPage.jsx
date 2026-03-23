@@ -14,12 +14,15 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import AdminPageHeader from "@/components/shared/AdminPageHeader";
-import ImageSourceSelector from "@/components/shared/ImageSourceSelector";
+import MultiImageSelector from "@/components/shared/MultiImageSelector";
+import SearchCombobox from "@/components/shared/SearchCombobox";
 import {
   useAdminContentSections,
+  useAdminOfferings,
   useCreateContentSection,
   useUpdateContentSection,
 } from "@/hooks/useAdmin";
+import { resolveField } from "@/lib/i18n-data";
 import ROUTES from "@/constants/routes";
 
 const EMPTY_FORM = {
@@ -33,11 +36,23 @@ const EMPTY_FORM = {
   cta_label_es: "",
   cta_label_en: "",
   cta_url: "",
-  image_id: "",
-  image_bucket: "",
+  images: [],
+  scope: "global",
+  offering_id: "",
   display_order: 0,
   enabled: true,
 };
+
+/** Parse images_json string to array */
+function parseImagesJson(raw) {
+  if (!raw) return [];
+  try {
+    const arr = JSON.parse(raw);
+    return Array.isArray(arr) ? arr : [];
+  } catch {
+    return [];
+  }
+}
 
 function SettingRow({ label, checked, onCheckedChange }) {
   return (
@@ -71,6 +86,7 @@ export default function AdminContentFormPage() {
 
   const { data: sections = [], isLoading: sectionsLoading } =
     useAdminContentSections();
+  const { data: offerings = [] } = useAdminOfferings();
   const createMutation = useCreateContentSection();
   const updateMutation = useUpdateContentSection();
 
@@ -92,8 +108,9 @@ export default function AdminContentFormPage() {
         cta_label_es: existing.cta_label_es ?? "",
         cta_label_en: existing.cta_label_en ?? "",
         cta_url: existing.cta_url ?? "",
-        image_id: existing.image_id ?? "",
-        image_bucket: existing.image_bucket ?? "",
+        images: parseImagesJson(existing.images_json),
+        scope: existing.scope ?? "global",
+        offering_id: existing.offering_id ?? "",
         display_order: existing.display_order ?? 0,
         enabled: existing.enabled ?? true,
       });
@@ -109,14 +126,15 @@ export default function AdminContentFormPage() {
     e.preventDefault();
 
     if (!form.section_key.trim()) {
-      toast.error(
-        t("contentSections.fields.sectionKey") + " es obligatorio",
-      );
+      toast.error(t("contentSections.fields.sectionKey") + " es obligatorio");
       return;
     }
 
+    // Serialize images array to JSON string for Appwrite
+    const { images, ...rest } = form;
     const payload = {
-      ...form,
+      ...rest,
+      images_json: images.length > 0 ? JSON.stringify(images) : null,
       display_order: Number(form.display_order) || 0,
     };
 
@@ -145,6 +163,11 @@ export default function AdminContentFormPage() {
   }
 
   const isBusy = createMutation.isPending || updateMutation.isPending;
+  const offeringOptions = offerings.map((item) => ({
+    value: item.$id,
+    label: resolveField(item, "title") || item.slug,
+    description: item.slug,
+  }));
 
   if (isEditing && sectionsLoading) {
     return (
@@ -180,9 +203,45 @@ export default function AdminContentFormPage() {
             <Input
               value={form.section_key}
               onChange={(e) => setField("section_key", e.target.value)}
-              placeholder="hero, about, testimonials..."
+              placeholder={t("contentSections.fields.sectionKeyPlaceholder")}
               required
             />
+          </div>
+        </FormSection>
+
+        <FormSection title={t("contentSections.fields.scope")}>
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-1.5">
+              <Label>{t("contentSections.fields.scope")}</Label>
+              <SearchCombobox
+                value={form.scope}
+                onValueChange={(value) => setField("scope", value)}
+                options={[
+                  {
+                    value: "global",
+                    label: t("contentSections.scope.global"),
+                  },
+                  {
+                    value: "offering",
+                    label: t("contentSections.scope.offering"),
+                  },
+                ]}
+                placeholder={t("contentSections.fields.scopePlaceholder")}
+                searchPlaceholder={t("common.search")}
+                emptyMessage={t("common.noData")}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label>{t("contentSections.fields.offeringOptional")}</Label>
+              <SearchCombobox
+                value={form.offering_id}
+                onValueChange={(value) => setField("offering_id", value)}
+                options={offeringOptions}
+                placeholder={t("contentSections.fields.offeringPlaceholder")}
+                searchPlaceholder={t("common.search")}
+                emptyMessage={t("common.noData")}
+              />
+            </div>
           </div>
         </FormSection>
 
@@ -249,7 +308,7 @@ export default function AdminContentFormPage() {
         </FormSection>
 
         {/* CTA */}
-        <FormSection title="CTA">
+        <FormSection title={t("contentSections.fields.ctaSection")}>
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-1.5">
               <Label>{t("contentSections.fields.ctaLabelEs")}</Label>
@@ -271,21 +330,18 @@ export default function AdminContentFormPage() {
             <Input
               value={form.cta_url}
               onChange={(e) => setField("cta_url", e.target.value)}
-              placeholder="https://..."
+              placeholder={t("contentSections.fields.ctaUrlPlaceholder")}
             />
           </div>
         </FormSection>
 
-        {/* Image */}
-        <FormSection>
-          <ImageSourceSelector
-            fileId={form.image_id}
-            bucketId={form.image_bucket}
-            onFileChange={(fileId, bucketId) => {
-              setField("image_id", fileId);
-              setForm((prev) => ({ ...prev, image_bucket: bucketId }));
-            }}
-            label={t("contentSections.fields.titleEs")}
+        {/* Images */}
+        <FormSection title={t("contentSections.sections.images")}>
+          <MultiImageSelector
+            images={form.images}
+            onChange={(imgs) => setField("images", imgs)}
+            maxImages={3}
+            label={t("contentSections.fields.images")}
             aspectRatio="16/9"
           />
         </FormSection>

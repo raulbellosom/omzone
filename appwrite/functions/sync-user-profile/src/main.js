@@ -107,13 +107,13 @@ export default async ({ req, res, log, error }) => {
     return res.json({ ok: false, error: e.message }, 500);
   }
 
-  // ── Update profile.fullName + updatedAt ───────────────────────────────────
+  // ── Update profile.fullName ───────────────────────────────────────────────
   try {
     await db.updateDocument(
       APPWRITE_DATABASE_ID,
       APPWRITE_USERS_PROFILE_COLLECTION_ID,
       profile.$id,
-      { fullName, updatedAt: new Date().toISOString() },
+      { fullName },
     );
   } catch (e) {
     // Non-fatal: Auth.name is already updated; profile fullName is cosmetic.

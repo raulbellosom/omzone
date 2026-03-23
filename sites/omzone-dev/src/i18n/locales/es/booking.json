@@ -54,5 +54,19 @@
     "tax": "IVA",
     "total": "Total",
     "currency": "MXN"
+  },
+  "actions": {
+    "backToOfferings": "Volver"
+  },
+  "errors": {
+    "offeringNotFound": "No encontramos el offering."
+  },
+  "fields": {
+    "checkIn": "Check-in",
+    "checkOut": "Check-out",
+    "notes": "Notas"
+  },
+  "review": {
+    "guests": "Personas: {{count}}"
   }
 }

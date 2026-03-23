@@ -72,7 +72,18 @@
     "contactUs": "Contact us",
     "selectDate": "Select a date",
     "spotsAvailable": "{{available}} of {{total}} spots available",
-    "relatedOfferings": "You may also like"
+    "relatedOfferings": "You may also like",
+    "theExperience": "The experience",
+    "scrollToExplore": "Explore",
+    "readyTitle": "Ready to begin?",
+    "readySubtitle": "Book your spot and begin your transformation journey.",
+    "escapeTitle": "Escape to nature",
+    "escapeSubtitle": "Reconnect with the sea, the earth, and your inner self.",
+    "yourJourney": "Your journey",
+    "journeySubtitle": "A path of personal transformation",
+    "whatsIncluded": "What's included?",
+    "beginJourney": "Begin your journey",
+    "beginSubtitle": "Don't wait any longer to transform your life. Book today."
   },
   "filters": {
     "category": "Category",

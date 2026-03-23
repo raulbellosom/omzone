@@ -17,6 +17,7 @@ import AdminFormDialog from "@/components/admin/AdminFormDialog";
 import AdminPageHeader from "@/components/shared/AdminPageHeader";
 import {
   useAdminContentSections,
+  useAdminOfferings,
   useToggleContentSection,
   useDeleteContentSection,
 } from "@/hooks/useAdmin";
@@ -34,8 +35,10 @@ export default function AdminContentPage() {
   const [deleteState, setDeleteState] = useState(null);
 
   const { data: sections = [], isLoading } = useAdminContentSections();
+  const { data: offerings = [] } = useAdminOfferings();
   const toggleMutation = useToggleContentSection();
   const deleteMutation = useDeleteContentSection();
+  const offeringMap = Object.fromEntries(offerings.map((item) => [item.$id, item]));
 
   const filtered = sections.filter((item) => {
     const query = search.trim().toLowerCase();
@@ -124,12 +127,25 @@ export default function AdminContentPage() {
                 )}
                 <div className="mt-3 flex flex-wrap gap-2 text-xs text-charcoal-muted">
                   <span className="rounded-full bg-warm-gray/50 px-3 py-1.5">
+                    {t("contentSections.chips.scope")}:{" "}
+                    {t(`contentSections.scope.${item.scope || "global"}`)}
+                  </span>
+                  {item.offering_id && (
+                    <span className="rounded-full bg-warm-gray/50 px-3 py-1.5">
+                      {t("contentSections.chips.offering")}:{" "}
+                      {resolveField(offeringMap[item.offering_id], "title") ||
+                        item.offering_id}
+                    </span>
+                  )}
+                  <span className="rounded-full bg-warm-gray/50 px-3 py-1.5">
                     {t("contentSections.fields.displayOrder")}:{" "}
                     {item.display_order ?? 0}
                   </span>
                   {item.cta_url && (
                     <span className="rounded-full bg-warm-gray/50 px-3 py-1.5">
-                      CTA → {item.cta_url}
+                      {t("contentSections.chips.cta")}
+                      {" -> "}
+                      {item.cta_url}
                     </span>
                   )}
                 </div>

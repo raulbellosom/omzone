@@ -107,7 +107,6 @@ export default async ({ req, res, log, error }) => {
   // ── Build update payload ───────────────────────────────────────────────────
   const update = {
     emailVerified,
-    updatedAt: new Date().toISOString(),
   };
 
   // Promote status from pending_verification → active when email is verified

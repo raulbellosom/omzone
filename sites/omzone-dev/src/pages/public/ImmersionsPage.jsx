@@ -1,11 +1,11 @@
-import OfferingListingLayout from "@/features/offerings/OfferingListingLayout";
+import OfferingSectionsLayout from "@/features/offerings/OfferingSectionsLayout";
 
 export default function ImmersionsPage() {
   return (
-    <OfferingListingLayout
+    <OfferingSectionsLayout
       category="immersion"
       pageKey="immersions"
-      cardLayout="overlay"
+      heroVariant="light"
     />
   );
 }

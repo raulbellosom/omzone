@@ -1,11 +1,11 @@
-import OfferingListingLayout from "@/features/offerings/OfferingListingLayout";
+import OfferingSectionsLayout from "@/features/offerings/OfferingSectionsLayout";
 
 export default function ServicesPage() {
   return (
-    <OfferingListingLayout
+    <OfferingSectionsLayout
       category="service"
       pageKey="services"
-      cardLayout="split"
+      heroVariant="dark"
     />
   );
 }

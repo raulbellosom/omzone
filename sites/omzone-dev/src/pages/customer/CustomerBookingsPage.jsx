@@ -11,7 +11,6 @@ import {
   CalendarCheck,
   MapPin,
   Clock,
-  User,
   X,
   CheckCircle,
   Ban,
@@ -45,7 +44,15 @@ const STATUS_ICON = {
 function BookingCard({ booking, t, dateFnsLocale, onCancel, cancelling }) {
   const [confirmingCancel, setConfirmingCancel] = useState(false);
   const { formatPrice } = useCurrency();
-  const cls = booking.session.class;
+  const offering = booking.offering ?? null;
+  const title = resolveField(offering, "title");
+  const startsAt = booking.slot?.start_at || booking.reserved_at || null;
+  const locationLabel =
+    booking.slot?.location_label ||
+    offering?.location_label ||
+    "-";
+  const guestCount = booking.guest_count ?? booking.quantity ?? 1;
+  const totalPrice = (booking.unit_price ?? 0) * guestCount;
   const isUpcoming = booking.status === "confirmed";
   const StatusIcon = STATUS_ICON[booking.status] ?? CheckCircle;
 
@@ -79,7 +86,7 @@ function BookingCard({ booking, t, dateFnsLocale, onCancel, cancelling }) {
             <div className="flex items-start justify-between gap-3 mb-3">
               <div>
                 <h3 className="font-semibold text-charcoal leading-tight">
-                  {resolveField(cls, "title")}
+                  {title || "Booking"}
                 </h3>
                 <p className="text-[10px] font-mono text-charcoal-subtle mt-0.5 uppercase tracking-wider">
                   {t("bookings.code")}: {booking.booking_code}
@@ -96,32 +103,28 @@ function BookingCard({ booking, t, dateFnsLocale, onCancel, cancelling }) {
 
             {/* Detalles */}
             <div className="grid grid-cols-2 gap-x-6 gap-y-1.5 mb-4 text-sm">
-              <div className="flex items-center gap-2 text-charcoal-muted">
-                <CalendarCheck className="w-3.5 h-3.5 text-sage shrink-0" />
-                <span>
-                  {format(
-                    new Date(booking.session.session_date),
-                    "d MMM, HH:mm",
-                    { locale: dateFnsLocale },
-                  )}
-                  {" · "}
-                  {booking.session.start_time}
-                </span>
-              </div>
+              {startsAt && (
+                <div className="flex items-center gap-2 text-charcoal-muted">
+                  <CalendarCheck className="w-3.5 h-3.5 text-sage shrink-0" />
+                  <span>
+                    {format(new Date(startsAt), "d MMM, HH:mm", {
+                      locale: dateFnsLocale,
+                    })}
+                  </span>
+                </div>
+              )}
               <div className="flex items-center gap-2 text-charcoal-muted">
                 <MapPin className="w-3.5 h-3.5 text-sage shrink-0" />
-                <span>{booking.session.location_label}</span>
+                <span>{locationLabel}</span>
               </div>
-              <div className="flex items-center gap-2 text-charcoal-muted">
-                <User className="w-3.5 h-3.5 text-sage shrink-0" />
-                <span>{cls.instructor?.display_name}</span>
-              </div>
-              <div className="flex items-center gap-2 text-charcoal-muted">
-                <Clock className="w-3.5 h-3.5 text-sage shrink-0" />
-                <span>
-                  {cls.duration_min} {t("bookings.min")}
-                </span>
-              </div>
+              {offering?.duration_min && (
+                <div className="flex items-center gap-2 text-charcoal-muted">
+                  <Clock className="w-3.5 h-3.5 text-sage shrink-0" />
+                  <span>
+                    {offering.duration_min} {t("bookings.min")}
+                  </span>
+                </div>
+              )}
             </div>
 
             {/* Extras */}
@@ -143,11 +146,7 @@ function BookingCard({ booking, t, dateFnsLocale, onCancel, cancelling }) {
               <span className="text-xs text-charcoal-subtle">
                 {t("bookings.total")}:{" "}
                 <span className="font-semibold text-charcoal">
-                  {formatPrice(
-                    booking.unit_price +
-                      (booking.extras_json?.reduce((s, e) => s + e.price, 0) ??
-                        0),
-                  )}
+                  {formatPrice(totalPrice)}
                 </span>
               </span>
               {isUpcoming && (

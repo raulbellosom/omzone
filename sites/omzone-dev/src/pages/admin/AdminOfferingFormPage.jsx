@@ -1,11 +1,10 @@
 /**
- * AdminOfferingFormPage — página dedicada para crear/editar un offering.
- * Rutas: /app/offerings/new  |  /app/offerings/:id/edit
+ * AdminOfferingFormPage - dynamic offering form by flowKey.
  */
-import { useState, useEffect } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { useNavigate, useParams, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { ArrowLeft, Loader2 } from "lucide-react";
+import { ArrowLeft, Loader2, Plus } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -13,46 +12,23 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import AdminPageHeader from "@/components/shared/AdminPageHeader";
-import ImageSourceSelector from "@/components/shared/ImageSourceSelector";
 import SearchCombobox from "@/components/shared/SearchCombobox";
+import AdminPageHeader from "@/components/shared/AdminPageHeader";
+import MultiImageSelector from "@/components/shared/MultiImageSelector";
 import {
   useCreateOffering,
   useUpdateOffering,
+  useAdminLocationProfiles,
+  useCreateLocationProfile,
 } from "@/hooks/useAdmin";
 import { useOfferingById } from "@/hooks/useOfferings";
-import { CURRENCY_OPTIONS } from "@/lib/currency";
 import ROUTES from "@/constants/routes";
-
-const EMPTY_FORM = {
-  slug: "",
-  title_es: "",
-  title_en: "",
-  summary_es: "",
-  summary_en: "",
-  description_es: "",
-  description_en: "",
-  category: "wellness_studio",
-  type: "session",
-  yoga_style: "",
-  booking_mode: "scheduled",
-  pricing_mode: "fixed_price",
-  base_price: 0,
-  currency: "MXN",
-  duration_min: 60,
-  min_guests: 1,
-  max_guests: 1,
-  location_label: "",
-  cta_label_es: "",
-  cta_label_en: "",
-  cover_image_id: "",
-  cover_image_bucket: "",
-  is_featured: false,
-  show_on_home: false,
-  display_order: 0,
-  status: "draft",
-  enabled: true,
-};
+import { CURRENCY_OPTIONS } from "@/lib/currency";
+import {
+  getFlowTemplate,
+  ensureOfferingFlow,
+  getFlowOptions,
+} from "@/lib/offering-flow";
 
 const CATEGORY_OPTIONS = [
   "wellness_studio",
@@ -71,28 +47,64 @@ const TYPE_OPTIONS = [
   "experience",
 ];
 
-const BOOKING_MODE_OPTIONS = [
-  "scheduled",
-  "request_only",
-  "always_available",
-  "date_range",
-];
-
-const PRICING_MODE_OPTIONS = ["fixed_price", "from_price", "request_quote"];
 const STATUS_OPTIONS = ["draft", "published", "archived"];
 
-function SettingRow({ label, description, checked, onCheckedChange }) {
-  return (
-    <div className="flex items-center justify-between gap-4 rounded-2xl border border-warm-gray-dark/40 bg-warm-gray/20 px-4 py-3">
-      <div>
-        <p className="text-sm font-medium text-charcoal">{label}</p>
-        {description && (
-          <p className="text-xs text-charcoal-muted">{description}</p>
-        )}
-      </div>
-      <Switch checked={checked} onCheckedChange={onCheckedChange} />
-    </div>
-  );
+const EMPTY_CORE = {
+  slug: "",
+  title_es: "",
+  title_en: "",
+  summary_es: "",
+  summary_en: "",
+  description_es: "",
+  description_en: "",
+  category: "wellness_studio",
+  type: "session",
+  yoga_style: "",
+  currency: "MXN",
+  cta_label_es: "",
+  cta_label_en: "",
+  images: [],
+  is_featured: false,
+  show_on_home: false,
+  display_order: 0,
+  status: "draft",
+  enabled: true,
+};
+
+/**
+ * Parse imagesJson string into array of {id, bucket} objects.
+ * Returns empty array if invalid or missing.
+ */
+function parseImagesJson(jsonStr) {
+  if (!jsonStr) return [];
+  try {
+    const parsed = JSON.parse(jsonStr);
+    if (Array.isArray(parsed)) {
+      return parsed.filter((img) => img && img.id);
+    }
+    return [];
+  } catch {
+    return [];
+  }
+}
+
+function buildInitialForm() {
+  const tpl = getFlowTemplate("wellness_studio", "session");
+  return {
+    core: { ...EMPTY_CORE },
+    flow: {
+      flow_key: tpl.flow_key,
+      flow_version: tpl.flow_version,
+      flow_config: tpl.flow_config,
+      terms_config: tpl.terms_config,
+    },
+    new_location: {
+      name: "",
+      address: "",
+      map_url: "",
+      notes: "",
+    },
+  };
 }
 
 function FormSection({ title, children }) {
@@ -100,13 +112,22 @@ function FormSection({ title, children }) {
     <Card className="border-warm-gray-dark/40">
       <CardContent className="p-6 space-y-4">
         {title && (
-          <h3 className="text-sm font-semibold uppercase tracking-[0.15em] text-charcoal-subtle mb-2">
+          <h3 className="text-sm font-semibold uppercase tracking-[0.15em] text-charcoal-subtle">
             {title}
           </h3>
         )}
         {children}
       </CardContent>
     </Card>
+  );
+}
+
+function SettingRow({ label, checked, onCheckedChange }) {
+  return (
+    <div className="flex items-center justify-between gap-4 rounded-2xl border border-warm-gray-dark/40 bg-warm-gray/20 px-4 py-3">
+      <p className="text-sm font-medium text-charcoal">{label}</p>
+      <Switch checked={checked} onCheckedChange={onCheckedChange} />
+    </div>
   );
 }
 
@@ -118,15 +139,27 @@ export default function AdminOfferingFormPage() {
   const isEditing = !!id;
 
   const { data: existing, isLoading: loadingExisting } = useOfferingById(id);
-  const createMutation = useCreateOffering();
-  const updateMutation = useUpdateOffering();
+  const { data: locationProfiles = [] } = useAdminLocationProfiles();
+  const createOfferingMutation = useCreateOffering();
+  const updateOfferingMutation = useUpdateOffering();
+  const createLocationMutation = useCreateLocationProfile();
 
-  const [form, setForm] = useState(EMPTY_FORM);
+  const [form, setForm] = useState(buildInitialForm());
   const [initialized, setInitialized] = useState(false);
 
   useEffect(() => {
-    if (isEditing && existing && !initialized) {
-      setForm({
+    if (!isEditing || !existing || initialized) return;
+    const flow = ensureOfferingFlow({
+      category: existing.category,
+      type: existing.type,
+      flow_key: existing.flow_key,
+      flow_version: existing.flow_version,
+      flow_config: existing.flow_config,
+      terms_config: existing.terms_config,
+    });
+
+    setForm({
+      core: {
         slug: existing.slug ?? "",
         title_es: existing.title_es ?? "",
         title_en: existing.title_en ?? "",
@@ -137,50 +170,237 @@ export default function AdminOfferingFormPage() {
         category: existing.category ?? "wellness_studio",
         type: existing.type ?? "session",
         yoga_style: existing.yoga_style ?? "",
-        booking_mode: existing.booking_mode ?? "scheduled",
-        pricing_mode: existing.pricing_mode ?? "fixed_price",
-        base_price: existing.base_price ?? 0,
         currency: existing.currency ?? "MXN",
-        duration_min: existing.duration_min ?? 60,
-        min_guests: existing.min_guests ?? 1,
-        max_guests: existing.max_guests ?? 1,
-        location_label: existing.location_label ?? "",
         cta_label_es: existing.cta_label_es ?? "",
         cta_label_en: existing.cta_label_en ?? "",
-        cover_image_id: existing.cover_image_id ?? "",
-        cover_image_bucket: existing.cover_image_bucket ?? "",
+        images: parseImagesJson(existing.images_json),
         is_featured: existing.is_featured ?? false,
         show_on_home: existing.show_on_home ?? false,
         display_order: existing.display_order ?? 0,
         status: existing.status ?? "draft",
         enabled: existing.enabled ?? true,
-      });
-      setInitialized(true);
-    }
+      },
+      flow: {
+        flow_key: flow.flow_key,
+        flow_version: flow.flow_version,
+        flow_config: flow.flow_config,
+        terms_config: flow.terms_config,
+      },
+      new_location: {
+        name: "",
+        address: "",
+        map_url: "",
+        notes: "",
+      },
+    });
+    setInitialized(true);
   }, [isEditing, existing, initialized]);
 
-  function setField(key, value) {
-    setForm((prev) => ({ ...prev, [key]: value }));
+  function setCoreField(key, value) {
+    setForm((prev) => ({ ...prev, core: { ...prev.core, [key]: value } }));
   }
 
-  function handleSubmit(e) {
-    e.preventDefault();
+  function setFlowConfig(path, value) {
+    setForm((prev) => ({
+      ...prev,
+      flow: {
+        ...prev.flow,
+        flow_config: {
+          ...prev.flow.flow_config,
+          [path.section]: {
+            ...prev.flow.flow_config[path.section],
+            [path.key]: value,
+          },
+        },
+      },
+    }));
+  }
 
-    if (!form.title_es.trim()) {
-      toast.error(t("offerings.fields.titleEs") + " es obligatorio");
+  function setTermsField(key, value) {
+    setForm((prev) => ({
+      ...prev,
+      flow: {
+        ...prev.flow,
+        terms_config: {
+          ...prev.flow.terms_config,
+          [key]: value,
+        },
+      },
+    }));
+  }
+
+  function applyTemplate(category, type) {
+    const next = getFlowTemplate(category, type);
+    setForm((prev) => {
+      const mergedFlow = ensureOfferingFlow({
+        category,
+        type,
+        flow_key: next.flow_key,
+        flow_version: next.flow_version,
+        flow_config: {
+          ...next.flow_config,
+          booking: {
+            ...next.flow_config.booking,
+            ...(prev.flow.flow_config?.booking ?? {}),
+          },
+          pricing: {
+            ...next.flow_config.pricing,
+            ...(prev.flow.flow_config?.pricing ?? {}),
+          },
+          guest_policy: {
+            ...next.flow_config.guest_policy,
+            ...(prev.flow.flow_config?.guest_policy ?? {}),
+          },
+          location: {
+            ...next.flow_config.location,
+            ...(prev.flow.flow_config?.location ?? {}),
+          },
+        },
+        terms_config: {
+          ...next.terms_config,
+          ...(prev.flow.terms_config ?? {}),
+        },
+      });
+      return {
+        ...prev,
+        flow: {
+          flow_key: mergedFlow.flow_key,
+          flow_version: mergedFlow.flow_version,
+          flow_config: mergedFlow.flow_config,
+          terms_config: mergedFlow.terms_config,
+        },
+      };
+    });
+  }
+
+  const flowOptions = useMemo(
+    () => getFlowOptions(form.core.category, form.core.type),
+    [form.core.category, form.core.type],
+  );
+
+  const bookingOptions = flowOptions.booking_modes.map((value) => ({
+    value,
+    label: tOff(`bookingMode.${value}`),
+  }));
+  const pricingOptions = flowOptions.pricing_modes.map((value) => ({
+    value,
+    label: tOff(`pricingMode.${value}`),
+  }));
+  const categoryOptions = CATEGORY_OPTIONS.map((value) => ({
+    value,
+    label: tOff(`categories.${value}`),
+  }));
+  const typeOptions = TYPE_OPTIONS.map((value) => ({
+    value,
+    label: tOff(`types.${value}`),
+  }));
+  const statusOptions = STATUS_OPTIONS.map((value) => ({
+    value,
+    label: tOff(`status.${value}`),
+  }));
+  const locationOptions = locationProfiles.map((location) => ({
+    value: location.$id,
+    label: location.name || location.address || location.$id,
+    description: location.address || "",
+  }));
+
+  async function createLocationAndAssign() {
+    if (!form.new_location.name.trim()) {
+      toast.error(t("offerings.validation.locationNameRequired"));
+      return;
+    }
+    createLocationMutation.mutate(
+      {
+        name: form.new_location.name.trim(),
+        address: form.new_location.address.trim() || null,
+        map_url: form.new_location.map_url.trim() || null,
+        notes: form.new_location.notes.trim() || null,
+        enabled: true,
+      },
+      {
+        onSuccess: (location) => {
+          setFlowConfig(
+            { section: "location", key: "default_location_profile_id" },
+            location.$id,
+          );
+          setForm((prev) => ({
+            ...prev,
+            new_location: { name: "", address: "", map_url: "", notes: "" },
+          }));
+          toast.success(t("offerings.feedback.locationCreated"));
+        },
+        onError: (error) =>
+          toast.error(
+            error.message || t("offerings.feedback.locationCreateError"),
+          ),
+      },
+    );
+  }
+
+  function handleSubmit(event) {
+    event.preventDefault();
+    if (!form.core.title_es.trim()) {
+      toast.error(`${t("offerings.fields.titleEs")} es obligatorio`);
       return;
     }
 
+    const flow = ensureOfferingFlow({
+      category: form.core.category,
+      type: form.core.type,
+      flow_key: form.flow.flow_key,
+      flow_version: form.flow.flow_version,
+      flow_config: {
+        ...form.flow.flow_config,
+        pricing: {
+          ...form.flow.flow_config.pricing,
+          base_price:
+            form.flow.flow_config.pricing?.base_price === "" ||
+            form.flow.flow_config.pricing?.base_price === null
+              ? null
+              : Number(form.flow.flow_config.pricing?.base_price ?? 0),
+        },
+        schedule: {
+          ...form.flow.flow_config.schedule,
+          duration_min:
+            form.flow.flow_config.schedule?.duration_min === "" ||
+            form.flow.flow_config.schedule?.duration_min === null
+              ? null
+              : Number(form.flow.flow_config.schedule?.duration_min ?? 0),
+        },
+        guest_policy: {
+          ...form.flow.flow_config.guest_policy,
+          min_per_booking:
+            Number(form.flow.flow_config.guest_policy?.min_per_booking ?? 1) ||
+            1,
+          max_per_booking:
+            Number(form.flow.flow_config.guest_policy?.max_per_booking ?? 1) ||
+            1,
+        },
+      },
+      terms_config: form.flow.terms_config,
+    });
+
+    // Serialize images array to JSON string, excluding the 'images' field from core
+    const { images, ...coreWithoutImages } = form.core;
+    const imagesJson = images.length > 0 ? JSON.stringify(images) : null;
+
     const payload = {
-      ...form,
-      base_price: Number(form.base_price) || 0,
-      duration_min: Number(form.duration_min) || 0,
-      min_guests: Number(form.min_guests) || 1,
-      max_guests: Number(form.max_guests) || 1,
-      display_order: Number(form.display_order) || 0,
+      core: {
+        ...coreWithoutImages,
+        images_json: imagesJson,
+        display_order: Number(form.core.display_order) || 0,
+      },
+      flow: {
+        flow_key: flow.flow_key,
+        flow_version: flow.flow_version,
+        flow_config: flow.flow_config,
+        terms_config: flow.terms_config,
+      },
     };
 
-    const mutation = isEditing ? updateMutation : createMutation;
+    const mutation = isEditing
+      ? updateOfferingMutation
+      : createOfferingMutation;
     const mutationPayload = isEditing
       ? { offeringId: id, data: payload }
       : payload;
@@ -194,28 +414,13 @@ export default function AdminOfferingFormPage() {
         );
         navigate(ROUTES.ADMIN_OFFERINGS);
       },
-      onError: (error) => {
-        const msg =
-          error instanceof Error && error.message
-            ? error.message
-            : t("offerings.feedback.saveError");
-        toast.error(msg);
-      },
+      onError: (error) =>
+        toast.error(error.message || t("offerings.feedback.saveError")),
     });
   }
 
-  // Combobox option builders
-  function enumOptions(keys, ns) {
-    return keys.map((k) => ({ value: k, label: tOff(`${ns}.${k}`) }));
-  }
-
-  const categoryOpts = enumOptions(CATEGORY_OPTIONS, "categories");
-  const typeOpts = enumOptions(TYPE_OPTIONS, "types");
-  const bookingModeOpts = enumOptions(BOOKING_MODE_OPTIONS, "bookingMode");
-  const pricingModeOpts = enumOptions(PRICING_MODE_OPTIONS, "pricingMode");
-  const statusOpts = enumOptions(STATUS_OPTIONS, "status");
-
-  const isBusy = createMutation.isPending || updateMutation.isPending;
+  const isBusy =
+    createOfferingMutation.isPending || updateOfferingMutation.isPending;
 
   if (isEditing && loadingExisting) {
     return (
@@ -244,56 +449,45 @@ export default function AdminOfferingFormPage() {
       />
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Identity */}
-        <FormSection title={t("offerings.fields.titleEs")?.split(" ")[0]}>
+        <FormSection title={t("offerings.sections.identity")}>
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-1.5">
               <Label>{t("offerings.fields.titleEs")}</Label>
               <Input
-                value={form.title_es}
-                onChange={(e) => setField("title_es", e.target.value)}
+                value={form.core.title_es}
+                onChange={(e) => setCoreField("title_es", e.target.value)}
                 required
               />
             </div>
             <div className="space-y-1.5">
               <Label>{t("offerings.fields.titleEn")}</Label>
               <Input
-                value={form.title_en}
-                onChange={(e) => setField("title_en", e.target.value)}
+                value={form.core.title_en}
+                onChange={(e) => setCoreField("title_en", e.target.value)}
               />
             </div>
           </div>
-          <div className="grid gap-4 md:grid-cols-2">
-            <div className="space-y-1.5">
-              <Label>{t("offerings.fields.slug")}</Label>
-              <Input
-                value={form.slug}
-                onChange={(e) => setField("slug", e.target.value)}
-                placeholder={t("offerings.fields.slugPlaceholder")}
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label>{t("offerings.fields.duration")}</Label>
-              <Input
-                type="number"
-                min="0"
-                max="10080"
-                value={form.duration_min}
-                onChange={(e) => setField("duration_min", e.target.value)}
-              />
-            </div>
+          <div className="space-y-1.5">
+            <Label>{t("offerings.fields.slug")}</Label>
+            <Input
+              value={form.core.slug}
+              onChange={(e) => setCoreField("slug", e.target.value)}
+              placeholder={t("offerings.fields.slugPlaceholder")}
+            />
           </div>
         </FormSection>
 
-        {/* Classification */}
         <FormSection title={t("offerings.fields.category")}>
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-1.5">
               <Label>{t("offerings.fields.category")}</Label>
               <SearchCombobox
-                value={form.category}
-                onValueChange={(v) => setField("category", v)}
-                options={categoryOpts}
+                value={form.core.category}
+                onValueChange={(value) => {
+                  setCoreField("category", value);
+                  applyTemplate(value, form.core.type);
+                }}
+                options={categoryOptions}
                 placeholder={t("offerings.fields.category")}
                 searchPlaceholder={t("common.search")}
                 emptyMessage={t("common.noData")}
@@ -302,36 +496,39 @@ export default function AdminOfferingFormPage() {
             <div className="space-y-1.5">
               <Label>{t("offerings.fields.type")}</Label>
               <SearchCombobox
-                value={form.type}
-                onValueChange={(v) => setField("type", v)}
-                options={typeOpts}
+                value={form.core.type}
+                onValueChange={(value) => {
+                  setCoreField("type", value);
+                  applyTemplate(form.core.category, value);
+                }}
+                options={typeOptions}
                 placeholder={t("offerings.fields.type")}
                 searchPlaceholder={t("common.search")}
                 emptyMessage={t("common.noData")}
               />
             </div>
           </div>
-          {form.category === "wellness_studio" && (
+          {form.core.category === "wellness_studio" && (
             <div className="space-y-1.5">
               <Label>{t("offerings.fields.yogaStyle")}</Label>
               <Input
-                value={form.yoga_style}
-                onChange={(e) => setField("yoga_style", e.target.value)}
-                placeholder="vinyasa, hatha, yin..."
+                value={form.core.yoga_style}
+                onChange={(e) => setCoreField("yoga_style", e.target.value)}
               />
             </div>
           )}
         </FormSection>
 
-        {/* Booking & Pricing */}
-        <FormSection title={t("offerings.fields.bookingMode")}>
+        <FormSection title={t("offerings.sections.flow")}>
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-1.5">
               <Label>{t("offerings.fields.bookingMode")}</Label>
               <SearchCombobox
-                value={form.booking_mode}
-                onValueChange={(v) => setField("booking_mode", v)}
-                options={bookingModeOpts}
+                value={form.flow.flow_config.booking?.mode}
+                onValueChange={(value) =>
+                  setFlowConfig({ section: "booking", key: "mode" }, value)
+                }
+                options={bookingOptions}
                 placeholder={t("offerings.fields.bookingMode")}
                 searchPlaceholder={t("common.search")}
                 emptyMessage={t("common.noData")}
@@ -340,21 +537,24 @@ export default function AdminOfferingFormPage() {
             <div className="space-y-1.5">
               <Label>{t("offerings.fields.pricingMode")}</Label>
               <SearchCombobox
-                value={form.pricing_mode}
-                onValueChange={(v) => setField("pricing_mode", v)}
-                options={pricingModeOpts}
+                value={form.flow.flow_config.pricing?.mode}
+                onValueChange={(value) =>
+                  setFlowConfig({ section: "pricing", key: "mode" }, value)
+                }
+                options={pricingOptions}
                 placeholder={t("offerings.fields.pricingMode")}
                 searchPlaceholder={t("common.search")}
                 emptyMessage={t("common.noData")}
               />
             </div>
           </div>
+
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-1.5">
               <Label>{t("offerings.fields.currency")}</Label>
               <SearchCombobox
-                value={form.currency}
-                onValueChange={(v) => setField("currency", v)}
+                value={form.core.currency}
+                onValueChange={(value) => setCoreField("currency", value)}
                 options={CURRENCY_OPTIONS}
                 placeholder={t("offerings.fields.currency")}
                 searchPlaceholder={t("common.search")}
@@ -363,189 +563,295 @@ export default function AdminOfferingFormPage() {
             </div>
             <div className="space-y-1.5">
               <Label>{t("offerings.fields.basePrice")}</Label>
-              <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-medium text-charcoal-muted select-none pointer-events-none z-10">
-                  {form.currency}
-                </span>
+              <Input
+                type="number"
+                min="0"
+                value={form.flow.flow_config.pricing?.base_price ?? ""}
+                onChange={(e) =>
+                  setFlowConfig(
+                    { section: "pricing", key: "base_price" },
+                    e.target.value,
+                  )
+                }
+              />
+            </div>
+          </div>
+
+          {flowOptions.supports_duration && (
+            <div className="space-y-1.5">
+              <Label>{t("offerings.fields.duration")}</Label>
+              <Input
+                type="number"
+                min="0"
+                value={form.flow.flow_config.schedule?.duration_min ?? ""}
+                onChange={(e) =>
+                  setFlowConfig(
+                    { section: "schedule", key: "duration_min" },
+                    e.target.value,
+                  )
+                }
+              />
+            </div>
+          )}
+
+          {flowOptions.supports_guest_policy && (
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="space-y-1.5">
+                <Label>{t("offerings.fields.minGuests")}</Label>
                 <Input
                   type="number"
-                  min="0"
-                  step="10"
-                  className="pl-12"
-                  value={form.base_price}
-                  onChange={(e) => setField("base_price", e.target.value)}
+                  min="1"
+                  value={
+                    form.flow.flow_config.guest_policy?.min_per_booking ?? 1
+                  }
+                  onChange={(e) =>
+                    setFlowConfig(
+                      { section: "guest_policy", key: "min_per_booking" },
+                      e.target.value,
+                    )
+                  }
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label>{t("offerings.fields.maxGuests")}</Label>
+                <Input
+                  type="number"
+                  min="1"
+                  value={
+                    form.flow.flow_config.guest_policy?.max_per_booking ?? 1
+                  }
+                  onChange={(e) =>
+                    setFlowConfig(
+                      { section: "guest_policy", key: "max_per_booking" },
+                      e.target.value,
+                    )
+                  }
                 />
               </div>
             </div>
-          </div>
+          )}
         </FormSection>
 
-        {/* Capacity & Location */}
         <FormSection title={t("offerings.fields.location")}>
-          <div className="grid gap-4 md:grid-cols-3">
-            <div className="space-y-1.5">
-              <Label>{t("offerings.fields.minGuests")}</Label>
+          <div className="space-y-1.5">
+            <Label>{t("offerings.fields.locationProfile")}</Label>
+            <SearchCombobox
+              value={
+                form.flow.flow_config.location?.default_location_profile_id ??
+                ""
+              }
+              onValueChange={(value) =>
+                setFlowConfig(
+                  { section: "location", key: "default_location_profile_id" },
+                  value,
+                )
+              }
+              options={locationOptions}
+              placeholder={t("offerings.fields.locationProfilePlaceholder")}
+              searchPlaceholder={t("common.search")}
+              emptyMessage={t("common.noData")}
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label>{t("offerings.fields.locationFallbackLabel")}</Label>
+            <Input
+              value={form.flow.flow_config.location?.fallback_label ?? ""}
+              onChange={(e) =>
+                setFlowConfig(
+                  { section: "location", key: "fallback_label" },
+                  e.target.value,
+                )
+              }
+              placeholder={t("offerings.fields.locationFallbackPlaceholder")}
+            />
+          </div>
+          <div className="rounded-2xl border border-dashed border-warm-gray-dark/50 p-4 space-y-3">
+            <p className="text-xs uppercase tracking-[0.12em] text-charcoal-subtle">
+              {t("offerings.sections.quickCreateLocation")}
+            </p>
+            <div className="grid gap-3 md:grid-cols-2">
               <Input
-                type="number"
-                min="1"
-                value={form.min_guests}
-                onChange={(e) => setField("min_guests", e.target.value)}
+                value={form.new_location.name}
+                onChange={(e) =>
+                  setForm((prev) => ({
+                    ...prev,
+                    new_location: {
+                      ...prev.new_location,
+                      name: e.target.value,
+                    },
+                  }))
+                }
+                placeholder={t("offerings.fields.locationName")}
+              />
+              <Input
+                value={form.new_location.address}
+                onChange={(e) =>
+                  setForm((prev) => ({
+                    ...prev,
+                    new_location: {
+                      ...prev.new_location,
+                      address: e.target.value,
+                    },
+                  }))
+                }
+                placeholder={t("offerings.fields.locationAddress")}
               />
             </div>
-            <div className="space-y-1.5">
-              <Label>{t("offerings.fields.maxGuests")}</Label>
-              <Input
-                type="number"
-                min="1"
-                value={form.max_guests}
-                onChange={(e) => setField("max_guests", e.target.value)}
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label>{t("offerings.fields.location")}</Label>
-              <Input
-                value={form.location_label}
-                onChange={(e) => setField("location_label", e.target.value)}
-              />
-            </div>
+            <Input
+              value={form.new_location.map_url}
+              onChange={(e) =>
+                setForm((prev) => ({
+                  ...prev,
+                  new_location: {
+                    ...prev.new_location,
+                    map_url: e.target.value,
+                  },
+                }))
+              }
+              placeholder={t("offerings.fields.locationMapUrl")}
+            />
+            <Textarea
+              value={form.new_location.notes}
+              onChange={(e) =>
+                setForm((prev) => ({
+                  ...prev,
+                  new_location: { ...prev.new_location, notes: e.target.value },
+                }))
+              }
+              placeholder={t("offerings.fields.locationNotes")}
+            />
+            <Button
+              type="button"
+              variant="outline"
+              onClick={createLocationAndAssign}
+              disabled={createLocationMutation.isPending}
+            >
+              <Plus className="w-4 h-4" />
+              {t("offerings.actions.createLocationAndAssign")}
+            </Button>
           </div>
         </FormSection>
 
-        {/* Summaries */}
-        <FormSection title={t("offerings.fields.summaryEs")?.split(" ")[0]}>
+        <FormSection title={t("offerings.sections.terms")}>
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-1.5">
-              <Label>{t("offerings.fields.summaryEs")}</Label>
+              <Label>{t("offerings.fields.cancellationEs")}</Label>
               <Textarea
-                className="min-h-24"
-                value={form.summary_es}
-                onChange={(e) => setField("summary_es", e.target.value)}
+                value={form.flow.terms_config.cancellation_policy_es ?? ""}
+                onChange={(e) =>
+                  setTermsField("cancellation_policy_es", e.target.value)
+                }
               />
             </div>
             <div className="space-y-1.5">
-              <Label>{t("offerings.fields.summaryEn")}</Label>
+              <Label>{t("offerings.fields.cancellationEn")}</Label>
               <Textarea
-                className="min-h-24"
-                value={form.summary_en}
-                onChange={(e) => setField("summary_en", e.target.value)}
+                value={form.flow.terms_config.cancellation_policy_en ?? ""}
+                onChange={(e) =>
+                  setTermsField("cancellation_policy_en", e.target.value)
+                }
               />
             </div>
           </div>
         </FormSection>
 
-        {/* Descriptions */}
-        <FormSection title={t("offerings.fields.descriptionEs")?.split(" ")[0]}>
+        <FormSection title={t("offerings.fields.summaryEs")}>
           <div className="grid gap-4 md:grid-cols-2">
-            <div className="space-y-1.5">
-              <Label>{t("offerings.fields.descriptionEs")}</Label>
-              <Textarea
-                className="min-h-36"
-                value={form.description_es}
-                onChange={(e) => setField("description_es", e.target.value)}
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label>{t("offerings.fields.descriptionEn")}</Label>
-              <Textarea
-                className="min-h-36"
-                value={form.description_en}
-                onChange={(e) => setField("description_en", e.target.value)}
-              />
-            </div>
+            <Textarea
+              value={form.core.summary_es}
+              onChange={(e) => setCoreField("summary_es", e.target.value)}
+            />
+            <Textarea
+              value={form.core.summary_en}
+              onChange={(e) => setCoreField("summary_en", e.target.value)}
+            />
           </div>
         </FormSection>
 
-        {/* CTA */}
-        <FormSection title="CTA">
+        <FormSection title={t("offerings.fields.descriptionEs")}>
           <div className="grid gap-4 md:grid-cols-2">
-            <div className="space-y-1.5">
-              <Label>{t("offerings.fields.ctaLabelEs")}</Label>
-              <Input
-                value={form.cta_label_es}
-                onChange={(e) => setField("cta_label_es", e.target.value)}
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label>{t("offerings.fields.ctaLabelEn")}</Label>
-              <Input
-                value={form.cta_label_en}
-                onChange={(e) => setField("cta_label_en", e.target.value)}
-              />
-            </div>
+            <Textarea
+              className="min-h-36"
+              value={form.core.description_es}
+              onChange={(e) => setCoreField("description_es", e.target.value)}
+            />
+            <Textarea
+              className="min-h-36"
+              value={form.core.description_en}
+              onChange={(e) => setCoreField("description_en", e.target.value)}
+            />
           </div>
         </FormSection>
 
-        {/* Cover Image */}
-        <FormSection>
-          <ImageSourceSelector
-            fileId={form.cover_image_id}
-            bucketId={form.cover_image_bucket}
-            onFileChange={(fileId, bucketId) => {
-              setField("cover_image_id", fileId);
-              setForm((prev) => ({ ...prev, cover_image_bucket: bucketId }));
-            }}
-            label={t("offerings.fields.featured")}
+        <FormSection title={t("offerings.sections.cta")}>
+          <div className="grid gap-4 md:grid-cols-2">
+            <Input
+              value={form.core.cta_label_es}
+              onChange={(e) => setCoreField("cta_label_es", e.target.value)}
+              placeholder={t("offerings.fields.ctaLabelEs")}
+            />
+            <Input
+              value={form.core.cta_label_en}
+              onChange={(e) => setCoreField("cta_label_en", e.target.value)}
+              placeholder={t("offerings.fields.ctaLabelEn")}
+            />
+          </div>
+        </FormSection>
+
+        <FormSection title={t("offerings.sections.images")}>
+          <MultiImageSelector
+            images={form.core.images}
+            onChange={(newImages) => setCoreField("images", newImages)}
+            maxImages={3}
+            label={t("offerings.fields.images")}
             aspectRatio="16/9"
           />
         </FormSection>
 
-        {/* Publication */}
         <FormSection title={t("offerings.fields.status")}>
           <div className="grid gap-4 md:grid-cols-2">
-            <div className="space-y-1.5">
-              <Label>{t("offerings.fields.status")}</Label>
-              <SearchCombobox
-                value={form.status}
-                onValueChange={(v) => setField("status", v)}
-                options={statusOpts}
-                placeholder={t("offerings.fields.status")}
-                searchPlaceholder={t("common.search")}
-                emptyMessage={t("common.noData")}
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label>{t("offerings.fields.displayOrder")}</Label>
-              <Input
-                type="number"
-                min="0"
-                value={form.display_order}
-                onChange={(e) => setField("display_order", e.target.value)}
-              />
-            </div>
+            <SearchCombobox
+              value={form.core.status}
+              onValueChange={(value) => setCoreField("status", value)}
+              options={statusOptions}
+              placeholder={t("offerings.fields.status")}
+              searchPlaceholder={t("common.search")}
+              emptyMessage={t("common.noData")}
+            />
+            <Input
+              type="number"
+              min="0"
+              value={form.core.display_order}
+              onChange={(e) => setCoreField("display_order", e.target.value)}
+              placeholder={t("offerings.fields.displayOrder")}
+            />
           </div>
-        </FormSection>
-
-        {/* Toggles */}
-        <FormSection>
           <div className="space-y-2">
             <SettingRow
               label={t("offerings.fields.featured")}
-              checked={form.is_featured}
-              onCheckedChange={(checked) => setField("is_featured", checked)}
+              checked={form.core.is_featured}
+              onCheckedChange={(value) => setCoreField("is_featured", value)}
             />
             <SettingRow
               label={t("offerings.fields.showOnHome")}
-              checked={form.show_on_home}
-              onCheckedChange={(checked) => setField("show_on_home", checked)}
+              checked={form.core.show_on_home}
+              onCheckedChange={(value) => setCoreField("show_on_home", value)}
             />
             <SettingRow
               label={t("offerings.fields.enabled")}
-              checked={form.enabled}
-              onCheckedChange={(checked) => setField("enabled", checked)}
+              checked={form.core.enabled}
+              onCheckedChange={(value) => setCoreField("enabled", value)}
             />
           </div>
         </FormSection>
 
-        {/* Submit */}
         <div className="flex items-center justify-end gap-3 pt-4">
           <Button type="button" variant="outline" asChild>
-            <Link to={ROUTES.ADMIN_OFFERINGS}>
-              {t("common.cancel")}
-            </Link>
+            <Link to={ROUTES.ADMIN_OFFERINGS}>{t("common.cancel")}</Link>
           </Button>
           <Button type="submit" disabled={isBusy}>
             {isBusy
-              ? t("common.save") + "..."
+              ? `${t("common.save")}...`
               : isEditing
                 ? t("offerings.actions.save")
                 : t("offerings.actions.create")}

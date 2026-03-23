@@ -100,8 +100,6 @@ export default async ({ req, res, log, error }) => {
     [firstName, lastName].filter(Boolean).join(" ") || name || "Usuario";
 
   // ── Create profile document ────────────────────────────────────────────────
-  const now = new Date().toISOString();
-
   try {
     const doc = await db.createDocument(
       APPWRITE_DATABASE_ID,
@@ -119,8 +117,6 @@ export default async ({ req, res, log, error }) => {
         locale: "es",
         isSystemUser: false,
         enabled: true,
-        createdAt: now,
-        updatedAt: now,
       },
       // Document-level permissions: owner can read + update their own profile.
       // Server SDK (API key) bypasses these for admin/function operations.

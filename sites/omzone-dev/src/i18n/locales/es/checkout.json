@@ -46,6 +46,17 @@
     "subtitle": "Tu pedido ha sido procesado exitosamente.",
     "orderNumber": "Número de orden",
     "email": "Recibirás un correo de confirmación en",
-    "cta": "Ver mis compras"
+    "cta": "Ver mis compras",
+    "metaDescription": "Tu pago ha sido confirmado.",
+    "bookingConfirmedTitle": "Tu reserva esta confirmada",
+    "bookingConfirmedBody": "Puedes ver el detalle y el codigo de tu reserva en tu dashboard.",
+    "exploreOfferings": "Explorar offerings"
+  },
+  "meta": {
+    "description": "Completa tu compra de forma segura."
+  },
+  "empty": {
+    "noActiveOrder": "No hay ningun pedido activo.",
+    "exploreOfferings": "Explorar offerings"
   }
 }

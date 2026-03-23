@@ -1,7 +1,15 @@
 import { useEffect, useState } from "react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Menu, LogOut, LayoutDashboard, Globe, User, BookMarked, ShoppingBag } from "lucide-react";
+import {
+  Menu,
+  LogOut,
+  LayoutDashboard,
+  Globe,
+  User,
+  BookMarked,
+  ShoppingBag,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -92,7 +100,16 @@ export default function Navbar() {
       style={{ boxShadow: isOverlay ? "none" : "var(--shadow-nav)" }}
     >
       <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4">
-        <Link to={logoHref} className="flex shrink-0 items-center gap-2">
+        <Link
+          to={logoHref}
+          className="flex shrink-0 items-center gap-2"
+          onClick={(e) => {
+            if (isLanding) {
+              e.preventDefault();
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }
+          }}
+        >
           <img
             src="/logo.png"
             alt="Omzone"
@@ -109,6 +126,12 @@ export default function Navbar() {
             <li key={href}>
               <NavLink
                 to={href}
+                onClick={(e) => {
+                  if (location.pathname === href) {
+                    e.preventDefault();
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                  }
+                }}
                 className={({ isActive }) =>
                   cn(
                     "rounded-lg px-3 py-2 text-sm font-medium transition-colors",
@@ -298,6 +321,9 @@ export default function Navbar() {
               <SheetClose asChild key={href}>
                 <NavLink
                   to={href}
+                  onClick={() => {
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                  }}
                   className={({ isActive }) =>
                     cn(
                       "block rounded-xl px-3 py-3 text-sm font-medium transition-colors duration-150",

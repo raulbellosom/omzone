@@ -56,8 +56,8 @@ export default function LandingPage() {
       <main>
         <HeroSection />
         <FourPillarsSection />
-        <StudioSection />
         <FeaturedOfferingsSection />
+        <StudioSection />
         <EditorialSection />
         <FaqSection />
         <BenefitsSection />
