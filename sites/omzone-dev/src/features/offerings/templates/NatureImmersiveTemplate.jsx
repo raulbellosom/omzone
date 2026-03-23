@@ -14,7 +14,7 @@ import { Link } from "react-router-dom";
 import { ArrowLeft, ArrowRight, Waves, Palmtree, Sun } from "lucide-react";
 import PageMeta from "@/components/seo/PageMeta";
 import { resolveField } from "@/lib/i18n-data";
-import { getPreviewUrl } from "@/lib/media";
+import { getPreviewUrl, getFirstImageUrl, getImageUrls } from "@/lib/media";
 import { BUCKET_PUBLIC_MEDIA } from "@/env";
 import ROUTES from "@/constants/routes";
 import { cn } from "@/lib/utils";
@@ -45,28 +45,35 @@ export default function NatureImmersiveTemplate({
   const description = resolveField(offering, "description");
   const backRoute = CATEGORY_BACK_ROUTES[offering.category] ?? ROUTES.SESSIONS;
 
-  const coverUrl = offering.cover_image_id
-    ? getPreviewUrl(
-        offering.cover_image_id,
-        offering.cover_image_bucket ?? BUCKET_PUBLIC_MEDIA,
-        1200,
-        1200,
-        85,
-      )
-    : null;
+  // Get images: prefer images_json, fall back to legacy cover_image fields
+  const imageUrls = getImageUrls(offering.images_json, 1200, 1200, 85);
+  const coverUrl =
+    imageUrls.length > 0
+      ? imageUrls[0]
+      : offering.cover_image_id
+        ? getPreviewUrl(
+            offering.cover_image_id,
+            offering.cover_image_bucket ?? BUCKET_PUBLIC_MEDIA,
+            1200,
+            1200,
+            85,
+          )
+        : null;
 
-  // Secondary image from sections or fallback
+  // Secondary image from sections or fallback to second offering image
   const secondarySection = sections?.[0];
+  const sectionImageUrls = getImageUrls(
+    secondarySection?.images_json,
+    800,
+    800,
+    85,
+  );
   const secondaryUrl =
-    secondarySection?.image_id && secondarySection?.image_bucket
-      ? getPreviewUrl(
-          secondarySection.image_id,
-          secondarySection.image_bucket,
-          800,
-          800,
-          85,
-        )
-      : null;
+    sectionImageUrls.length > 0
+      ? sectionImageUrls[0]
+      : imageUrls.length > 1
+        ? imageUrls[1]
+        : null;
 
   return (
     <>

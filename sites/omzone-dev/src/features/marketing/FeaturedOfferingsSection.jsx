@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { useOfferings } from "@/hooks/useOfferings";
 import { useCurrency } from "@/hooks/useCurrency";
 import { resolveField } from "@/lib/i18n-data";
-import { getPreviewUrl } from "@/lib/media";
+import { getPreviewUrl, getFirstImageUrl, getImageUrls } from "@/lib/media";
 import { BUCKET_PUBLIC_MEDIA } from "@/env";
 import { formatDuration } from "@/lib/dates";
 import { offeringHref } from "@/features/offerings/OfferingCard";
@@ -100,15 +100,20 @@ function FeaturedSection({ offering, index, t }) {
   const summary = resolveField(offering, "summary");
   const href = offeringHref(offering);
 
-  const coverUrl = offering.cover_image_id
-    ? getPreviewUrl(
-        offering.cover_image_id,
-        offering.cover_image_bucket ?? BUCKET_PUBLIC_MEDIA,
-        1400,
-        900,
-        85,
-      )
-    : null;
+  // Get images: prefer images_json, fall back to legacy cover_image fields
+  const imageUrls = getImageUrls(offering.images_json, 1400, 900, 85);
+  const coverUrl =
+    imageUrls.length > 0
+      ? imageUrls[0]
+      : offering.cover_image_id
+        ? getPreviewUrl(
+            offering.cover_image_id,
+            offering.cover_image_bucket ?? BUCKET_PUBLIC_MEDIA,
+            1400,
+            900,
+            85,
+          )
+        : null;
 
   // Price display
   let priceLabel = null;

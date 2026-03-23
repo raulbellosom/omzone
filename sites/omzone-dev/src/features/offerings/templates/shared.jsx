@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { useCurrency } from "@/hooks/useCurrency";
 import { formatDuration } from "@/lib/dates";
 import { resolveField } from "@/lib/i18n-data";
-import { getPreviewUrl } from "@/lib/media";
+import { getFirstImageUrl, getImageUrls } from "@/lib/media";
 import ROUTES from "@/constants/routes";
 import { cn } from "@/lib/utils";
 
@@ -151,10 +151,9 @@ export function ContentSectionBlock({ section, index, className }) {
   const ctaLabel = resolveField(section, "cta_label");
   const ctaUrl = section.cta_url;
 
-  const imageUrl =
-    section.image_id && section.image_bucket
-      ? getPreviewUrl(section.image_id, section.image_bucket, 1000, 700, 85)
-      : null;
+  // Get images from images_json
+  const imageUrls = getImageUrls(section.images_json, 1000, 700, 85);
+  const imageUrl = imageUrls.length > 0 ? imageUrls[0] : null;
 
   const template = section.template_key ?? "centered-minimal";
   const isReversed =

@@ -129,3 +129,59 @@ export async function listStockImages() {
   const result = await storage.listFiles(BUCKET_STOCK_IMAGES);
   return result.files ?? [];
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Images JSON Helpers (multi-image support)
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Parse images_json string to array of {id, bucket} objects.
+ * @param {string|null} raw  — JSON string or null
+ * @returns {Array<{id: string, bucket: string}>}
+ */
+export function parseImagesJson(raw) {
+  if (!raw) return [];
+  try {
+    const arr = JSON.parse(raw);
+    return Array.isArray(arr) ? arr : [];
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * Get preview URL for the first image in an images array.
+ * @param {Array<{id: string, bucket: string}>|string|null} images — parsed array or JSON string
+ * @param {number} width
+ * @param {number} height
+ * @param {number} quality
+ * @returns {string|null}
+ */
+export function getFirstImageUrl(
+  images,
+  width = 800,
+  height = 600,
+  quality = 80,
+) {
+  const arr = typeof images === "string" ? parseImagesJson(images) : images;
+  if (!Array.isArray(arr) || arr.length === 0) return null;
+  const first = arr[0];
+  if (!first?.id || !first?.bucket) return null;
+  return getPreviewUrl(first.id, first.bucket, width, height, quality);
+}
+
+/**
+ * Get array of preview URLs for all images.
+ * @param {Array<{id: string, bucket: string}>|string|null} images
+ * @param {number} width
+ * @param {number} height
+ * @param {number} quality
+ * @returns {string[]}
+ */
+export function getImageUrls(images, width = 800, height = 600, quality = 80) {
+  const arr = typeof images === "string" ? parseImagesJson(images) : images;
+  if (!Array.isArray(arr) || arr.length === 0) return [];
+  return arr
+    .filter((img) => img?.id && img?.bucket)
+    .map((img) => getPreviewUrl(img.id, img.bucket, width, height, quality));
+}

@@ -16,7 +16,7 @@ import PageMeta from "@/components/seo/PageMeta";
 import { Button } from "@/components/ui/button";
 import { useOfferings } from "@/hooks/useOfferings";
 import { resolveField, getActiveLang } from "@/lib/i18n-data";
-import { getPreviewUrl } from "@/lib/media";
+import { getPreviewUrl, getImageUrls } from "@/lib/media";
 import { BUCKET_PUBLIC_MEDIA } from "@/env";
 import { useCurrency } from "@/hooks/useCurrency";
 import { formatDuration } from "@/lib/dates";
@@ -154,15 +154,19 @@ function OfferingSection({ offering, index, t }) {
   const title = resolveField(offering, "title");
   const summary = resolveField(offering, "summary");
 
-  const coverUrl = offering.cover_image_id
-    ? getPreviewUrl(
-        offering.cover_image_id,
-        offering.cover_image_bucket ?? BUCKET_PUBLIC_MEDIA,
-        1200,
-        800,
-        85,
-      )
-    : null;
+  // Try new images_json first, then fall back to legacy cover_image fields
+  const imageUrls = getImageUrls(offering.images_json, 1200, 800, 85);
+  const coverUrl =
+    imageUrls[0] ??
+    (offering.cover_image_id
+      ? getPreviewUrl(
+          offering.cover_image_id,
+          offering.cover_image_bucket ?? BUCKET_PUBLIC_MEDIA,
+          1200,
+          800,
+          85,
+        )
+      : null);
 
   const getDetailRoute = CATEGORY_DETAIL_ROUTES[offering.category];
   const href = getDetailRoute

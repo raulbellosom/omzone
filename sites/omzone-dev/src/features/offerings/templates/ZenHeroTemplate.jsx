@@ -15,7 +15,7 @@ import { ArrowLeft, Calendar, ChevronDown } from "lucide-react";
 import PageMeta from "@/components/seo/PageMeta";
 import StructuredData from "@/components/seo/StructuredData";
 import { resolveField } from "@/lib/i18n-data";
-import { getPreviewUrl } from "@/lib/media";
+import { getPreviewUrl, getFirstImageUrl, getImageUrls } from "@/lib/media";
 import { BUCKET_PUBLIC_MEDIA } from "@/env";
 import ROUTES from "@/constants/routes";
 import { cn } from "@/lib/utils";
@@ -41,15 +41,20 @@ export default function ZenHeroTemplate({ offering, sections, t, locale }) {
   const description = resolveField(offering, "description");
   const backRoute = CATEGORY_BACK_ROUTES[offering.category] ?? ROUTES.SESSIONS;
 
-  const coverUrl = offering.cover_image_id
-    ? getPreviewUrl(
-        offering.cover_image_id,
-        offering.cover_image_bucket ?? BUCKET_PUBLIC_MEDIA,
-        1920,
-        1080,
-        85,
-      )
-    : null;
+  // Get images: prefer images_json, fall back to legacy cover_image fields
+  const imageUrls = getImageUrls(offering.images_json, 1920, 1080, 85);
+  const coverUrl =
+    imageUrls.length > 0
+      ? imageUrls[0]
+      : offering.cover_image_id
+        ? getPreviewUrl(
+            offering.cover_image_id,
+            offering.cover_image_bucket ?? BUCKET_PUBLIC_MEDIA,
+            1920,
+            1080,
+            85,
+          )
+        : null;
 
   return (
     <>

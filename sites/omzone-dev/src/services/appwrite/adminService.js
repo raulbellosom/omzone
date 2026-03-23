@@ -191,6 +191,9 @@ function normalizeAdminOffering(doc, defaultLocation = null) {
       defaultLocation?.address ??
       derived.location_label ??
       null,
+    // Multi-image support: use imagesJson if available, otherwise fall back to legacy fields
+    images_json: doc.imagesJson ?? null,
+    // Legacy compat: still expose cover_image_id/bucket for components not yet updated
     cover_image_id: doc.coverImageId ?? null,
     cover_image_bucket: doc.coverImageBucket ?? null,
     cta_label_es: doc.ctaLabelEs ?? null,
@@ -201,8 +204,6 @@ function normalizeAdminOffering(doc, defaultLocation = null) {
     display_order: doc.displayOrder ?? 0,
     status: doc.status ?? "draft",
     enabled: doc.enabled ?? true,
-    created_at: doc.createdAt ?? doc.$createdAt,
-    updated_at: doc.updatedAt ?? null,
   };
 }
 

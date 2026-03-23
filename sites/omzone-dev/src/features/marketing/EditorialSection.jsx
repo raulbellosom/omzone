@@ -1,13 +1,13 @@
 /**
  * EditorialSection — renders dynamic content_sections from the DB.
- * Each section can have title, subtitle, body, CTA, and image.
+ * Each section can have title, subtitle, body, CTA, and images (up to 3).
  */
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { ArrowRight } from "lucide-react";
 import { useContentSections } from "@/hooks/useOfferings";
 import { resolveField } from "@/lib/i18n-data";
-import { getPreviewUrl } from "@/lib/media";
+import { getFirstImageUrl, getImageUrls } from "@/lib/media";
 
 export default function EditorialSection() {
   const { t } = useTranslation("landing");
@@ -35,10 +35,10 @@ function EditorialBlock({ section }) {
   const body = resolveField(section, "body");
   const ctaLabel = resolveField(section, "cta_label");
   const ctaUrl = section.cta_url;
-  const imageUrl =
-    section.image_id && section.image_bucket
-      ? getPreviewUrl(section.image_id, section.image_bucket, 1000, 600, 80)
-      : null;
+
+  // Get all image URLs from images_json
+  const imageUrls = getImageUrls(section.images_json, 1000, 600, 80);
+  const imageCount = imageUrls.length;
 
   if (!title && !body) return null;
 
@@ -72,17 +72,78 @@ function EditorialBlock({ section }) {
         )}
       </div>
 
-      {/* Image */}
-      {imageUrl && (
-        <div className="relative rounded-3xl overflow-hidden aspect-4/3">
-          <img
-            src={imageUrl}
-            alt={title ?? ""}
-            className="w-full h-full object-cover"
-            loading="lazy"
-          />
-        </div>
-      )}
+      {/* Images - dynamic layout based on count */}
+      {imageCount > 0 && <ImageGrid images={imageUrls} alt={title ?? ""} />}
+    </div>
+  );
+}
+
+/** Dynamic image grid based on image count */
+function ImageGrid({ images, alt }) {
+  const count = images.length;
+
+  // Single image: full size
+  if (count === 1) {
+    return (
+      <div className="relative rounded-3xl overflow-hidden aspect-4/3">
+        <img
+          src={images[0]}
+          alt={alt}
+          className="w-full h-full object-cover"
+          loading="lazy"
+        />
+      </div>
+    );
+  }
+
+  // Two images: side by side
+  if (count === 2) {
+    return (
+      <div className="grid grid-cols-2 gap-3">
+        {images.map((url, i) => (
+          <div
+            key={i}
+            className="relative rounded-2xl overflow-hidden aspect-3/4"
+          >
+            <img
+              src={url}
+              alt={`${alt} ${i + 1}`}
+              className="w-full h-full object-cover"
+              loading="lazy"
+            />
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  // Three images: 1 large + 2 small
+  return (
+    <div className="grid grid-cols-2 gap-3">
+      <div className="row-span-2 relative rounded-2xl overflow-hidden aspect-3/4">
+        <img
+          src={images[0]}
+          alt={`${alt} 1`}
+          className="w-full h-full object-cover"
+          loading="lazy"
+        />
+      </div>
+      <div className="relative rounded-2xl overflow-hidden aspect-4/3">
+        <img
+          src={images[1]}
+          alt={`${alt} 2`}
+          className="w-full h-full object-cover"
+          loading="lazy"
+        />
+      </div>
+      <div className="relative rounded-2xl overflow-hidden aspect-4/3">
+        <img
+          src={images[2]}
+          alt={`${alt} 3`}
+          className="w-full h-full object-cover"
+          loading="lazy"
+        />
+      </div>
     </div>
   );
 }

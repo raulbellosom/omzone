@@ -23,7 +23,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useCurrency } from "@/hooks/useCurrency";
 import { formatDuration } from "@/lib/dates";
-import { getPreviewUrl } from "@/lib/media";
+import { getPreviewUrl, getFirstImageUrl, getImageUrls } from "@/lib/media";
 import { BUCKET_PUBLIC_MEDIA } from "@/env";
 import { resolveField } from "@/lib/i18n-data";
 import ROUTES from "@/constants/routes";
@@ -89,15 +89,20 @@ function useCardData(offering) {
   const title = resolveField(offering, "title");
   const summary = resolveField(offering, "summary");
 
-  const imgUrl = offering.cover_image_id
-    ? getPreviewUrl(
-        offering.cover_image_id,
-        offering.cover_image_bucket ?? BUCKET_PUBLIC_MEDIA,
-        900,
-        1200,
-        85,
-      )
-    : null;
+  // Get images: prefer images_json, fall back to legacy cover_image fields
+  const imageUrls = getImageUrls(offering.images_json, 900, 1200, 85);
+  const imgUrl =
+    imageUrls.length > 0
+      ? imageUrls[0]
+      : offering.cover_image_id
+        ? getPreviewUrl(
+            offering.cover_image_id,
+            offering.cover_image_bucket ?? BUCKET_PUBLIC_MEDIA,
+            900,
+            1200,
+            85,
+          )
+        : null;
 
   const href = offeringHref(offering);
 

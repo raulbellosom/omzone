@@ -94,6 +94,9 @@ export function normalizeOffering(doc, locationProfile = null) {
       derived.location_label ??
       null,
     location_profile: normalizeLocationProfile(locationProfile),
+    // Multi-image support: use imagesJson if available
+    images_json: doc.imagesJson ?? null,
+    // Legacy compat: still expose cover_image_id/bucket for components not yet updated
     cover_image_id: doc.coverImageId ?? null,
     cover_image_bucket: doc.coverImageBucket ?? null,
     cta_label_es: doc.ctaLabelEs ?? null,
@@ -104,8 +107,6 @@ export function normalizeOffering(doc, locationProfile = null) {
     display_order: doc.displayOrder ?? 0,
     status: doc.status ?? "draft",
     enabled: doc.enabled ?? true,
-    created_at: doc.createdAt ?? doc.$createdAt,
-    updated_at: doc.updatedAt ?? null,
   };
 }
 
@@ -145,8 +146,7 @@ export function normalizeContentSection(doc) {
     cta_label_es: doc.ctaLabelEs ?? null,
     cta_label_en: doc.ctaLabelEn ?? null,
     cta_url: doc.ctaUrl ?? null,
-    image_id: doc.imageId ?? null,
-    image_bucket: doc.imageBucket ?? null,
+    images_json: doc.imagesJson ?? null,
     scope: doc.scope ?? "global",
     offering_id: doc.offeringId ?? null,
     display_order: doc.displayOrder ?? 0,
@@ -202,13 +202,19 @@ export async function getOfferingBySlug(slug, { publicOnly = true } = {}) {
 
   const doc = res.documents[0];
   const locationMap = await fetchLocationMap([doc.defaultLocationProfileId]);
-  return normalizeOffering(doc, locationMap[doc.defaultLocationProfileId] ?? null);
+  return normalizeOffering(
+    doc,
+    locationMap[doc.defaultLocationProfileId] ?? null,
+  );
 }
 
 export async function getOfferingById(id) {
   const doc = await databases.getDocument(DB, COL_OFFERINGS, id);
   const locationMap = await fetchLocationMap([doc.defaultLocationProfileId]);
-  return normalizeOffering(doc, locationMap[doc.defaultLocationProfileId] ?? null);
+  return normalizeOffering(
+    doc,
+    locationMap[doc.defaultLocationProfileId] ?? null,
+  );
 }
 
 export async function getOfferingSlots(
@@ -252,13 +258,19 @@ export async function getSlotById(slotId) {
   }
   const [offeringDoc, locationMap] = await Promise.all([
     doc.offeringId
-      ? databases.getDocument(DB, COL_OFFERINGS, doc.offeringId).catch(() => null)
+      ? databases
+          .getDocument(DB, COL_OFFERINGS, doc.offeringId)
+          .catch(() => null)
       : Promise.resolve(null),
     fetchLocationMap([doc.locationProfileId]),
   ]);
 
   const offering = offeringDoc ? normalizeOffering(offeringDoc) : null;
-  return normalizeSlot(doc, offering, locationMap[doc.locationProfileId] ?? null);
+  return normalizeSlot(
+    doc,
+    offering,
+    locationMap[doc.locationProfileId] ?? null,
+  );
 }
 
 export async function getAllUpcomingSlots({ category, limit = 50 } = {}) {
@@ -272,7 +284,9 @@ export async function getAllUpcomingSlots({ category, limit = 50 } = {}) {
   ];
 
   const res = await databases.listDocuments(DB, COL_OFFERING_SLOTS, q);
-  const offeringIds = [...new Set(res.documents.map((d) => d.offeringId).filter(Boolean))];
+  const offeringIds = [
+    ...new Set(res.documents.map((d) => d.offeringId).filter(Boolean)),
+  ];
   const offeringDocs = await Promise.all(
     offeringIds.map((id) =>
       databases.getDocument(DB, COL_OFFERINGS, id).catch(() => null),
@@ -287,11 +301,18 @@ export async function getAllUpcomingSlots({ category, limit = 50 } = {}) {
   );
 
   let slots = res.documents.map((doc) =>
-    normalizeSlot(doc, normalizeOffering(offeringMap[doc.offeringId] ?? null), locationMap[doc.locationProfileId] ?? null),
+    normalizeSlot(
+      doc,
+      normalizeOffering(offeringMap[doc.offeringId] ?? null),
+      locationMap[doc.locationProfileId] ?? null,
+    ),
   );
 
   slots = slots.filter(
-    (slot) => slot.offering && slot.offering.enabled && slot.offering.status === "published",
+    (slot) =>
+      slot.offering &&
+      slot.offering.enabled &&
+      slot.offering.status === "published",
   );
 
   if (category) {
@@ -322,8 +343,12 @@ export async function getContentSections({
       ]),
     ]);
     const map = new Map();
-    globalRes.documents.forEach((doc) => map.set(doc.sectionKey, normalizeContentSection(doc)));
-    offeringRes.documents.forEach((doc) => map.set(doc.sectionKey, normalizeContentSection(doc)));
+    globalRes.documents.forEach((doc) =>
+      map.set(doc.sectionKey, normalizeContentSection(doc)),
+    );
+    offeringRes.documents.forEach((doc) =>
+      map.set(doc.sectionKey, normalizeContentSection(doc)),
+    );
     return [...map.values()].sort((a, b) => a.display_order - b.display_order);
   }
 
@@ -334,7 +359,10 @@ export async function getContentSections({
   return res.documents.map(normalizeContentSection);
 }
 
-export async function searchOfferings(term, { locale = "es", limit = 20 } = {}) {
+export async function searchOfferings(
+  term,
+  { locale = "es", limit = 20 } = {},
+) {
   if (!term || term.length < 2) return [];
   const titleField = locale === "en" ? "titleEn" : "titleEs";
   const res = await databases.listDocuments(DB, COL_OFFERINGS, [
