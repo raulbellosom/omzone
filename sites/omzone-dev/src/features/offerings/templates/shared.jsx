@@ -19,6 +19,10 @@ import { getImageUrls } from "@/lib/media";
 import ROUTES from "@/constants/routes";
 import { cn } from "@/lib/utils";
 
+function isAbsoluteUrl(url) {
+  return /^https?:\/\//.test(url);
+}
+
 // ── Hero Carousel ───────────────────────────────────────────────────────────
 
 const SLIDE_INTERVAL = 5000;
@@ -284,13 +288,23 @@ export function ContentSectionBlock({ section, index, className }) {
             </div>
           )}
           {ctaLabel && ctaUrl && (
-            <Link
-              to={ctaUrl}
-              className="inline-flex items-center gap-2 mt-8 bg-charcoal text-white rounded-full px-6 py-3 font-semibold hover:bg-charcoal/90 transition-colors"
-            >
-              {ctaLabel}
-              <ArrowRight className="w-4 h-4" />
-            </Link>
+            isAbsoluteUrl(ctaUrl) ? (
+              <a
+                href={ctaUrl}
+                className="inline-flex items-center gap-2 mt-8 bg-charcoal text-white rounded-full px-6 py-3 font-semibold hover:bg-charcoal/90 transition-colors"
+              >
+                {ctaLabel}
+                <ArrowRight className="w-4 h-4" />
+              </a>
+            ) : (
+              <Link
+                to={ctaUrl}
+                className="inline-flex items-center gap-2 mt-8 bg-charcoal text-white rounded-full px-6 py-3 font-semibold hover:bg-charcoal/90 transition-colors"
+              >
+                {ctaLabel}
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+            )
           )}
         </div>
       </div>
@@ -334,13 +348,23 @@ export function ContentSectionBlock({ section, index, className }) {
               </div>
             )}
             {ctaLabel && ctaUrl && (
-              <Link
-                to={ctaUrl}
-                className="inline-flex items-center gap-2 bg-charcoal text-white rounded-full px-6 py-3 font-semibold hover:bg-charcoal/90 transition-colors"
-              >
-                {ctaLabel}
-                <ArrowRight className="w-4 h-4" />
-              </Link>
+              isAbsoluteUrl(ctaUrl) ? (
+                <a
+                  href={ctaUrl}
+                  className="inline-flex items-center gap-2 bg-charcoal text-white rounded-full px-6 py-3 font-semibold hover:bg-charcoal/90 transition-colors"
+                >
+                  {ctaLabel}
+                  <ArrowRight className="w-4 h-4" />
+                </a>
+              ) : (
+                <Link
+                  to={ctaUrl}
+                  className="inline-flex items-center gap-2 bg-charcoal text-white rounded-full px-6 py-3 font-semibold hover:bg-charcoal/90 transition-colors"
+                >
+                  {ctaLabel}
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+              )
             )}
           </div>
         </div>
