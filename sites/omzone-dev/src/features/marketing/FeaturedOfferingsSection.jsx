@@ -1,21 +1,30 @@
 /**
  * FeaturedOfferingsSection — full-width editorial sections for featured offerings.
- * Displays each featured offering as its own alternating section (not cards).
+ * Displays each featured offering with an image carousel and alternating layout.
  */
+import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { ArrowRight, Clock, MapPin, Sparkles } from "lucide-react";
+import {
+  ArrowRight,
+  ChevronLeft,
+  ChevronRight,
+  Clock,
+  MapPin,
+  Sparkles,
+} from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { useOfferings } from "@/hooks/useOfferings";
 import { useCurrency } from "@/hooks/useCurrency";
 import { resolveField } from "@/lib/i18n-data";
-import { getPreviewUrl, getImageUrls } from "@/lib/media";
-import { BUCKET_PUBLIC_MEDIA } from "@/env";
+import { getImageUrls } from "@/lib/media";
 import { formatDuration } from "@/lib/dates";
 import { offeringHref } from "@/features/offerings/OfferingCard";
 import ROUTES from "@/constants/routes";
 import { cn } from "@/lib/utils";
+
+const SLIDE_INTERVAL = 5000;
 
 export default function FeaturedOfferingsSection() {
   const { t } = useTranslation("landing");
@@ -100,20 +109,7 @@ function FeaturedSection({ offering, index, t }) {
   const summary = resolveField(offering, "summary");
   const href = offeringHref(offering);
 
-  // Get images: prefer images_json, fall back to legacy cover_image fields
   const imageUrls = getImageUrls(offering.images_json, 1400, 900, 85);
-  const coverUrl =
-    imageUrls.length > 0
-      ? imageUrls[0]
-      : offering.cover_image_id
-        ? getPreviewUrl(
-            offering.cover_image_id,
-            offering.cover_image_bucket ?? BUCKET_PUBLIC_MEDIA,
-            1400,
-            900,
-            85,
-          )
-        : null;
 
   // Price display
   let priceLabel = null;
@@ -145,26 +141,11 @@ function FeaturedSection({ offering, index, t }) {
             isReversed && "lg:[direction:rtl] lg:*:[direction:ltr]",
           )}
         >
-          {/* Image */}
-          <div className="relative aspect-4/3 rounded-3xl overflow-hidden shadow-xl group">
-            {coverUrl ? (
-              <img
-                src={coverUrl}
-                alt=""
-                aria-hidden="true"
-                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                loading="lazy"
-              />
-            ) : (
-              <div className="absolute inset-0 bg-linear-to-br from-sage via-sage-dark to-emerald-700" />
-            )}
-            <div className="absolute inset-0 bg-black/5 pointer-events-none" />
-
-            {/* Category badge */}
-            <span className="absolute top-5 left-5 text-[10px] uppercase tracking-[0.18em] font-semibold text-white bg-black/30 backdrop-blur-md border border-white/15 rounded-full px-4 py-2 leading-none">
-              {categoryLabel}
-            </span>
-          </div>
+          {/* Image carousel */}
+          <FeaturedCarousel
+            imageUrls={imageUrls}
+            categoryLabel={categoryLabel}
+          />
 
           {/* Content */}
           <div className="space-y-6">
@@ -216,5 +197,97 @@ function FeaturedSection({ offering, index, t }) {
         </div>
       </div>
     </section>
+  );
+}
+
+// ── Featured Carousel ────────────────────────────────────────────────────────
+
+function FeaturedCarousel({ imageUrls, categoryLabel }) {
+  const [current, setCurrent] = useState(0);
+  const count = imageUrls.length;
+
+  const advance = useCallback(() => {
+    setCurrent((prev) => (prev + 1) % count);
+  }, [count]);
+
+  useEffect(() => {
+    if (count <= 1) return;
+    const id = setInterval(advance, SLIDE_INTERVAL);
+    return () => clearInterval(id);
+  }, [advance, count]);
+
+  if (count === 0) {
+    return (
+      <div className="relative aspect-4/3 rounded-3xl overflow-hidden shadow-xl bg-linear-to-br from-sage via-sage-dark to-emerald-700">
+        <span className="absolute top-5 left-5 text-[10px] uppercase tracking-[0.18em] font-semibold text-white bg-black/30 backdrop-blur-md border border-white/15 rounded-full px-4 py-2 leading-none">
+          {categoryLabel}
+        </span>
+      </div>
+    );
+  }
+
+  return (
+    <div className="relative aspect-4/3 rounded-3xl overflow-hidden shadow-xl group">
+      {/* Slides */}
+      {imageUrls.map((url, i) => (
+        <img
+          key={url}
+          src={url}
+          alt=""
+          aria-hidden="true"
+          className="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out"
+          style={{ opacity: i === current ? 1 : 0 }}
+          loading={i === 0 ? "eager" : "lazy"}
+        />
+      ))}
+      <div className="absolute inset-0 bg-black/5 pointer-events-none" />
+
+      {/* Category badge */}
+      <span className="absolute top-5 left-5 z-10 text-[10px] uppercase tracking-[0.18em] font-semibold text-white bg-black/30 backdrop-blur-md border border-white/15 rounded-full px-4 py-2 leading-none">
+        {categoryLabel}
+      </span>
+
+      {/* Navigation arrows */}
+      {count > 1 && (
+        <>
+          <button
+            type="button"
+            onClick={() => setCurrent((prev) => (prev - 1 + count) % count)}
+            className="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-black/30 backdrop-blur-sm text-white flex items-center justify-center opacity-0 group-hover:opacity-100 hover:bg-black/50 transition-all"
+            aria-label="Previous"
+          >
+            <ChevronLeft className="w-4 h-4" />
+          </button>
+          <button
+            type="button"
+            onClick={() => setCurrent((prev) => (prev + 1) % count)}
+            className="absolute right-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-black/30 backdrop-blur-sm text-white flex items-center justify-center opacity-0 group-hover:opacity-100 hover:bg-black/50 transition-all"
+            aria-label="Next"
+          >
+            <ChevronRight className="w-4 h-4" />
+          </button>
+        </>
+      )}
+
+      {/* Dots */}
+      {count > 1 && (
+        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-10 flex gap-1.5">
+          {imageUrls.map((url, i) => (
+            <button
+              key={url}
+              type="button"
+              onClick={() => setCurrent(i)}
+              className={cn(
+                "h-1.5 rounded-full transition-all duration-400",
+                i === current
+                  ? "w-6 bg-white/90"
+                  : "w-1.5 bg-white/40 hover:bg-white/60",
+              )}
+              aria-label={`Image ${i + 1}`}
+            />
+          ))}
+        </div>
+      )}
+    </div>
   );
 }

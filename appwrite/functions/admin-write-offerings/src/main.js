@@ -410,6 +410,11 @@ async function offeringCreate(db, cfg, p) {
   const core = p.core ?? p;
   const flowPayload = normalizeFlowPayload(p, null);
 
+  // Store images_json inside flowConfig (offerings table has no imagesJson column)
+  if (core.images_json !== undefined) {
+    flowPayload.flowConfig.images_json = toNullableString(core.images_json);
+  }
+
   return db.createDocument(
     cfg.databaseId,
     cfg.collections.offerings,
@@ -429,7 +434,6 @@ async function offeringCreate(db, cfg, p) {
       ctaLabelEs: toNullableString(core.cta_label_es),
       ctaLabelEn: toNullableString(core.cta_label_en),
       badgesJson: toNullableString(core.badges_json),
-      imagesJson: toNullableString(core.images_json),
       isFeatured: toBoolean(core.is_featured, false),
       showOnHome: toBoolean(core.show_on_home, false),
       displayOrder: toNumber(core.display_order, 0),
@@ -499,8 +503,11 @@ async function offeringUpdate(db, cfg, p) {
     u.displayOrder = toNumber(core.display_order, 0);
   if (core.status !== undefined) u.status = core.status;
   if (core.enabled !== undefined) u.enabled = toBoolean(core.enabled, true);
-  if (core.images_json !== undefined)
-    u.imagesJson = toNullableString(core.images_json);
+
+  // Store images_json inside flowConfig (offerings table has no imagesJson column)
+  if (core.images_json !== undefined) {
+    flowPayload.flowConfig.images_json = toNullableString(core.images_json);
+  }
 
   if (
     p.flow !== undefined ||
@@ -518,7 +525,8 @@ async function offeringUpdate(db, cfg, p) {
     core.duration_min !== undefined ||
     core.min_guests !== undefined ||
     core.max_guests !== undefined ||
-    core.location_label !== undefined
+    core.location_label !== undefined ||
+    core.images_json !== undefined
   ) {
     u.flowKey = flowPayload.flowKey;
     u.flowVersion = flowPayload.flowVersion;

@@ -2,23 +2,21 @@
  * NatureImmersiveTemplate — Organic, nature-inspired flowing layout.
  *
  * Layout:
- *   1. Asymmetric hero with multiple circular/organic image shapes
+ *   1. Full-width hero carousel with organic overlay
  *   2. Flowing text sections with nature-inspired curves
- *   3. Gallery-style image presentation
- *   4. Dynamic content sections
- *   5. Beach/nature themed footer CTA
+ *   3. Dynamic content sections
+ *   4. Beach/nature themed footer CTA
  *
  * Best for: Retreats, stays, outdoor experiences, beach yoga.
  */
 import { Link } from "react-router-dom";
-import { ArrowLeft, ArrowRight, Waves, Palmtree, Sun } from "lucide-react";
+import { ArrowLeft, Waves, Palmtree } from "lucide-react";
 import PageMeta from "@/components/seo/PageMeta";
 import { resolveField } from "@/lib/i18n-data";
-import { getPreviewUrl, getImageUrls } from "@/lib/media";
-import { BUCKET_PUBLIC_MEDIA } from "@/env";
+import { getImageUrls } from "@/lib/media";
 import ROUTES from "@/constants/routes";
-import { cn } from "@/lib/utils";
 import {
+  HeroCarousel,
   BookingCTA,
   InfoBadges,
   PriceDisplay,
@@ -45,140 +43,72 @@ export default function NatureImmersiveTemplate({
   const description = resolveField(offering, "description");
   const backRoute = CATEGORY_BACK_ROUTES[offering.category] ?? ROUTES.SESSIONS;
 
-  // Get images: prefer images_json, fall back to legacy cover_image fields
-  const imageUrls = getImageUrls(offering.images_json, 1200, 1200, 85);
-  const coverUrl =
-    imageUrls.length > 0
-      ? imageUrls[0]
-      : offering.cover_image_id
-        ? getPreviewUrl(
-            offering.cover_image_id,
-            offering.cover_image_bucket ?? BUCKET_PUBLIC_MEDIA,
-            1200,
-            1200,
-            85,
-          )
-        : null;
-
-  // Secondary image from sections or fallback to second offering image
-  const secondarySection = sections?.[0];
-  const sectionImageUrls = getImageUrls(
-    secondarySection?.images_json,
-    800,
-    800,
-    85,
-  );
-  const secondaryUrl =
-    sectionImageUrls.length > 0
-      ? sectionImageUrls[0]
-      : imageUrls.length > 1
-        ? imageUrls[1]
-        : null;
+  const imageUrls = getImageUrls(offering.images_json, 1920, 1080, 85);
 
   return (
     <>
       <PageMeta title={title} description={summary} locale={locale} />
 
-      {/* ── Organic Hero ──────────────────────────────────────────────── */}
-      <section className="relative bg-gradient-to-br from-cream via-sand/50 to-warm-gray/30 pt-20 pb-16 md:pt-28 md:pb-24 overflow-hidden">
-        {/* Decorative organic shapes */}
-        <div
-          className="absolute top-0 right-0 w-96 h-96 bg-sage/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"
-          aria-hidden="true"
-        />
-        <div
-          className="absolute bottom-0 left-0 w-80 h-80 bg-amber-200/20 rounded-full blur-3xl translate-y-1/2 -translate-x-1/3"
-          aria-hidden="true"
-        />
+      {/* ── Full-width Hero Carousel ─────────────────────────────────── */}
+      <section className="relative group">
+        <HeroCarousel
+          imageUrls={imageUrls}
+          aspectClassName="aspect-[16/9] md:aspect-[21/9]"
+          overlay={
+            <>
+              <div className="absolute inset-0 bg-linear-to-t from-charcoal/70 via-charcoal/20 to-charcoal/30" />
+              {/* Decorative organic shapes */}
+              <div
+                className="absolute top-0 right-0 w-96 h-96 bg-sage/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"
+                aria-hidden="true"
+              />
+              <div
+                className="absolute bottom-0 left-0 w-80 h-80 bg-amber-200/15 rounded-full blur-3xl translate-y-1/2 -translate-x-1/3"
+                aria-hidden="true"
+              />
+            </>
+          }
+        >
+          {/* Content overlay */}
+          <div className="absolute inset-0 z-10 flex items-end">
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 pb-12 md:pb-16 w-full">
+              {/* Back link */}
+              <Link
+                to={backRoute}
+                className="inline-flex items-center gap-1.5 text-sm text-white/70 hover:text-white transition-colors mb-6"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                {t(`categories.${offering.category}`)}
+              </Link>
 
-        <div className="relative max-w-6xl mx-auto px-4 sm:px-6">
-          {/* Back link */}
-          <Link
-            to={backRoute}
-            className="inline-flex items-center gap-1.5 text-sm text-charcoal-muted hover:text-charcoal transition-colors mb-8"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            {t(`categories.${offering.category}`)}
-          </Link>
-
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-            {/* Text content */}
-            <div>
               <CategoryBadge
                 offering={offering}
                 t={t}
-                variant="light"
-                className="mb-6"
+                className="mb-4 block w-fit"
               />
 
-              <h1 className="font-display text-4xl sm:text-5xl md:text-6xl text-charcoal font-semibold leading-[0.95] tracking-tight mb-6">
+              <h1 className="font-display text-4xl sm:text-5xl md:text-6xl text-white font-semibold leading-[0.95] tracking-tight mb-4 max-w-3xl">
                 {title}
               </h1>
 
               {summary && (
-                <p className="text-charcoal-muted text-lg md:text-xl leading-relaxed mb-8">
+                <p className="text-white/70 text-lg md:text-xl leading-relaxed mb-6 max-w-2xl">
                   {summary}
                 </p>
               )}
 
-              <InfoBadges
-                offering={offering}
-                t={t}
-                variant="light"
-                className="mb-8"
-              />
-
-              <div className="flex flex-wrap items-center gap-4">
-                <PriceDisplay offering={offering} t={t} />
+              <div className="flex flex-wrap items-center gap-6">
+                <InfoBadges offering={offering} t={t} />
+                <PriceDisplay
+                  offering={offering}
+                  t={t}
+                  className="text-white!"
+                />
                 <BookingCTA offering={offering} t={t} />
               </div>
             </div>
-
-            {/* Images - organic layout */}
-            <div className="relative h-[450px] md:h-[550px]">
-              {/* Main circular image */}
-              {coverUrl && (
-                <div className="absolute top-0 right-0 w-72 h-72 md:w-96 md:h-96 rounded-full overflow-hidden shadow-2xl shadow-charcoal/10 border-4 border-white">
-                  <img
-                    src={coverUrl}
-                    alt=""
-                    aria-hidden="true"
-                    className="w-full h-full object-cover"
-                    loading="eager"
-                  />
-                </div>
-              )}
-
-              {/* Secondary organic shape */}
-              {secondaryUrl && (
-                <div className="absolute bottom-0 left-0 w-52 h-52 md:w-64 md:h-64 rounded-[60%_40%_30%_70%/60%_30%_70%_40%] overflow-hidden shadow-xl shadow-charcoal/10 border-4 border-white">
-                  <img
-                    src={secondaryUrl}
-                    alt=""
-                    aria-hidden="true"
-                    className="w-full h-full object-cover"
-                    loading="lazy"
-                  />
-                </div>
-              )}
-
-              {/* Decorative elements */}
-              <div
-                className="absolute top-1/2 left-1/3 w-16 h-16 bg-sage-muted rounded-full flex items-center justify-center shadow-lg"
-                aria-hidden="true"
-              >
-                <Waves className="w-8 h-8 text-sage-dark" />
-              </div>
-
-              <div
-                className="absolute bottom-20 right-8 w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center shadow-md"
-                aria-hidden="true"
-              >
-                <Sun className="w-6 h-6 text-amber-600" />
-              </div>
-            </div>
           </div>
-        </div>
+        </HeroCarousel>
       </section>
 
       {/* ── Wave divider ──────────────────────────────────────────────── */}
@@ -233,7 +163,7 @@ export default function NatureImmersiveTemplate({
       <SectionRenderer sections={sections} />
 
       {/* ── Beach/Nature CTA Section ──────────────────────────────────── */}
-      <section className="relative bg-gradient-to-br from-amber-700 via-amber-600 to-orange-500 py-20 md:py-28 overflow-hidden">
+      <section className="relative bg-linear-to-br from-amber-700 via-amber-600 to-orange-500 py-20 md:py-28 overflow-hidden">
         {/* Decorative waves */}
         <div
           className="absolute inset-0 opacity-10"

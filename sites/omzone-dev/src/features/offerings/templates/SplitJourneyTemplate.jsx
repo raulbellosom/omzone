@@ -2,7 +2,7 @@
  * SplitJourneyTemplate — Side-by-side hero with journey progression.
  *
  * Layout:
- *   1. Split hero: Large image on left/right, content on the other side
+ *   1. Split hero: Image carousel on left, content on the right
  *   2. Journey narrative with alternating image/text blocks
  *   3. What's included section with icons
  *   4. Dynamic content sections
@@ -11,22 +11,13 @@
  * Best for: Transformative experiences, immersions, multi-day programs.
  */
 import { Link } from "react-router-dom";
-import {
-  ArrowLeft,
-  ArrowRight,
-  Check,
-  Sunrise,
-  Sunset,
-  Moon,
-  Star,
-} from "lucide-react";
+import { ArrowLeft, Sunrise, Sunset, Moon, Star } from "lucide-react";
 import PageMeta from "@/components/seo/PageMeta";
 import { resolveField } from "@/lib/i18n-data";
-import { getPreviewUrl, getImageUrls } from "@/lib/media";
-import { BUCKET_PUBLIC_MEDIA } from "@/env";
+import { getImageUrls } from "@/lib/media";
 import ROUTES from "@/constants/routes";
-import { cn } from "@/lib/utils";
 import {
+  HeroCarousel,
   BookingCTA,
   InfoBadges,
   PriceDisplay,
@@ -56,20 +47,7 @@ export default function SplitJourneyTemplate({
   const description = resolveField(offering, "description");
   const backRoute = CATEGORY_BACK_ROUTES[offering.category] ?? ROUTES.SESSIONS;
 
-  // Get images: prefer images_json, fall back to legacy cover_image fields
   const imageUrls = getImageUrls(offering.images_json, 1400, 900, 85);
-  const coverUrl =
-    imageUrls.length > 0
-      ? imageUrls[0]
-      : offering.cover_image_id
-        ? getPreviewUrl(
-            offering.cover_image_id,
-            offering.cover_image_bucket ?? BUCKET_PUBLIC_MEDIA,
-            1400,
-            900,
-            85,
-          )
-        : null;
 
   // Parse included items from termsConfig if available
   let includedItems = [];
@@ -87,25 +65,19 @@ export default function SplitJourneyTemplate({
       {/* ── Split Hero ────────────────────────────────────────────────── */}
       <section className="min-h-screen bg-cream">
         <div className="grid lg:grid-cols-2 min-h-screen">
-          {/* Image side */}
-          <div className="relative h-[50vh] lg:h-auto lg:sticky lg:top-0">
-            {coverUrl ? (
-              <img
-                src={coverUrl}
-                alt=""
-                aria-hidden="true"
-                className="absolute inset-0 w-full h-full object-cover"
-                loading="eager"
-              />
-            ) : (
-              <div className="absolute inset-0 bg-gradient-to-br from-sage-dark via-sage to-emerald-600" />
-            )}
+          {/* Image side — carousel */}
+          <div className="relative h-[50vh] lg:h-auto lg:sticky lg:top-0 group">
+            <HeroCarousel
+              imageUrls={imageUrls}
+              className="absolute inset-0"
+              aspectClassName=""
+            />
 
             {/* Category badge overlay */}
             <CategoryBadge
               offering={offering}
               t={t}
-              className="absolute top-20 lg:top-28 left-6"
+              className="absolute top-20 lg:top-28 left-6 z-10"
             />
           </div>
 
@@ -204,7 +176,7 @@ export default function SplitJourneyTemplate({
       <SectionRenderer sections={sections} />
 
       {/* ── Final CTA Section ─────────────────────────────────────────── */}
-      <section className="bg-gradient-to-br from-sage-dark via-sage to-emerald-600 py-20 md:py-28">
+      <section className="bg-linear-to-br from-sage-dark via-sage to-emerald-600 py-20 md:py-28">
         <div className="max-w-4xl mx-auto px-4 text-center">
           <h2 className="font-display text-3xl md:text-4xl text-white font-semibold mb-4">
             {t("detail.beginJourney", { defaultValue: "Comienza tu viaje" })}

@@ -2,13 +2,15 @@
  * Shared components for offering templates.
  *
  * Reusable pieces used across all template layouts:
+ * - HeroCarousel: Full-width image carousel for hero sections
  * - BookingCTA: Primary call-to-action button
  * - InfoBadges: Duration, location, capacity badges
  * - PriceDisplay: Formatted price with mode support
  * - SectionRenderer: Renders content_sections with templates
  */
+import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, Clock, MapPin, Users, Sparkles } from "lucide-react";
+import { ArrowRight, ChevronLeft, ChevronRight, Clock, MapPin, Users, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCurrency } from "@/hooks/useCurrency";
 import { formatDuration } from "@/lib/dates";
@@ -16,6 +18,108 @@ import { resolveField } from "@/lib/i18n-data";
 import { getImageUrls } from "@/lib/media";
 import ROUTES from "@/constants/routes";
 import { cn } from "@/lib/utils";
+
+// ── Hero Carousel ───────────────────────────────────────────────────────────
+
+const SLIDE_INTERVAL = 5000;
+
+/**
+ * Full-width image carousel for offering hero sections.
+ * Shows navigation arrows and dots when there are multiple images.
+ * Falls back to a single image display or gradient placeholder.
+ */
+export function HeroCarousel({
+  imageUrls,
+  className,
+  aspectClassName = "aspect-16/9",
+  overlay,
+  children,
+}) {
+  const [current, setCurrent] = useState(0);
+  const count = imageUrls?.length ?? 0;
+
+  const advance = useCallback(() => {
+    setCurrent((prev) => (prev + 1) % count);
+  }, [count]);
+
+  useEffect(() => {
+    if (count <= 1) return;
+    const id = setInterval(advance, SLIDE_INTERVAL);
+    return () => clearInterval(id);
+  }, [advance, count]);
+
+  if (count === 0) {
+    return (
+      <div className={cn("relative bg-linear-to-br from-sage-dark via-sage to-emerald-600", aspectClassName, className)}>
+        {overlay}
+        {children}
+      </div>
+    );
+  }
+
+  return (
+    <div className={cn("relative overflow-hidden", aspectClassName, className)}>
+      {/* Slides */}
+      {imageUrls.map((url, i) => (
+        <img
+          key={url}
+          src={url}
+          alt=""
+          aria-hidden="true"
+          className="absolute inset-0 w-full h-full object-cover object-center transition-opacity duration-1200 ease-in-out"
+          style={{ opacity: i === current ? 1 : 0 }}
+          loading={i === 0 ? "eager" : "lazy"}
+        />
+      ))}
+
+      {overlay}
+
+      {/* Navigation arrows */}
+      {count > 1 && (
+        <>
+          <button
+            type="button"
+            onClick={() => setCurrent((prev) => (prev - 1 + count) % count)}
+            className="absolute left-3 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-black/30 backdrop-blur-sm text-white flex items-center justify-center opacity-0 group-hover:opacity-100 hover:bg-black/50 transition-all"
+            aria-label="Previous"
+          >
+            <ChevronLeft className="w-5 h-5" />
+          </button>
+          <button
+            type="button"
+            onClick={() => setCurrent((prev) => (prev + 1) % count)}
+            className="absolute right-3 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-black/30 backdrop-blur-sm text-white flex items-center justify-center opacity-0 group-hover:opacity-100 hover:bg-black/50 transition-all"
+            aria-label="Next"
+          >
+            <ChevronRight className="w-5 h-5" />
+          </button>
+        </>
+      )}
+
+      {/* Dots */}
+      {count > 1 && (
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex gap-2">
+          {imageUrls.map((url, i) => (
+            <button
+              key={url}
+              type="button"
+              onClick={() => setCurrent(i)}
+              className={cn(
+                "h-1.5 rounded-full transition-all duration-400",
+                i === current
+                  ? "w-8 bg-white/90"
+                  : "w-2 bg-white/40 hover:bg-white/60",
+              )}
+              aria-label={`Image ${i + 1}`}
+            />
+          ))}
+        </div>
+      )}
+
+      {children}
+    </div>
+  );
+}
 
 // ── Booking CTA ─────────────────────────────────────────────────────────────
 

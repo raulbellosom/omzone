@@ -1,2422 +1,2455 @@
 {
-  "projectId": "69b37e1f001cce5d19cc",
-  "projectName": "OMZONE",
-  "settings": {
-    "services": {
-      "account": true,
-      "avatars": true,
-      "databases": true,
-      "locale": true,
-      "health": true,
-      "storage": true,
-      "teams": true,
-      "users": true,
-      "sites": true,
-      "functions": true,
-      "graphql": true,
-      "messaging": true
+    "projectId": "69b37e1f001cce5d19cc",
+    "projectName": "OMZONE",
+    "settings": {
+        "services": {
+            "account": true,
+            "avatars": true,
+            "databases": true,
+            "locale": true,
+            "health": true,
+            "storage": true,
+            "teams": true,
+            "users": true,
+            "sites": true,
+            "functions": true,
+            "graphql": true,
+            "messaging": true
+        },
+        "auth": {
+            "methods": {
+                "jwt": true,
+                "phone": true,
+                "invites": true,
+                "anonymous": true,
+                "email-otp": true,
+                "magic-url": true,
+                "email-password": true
+            },
+            "security": {
+                "duration": 31536000,
+                "limit": 0,
+                "sessionsLimit": 10,
+                "passwordHistory": 0,
+                "passwordDictionary": false,
+                "personalDataCheck": false,
+                "sessionAlerts": false,
+                "mockNumbers": []
+            }
+        }
     },
-    "auth": {
-      "methods": {
-        "jwt": true,
-        "phone": true,
-        "invites": true,
-        "anonymous": true,
-        "email-otp": true,
-        "magic-url": true,
-        "email-password": true
-      },
-      "security": {
-        "duration": 31536000,
-        "limit": 0,
-        "sessionsLimit": 10,
-        "passwordHistory": 0,
-        "passwordDictionary": false,
-        "personalDataCheck": false,
-        "sessionAlerts": false,
-        "mockNumbers": []
-      }
-    }
-  },
-  "functions": [
-    {
-      "$id": "create-user-profile",
-      "name": "create-user-profile",
-      "runtime": "node-20.0",
-      "path": "appwrite/functions/create-user-profile",
-      "entrypoint": "src/main.js",
-      "ignore": [
-        "node_modules",
-        ".npm"
-      ],
-      "execute": [],
-      "events": [
-        "users.*.create"
-      ],
-      "schedule": "",
-      "timeout": 15,
-      "enabled": true,
-      "logging": true,
-      "scopes": [
-        "users.read",
-        "users.write",
-        "databases.read",
-        "databases.write"
-      ],
-      "commands": "npm install"
-    },
-    {
-      "$id": "sync-user-profile",
-      "name": "sync-user-profile",
-      "runtime": "node-20.0",
-      "path": "appwrite/functions/sync-user-profile",
-      "entrypoint": "src/main.js",
-      "ignore": [
-        "node_modules",
-        ".npm"
-      ],
-      "execute": [
-        "users"
-      ],
-      "events": [],
-      "schedule": "",
-      "timeout": 15,
-      "enabled": true,
-      "logging": true,
-      "scopes": [
-        "users.read",
-        "users.write",
-        "databases.read",
-        "databases.write"
-      ],
-      "commands": "npm install"
-    },
-    {
-      "$id": "sync-email-verification",
-      "name": "sync-email-verification",
-      "runtime": "node-20.0",
-      "path": "appwrite/functions/sync-email-verification",
-      "entrypoint": "src/main.js",
-      "ignore": [
-        "node_modules",
-        ".npm"
-      ],
-      "execute": [
-        "users"
-      ],
-      "events": [],
-      "schedule": "",
-      "timeout": 15,
-      "enabled": true,
-      "logging": true,
-      "scopes": [
-        "users.read",
-        "users.write",
-        "databases.read",
-        "databases.write"
-      ],
-      "commands": "npm install"
-    },
-    {
-      "$id": "admin-write-offerings",
-      "name": "admin-write-offerings",
-      "runtime": "node-20.0",
-      "path": "appwrite/functions/admin-write-offerings",
-      "entrypoint": "src/main.js",
-      "ignore": [
-        "node_modules",
-        ".npm"
-      ],
-      "execute": [
-        "users"
-      ],
-      "events": [],
-      "schedule": "",
-      "timeout": 15,
-      "enabled": true,
-      "logging": true,
-      "scopes": [
-        "users.read",
-        "databases.read",
-        "databases.write"
-      ],
-      "commands": "npm install"
-    },
-    {
-      "$id": "submit-contact",
-      "name": "submit-contact",
-      "runtime": "node-20.0",
-      "path": "appwrite/functions/submit-contact",
-      "entrypoint": "src/main.js",
-      "ignore": [
-        "node_modules",
-        ".npm"
-      ],
-      "execute": [
-        "any"
-      ],
-      "events": [],
-      "schedule": "",
-      "timeout": 15,
-      "enabled": true,
-      "logging": true,
-      "scopes": [
-        "databases.read",
-        "databases.write"
-      ],
-      "commands": "npm install"
-    }
-  ],
-  "sites": [
-    {
-      "$id": "69b465ef00065194e9d2",
-      "name": "omzone-dev",
-      "path": "sites/omzone-dev",
-      "framework": "vite",
-      "enabled": true,
-      "logging": true,
-      "timeout": 30,
-      "buildRuntime": "node-22",
-      "adapter": "static",
-      "installCommand": "npm install",
-      "buildCommand": "npm run build",
-      "outputDirectory": "./dist",
-      "fallbackFile": "index.html",
-      "specification": "s-8vcpu-8gb"
-    }
-  ],
-  "tablesDB": [
-    {
-      "$id": "main",
-      "name": "main",
-      "enabled": true
-    }
-  ],
-  "tables": [
-    {
-      "$id": "users_profile",
-      "$permissions": [
-        "read(\"label:admin\")",
-        "read(\"label:root\")"
-      ],
-      "databaseId": "main",
-      "name": "users_profile",
-      "enabled": true,
-      "rowSecurity": true,
-      "columns": [
+    "functions": [
         {
-          "key": "roleKey",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "default": "client",
-          "format": "enum",
-          "elements": [
-            "root",
-            "admin",
-            "client"
-          ]
+            "$id": "create-user-profile",
+            "name": "create-user-profile",
+            "runtime": "node-20.0",
+            "path": "appwrite/functions/create-user-profile",
+            "entrypoint": "src/main.js",
+            "ignore": [
+                "node_modules",
+                ".npm"
+            ],
+            "execute": [],
+            "events": [
+                "users.*.create"
+            ],
+            "schedule": "",
+            "timeout": 15,
+            "enabled": true,
+            "logging": true,
+            "scopes": [
+                "users.read",
+                "users.write",
+                "databases.read",
+                "databases.write"
+            ],
+            "commands": "npm install"
         },
         {
-          "key": "firstName",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 80,
-          "default": null,
-          "encrypt": false
+            "$id": "sync-user-profile",
+            "name": "sync-user-profile",
+            "runtime": "node-20.0",
+            "path": "appwrite/functions/sync-user-profile",
+            "entrypoint": "src/main.js",
+            "ignore": [
+                "node_modules",
+                ".npm"
+            ],
+            "execute": [
+                "users"
+            ],
+            "events": [],
+            "schedule": "",
+            "timeout": 15,
+            "enabled": true,
+            "logging": true,
+            "scopes": [
+                "users.read",
+                "users.write",
+                "databases.read",
+                "databases.write"
+            ],
+            "commands": "npm install"
         },
         {
-          "key": "lastName",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 80,
-          "default": null,
-          "encrypt": false
+            "$id": "sync-email-verification",
+            "name": "sync-email-verification",
+            "runtime": "node-20.0",
+            "path": "appwrite/functions/sync-email-verification",
+            "entrypoint": "src/main.js",
+            "ignore": [
+                "node_modules",
+                ".npm"
+            ],
+            "execute": [
+                "users"
+            ],
+            "events": [],
+            "schedule": "",
+            "timeout": 15,
+            "enabled": true,
+            "logging": true,
+            "scopes": [
+                "users.read",
+                "users.write",
+                "databases.read",
+                "databases.write"
+            ],
+            "commands": "npm install"
         },
         {
-          "key": "fullName",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 200,
-          "default": null,
-          "encrypt": false
+            "$id": "admin-write-offerings",
+            "name": "admin-write-offerings",
+            "runtime": "node-20.0",
+            "path": "appwrite/functions/admin-write-offerings",
+            "entrypoint": "src/main.js",
+            "ignore": [
+                "node_modules",
+                ".npm"
+            ],
+            "execute": [
+                "users"
+            ],
+            "events": [],
+            "schedule": "",
+            "timeout": 15,
+            "enabled": true,
+            "logging": true,
+            "scopes": [
+                "users.read",
+                "databases.read",
+                "databases.write"
+            ],
+            "commands": "npm install"
         },
         {
-          "key": "emailVerified",
-          "type": "boolean",
-          "required": false,
-          "array": false,
-          "default": false
-        },
-        {
-          "key": "avatarId",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 64,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "status",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "default": "pending_verification",
-          "format": "enum",
-          "elements": [
-            "pending_verification",
-            "active",
-            "inactive",
-            "blocked"
-          ]
-        },
-        {
-          "key": "onboardingCompleted",
-          "type": "boolean",
-          "required": false,
-          "array": false,
-          "default": false
-        },
-        {
-          "key": "provider",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 40,
-          "default": "email",
-          "encrypt": false
-        },
-        {
-          "key": "locale",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 10,
-          "default": "es",
-          "encrypt": false
-        },
-        {
-          "key": "isSystemUser",
-          "type": "boolean",
-          "required": false,
-          "array": false,
-          "default": false
-        },
-        {
-          "key": "enabled",
-          "type": "boolean",
-          "required": false,
-          "array": false,
-          "default": true
+            "$id": "submit-contact",
+            "name": "submit-contact",
+            "runtime": "node-20.0",
+            "path": "appwrite/functions/submit-contact",
+            "entrypoint": "src/main.js",
+            "ignore": [
+                "node_modules",
+                ".npm"
+            ],
+            "execute": [
+                "any"
+            ],
+            "events": [],
+            "schedule": "",
+            "timeout": 15,
+            "enabled": true,
+            "logging": true,
+            "scopes": [
+                "databases.read",
+                "databases.write"
+            ],
+            "commands": "npm install"
         }
-      ],
-      "indexes": [
+    ],
+    "sites": [
         {
-          "key": "idx_profile_role",
-          "type": "key",
-          "status": "available",
-          "columns": [
-            "roleKey"
-          ],
-          "orders": [
-            "ASC"
-          ]
-        },
-        {
-          "key": "idx_profile_status",
-          "type": "key",
-          "status": "available",
-          "columns": [
-            "status"
-          ],
-          "orders": [
-            "ASC"
-          ]
-        },
-        {
-          "key": "idx_profile_system",
-          "type": "key",
-          "status": "available",
-          "columns": [
-            "isSystemUser"
-          ],
-          "orders": [
-            "ASC"
-          ]
-        },
-        {
-          "key": "idx_profile_verified",
-          "type": "key",
-          "status": "available",
-          "columns": [
-            "emailVerified"
-          ],
-          "orders": [
-            "ASC"
-          ]
-        },
-        {
-          "key": "idx_profile_onboarding",
-          "type": "key",
-          "status": "available",
-          "columns": [
-            "onboardingCompleted"
-          ],
-          "orders": [
-            "ASC"
-          ]
+            "$id": "69b465ef00065194e9d2",
+            "name": "omzone-dev",
+            "path": "sites/omzone-dev",
+            "framework": "vite",
+            "enabled": true,
+            "logging": true,
+            "timeout": 30,
+            "buildRuntime": "node-22",
+            "adapter": "static",
+            "installCommand": "npm install",
+            "buildCommand": "npm run build",
+            "outputDirectory": "./dist",
+            "fallbackFile": "index.html",
+            "specification": "s-8vcpu-8gb"
         }
-      ]
-    },
-    {
-      "$id": "contact_leads",
-      "$permissions": [
-        "create(\"any\")",
-        "read(\"label:admin\")",
-        "update(\"label:admin\")",
-        "delete(\"label:admin\")",
-        "read(\"label:root\")",
-        "update(\"label:root\")",
-        "delete(\"label:root\")"
-      ],
-      "databaseId": "main",
-      "name": "contact_leads",
-      "enabled": true,
-      "rowSecurity": false,
-      "columns": [
+    ],
+    "tablesDB": [
         {
-          "key": "fullName",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 120,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "email",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "default": null,
-          "format": "email"
-        },
-        {
-          "key": "phone",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 20,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "subject",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 200,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "message",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 4000,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "status",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "default": "new",
-          "format": "enum",
-          "elements": [
-            "new",
-            "read",
-            "archived"
-          ]
+            "$id": "main",
+            "name": "main",
+            "enabled": true
         }
-      ],
-      "indexes": [
+    ],
+    "tables": [
         {
-          "key": "idx_leads_email",
-          "type": "key",
-          "status": "available",
-          "columns": [
-            "email"
-          ],
-          "orders": [
-            "ASC"
-          ]
+            "$id": "users_profile",
+            "$permissions": [
+                "read(\"label:admin\")",
+                "read(\"label:root\")"
+            ],
+            "databaseId": "main",
+            "name": "users_profile",
+            "enabled": true,
+            "rowSecurity": true,
+            "columns": [
+                {
+                    "key": "roleKey",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "default": "client",
+                    "format": "enum",
+                    "elements": [
+                        "root",
+                        "admin",
+                        "client"
+                    ]
+                },
+                {
+                    "key": "firstName",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 80,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "lastName",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 80,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "avatarId",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 64,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "status",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "default": "pending_verification",
+                    "format": "enum",
+                    "elements": [
+                        "pending_verification",
+                        "active",
+                        "inactive",
+                        "blocked"
+                    ]
+                },
+                {
+                    "key": "locale",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 10,
+                    "default": "es",
+                    "encrypt": false
+                },
+                {
+                    "key": "enabled",
+                    "type": "boolean",
+                    "required": false,
+                    "array": false,
+                    "default": true
+                },
+                {
+                    "key": "isSystemUser",
+                    "type": "boolean",
+                    "required": false,
+                    "array": false,
+                    "default": false
+                },
+                {
+                    "key": "fullName",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 200,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "emailVerified",
+                    "type": "boolean",
+                    "required": false,
+                    "array": false,
+                    "default": false
+                },
+                {
+                    "key": "onboardingCompleted",
+                    "type": "boolean",
+                    "required": false,
+                    "array": false,
+                    "default": false
+                },
+                {
+                    "key": "provider",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 40,
+                    "default": "email",
+                    "encrypt": false
+                }
+            ],
+            "indexes": [
+                {
+                    "key": "idx_profile_role",
+                    "type": "key",
+                    "status": "available",
+                    "columns": [
+                        "roleKey"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                },
+                {
+                    "key": "idx_profile_status",
+                    "type": "key",
+                    "status": "available",
+                    "columns": [
+                        "enabled"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                },
+                {
+                    "key": "idx_profile_system",
+                    "type": "key",
+                    "status": "available",
+                    "columns": [
+                        "isSystemUser"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                },
+                {
+                    "key": "idx_profile_verified",
+                    "type": "key",
+                    "status": "available",
+                    "columns": [
+                        "emailVerified"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                },
+                {
+                    "key": "idx_profile_onboarding",
+                    "type": "key",
+                    "status": "available",
+                    "columns": [
+                        "onboardingCompleted"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                }
+            ]
         },
         {
-          "key": "idx_leads_status",
-          "type": "key",
-          "status": "available",
-          "columns": [
-            "status"
-          ],
-          "orders": [
-            "ASC"
-          ]
+            "$id": "contact_leads",
+            "$permissions": [
+                "create(\"any\")",
+                "read(\"label:admin\")",
+                "update(\"label:admin\")",
+                "delete(\"label:admin\")",
+                "read(\"label:root\")",
+                "update(\"label:root\")",
+                "delete(\"label:root\")"
+            ],
+            "databaseId": "main",
+            "name": "contact_leads",
+            "enabled": true,
+            "rowSecurity": false,
+            "columns": [
+                {
+                    "key": "fullName",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 120,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "email",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "format": "email"
+                },
+                {
+                    "key": "phone",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 20,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "subject",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 200,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "message",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 4000,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "status",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "default": "new",
+                    "format": "enum",
+                    "elements": [
+                        "new",
+                        "read",
+                        "archived"
+                    ]
+                }
+            ],
+            "indexes": [
+                {
+                    "key": "idx_leads_email",
+                    "type": "key",
+                    "status": "available",
+                    "columns": [
+                        "email"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                },
+                {
+                    "key": "idx_leads_status",
+                    "type": "key",
+                    "status": "available",
+                    "columns": [
+                        "status"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                }
+            ]
+        },
+        {
+            "$id": "order_items",
+            "$permissions": [
+                "read(\"label:admin\")",
+                "read(\"label:root\")"
+            ],
+            "databaseId": "main",
+            "name": "order_items",
+            "enabled": true,
+            "rowSecurity": true,
+            "columns": [
+                {
+                    "key": "orderId",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 64,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "itemType",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "format": "enum",
+                    "elements": [
+                        "class_session",
+                        "wellness_package",
+                        "product",
+                        "addon",
+                        "offering"
+                    ]
+                },
+                {
+                    "key": "referenceId",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 64,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "titleSnapshot",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 160,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "quantity",
+                    "type": "integer",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "min": -9223372036854775808,
+                    "max": 9223372036854775807
+                },
+                {
+                    "key": "unitPrice",
+                    "type": "double",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "min": -1.7976931348623157e+308,
+                    "max": 1.7976931348623157e+308
+                },
+                {
+                    "key": "lineTotal",
+                    "type": "double",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "min": -1.7976931348623157e+308,
+                    "max": 1.7976931348623157e+308
+                },
+                {
+                    "key": "metaJson",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 2000,
+                    "default": null,
+                    "encrypt": false
+                }
+            ],
+            "indexes": [
+                {
+                    "key": "idx_oitems_order",
+                    "type": "key",
+                    "status": "available",
+                    "columns": [
+                        "orderId"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                },
+                {
+                    "key": "idx_oitems_ref",
+                    "type": "key",
+                    "status": "available",
+                    "columns": [
+                        "referenceId"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                },
+                {
+                    "key": "idx_oitems_type",
+                    "type": "key",
+                    "status": "available",
+                    "columns": [
+                        "itemType"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                }
+            ]
+        },
+        {
+            "$id": "bookings",
+            "$permissions": [
+                "read(\"label:admin\")",
+                "update(\"label:admin\")",
+                "read(\"label:root\")",
+                "update(\"label:root\")",
+                "delete(\"label:root\")"
+            ],
+            "databaseId": "main",
+            "name": "bookings",
+            "enabled": true,
+            "rowSecurity": true,
+            "columns": [
+                {
+                    "key": "clientUserId",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 64,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "sessionId",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 64,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "orderId",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 64,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "bookingCode",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 40,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "status",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "format": "enum",
+                    "elements": [
+                        "pending",
+                        "confirmed",
+                        "cancelled",
+                        "completed",
+                        "no_show",
+                        "rescheduled"
+                    ]
+                },
+                {
+                    "key": "unitPrice",
+                    "type": "double",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "min": -1.7976931348623157e+308,
+                    "max": 1.7976931348623157e+308
+                },
+                {
+                    "key": "extrasJson",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 2000,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "reservedAt",
+                    "type": "datetime",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "format": ""
+                },
+                {
+                    "key": "quantity",
+                    "type": "integer",
+                    "required": false,
+                    "array": false,
+                    "default": 1,
+                    "min": -9223372036854775808,
+                    "max": 9223372036854775807
+                },
+                {
+                    "key": "offeringId",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 64,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "slotId",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 64,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "bookingType",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "format": "enum",
+                    "elements": [
+                        "session",
+                        "immersion",
+                        "service",
+                        "stay",
+                        "experience"
+                    ]
+                },
+                {
+                    "key": "guestCount",
+                    "type": "integer",
+                    "required": false,
+                    "array": false,
+                    "default": 1,
+                    "min": -9223372036854775808,
+                    "max": 9223372036854775807
+                },
+                {
+                    "key": "requestDataJson",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 3000,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "confirmedAt",
+                    "type": "datetime",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "format": ""
+                },
+                {
+                    "key": "pricingSnapshotJson",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 4000,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "customAnswersJson",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 4000,
+                    "default": null,
+                    "encrypt": false
+                }
+            ],
+            "indexes": [
+                {
+                    "key": "uq_bookings_code",
+                    "type": "unique",
+                    "status": "available",
+                    "columns": [
+                        "bookingCode"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                },
+                {
+                    "key": "idx_bookings_client",
+                    "type": "key",
+                    "status": "available",
+                    "columns": [
+                        "clientUserId"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                },
+                {
+                    "key": "idx_bookings_session",
+                    "type": "key",
+                    "status": "available",
+                    "columns": [
+                        "sessionId"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                },
+                {
+                    "key": "idx_bookings_order",
+                    "type": "key",
+                    "status": "available",
+                    "columns": [
+                        "orderId"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                },
+                {
+                    "key": "idx_bookings_status",
+                    "type": "key",
+                    "status": "available",
+                    "columns": [
+                        "status"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                },
+                {
+                    "key": "idx_bookings_offering",
+                    "type": "key",
+                    "status": "available",
+                    "columns": [
+                        "offeringId"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                },
+                {
+                    "key": "idx_bookings_slot",
+                    "type": "key",
+                    "status": "available",
+                    "columns": [
+                        "slotId"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                },
+                {
+                    "key": "idx_bookings_type",
+                    "type": "key",
+                    "status": "available",
+                    "columns": [
+                        "bookingType"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                }
+            ]
+        },
+        {
+            "$id": "app_settings",
+            "$permissions": [
+                "read(\"any\")",
+                "create(\"label:root\")",
+                "update(\"label:root\")",
+                "delete(\"label:root\")"
+            ],
+            "databaseId": "main",
+            "name": "app_settings",
+            "enabled": true,
+            "rowSecurity": false,
+            "columns": [
+                {
+                    "key": "appName",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 100,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "defaultLocale",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 10,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "defaultCurrency",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 3,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "supportEmail",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "format": "email"
+                },
+                {
+                    "key": "contactPhone",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 20,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "bookingNotice",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 1000,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "address",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 255,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "instagram",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 100,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "website",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 255,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "timezone",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 50,
+                    "default": null,
+                    "encrypt": false
+                }
+            ],
+            "indexes": []
+        },
+        {
+            "$id": "access_passes",
+            "$permissions": [
+                "read(\"label:admin\")",
+                "create(\"label:admin\")",
+                "update(\"label:admin\")",
+                "delete(\"label:admin\")",
+                "read(\"label:root\")",
+                "create(\"label:root\")",
+                "update(\"label:root\")",
+                "delete(\"label:root\")"
+            ],
+            "databaseId": "main",
+            "name": "access_passes",
+            "enabled": true,
+            "rowSecurity": true,
+            "columns": [
+                {
+                    "key": "clientUserId",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 64,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "passType",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "format": "enum",
+                    "elements": [
+                        "booking",
+                        "order",
+                        "package",
+                        "offering"
+                    ]
+                },
+                {
+                    "key": "referenceId",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 64,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "qrToken",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 200,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "status",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "format": "enum",
+                    "elements": [
+                        "active",
+                        "used",
+                        "expired",
+                        "cancelled"
+                    ]
+                },
+                {
+                    "key": "validFrom",
+                    "type": "datetime",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "format": ""
+                },
+                {
+                    "key": "validUntil",
+                    "type": "datetime",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "format": ""
+                },
+                {
+                    "key": "usedAt",
+                    "type": "datetime",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "format": ""
+                },
+                {
+                    "key": "usedBy",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 64,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "notes",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 500,
+                    "default": null,
+                    "encrypt": false
+                }
+            ],
+            "indexes": [
+                {
+                    "key": "uq_pass_token",
+                    "type": "unique",
+                    "status": "available",
+                    "columns": [
+                        "qrToken"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                },
+                {
+                    "key": "idx_pass_client",
+                    "type": "key",
+                    "status": "available",
+                    "columns": [
+                        "clientUserId"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                },
+                {
+                    "key": "idx_pass_type",
+                    "type": "key",
+                    "status": "available",
+                    "columns": [
+                        "passType"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                },
+                {
+                    "key": "idx_pass_ref",
+                    "type": "key",
+                    "status": "available",
+                    "columns": [
+                        "referenceId"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                },
+                {
+                    "key": "idx_pass_status",
+                    "type": "key",
+                    "status": "available",
+                    "columns": [
+                        "status"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                },
+                {
+                    "key": "idx_pass_until",
+                    "type": "key",
+                    "status": "available",
+                    "columns": [
+                        "validUntil"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                }
+            ]
+        },
+        {
+            "$id": "orders",
+            "$permissions": [
+                "read(\"label:admin\")",
+                "update(\"label:admin\")",
+                "read(\"label:root\")",
+                "update(\"label:root\")",
+                "delete(\"label:root\")"
+            ],
+            "databaseId": "main",
+            "name": "orders",
+            "enabled": true,
+            "rowSecurity": true,
+            "columns": [
+                {
+                    "key": "orderNo",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 40,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "clientUserId",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 64,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "clientEmail",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "format": "email"
+                },
+                {
+                    "key": "currency",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 3,
+                    "default": "MXN",
+                    "encrypt": false
+                },
+                {
+                    "key": "subtotal",
+                    "type": "double",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "min": -1.7976931348623157e+308,
+                    "max": 1.7976931348623157e+308
+                },
+                {
+                    "key": "discountTotal",
+                    "type": "double",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "min": -1.7976931348623157e+308,
+                    "max": 1.7976931348623157e+308
+                },
+                {
+                    "key": "taxTotal",
+                    "type": "double",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "min": -1.7976931348623157e+308,
+                    "max": 1.7976931348623157e+308
+                },
+                {
+                    "key": "grandTotal",
+                    "type": "double",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "min": -1.7976931348623157e+308,
+                    "max": 1.7976931348623157e+308
+                },
+                {
+                    "key": "paymentStatus",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "format": "enum",
+                    "elements": [
+                        "pending",
+                        "paid",
+                        "failed",
+                        "refunded",
+                        "partial_refund"
+                    ]
+                },
+                {
+                    "key": "fulfillmentState",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "format": "enum",
+                    "elements": [
+                        "pending",
+                        "confirmed",
+                        "cancelled",
+                        "completed"
+                    ]
+                },
+                {
+                    "key": "promoCode",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 40,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "notes",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 1500,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "paidAt",
+                    "type": "datetime",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "format": ""
+                }
+            ],
+            "indexes": [
+                {
+                    "key": "uq_orders_no",
+                    "type": "unique",
+                    "status": "available",
+                    "columns": [
+                        "orderNo"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                },
+                {
+                    "key": "idx_orders_client",
+                    "type": "key",
+                    "status": "available",
+                    "columns": [
+                        "clientUserId"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                },
+                {
+                    "key": "idx_orders_pay",
+                    "type": "key",
+                    "status": "available",
+                    "columns": [
+                        "paymentStatus"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                },
+                {
+                    "key": "idx_orders_state",
+                    "type": "key",
+                    "status": "available",
+                    "columns": [
+                        "fulfillmentState"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                },
+                {
+                    "key": "idx_orders_paid",
+                    "type": "key",
+                    "status": "available",
+                    "columns": [
+                        "paidAt"
+                    ],
+                    "orders": [
+                        "DESC"
+                    ]
+                }
+            ]
+        },
+        {
+            "$id": "content_sections",
+            "$permissions": [
+                "read(\"any\")",
+                "create(\"label:admin\")",
+                "update(\"label:admin\")",
+                "delete(\"label:admin\")",
+                "create(\"label:root\")",
+                "update(\"label:root\")",
+                "delete(\"label:root\")"
+            ],
+            "databaseId": "main",
+            "name": "content_sections",
+            "enabled": true,
+            "rowSecurity": false,
+            "columns": [
+                {
+                    "key": "sectionKey",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 80,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "titleEs",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 200,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "titleEn",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 200,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "subtitleEs",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 400,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "subtitleEn",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 400,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "bodyEs",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 5000,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "bodyEn",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 5000,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "ctaLabelEs",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 60,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "ctaLabelEn",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 60,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "ctaUrl",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 300,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "imageId",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 64,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "imageBucket",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 32,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "displayOrder",
+                    "type": "integer",
+                    "required": false,
+                    "array": false,
+                    "default": 0,
+                    "min": -9223372036854775808,
+                    "max": 9223372036854775807
+                },
+                {
+                    "key": "enabled",
+                    "type": "boolean",
+                    "required": false,
+                    "array": false,
+                    "default": true
+                },
+                {
+                    "key": "scope",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "default": "global",
+                    "format": "enum",
+                    "elements": [
+                        "global",
+                        "offering"
+                    ]
+                },
+                {
+                    "key": "offeringId",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 64,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "imagesJson",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 1000,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "templateKey",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "default": "centered-minimal",
+                    "format": "enum",
+                    "elements": [
+                        "centered-minimal",
+                        "story-left",
+                        "story-right"
+                    ]
+                }
+            ],
+            "indexes": [
+                {
+                    "key": "idx_section_order",
+                    "type": "key",
+                    "status": "available",
+                    "columns": [
+                        "displayOrder"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                },
+                {
+                    "key": "idx_section_enabled",
+                    "type": "key",
+                    "status": "available",
+                    "columns": [
+                        "enabled"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                },
+                {
+                    "key": "idx_section_scope",
+                    "type": "key",
+                    "status": "available",
+                    "columns": [
+                        "scope"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                },
+                {
+                    "key": "idx_section_offering",
+                    "type": "key",
+                    "status": "available",
+                    "columns": [
+                        "offeringId"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                },
+                {
+                    "key": "idx_section_key",
+                    "type": "key",
+                    "status": "available",
+                    "columns": [
+                        "sectionKey"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                },
+                {
+                    "key": "idx_section_template",
+                    "type": "key",
+                    "status": "available",
+                    "columns": [
+                        "templateKey"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                }
+            ]
+        },
+        {
+            "$id": "availability_blocks",
+            "$permissions": [
+                "create(\"label:admin\")",
+                "read(\"label:admin\")",
+                "update(\"label:admin\")",
+                "delete(\"label:admin\")",
+                "create(\"label:root\")",
+                "read(\"label:root\")",
+                "update(\"label:root\")",
+                "delete(\"label:root\")"
+            ],
+            "databaseId": "main",
+            "name": "availability_blocks",
+            "enabled": true,
+            "rowSecurity": false,
+            "columns": [
+                {
+                    "key": "offeringId",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 64,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "startAt",
+                    "type": "datetime",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "format": ""
+                },
+                {
+                    "key": "endAt",
+                    "type": "datetime",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "format": ""
+                },
+                {
+                    "key": "reason",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 300,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "blockType",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "format": "enum",
+                    "elements": [
+                        "holiday",
+                        "maintenance",
+                        "private_event",
+                        "custom"
+                    ]
+                },
+                {
+                    "key": "enabled",
+                    "type": "boolean",
+                    "required": false,
+                    "array": false,
+                    "default": true
+                }
+            ],
+            "indexes": [
+                {
+                    "key": "idx_block_offering",
+                    "type": "key",
+                    "status": "available",
+                    "columns": [
+                        "offeringId"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                },
+                {
+                    "key": "idx_block_start",
+                    "type": "key",
+                    "status": "available",
+                    "columns": [
+                        "startAt"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                },
+                {
+                    "key": "idx_block_end",
+                    "type": "key",
+                    "status": "available",
+                    "columns": [
+                        "endAt"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                }
+            ]
+        },
+        {
+            "$id": "offerings",
+            "$permissions": [
+                "read(\"any\")",
+                "create(\"label:admin\")",
+                "update(\"label:admin\")",
+                "delete(\"label:admin\")",
+                "create(\"label:root\")",
+                "update(\"label:root\")",
+                "delete(\"label:root\")"
+            ],
+            "databaseId": "main",
+            "name": "offerings",
+            "enabled": true,
+            "rowSecurity": false,
+            "columns": [
+                {
+                    "key": "slug",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 150,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "titleEs",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 200,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "titleEn",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 200,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "summaryEs",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 500,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "summaryEn",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 500,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "descriptionEs",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 4000,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "descriptionEn",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 4000,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "category",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "format": "enum",
+                    "elements": [
+                        "wellness_studio",
+                        "immersion",
+                        "service",
+                        "stay",
+                        "experience"
+                    ]
+                },
+                {
+                    "key": "type",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "format": "enum",
+                    "elements": [
+                        "session",
+                        "program",
+                        "immersion",
+                        "service",
+                        "stay",
+                        "experience"
+                    ]
+                },
+                {
+                    "key": "yogaStyle",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 100,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "currency",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 3,
+                    "default": "MXN",
+                    "encrypt": false
+                },
+                {
+                    "key": "ctaLabelEs",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 60,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "ctaLabelEn",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 60,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "badgesJson",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 500,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "isFeatured",
+                    "type": "boolean",
+                    "required": false,
+                    "array": false,
+                    "default": false
+                },
+                {
+                    "key": "showOnHome",
+                    "type": "boolean",
+                    "required": false,
+                    "array": false,
+                    "default": false
+                },
+                {
+                    "key": "displayOrder",
+                    "type": "integer",
+                    "required": false,
+                    "array": false,
+                    "default": 0,
+                    "min": -9223372036854775808,
+                    "max": 9223372036854775807
+                },
+                {
+                    "key": "status",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "default": "draft",
+                    "format": "enum",
+                    "elements": [
+                        "draft",
+                        "published",
+                        "archived"
+                    ]
+                },
+                {
+                    "key": "enabled",
+                    "type": "boolean",
+                    "required": false,
+                    "array": false,
+                    "default": true
+                },
+                {
+                    "key": "flowKey",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 120,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "flowVersion",
+                    "type": "integer",
+                    "required": false,
+                    "array": false,
+                    "default": 1,
+                    "min": -9223372036854775808,
+                    "max": 9223372036854775807
+                },
+                {
+                    "key": "defaultLocationProfileId",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 64,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "flowConfig",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 3000,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "termsConfig",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 1700,
+                    "default": "{}",
+                    "encrypt": false
+                }
+            ],
+            "indexes": [
+                {
+                    "key": "uq_offering_slug",
+                    "type": "unique",
+                    "status": "available",
+                    "columns": [
+                        "slug"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                },
+                {
+                    "key": "idx_offering_category",
+                    "type": "key",
+                    "status": "available",
+                    "columns": [
+                        "category"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                },
+                {
+                    "key": "idx_offering_type",
+                    "type": "key",
+                    "status": "available",
+                    "columns": [
+                        "type"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                },
+                {
+                    "key": "idx_offering_status",
+                    "type": "key",
+                    "status": "available",
+                    "columns": [
+                        "status"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                },
+                {
+                    "key": "idx_offering_featured",
+                    "type": "key",
+                    "status": "available",
+                    "columns": [
+                        "isFeatured"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                },
+                {
+                    "key": "idx_offering_enabled",
+                    "type": "key",
+                    "status": "available",
+                    "columns": [
+                        "enabled"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                },
+                {
+                    "key": "idx_offering_display",
+                    "type": "key",
+                    "status": "available",
+                    "columns": [
+                        "displayOrder"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                },
+                {
+                    "key": "idx_offering_home",
+                    "type": "key",
+                    "status": "available",
+                    "columns": [
+                        "showOnHome"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                },
+                {
+                    "key": "idx_offering_flow_key",
+                    "type": "key",
+                    "status": "available",
+                    "columns": [
+                        "flowKey"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                },
+                {
+                    "key": "idx_offering_default_location",
+                    "type": "key",
+                    "status": "available",
+                    "columns": [
+                        "defaultLocationProfileId"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                }
+            ]
+        },
+        {
+            "$id": "offering_slots",
+            "$permissions": [
+                "read(\"any\")",
+                "create(\"label:admin\")",
+                "update(\"label:admin\")",
+                "delete(\"label:admin\")",
+                "create(\"label:root\")",
+                "update(\"label:root\")",
+                "delete(\"label:root\")"
+            ],
+            "databaseId": "main",
+            "name": "offering_slots",
+            "enabled": true,
+            "rowSecurity": false,
+            "columns": [
+                {
+                    "key": "offeringId",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 64,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "startAt",
+                    "type": "datetime",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "format": ""
+                },
+                {
+                    "key": "endAt",
+                    "type": "datetime",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "format": ""
+                },
+                {
+                    "key": "dateLabel",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 100,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "capacityTotal",
+                    "type": "integer",
+                    "required": false,
+                    "array": false,
+                    "default": 0,
+                    "min": -9223372036854775808,
+                    "max": 9223372036854775807
+                },
+                {
+                    "key": "capacityTaken",
+                    "type": "integer",
+                    "required": false,
+                    "array": false,
+                    "default": 0,
+                    "min": -9223372036854775808,
+                    "max": 9223372036854775807
+                },
+                {
+                    "key": "priceOverride",
+                    "type": "double",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "min": -1.7976931348623157e+308,
+                    "max": 1.7976931348623157e+308
+                },
+                {
+                    "key": "status",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "default": "open",
+                    "format": "enum",
+                    "elements": [
+                        "open",
+                        "full",
+                        "cancelled",
+                        "completed"
+                    ]
+                },
+                {
+                    "key": "notes",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 500,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "enabled",
+                    "type": "boolean",
+                    "required": false,
+                    "array": false,
+                    "default": true
+                },
+                {
+                    "key": "locationProfileId",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 64,
+                    "default": null,
+                    "encrypt": false
+                }
+            ],
+            "indexes": [
+                {
+                    "key": "idx_slot_offering",
+                    "type": "key",
+                    "status": "available",
+                    "columns": [
+                        "offeringId"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                },
+                {
+                    "key": "idx_slot_start",
+                    "type": "key",
+                    "status": "available",
+                    "columns": [
+                        "startAt"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                },
+                {
+                    "key": "idx_slot_status",
+                    "type": "key",
+                    "status": "available",
+                    "columns": [
+                        "status"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                },
+                {
+                    "key": "idx_slot_enabled",
+                    "type": "key",
+                    "status": "available",
+                    "columns": [
+                        "enabled"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                },
+                {
+                    "key": "idx_slot_location_profile",
+                    "type": "key",
+                    "status": "available",
+                    "columns": [
+                        "locationProfileId"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                }
+            ]
+        },
+        {
+            "$id": "location_profiles",
+            "$permissions": [
+                "read(\"any\")",
+                "create(\"label:admin\")",
+                "update(\"label:admin\")",
+                "delete(\"label:admin\")",
+                "create(\"label:root\")",
+                "update(\"label:root\")",
+                "delete(\"label:root\")"
+            ],
+            "databaseId": "main",
+            "name": "location_profiles",
+            "enabled": true,
+            "rowSecurity": false,
+            "columns": [
+                {
+                    "key": "name",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 160,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "address",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 500,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "mapUrl",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 600,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "geoJson",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 2000,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "notes",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 1000,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "capacityHintsJson",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 2000,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "enabled",
+                    "type": "boolean",
+                    "required": false,
+                    "array": false,
+                    "default": true
+                }
+            ],
+            "indexes": [
+                {
+                    "key": "idx_location_name",
+                    "type": "key",
+                    "status": "available",
+                    "columns": [
+                        "name"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                },
+                {
+                    "key": "idx_location_enabled",
+                    "type": "key",
+                    "status": "available",
+                    "columns": [
+                        "enabled"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                }
+            ]
         }
-      ]
-    },
-    {
-      "$id": "orders",
-      "$permissions": [
-        "read(\"label:admin\")",
-        "update(\"label:admin\")",
-        "read(\"label:root\")",
-        "update(\"label:root\")",
-        "delete(\"label:root\")"
-      ],
-      "databaseId": "main",
-      "name": "orders",
-      "enabled": true,
-      "rowSecurity": true,
-      "columns": [
+    ],
+    "buckets": [
         {
-          "key": "orderNo",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 40,
-          "default": null,
-          "encrypt": false
+            "$id": "public-media",
+            "$permissions": [
+                "read(\"any\")",
+                "create(\"label:admin\")",
+                "read(\"label:admin\")",
+                "update(\"label:admin\")",
+                "delete(\"label:admin\")",
+                "create(\"label:root\")",
+                "read(\"label:root\")",
+                "update(\"label:root\")",
+                "delete(\"label:root\")"
+            ],
+            "fileSecurity": false,
+            "name": "public-media",
+            "enabled": true,
+            "maximumFileSize": 10000000,
+            "allowedFileExtensions": [
+                "jpg",
+                "jpeg",
+                "png",
+                "webp",
+                "gif",
+                "svg"
+            ],
+            "compression": "none",
+            "encryption": true,
+            "antivirus": true
         },
         {
-          "key": "clientUserId",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 64,
-          "default": null,
-          "encrypt": false
+            "$id": "private-media",
+            "$permissions": [
+                "create(\"label:admin\")",
+                "read(\"label:admin\")",
+                "update(\"label:admin\")",
+                "delete(\"label:admin\")",
+                "create(\"label:root\")",
+                "read(\"label:root\")",
+                "update(\"label:root\")",
+                "delete(\"label:root\")"
+            ],
+            "fileSecurity": false,
+            "name": "private-media",
+            "enabled": true,
+            "maximumFileSize": 15000000,
+            "allowedFileExtensions": [],
+            "compression": "none",
+            "encryption": true,
+            "antivirus": true
         },
         {
-          "key": "clientEmail",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "default": null,
-          "format": "email"
+            "$id": "avatars",
+            "$permissions": [
+                "read(\"any\")",
+                "create(\"users\")"
+            ],
+            "fileSecurity": true,
+            "name": "User Avatars",
+            "enabled": true,
+            "maximumFileSize": 5242880,
+            "allowedFileExtensions": [
+                "jpg",
+                "jpeg",
+                "png",
+                "webp"
+            ],
+            "compression": "none",
+            "encryption": true,
+            "antivirus": true
         },
         {
-          "key": "currency",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 3,
-          "default": "MXN",
-          "encrypt": false
-        },
-        {
-          "key": "subtotal",
-          "type": "double",
-          "required": false,
-          "array": false,
-          "default": null
-        },
-        {
-          "key": "discountTotal",
-          "type": "double",
-          "required": false,
-          "array": false,
-          "default": null
-        },
-        {
-          "key": "taxTotal",
-          "type": "double",
-          "required": false,
-          "array": false,
-          "default": null
-        },
-        {
-          "key": "grandTotal",
-          "type": "double",
-          "required": false,
-          "array": false,
-          "default": null
-        },
-        {
-          "key": "paymentStatus",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "default": null,
-          "format": "enum",
-          "elements": [
-            "pending",
-            "paid",
-            "failed",
-            "refunded",
-            "partial_refund"
-          ]
-        },
-        {
-          "key": "fulfillmentState",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "default": null,
-          "format": "enum",
-          "elements": [
-            "pending",
-            "confirmed",
-            "cancelled",
-            "completed"
-          ]
-        },
-        {
-          "key": "promoCode",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 40,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "notes",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 1500,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "paidAt",
-          "type": "datetime",
-          "required": false,
-          "array": false,
-          "default": null
+            "$id": "stock-images",
+            "$permissions": [
+                "read(\"any\")",
+                "create(\"label:root\")",
+                "read(\"label:root\")",
+                "update(\"label:root\")",
+                "delete(\"label:root\")"
+            ],
+            "fileSecurity": false,
+            "name": "Stock Images",
+            "enabled": true,
+            "maximumFileSize": 10485760,
+            "allowedFileExtensions": [
+                "jpg",
+                "jpeg",
+                "png",
+                "webp",
+                "gif",
+                "svg"
+            ],
+            "compression": "none",
+            "encryption": true,
+            "antivirus": true
         }
-      ],
-      "indexes": [
-        {
-          "key": "uq_orders_no",
-          "type": "unique",
-          "status": "available",
-          "columns": [
-            "orderNo"
-          ],
-          "orders": [
-            "ASC"
-          ]
-        },
-        {
-          "key": "idx_orders_client",
-          "type": "key",
-          "status": "available",
-          "columns": [
-            "clientUserId"
-          ],
-          "orders": [
-            "ASC"
-          ]
-        },
-        {
-          "key": "idx_orders_pay",
-          "type": "key",
-          "status": "available",
-          "columns": [
-            "paymentStatus"
-          ],
-          "orders": [
-            "ASC"
-          ]
-        },
-        {
-          "key": "idx_orders_state",
-          "type": "key",
-          "status": "available",
-          "columns": [
-            "fulfillmentState"
-          ],
-          "orders": [
-            "ASC"
-          ]
-        },
-        {
-          "key": "idx_orders_paid",
-          "type": "key",
-          "status": "available",
-          "columns": [
-            "paidAt"
-          ],
-          "orders": [
-            "DESC"
-          ]
-        }
-      ]
-    },
-    {
-      "$id": "order_items",
-      "$permissions": [
-        "read(\"label:admin\")",
-        "read(\"label:root\")"
-      ],
-      "databaseId": "main",
-      "name": "order_items",
-      "enabled": true,
-      "rowSecurity": true,
-      "columns": [
-        {
-          "key": "orderId",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 64,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "itemType",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "default": null,
-          "format": "enum",
-          "elements": [
-            "class_session",
-            "wellness_package",
-            "product",
-            "addon",
-            "offering"
-          ]
-        },
-        {
-          "key": "referenceId",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 64,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "titleSnapshot",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 160,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "quantity",
-          "type": "integer",
-          "required": false,
-          "array": false,
-          "default": null
-        },
-        {
-          "key": "unitPrice",
-          "type": "double",
-          "required": false,
-          "array": false,
-          "default": null
-        },
-        {
-          "key": "lineTotal",
-          "type": "double",
-          "required": false,
-          "array": false,
-          "default": null
-        },
-        {
-          "key": "metaJson",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 2000,
-          "default": null,
-          "encrypt": false
-        }
-      ],
-      "indexes": [
-        {
-          "key": "idx_oitems_order",
-          "type": "key",
-          "status": "available",
-          "columns": [
-            "orderId"
-          ],
-          "orders": [
-            "ASC"
-          ]
-        },
-        {
-          "key": "idx_oitems_ref",
-          "type": "key",
-          "status": "available",
-          "columns": [
-            "referenceId"
-          ],
-          "orders": [
-            "ASC"
-          ]
-        },
-        {
-          "key": "idx_oitems_type",
-          "type": "key",
-          "status": "available",
-          "columns": [
-            "itemType"
-          ],
-          "orders": [
-            "ASC"
-          ]
-        }
-      ]
-    },
-    {
-      "$id": "bookings",
-      "$permissions": [
-        "read(\"label:admin\")",
-        "update(\"label:admin\")",
-        "read(\"label:root\")",
-        "update(\"label:root\")",
-        "delete(\"label:root\")"
-      ],
-      "databaseId": "main",
-      "name": "bookings",
-      "enabled": true,
-      "rowSecurity": true,
-      "columns": [
-        {
-          "key": "clientUserId",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 64,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "sessionId",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 64,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "orderId",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 64,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "bookingCode",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 40,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "status",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "default": null,
-          "format": "enum",
-          "elements": [
-            "pending",
-            "confirmed",
-            "cancelled",
-            "completed",
-            "no_show",
-            "rescheduled"
-          ]
-        },
-        {
-          "key": "quantity",
-          "type": "integer",
-          "required": false,
-          "array": false,
-          "default": 1
-        },
-        {
-          "key": "unitPrice",
-          "type": "double",
-          "required": false,
-          "array": false,
-          "default": null
-        },
-        {
-          "key": "extrasJson",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 2000,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "reservedAt",
-          "type": "datetime",
-          "required": false,
-          "array": false,
-          "default": null
-        },
-        {
-          "key": "offeringId",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 64,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "slotId",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 64,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "bookingType",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "default": null,
-          "format": "enum",
-          "elements": [
-            "session",
-            "immersion",
-            "service",
-            "stay",
-            "experience"
-          ]
-        },
-        {
-          "key": "guestCount",
-          "type": "integer",
-          "required": false,
-          "array": false,
-          "default": 1
-        },
-        {
-          "key": "requestDataJson",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 3000,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "confirmedAt",
-          "type": "datetime",
-          "required": false,
-          "array": false,
-          "default": null
-        },
-        {
-          "key": "pricingSnapshotJson",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 4000,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "customAnswersJson",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 4000,
-          "default": null,
-          "encrypt": false
-        }
-      ],
-      "indexes": [
-        {
-          "key": "uq_bookings_code",
-          "type": "unique",
-          "status": "available",
-          "columns": [
-            "bookingCode"
-          ],
-          "orders": [
-            "ASC"
-          ]
-        },
-        {
-          "key": "idx_bookings_client",
-          "type": "key",
-          "status": "available",
-          "columns": [
-            "clientUserId"
-          ],
-          "orders": [
-            "ASC"
-          ]
-        },
-        {
-          "key": "idx_bookings_session",
-          "type": "key",
-          "status": "available",
-          "columns": [
-            "sessionId"
-          ],
-          "orders": [
-            "ASC"
-          ]
-        },
-        {
-          "key": "idx_bookings_order",
-          "type": "key",
-          "status": "available",
-          "columns": [
-            "orderId"
-          ],
-          "orders": [
-            "ASC"
-          ]
-        },
-        {
-          "key": "idx_bookings_status",
-          "type": "key",
-          "status": "available",
-          "columns": [
-            "status"
-          ],
-          "orders": [
-            "ASC"
-          ]
-        },
-        {
-          "key": "idx_bookings_offering",
-          "type": "key",
-          "status": "available",
-          "columns": [
-            "offeringId"
-          ],
-          "orders": [
-            "ASC"
-          ]
-        },
-        {
-          "key": "idx_bookings_slot",
-          "type": "key",
-          "status": "available",
-          "columns": [
-            "slotId"
-          ],
-          "orders": [
-            "ASC"
-          ]
-        },
-        {
-          "key": "idx_bookings_type",
-          "type": "key",
-          "status": "available",
-          "columns": [
-            "bookingType"
-          ],
-          "orders": [
-            "ASC"
-          ]
-        }
-      ]
-    },
-    {
-      "$id": "access_passes",
-      "$permissions": [
-        "read(\"label:admin\")",
-        "create(\"label:admin\")",
-        "update(\"label:admin\")",
-        "delete(\"label:admin\")",
-        "read(\"label:root\")",
-        "create(\"label:root\")",
-        "update(\"label:root\")",
-        "delete(\"label:root\")"
-      ],
-      "databaseId": "main",
-      "name": "access_passes",
-      "enabled": true,
-      "rowSecurity": true,
-      "columns": [
-        {
-          "key": "clientUserId",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 64,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "passType",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "default": null,
-          "format": "enum",
-          "elements": [
-            "booking",
-            "order",
-            "package",
-            "offering"
-          ]
-        },
-        {
-          "key": "referenceId",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 64,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "qrToken",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 200,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "status",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "default": null,
-          "format": "enum",
-          "elements": [
-            "active",
-            "used",
-            "expired",
-            "cancelled"
-          ]
-        },
-        {
-          "key": "validFrom",
-          "type": "datetime",
-          "required": false,
-          "array": false,
-          "default": null
-        },
-        {
-          "key": "validUntil",
-          "type": "datetime",
-          "required": false,
-          "array": false,
-          "default": null
-        },
-        {
-          "key": "usedAt",
-          "type": "datetime",
-          "required": false,
-          "array": false,
-          "default": null
-        },
-        {
-          "key": "usedBy",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 64,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "notes",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 500,
-          "default": null,
-          "encrypt": false
-        }
-      ],
-      "indexes": [
-        {
-          "key": "uq_pass_token",
-          "type": "unique",
-          "status": "available",
-          "columns": [
-            "qrToken"
-          ],
-          "orders": [
-            "ASC"
-          ]
-        },
-        {
-          "key": "idx_pass_client",
-          "type": "key",
-          "status": "available",
-          "columns": [
-            "clientUserId"
-          ],
-          "orders": [
-            "ASC"
-          ]
-        },
-        {
-          "key": "idx_pass_type",
-          "type": "key",
-          "status": "available",
-          "columns": [
-            "passType"
-          ],
-          "orders": [
-            "ASC"
-          ]
-        },
-        {
-          "key": "idx_pass_ref",
-          "type": "key",
-          "status": "available",
-          "columns": [
-            "referenceId"
-          ],
-          "orders": [
-            "ASC"
-          ]
-        },
-        {
-          "key": "idx_pass_status",
-          "type": "key",
-          "status": "available",
-          "columns": [
-            "status"
-          ],
-          "orders": [
-            "ASC"
-          ]
-        },
-        {
-          "key": "idx_pass_until",
-          "type": "key",
-          "status": "available",
-          "columns": [
-            "validUntil"
-          ],
-          "orders": [
-            "ASC"
-          ]
-        }
-      ]
-    },
-    {
-      "$id": "app_settings",
-      "$permissions": [
-        "read(\"any\")",
-        "create(\"label:root\")",
-        "update(\"label:root\")",
-        "delete(\"label:root\")"
-      ],
-      "databaseId": "main",
-      "name": "app_settings",
-      "enabled": true,
-      "rowSecurity": false,
-      "columns": [
-        {
-          "key": "appName",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 100,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "defaultLocale",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 10,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "defaultCurrency",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 3,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "supportEmail",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "default": null,
-          "format": "email"
-        },
-        {
-          "key": "contactPhone",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 20,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "bookingNotice",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 1000,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "address",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 255,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "instagram",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 100,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "website",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 255,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "timezone",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 50,
-          "default": null,
-          "encrypt": false
-        }
-      ],
-      "indexes": []
-    },
-    {
-      "$id": "offerings",
-      "$permissions": [
-        "read(\"any\")",
-        "create(\"label:admin\")",
-        "update(\"label:admin\")",
-        "delete(\"label:admin\")",
-        "create(\"label:root\")",
-        "update(\"label:root\")",
-        "delete(\"label:root\")"
-      ],
-      "databaseId": "main",
-      "name": "offerings",
-      "enabled": true,
-      "rowSecurity": false,
-      "columns": [
-        {
-          "key": "slug",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 150,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "titleEs",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 200,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "titleEn",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 200,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "summaryEs",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 500,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "summaryEn",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 500,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "descriptionEs",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 4000,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "descriptionEn",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 4000,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "category",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "default": null,
-          "format": "enum",
-          "elements": [
-            "wellness_studio",
-            "immersion",
-            "service",
-            "stay",
-            "experience"
-          ]
-        },
-        {
-          "key": "type",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "default": null,
-          "format": "enum",
-          "elements": [
-            "session",
-            "program",
-            "immersion",
-            "service",
-            "stay",
-            "experience"
-          ]
-        },
-        {
-          "key": "yogaStyle",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 100,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "currency",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 3,
-          "default": "MXN",
-          "encrypt": false
-        },
-        {
-          "key": "ctaLabelEs",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 60,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "ctaLabelEn",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 60,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "badgesJson",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 500,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "isFeatured",
-          "type": "boolean",
-          "required": false,
-          "array": false,
-          "default": false
-        },
-        {
-          "key": "showOnHome",
-          "type": "boolean",
-          "required": false,
-          "array": false,
-          "default": false
-        },
-        {
-          "key": "displayOrder",
-          "type": "integer",
-          "required": false,
-          "array": false,
-          "default": 0
-        },
-        {
-          "key": "status",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "default": "draft",
-          "format": "enum",
-          "elements": [
-            "draft",
-            "published",
-            "archived"
-          ]
-        },
-        {
-          "key": "enabled",
-          "type": "boolean",
-          "required": false,
-          "array": false,
-          "default": true
-        },
-        {
-          "key": "flowKey",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 120,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "flowVersion",
-          "type": "integer",
-          "required": false,
-          "array": false,
-          "default": 1
-        },
-        {
-          "key": "flowConfig",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 3000,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "termsConfig",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 1700,
-          "default": "{}",
-          "encrypt": false
-        },
-        {
-          "key": "defaultLocationProfileId",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 64,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "imagesJson",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 180,
-          "default": null,
-          "encrypt": false
-        }
-      ],
-      "indexes": [
-        {
-          "key": "uq_offering_slug",
-          "type": "unique",
-          "status": "available",
-          "columns": [
-            "slug"
-          ],
-          "orders": [
-            "ASC"
-          ]
-        },
-        {
-          "key": "idx_offering_category",
-          "type": "key",
-          "status": "available",
-          "columns": [
-            "category"
-          ],
-          "orders": [
-            "ASC"
-          ]
-        },
-        {
-          "key": "idx_offering_type",
-          "type": "key",
-          "status": "available",
-          "columns": [
-            "type"
-          ],
-          "orders": [
-            "ASC"
-          ]
-        },
-        {
-          "key": "idx_offering_status",
-          "type": "key",
-          "status": "available",
-          "columns": [
-            "status"
-          ],
-          "orders": [
-            "ASC"
-          ]
-        },
-        {
-          "key": "idx_offering_featured",
-          "type": "key",
-          "status": "available",
-          "columns": [
-            "isFeatured"
-          ],
-          "orders": [
-            "ASC"
-          ]
-        },
-        {
-          "key": "idx_offering_enabled",
-          "type": "key",
-          "status": "available",
-          "columns": [
-            "enabled"
-          ],
-          "orders": [
-            "ASC"
-          ]
-        },
-        {
-          "key": "idx_offering_display",
-          "type": "key",
-          "status": "available",
-          "columns": [
-            "displayOrder"
-          ],
-          "orders": [
-            "ASC"
-          ]
-        },
-        {
-          "key": "idx_offering_home",
-          "type": "key",
-          "status": "available",
-          "columns": [
-            "showOnHome"
-          ],
-          "orders": [
-            "ASC"
-          ]
-        },
-        {
-          "key": "idx_offering_flow_key",
-          "type": "key",
-          "status": "available",
-          "columns": [
-            "flowKey"
-          ],
-          "orders": [
-            "ASC"
-          ]
-        },
-        {
-          "key": "idx_offering_default_location",
-          "type": "key",
-          "status": "available",
-          "columns": [
-            "defaultLocationProfileId"
-          ],
-          "orders": [
-            "ASC"
-          ]
-        }
-      ]
-    },
-    {
-      "$id": "location_profiles",
-      "$permissions": [
-        "read(\"any\")",
-        "create(\"label:admin\")",
-        "update(\"label:admin\")",
-        "delete(\"label:admin\")",
-        "create(\"label:root\")",
-        "update(\"label:root\")",
-        "delete(\"label:root\")"
-      ],
-      "databaseId": "main",
-      "name": "location_profiles",
-      "enabled": true,
-      "rowSecurity": false,
-      "columns": [
-        {
-          "key": "name",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 160,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "address",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 500,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "mapUrl",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 600,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "geoJson",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 2000,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "notes",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 1000,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "capacityHintsJson",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 2000,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "enabled",
-          "type": "boolean",
-          "required": false,
-          "array": false,
-          "default": true
-        }
-      ],
-      "indexes": [
-        {
-          "key": "idx_location_name",
-          "type": "key",
-          "status": "available",
-          "columns": [
-            "name"
-          ],
-          "orders": [
-            "ASC"
-          ]
-        },
-        {
-          "key": "idx_location_enabled",
-          "type": "key",
-          "status": "available",
-          "columns": [
-            "enabled"
-          ],
-          "orders": [
-            "ASC"
-          ]
-        }
-      ]
-    },
-    {
-      "$id": "offering_slots",
-      "$permissions": [
-        "read(\"any\")",
-        "create(\"label:admin\")",
-        "update(\"label:admin\")",
-        "delete(\"label:admin\")",
-        "create(\"label:root\")",
-        "update(\"label:root\")",
-        "delete(\"label:root\")"
-      ],
-      "databaseId": "main",
-      "name": "offering_slots",
-      "enabled": true,
-      "rowSecurity": false,
-      "columns": [
-        {
-          "key": "offeringId",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 64,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "startAt",
-          "type": "datetime",
-          "required": false,
-          "array": false,
-          "default": null
-        },
-        {
-          "key": "endAt",
-          "type": "datetime",
-          "required": false,
-          "array": false,
-          "default": null
-        },
-        {
-          "key": "dateLabel",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 100,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "capacityTotal",
-          "type": "integer",
-          "required": false,
-          "array": false,
-          "default": 0
-        },
-        {
-          "key": "capacityTaken",
-          "type": "integer",
-          "required": false,
-          "array": false,
-          "default": 0
-        },
-        {
-          "key": "priceOverride",
-          "type": "double",
-          "required": false,
-          "array": false,
-          "default": null
-        },
-        {
-          "key": "status",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "default": "open",
-          "format": "enum",
-          "elements": [
-            "open",
-            "full",
-            "cancelled",
-            "completed"
-          ]
-        },
-        {
-          "key": "notes",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 500,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "enabled",
-          "type": "boolean",
-          "required": false,
-          "array": false,
-          "default": true
-        },
-        {
-          "key": "locationProfileId",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 64,
-          "default": null,
-          "encrypt": false
-        }
-      ],
-      "indexes": [
-        {
-          "key": "idx_slot_offering",
-          "type": "key",
-          "status": "available",
-          "columns": [
-            "offeringId"
-          ],
-          "orders": [
-            "ASC"
-          ]
-        },
-        {
-          "key": "idx_slot_start",
-          "type": "key",
-          "status": "available",
-          "columns": [
-            "startAt"
-          ],
-          "orders": [
-            "ASC"
-          ]
-        },
-        {
-          "key": "idx_slot_status",
-          "type": "key",
-          "status": "available",
-          "columns": [
-            "status"
-          ],
-          "orders": [
-            "ASC"
-          ]
-        },
-        {
-          "key": "idx_slot_enabled",
-          "type": "key",
-          "status": "available",
-          "columns": [
-            "enabled"
-          ],
-          "orders": [
-            "ASC"
-          ]
-        },
-        {
-          "key": "idx_slot_location_profile",
-          "type": "key",
-          "status": "available",
-          "columns": [
-            "locationProfileId"
-          ],
-          "orders": [
-            "ASC"
-          ]
-        }
-      ]
-    },
-    {
-      "$id": "availability_blocks",
-      "$permissions": [
-        "create(\"label:admin\")",
-        "read(\"label:admin\")",
-        "update(\"label:admin\")",
-        "delete(\"label:admin\")",
-        "create(\"label:root\")",
-        "read(\"label:root\")",
-        "update(\"label:root\")",
-        "delete(\"label:root\")"
-      ],
-      "databaseId": "main",
-      "name": "availability_blocks",
-      "enabled": true,
-      "rowSecurity": false,
-      "columns": [
-        {
-          "key": "offeringId",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 64,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "startAt",
-          "type": "datetime",
-          "required": false,
-          "array": false,
-          "default": null
-        },
-        {
-          "key": "endAt",
-          "type": "datetime",
-          "required": false,
-          "array": false,
-          "default": null
-        },
-        {
-          "key": "reason",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 300,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "blockType",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "default": null,
-          "format": "enum",
-          "elements": [
-            "holiday",
-            "maintenance",
-            "private_event",
-            "custom"
-          ]
-        },
-        {
-          "key": "enabled",
-          "type": "boolean",
-          "required": false,
-          "array": false,
-          "default": true
-        }
-      ],
-      "indexes": [
-        {
-          "key": "idx_block_offering",
-          "type": "key",
-          "status": "available",
-          "columns": [
-            "offeringId"
-          ],
-          "orders": [
-            "ASC"
-          ]
-        },
-        {
-          "key": "idx_block_start",
-          "type": "key",
-          "status": "available",
-          "columns": [
-            "startAt"
-          ],
-          "orders": [
-            "ASC"
-          ]
-        },
-        {
-          "key": "idx_block_end",
-          "type": "key",
-          "status": "available",
-          "columns": [
-            "endAt"
-          ],
-          "orders": [
-            "ASC"
-          ]
-        }
-      ]
-    },
-    {
-      "$id": "content_sections",
-      "$permissions": [
-        "read(\"any\")",
-        "create(\"label:admin\")",
-        "update(\"label:admin\")",
-        "delete(\"label:admin\")",
-        "create(\"label:root\")",
-        "update(\"label:root\")",
-        "delete(\"label:root\")"
-      ],
-      "databaseId": "main",
-      "name": "content_sections",
-      "enabled": true,
-      "rowSecurity": false,
-      "columns": [
-        {
-          "key": "sectionKey",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 80,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "titleEs",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 200,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "titleEn",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 200,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "subtitleEs",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 400,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "subtitleEn",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 400,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "bodyEs",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 5000,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "bodyEn",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 5000,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "ctaLabelEs",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 60,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "ctaLabelEn",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 60,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "ctaUrl",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 300,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "imagesJson",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 1000,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "imageId",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 64,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "imageBucket",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 32,
-          "default": null,
-          "encrypt": false
-        },
-        {
-          "key": "displayOrder",
-          "type": "integer",
-          "required": false,
-          "array": false,
-          "default": 0
-        },
-        {
-          "key": "enabled",
-          "type": "boolean",
-          "required": false,
-          "array": false,
-          "default": true
-        },
-        {
-          "key": "templateKey",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "default": "centered-minimal",
-          "format": "enum",
-          "elements": [
-            "centered-minimal",
-            "story-left",
-            "story-right"
-          ]
-        },
-        {
-          "key": "scope",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "default": "global",
-          "format": "enum",
-          "elements": [
-            "global",
-            "offering"
-          ]
-        },
-        {
-          "key": "offeringId",
-          "type": "string",
-          "required": false,
-          "array": false,
-          "size": 64,
-          "default": null,
-          "encrypt": false
-        }
-      ],
-      "indexes": [
-        {
-          "key": "idx_section_order",
-          "type": "key",
-          "status": "available",
-          "columns": [
-            "displayOrder"
-          ],
-          "orders": [
-            "ASC"
-          ]
-        },
-        {
-          "key": "idx_section_enabled",
-          "type": "key",
-          "status": "available",
-          "columns": [
-            "enabled"
-          ],
-          "orders": [
-            "ASC"
-          ]
-        },
-        {
-          "key": "idx_section_scope",
-          "type": "key",
-          "status": "available",
-          "columns": [
-            "scope"
-          ],
-          "orders": [
-            "ASC"
-          ]
-        },
-        {
-          "key": "idx_section_offering",
-          "type": "key",
-          "status": "available",
-          "columns": [
-            "offeringId"
-          ],
-          "orders": [
-            "ASC"
-          ]
-        },
-        {
-          "key": "idx_section_key",
-          "type": "key",
-          "status": "available",
-          "columns": [
-            "sectionKey"
-          ],
-          "orders": [
-            "ASC"
-          ]
-        },
-        {
-          "key": "idx_section_template",
-          "type": "key",
-          "status": "available",
-          "columns": [
-            "templateKey"
-          ],
-          "orders": [
-            "ASC"
-          ]
-        }
-      ]
-    }
-  ],
-  "buckets": [
-    {
-      "$id": "public-media",
-      "$permissions": [
-        "read(\"any\")",
-        "create(\"label:admin\")",
-        "read(\"label:admin\")",
-        "update(\"label:admin\")",
-        "delete(\"label:admin\")",
-        "create(\"label:root\")",
-        "read(\"label:root\")",
-        "update(\"label:root\")",
-        "delete(\"label:root\")"
-      ],
-      "fileSecurity": false,
-      "name": "public-media",
-      "enabled": true,
-      "maximumFileSize": 10000000,
-      "allowedFileExtensions": [
-        "jpg",
-        "jpeg",
-        "png",
-        "webp",
-        "gif",
-        "svg"
-      ],
-      "compression": "none",
-      "encryption": true,
-      "antivirus": true
-    },
-    {
-      "$id": "private-media",
-      "$permissions": [
-        "create(\"label:admin\")",
-        "read(\"label:admin\")",
-        "update(\"label:admin\")",
-        "delete(\"label:admin\")",
-        "create(\"label:root\")",
-        "read(\"label:root\")",
-        "update(\"label:root\")",
-        "delete(\"label:root\")"
-      ],
-      "fileSecurity": false,
-      "name": "private-media",
-      "enabled": true,
-      "maximumFileSize": 15000000,
-      "allowedFileExtensions": [],
-      "compression": "none",
-      "encryption": true,
-      "antivirus": true
-    },
-    {
-      "$id": "avatars",
-      "$permissions": [
-        "read(\"any\")",
-        "create(\"users\")"
-      ],
-      "fileSecurity": true,
-      "name": "User Avatars",
-      "enabled": true,
-      "maximumFileSize": 5242880,
-      "allowedFileExtensions": [
-        "jpg",
-        "jpeg",
-        "png",
-        "webp"
-      ],
-      "compression": "none",
-      "encryption": true,
-      "antivirus": true
-    },
-    {
-      "$id": "stock-images",
-      "$permissions": [
-        "read(\"any\")",
-        "create(\"label:root\")",
-        "read(\"label:root\")",
-        "update(\"label:root\")",
-        "delete(\"label:root\")"
-      ],
-      "fileSecurity": false,
-      "name": "Stock Images",
-      "enabled": true,
-      "maximumFileSize": 10485760,
-      "allowedFileExtensions": [
-        "jpg",
-        "jpeg",
-        "png",
-        "webp",
-        "gif",
-        "svg"
-      ],
-      "compression": "none",
-      "encryption": true,
-      "antivirus": true
-    }
-  ],
-  "teams": [],
-  "topics": []
+    ],
+    "teams": [],
+    "topics": []
 }

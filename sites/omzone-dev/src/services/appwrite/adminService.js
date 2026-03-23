@@ -191,8 +191,8 @@ function normalizeAdminOffering(doc, defaultLocation = null) {
       defaultLocation?.address ??
       derived.location_label ??
       null,
-    // Multi-image support: use imagesJson if available, otherwise fall back to legacy fields
-    images_json: doc.imagesJson ?? null,
+    // Multi-image support: stored inside flowConfig for offerings (no separate column)
+    images_json: flow.flow_config?.images_json ?? doc.imagesJson ?? null,
     // Legacy compat: still expose cover_image_id/bucket for components not yet updated
     cover_image_id: doc.coverImageId ?? null,
     cover_image_bucket: doc.coverImageBucket ?? null,

@@ -11,15 +11,13 @@
  * Best for: Meditation sessions, breathwork, restorative yoga.
  */
 import { Link } from "react-router-dom";
-import { ArrowLeft, Calendar, ChevronDown } from "lucide-react";
+import { ArrowLeft, ChevronDown } from "lucide-react";
 import PageMeta from "@/components/seo/PageMeta";
-import StructuredData from "@/components/seo/StructuredData";
 import { resolveField } from "@/lib/i18n-data";
-import { getPreviewUrl, getImageUrls } from "@/lib/media";
-import { BUCKET_PUBLIC_MEDIA } from "@/env";
+import { getImageUrls } from "@/lib/media";
 import ROUTES from "@/constants/routes";
-import { cn } from "@/lib/utils";
 import {
+  HeroCarousel,
   BookingCTA,
   InfoBadges,
   PriceDisplay,
@@ -41,47 +39,31 @@ export default function ZenHeroTemplate({ offering, sections, t, locale }) {
   const description = resolveField(offering, "description");
   const backRoute = CATEGORY_BACK_ROUTES[offering.category] ?? ROUTES.SESSIONS;
 
-  // Get images: prefer images_json, fall back to legacy cover_image fields
   const imageUrls = getImageUrls(offering.images_json, 1920, 1080, 85);
-  const coverUrl =
-    imageUrls.length > 0
-      ? imageUrls[0]
-      : offering.cover_image_id
-        ? getPreviewUrl(
-            offering.cover_image_id,
-            offering.cover_image_bucket ?? BUCKET_PUBLIC_MEDIA,
-            1920,
-            1080,
-            85,
-          )
-        : null;
 
   return (
     <>
       <PageMeta title={title} description={summary} locale={locale} />
 
-      {/* ── Full-screen Hero ──────────────────────────────────────────── */}
+      {/* ── Full-screen Hero with Carousel ────────────────────────────── */}
       <section
-        className="relative min-h-screen flex flex-col"
+        className="relative min-h-screen flex flex-col group"
         style={{ minHeight: "100dvh" }}
       >
-        {/* Background */}
-        {coverUrl && (
-          <img
-            src={coverUrl}
-            alt=""
-            aria-hidden="true"
-            className="absolute inset-0 w-full h-full object-cover object-center"
-            loading="eager"
-          />
-        )}
-
-        {/* Gradient overlays for zen feel */}
-        <div className="absolute inset-0 bg-gradient-to-b from-charcoal/40 via-charcoal/20 to-charcoal/70" />
-        <div className="absolute inset-0 bg-gradient-to-r from-charcoal/30 via-transparent to-charcoal/30" />
+        <HeroCarousel
+          imageUrls={imageUrls}
+          className="absolute inset-0"
+          aspectClassName=""
+          overlay={
+            <>
+              <div className="absolute inset-0 bg-linear-to-b from-charcoal/40 via-charcoal/20 to-charcoal/70" />
+              <div className="absolute inset-0 bg-linear-to-r from-charcoal/30 via-transparent to-charcoal/30" />
+            </>
+          }
+        />
 
         {/* Content */}
-        <div className="relative flex-1 flex flex-col justify-center items-center text-center px-4 py-20 md:py-28">
+        <div className="relative flex-1 flex flex-col justify-center items-center text-center px-4 py-20 md:py-28 z-10">
           {/* Back link */}
           <Link
             to={backRoute}
@@ -114,7 +96,7 @@ export default function ZenHeroTemplate({ offering, sections, t, locale }) {
         </div>
 
         {/* Scroll indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-white/50 animate-bounce">
+        <div className="relative z-10 flex flex-col items-center gap-2 pb-8 text-white/50 animate-bounce">
           <span className="text-xs uppercase tracking-widest">
             {t("detail.scrollToExplore", { defaultValue: "Explora" })}
           </span>
