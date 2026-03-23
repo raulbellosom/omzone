@@ -205,6 +205,7 @@ export function ensureOfferingFlow({
 
   const normalizedFlow = {
     ...template.flow_config,
+    ...parsedFlow,
     booking: mergeSection(template.flow_config.booking, parsedFlow.booking),
     pricing: mergeSection(template.flow_config.pricing, parsedFlow.pricing),
     schedule: mergeSection(template.flow_config.schedule, parsedFlow.schedule),
