@@ -705,7 +705,9 @@
       "offeringPlaceholder": "Select offering",
       "displayOrder": "Order",
       "enabled": "Enabled",
-      "images": "Images (up to 3)"
+      "images": "Images (up to 3)",
+      "templateKey": "Layout template",
+      "templateKeyPlaceholder": "Select a template"
     },
     "scope": {
       "global": "Global",

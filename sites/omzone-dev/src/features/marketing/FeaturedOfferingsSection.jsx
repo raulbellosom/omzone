@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { useOfferings } from "@/hooks/useOfferings";
 import { useCurrency } from "@/hooks/useCurrency";
 import { resolveField } from "@/lib/i18n-data";
-import { getPreviewUrl, getFirstImageUrl, getImageUrls } from "@/lib/media";
+import { getPreviewUrl, getImageUrls } from "@/lib/media";
 import { BUCKET_PUBLIC_MEDIA } from "@/env";
 import { formatDuration } from "@/lib/dates";
 import { offeringHref } from "@/features/offerings/OfferingCard";

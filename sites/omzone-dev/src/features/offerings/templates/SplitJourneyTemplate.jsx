@@ -22,7 +22,7 @@ import {
 } from "lucide-react";
 import PageMeta from "@/components/seo/PageMeta";
 import { resolveField } from "@/lib/i18n-data";
-import { getPreviewUrl, getFirstImageUrl, getImageUrls } from "@/lib/media";
+import { getPreviewUrl, getImageUrls } from "@/lib/media";
 import { BUCKET_PUBLIC_MEDIA } from "@/env";
 import ROUTES from "@/constants/routes";
 import { cn } from "@/lib/utils";

@@ -705,7 +705,9 @@
       "scopePlaceholder": "Alcance",
       "offeringOptional": "Offering (opcional)",
       "offeringPlaceholder": "Selecciona un offering",
-      "images": "Imágenes (hasta 3)"
+      "images": "Imágenes (hasta 3)",
+      "templateKey": "Plantilla de diseño",
+      "templateKeyPlaceholder": "Selecciona una plantilla"
     },
     "feedback": {
       "created": "Sección creada",

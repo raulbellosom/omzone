@@ -874,6 +874,7 @@ async function contentCreate(db, cfg, p) {
       ctaLabelEn: toNullableString(core.cta_label_en),
       ctaUrl: toNullableString(core.cta_url),
       imagesJson: toNullableString(core.images_json),
+      templateKey: core.template_key || "centered-minimal",
       scope: core.scope || "global",
       offeringId: toNullableString(core.offering_id),
       displayOrder: toNumber(core.display_order, 0),
@@ -904,6 +905,8 @@ async function contentUpdate(db, cfg, p) {
   if (core.cta_url !== undefined) u.ctaUrl = toNullableString(core.cta_url);
   if (core.images_json !== undefined)
     u.imagesJson = toNullableString(core.images_json);
+  if (core.template_key !== undefined)
+    u.templateKey = core.template_key || "centered-minimal";
   if (core.scope !== undefined) u.scope = core.scope || "global";
   if (core.offering_id !== undefined)
     u.offeringId = toNullableString(core.offering_id);

@@ -1,13 +1,15 @@
 /**
  * EditorialSection — renders dynamic content_sections from the DB.
  * Each section can have title, subtitle, body, CTA, and images (up to 3).
+ * Respects the template_key field for layout selection.
  */
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { ArrowRight } from "lucide-react";
 import { useContentSections } from "@/hooks/useOfferings";
 import { resolveField } from "@/lib/i18n-data";
-import { getFirstImageUrl, getImageUrls } from "@/lib/media";
+import { getImageUrls } from "@/lib/media";
+import { cn } from "@/lib/utils";
 
 export default function EditorialSection() {
   const { t } = useTranslation("landing");
@@ -16,64 +18,119 @@ export default function EditorialSection() {
   if (!sections || sections.length === 0) return null;
 
   return (
-    <section
-      aria-label={t("editorial.defaultTitle")}
-      className="bg-cream py-20 md:py-28"
-    >
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-16">
-        {sections.map((section) => (
-          <EditorialBlock key={section.$id} section={section} />
-        ))}
-      </div>
+    <section aria-label={t("editorial.defaultTitle")}>
+      {sections.map((section, index) => (
+        <EditorialBlock key={section.$id} section={section} index={index} />
+      ))}
     </section>
   );
 }
 
-function EditorialBlock({ section }) {
+function EditorialBlock({ section, index }) {
   const title = resolveField(section, "title");
   const subtitle = resolveField(section, "subtitle");
   const body = resolveField(section, "body");
   const ctaLabel = resolveField(section, "cta_label");
   const ctaUrl = section.cta_url;
 
-  // Get all image URLs from images_json
-  const imageUrls = getImageUrls(section.images_json, 1000, 600, 80);
-  const imageCount = imageUrls.length;
+  const imageUrls = getImageUrls(section.images_json, 1000, 700, 85);
+  const template = section.template_key ?? "centered-minimal";
 
   if (!title && !body) return null;
 
-  return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-      {/* Text */}
-      <div>
-        {title && (
-          <h3 className="font-display text-3xl md:text-4xl text-charcoal font-semibold mb-4 leading-tight">
-            {title}
-          </h3>
+  // ── Centered minimal: no image column, text centered ──
+  if (template === "centered-minimal") {
+    return (
+      <div
+        className={cn(
+          "py-16 md:py-24",
+          index % 2 === 0 ? "bg-cream" : "bg-white",
         )}
-        {subtitle && (
-          <p className="text-charcoal-muted text-lg mb-6 leading-relaxed">
-            {subtitle}
-          </p>
-        )}
-        {body && (
-          <div className="prose prose-charcoal max-w-none text-charcoal-muted leading-relaxed whitespace-pre-line mb-6">
-            {body}
-          </div>
-        )}
-        {ctaLabel && ctaUrl && (
-          <Link
-            to={ctaUrl}
-            className="inline-flex items-center gap-2 bg-charcoal text-white rounded-2xl px-6 py-3 text-sm font-semibold hover:bg-charcoal/85 transition-all duration-200"
-          >
-            {ctaLabel}
-            <ArrowRight className="w-4 h-4" aria-hidden="true" />
-          </Link>
-        )}
+      >
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center">
+          {title && (
+            <h3 className="font-display text-3xl md:text-4xl text-charcoal font-semibold mb-4">
+              {title}
+            </h3>
+          )}
+          {subtitle && (
+            <p className="text-lg text-sage font-medium mb-6">{subtitle}</p>
+          )}
+          {body && (
+            <div className="prose prose-lg prose-charcoal max-w-none text-charcoal-muted leading-relaxed whitespace-pre-line mb-6">
+              {body}
+            </div>
+          )}
+          {imageUrls.length > 0 && (
+            <div className="mt-8">
+              <ImageGrid images={imageUrls} alt={title ?? ""} />
+            </div>
+          )}
+          {ctaLabel && ctaUrl && (
+            <Link
+              to={ctaUrl}
+              className="inline-flex items-center gap-2 mt-8 bg-charcoal text-white rounded-full px-6 py-3 font-semibold hover:bg-charcoal/90 transition-colors"
+            >
+              {ctaLabel}
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          )}
+        </div>
       </div>
+    );
+  }
 
-      {/* Images - dynamic layout based on count */}
-      {imageCount > 0 && <ImageGrid images={imageUrls} alt={title ?? ""} />}
+  // ── Story left / Story right: image + text side by side ──
+  const isReversed = template === "story-right";
+
+  return (
+    <div
+      className={cn(
+        "py-16 md:py-24",
+        index % 2 === 0 ? "bg-cream" : "bg-white",
+      )}
+    >
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div
+          className={cn(
+            "grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center",
+            isReversed && "lg:[direction:rtl] lg:*:[direction:ltr]",
+          )}
+        >
+          {/* Images */}
+          {imageUrls.length > 0 && (
+            <ImageGrid images={imageUrls} alt={title ?? ""} />
+          )}
+
+          {/* Text */}
+          <div>
+            {title && (
+              <h3 className="font-display text-3xl md:text-4xl text-charcoal font-semibold mb-4 leading-tight">
+                {title}
+              </h3>
+            )}
+            {subtitle && (
+              <p className="text-charcoal-muted text-lg mb-6 leading-relaxed">
+                {subtitle}
+              </p>
+            )}
+            {body && (
+              <div className="prose prose-charcoal max-w-none text-charcoal-muted leading-relaxed whitespace-pre-line mb-6">
+                {body}
+              </div>
+            )}
+            {ctaLabel && ctaUrl && (
+              <Link
+                to={ctaUrl}
+                className="inline-flex items-center gap-2 bg-charcoal text-white rounded-full px-6 py-3 text-sm font-semibold hover:bg-charcoal/85 transition-all duration-200"
+              >
+                {ctaLabel}
+                <ArrowRight className="w-4 h-4" aria-hidden="true" />
+              </Link>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
@@ -82,7 +139,6 @@ function EditorialBlock({ section }) {
 function ImageGrid({ images, alt }) {
   const count = images.length;
 
-  // Single image: full size
   if (count === 1) {
     return (
       <div className="relative rounded-3xl overflow-hidden aspect-4/3">
@@ -96,7 +152,6 @@ function ImageGrid({ images, alt }) {
     );
   }
 
-  // Two images: side by side
   if (count === 2) {
     return (
       <div className="grid grid-cols-2 gap-3">

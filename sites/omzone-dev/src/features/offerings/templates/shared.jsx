@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { useCurrency } from "@/hooks/useCurrency";
 import { formatDuration } from "@/lib/dates";
 import { resolveField } from "@/lib/i18n-data";
-import { getFirstImageUrl, getImageUrls } from "@/lib/media";
+import { getImageUrls } from "@/lib/media";
 import ROUTES from "@/constants/routes";
 import { cn } from "@/lib/utils";
 
@@ -151,14 +151,11 @@ export function ContentSectionBlock({ section, index, className }) {
   const ctaLabel = resolveField(section, "cta_label");
   const ctaUrl = section.cta_url;
 
-  // Get images from images_json
+  // Get all images from images_json
   const imageUrls = getImageUrls(section.images_json, 1000, 700, 85);
-  const imageUrl = imageUrls.length > 0 ? imageUrls[0] : null;
 
   const template = section.template_key ?? "centered-minimal";
-  const isReversed =
-    template === "story-right" ||
-    (template === "story-left" && index % 2 === 1);
+  const isReversed = template === "story-right";
 
   if (template === "centered-minimal") {
     return (
@@ -175,6 +172,11 @@ export function ContentSectionBlock({ section, index, className }) {
           {body && (
             <div className="prose prose-lg prose-charcoal max-w-none text-charcoal-muted leading-relaxed whitespace-pre-line">
               {body}
+            </div>
+          )}
+          {imageUrls.length > 0 && (
+            <div className="mt-8">
+              <SectionImageGrid images={imageUrls} alt={title ?? ""} />
             </div>
           )}
           {ctaLabel && ctaUrl && (
@@ -204,28 +206,16 @@ export function ContentSectionBlock({ section, index, className }) {
         <div
           className={cn(
             "grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center",
-            isReversed && "lg:flex-row-reverse",
+            isReversed && "lg:[direction:rtl] lg:*:[direction:ltr]",
           )}
         >
-          {/* Image */}
-          {imageUrl && (
-            <div
-              className={cn(
-                "relative rounded-3xl overflow-hidden aspect-4/3",
-                isReversed && "lg:order-2",
-              )}
-            >
-              <img
-                src={imageUrl}
-                alt={title ?? ""}
-                className="w-full h-full object-cover"
-                loading="lazy"
-              />
-            </div>
+          {/* Images */}
+          {imageUrls.length > 0 && (
+            <SectionImageGrid images={imageUrls} alt={title ?? ""} />
           )}
 
           {/* Text */}
-          <div className={cn(isReversed && "lg:order-1")}>
+          <div>
             {title && (
               <h3 className="font-display text-3xl md:text-4xl text-charcoal font-semibold mb-4 leading-tight">
                 {title}
@@ -250,6 +240,73 @@ export function ContentSectionBlock({ section, index, className }) {
             )}
           </div>
         </div>
+      </div>
+    </div>
+  );
+}
+
+/** Dynamic image grid: adapts layout to 1, 2, or 3 images */
+function SectionImageGrid({ images, alt }) {
+  const count = images.length;
+
+  if (count === 1) {
+    return (
+      <div className="relative rounded-3xl overflow-hidden aspect-4/3">
+        <img
+          src={images[0]}
+          alt={alt}
+          className="w-full h-full object-cover"
+          loading="lazy"
+        />
+      </div>
+    );
+  }
+
+  if (count === 2) {
+    return (
+      <div className="grid grid-cols-2 gap-3">
+        {images.map((url, i) => (
+          <div
+            key={i}
+            className="relative rounded-2xl overflow-hidden aspect-3/4"
+          >
+            <img
+              src={url}
+              alt={`${alt} ${i + 1}`}
+              className="w-full h-full object-cover"
+              loading="lazy"
+            />
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  return (
+    <div className="grid grid-cols-2 gap-3">
+      <div className="row-span-2 relative rounded-2xl overflow-hidden aspect-3/4">
+        <img
+          src={images[0]}
+          alt={`${alt} 1`}
+          className="w-full h-full object-cover"
+          loading="lazy"
+        />
+      </div>
+      <div className="relative rounded-2xl overflow-hidden aspect-4/3">
+        <img
+          src={images[1]}
+          alt={`${alt} 2`}
+          className="w-full h-full object-cover"
+          loading="lazy"
+        />
+      </div>
+      <div className="relative rounded-2xl overflow-hidden aspect-4/3">
+        <img
+          src={images[2]}
+          alt={`${alt} 3`}
+          className="w-full h-full object-cover"
+          loading="lazy"
+        />
       </div>
     </div>
   );

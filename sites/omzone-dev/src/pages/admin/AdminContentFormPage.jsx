@@ -37,11 +37,18 @@ const EMPTY_FORM = {
   cta_label_en: "",
   cta_url: "",
   images: [],
+  template_key: "centered-minimal",
   scope: "global",
   offering_id: "",
   display_order: 0,
   enabled: true,
 };
+
+const TEMPLATE_OPTIONS = [
+  { value: "centered-minimal", label: "Centrado minimal" },
+  { value: "story-left", label: "Historia (imagen izquierda)" },
+  { value: "story-right", label: "Historia (imagen derecha)" },
+];
 
 /** Parse images_json string to array */
 function parseImagesJson(raw) {
@@ -109,6 +116,7 @@ export default function AdminContentFormPage() {
         cta_label_en: existing.cta_label_en ?? "",
         cta_url: existing.cta_url ?? "",
         images: parseImagesJson(existing.images_json),
+        template_key: existing.template_key ?? "centered-minimal",
         scope: existing.scope ?? "global",
         offering_id: existing.offering_id ?? "",
         display_order: existing.display_order ?? 0,
@@ -210,7 +218,7 @@ export default function AdminContentFormPage() {
         </FormSection>
 
         <FormSection title={t("contentSections.fields.scope")}>
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="grid gap-4 md:grid-cols-3">
             <div className="space-y-1.5">
               <Label>{t("contentSections.fields.scope")}</Label>
               <SearchCombobox
@@ -238,6 +246,17 @@ export default function AdminContentFormPage() {
                 onValueChange={(value) => setField("offering_id", value)}
                 options={offeringOptions}
                 placeholder={t("contentSections.fields.offeringPlaceholder")}
+                searchPlaceholder={t("common.search")}
+                emptyMessage={t("common.noData")}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label>{t("contentSections.fields.templateKey")}</Label>
+              <SearchCombobox
+                value={form.template_key}
+                onValueChange={(value) => setField("template_key", value)}
+                options={TEMPLATE_OPTIONS}
+                placeholder={t("contentSections.fields.templateKeyPlaceholder")}
                 searchPlaceholder={t("common.search")}
                 emptyMessage={t("common.noData")}
               />

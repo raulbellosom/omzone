@@ -257,6 +257,7 @@ function normalizeAdminContentSection(doc) {
     cta_label_en: doc.ctaLabelEn ?? null,
     cta_url: doc.ctaUrl ?? null,
     images_json: doc.imagesJson ?? null,
+    template_key: doc.templateKey ?? "centered-minimal",
     scope: doc.scope ?? "global",
     offering_id: doc.offeringId ?? null,
     display_order: doc.displayOrder ?? 0,
