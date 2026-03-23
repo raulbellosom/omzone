@@ -2,7 +2,7 @@
  * AdminContentFormPage — pagina dedicada para crear/editar una content_section.
  * Rutas: /app/content/new  |  /app/content/:id/edit
  */
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { ArrowLeft, Loader2 } from "lucide-react";
@@ -99,11 +99,14 @@ export default function AdminContentFormPage() {
 
   const [form, setForm] = useState(EMPTY_FORM);
   const [initialized, setInitialized] = useState(false);
+  const originalImagesJsonRef = useRef(null);
 
   const existing = isEditing ? sections.find((s) => s.$id === id) : null;
 
   useEffect(() => {
     if (isEditing && existing && !initialized) {
+      originalImagesJsonRef.current = existing.images_json ?? null;
+
       setForm({
         section_key: existing.section_key ?? "",
         title_es: existing.title_es ?? "",
@@ -140,9 +143,16 @@ export default function AdminContentFormPage() {
 
     // Serialize images array to JSON string for Appwrite
     const { images, ...rest } = form;
+    const imagesJson = images.length > 0 ? JSON.stringify(images) : null;
+
+    // Only include images_json if images were actually changed
+    const imagesChanged = isEditing
+      ? imagesJson !== (originalImagesJsonRef.current ?? null)
+      : true;
+
     const payload = {
       ...rest,
-      images_json: images.length > 0 ? JSON.stringify(images) : null,
+      ...(imagesChanged ? { images_json: imagesJson } : {}),
       display_order: Number(form.display_order) || 0,
     };
 

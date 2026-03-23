@@ -1,7 +1,7 @@
 /**
  * AdminOfferingFormPage - dynamic offering form by flowKey.
  */
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { ArrowLeft, Loader2, Plus } from "lucide-react";
@@ -146,6 +146,7 @@ export default function AdminOfferingFormPage() {
 
   const [form, setForm] = useState(buildInitialForm());
   const [initialized, setInitialized] = useState(false);
+  const originalImagesJsonRef = useRef(null);
 
   useEffect(() => {
     if (!isEditing || !existing || initialized) return;
@@ -157,6 +158,8 @@ export default function AdminOfferingFormPage() {
       flow_config: existing.flow_config,
       terms_config: existing.terms_config,
     });
+
+    originalImagesJsonRef.current = existing.images_json ?? null;
 
     setForm({
       core: {
@@ -384,10 +387,15 @@ export default function AdminOfferingFormPage() {
     const { images, ...coreWithoutImages } = form.core;
     const imagesJson = images.length > 0 ? JSON.stringify(images) : null;
 
+    // Only include images_json if images were actually changed
+    const imagesChanged = isEditing
+      ? imagesJson !== (originalImagesJsonRef.current ?? null)
+      : true;
+
     const payload = {
       core: {
         ...coreWithoutImages,
-        images_json: imagesJson,
+        ...(imagesChanged ? { images_json: imagesJson } : {}),
         display_order: Number(form.core.display_order) || 0,
       },
       flow: {

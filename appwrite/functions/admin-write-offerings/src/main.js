@@ -429,6 +429,7 @@ async function offeringCreate(db, cfg, p) {
       ctaLabelEs: toNullableString(core.cta_label_es),
       ctaLabelEn: toNullableString(core.cta_label_en),
       badgesJson: toNullableString(core.badges_json),
+      imagesJson: toNullableString(core.images_json),
       isFeatured: toBoolean(core.is_featured, false),
       showOnHome: toBoolean(core.show_on_home, false),
       displayOrder: toNumber(core.display_order, 0),
@@ -498,6 +499,8 @@ async function offeringUpdate(db, cfg, p) {
     u.displayOrder = toNumber(core.display_order, 0);
   if (core.status !== undefined) u.status = core.status;
   if (core.enabled !== undefined) u.enabled = toBoolean(core.enabled, true);
+  if (core.images_json !== undefined)
+    u.imagesJson = toNullableString(core.images_json);
 
   if (
     p.flow !== undefined ||
