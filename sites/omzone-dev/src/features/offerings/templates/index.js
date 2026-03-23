@@ -10,11 +10,13 @@
 import ZenHeroTemplate from "./ZenHeroTemplate";
 import SplitJourneyTemplate from "./SplitJourneyTemplate";
 import NatureImmersiveTemplate from "./NatureImmersiveTemplate";
+import GalleryHeroTemplate from "./GalleryHeroTemplate";
 
 export const OFFERING_TEMPLATES = {
   "zen-hero": ZenHeroTemplate,
   "split-journey": SplitJourneyTemplate,
   "nature-immersive": NatureImmersiveTemplate,
+  "gallery-hero": GalleryHeroTemplate,
 };
 
 /**
@@ -23,10 +25,10 @@ export const OFFERING_TEMPLATES = {
  */
 const CATEGORY_DEFAULT_TEMPLATES = {
   wellness_studio: "zen-hero", // Meditation, yoga sessions
-  immersion: "split-journey", // Multi-day immersions
+  immersion: "gallery-hero", // Multi-day immersions - optimized gallery layout
   stay: "nature-immersive", // Retreat stays
   service: "zen-hero", // Spa services
-  experience: "split-journey", // Custom experiences
+  experience: "gallery-hero", // Custom experiences - gallery layout
 };
 
 /**
@@ -44,4 +46,9 @@ export function getOfferingTemplate(templateKey, category) {
   return OFFERING_TEMPLATES[defaultKey];
 }
 
-export { ZenHeroTemplate, SplitJourneyTemplate, NatureImmersiveTemplate };
+export {
+  ZenHeroTemplate,
+  SplitJourneyTemplate,
+  NatureImmersiveTemplate,
+  GalleryHeroTemplate,
+};
