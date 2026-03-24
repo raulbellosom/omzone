@@ -15,9 +15,11 @@ import {
 } from "@/services/appwrite/offeringService";
 
 export function useOfferings(options = {}) {
+  const { category, type, enabled } = options;
   return useQuery({
-    queryKey: ["offerings", options],
+    queryKey: ["offerings", category, type, enabled],
     queryFn: () => getOfferings(options),
+    staleTime: 1000 * 60 * 2,
   });
 }
 
@@ -38,10 +40,12 @@ export function useOfferingById(id) {
 }
 
 export function useOfferingSlots(offeringId, options = {}) {
+  const { fromDate, status, limit } = options;
   return useQuery({
-    queryKey: ["offeringSlots", offeringId, options],
+    queryKey: ["offeringSlots", offeringId, fromDate, status, limit],
     queryFn: () => getOfferingSlots(offeringId, options),
     enabled: !!offeringId,
+    staleTime: 1000 * 60 * 2,
   });
 }
 
@@ -50,13 +54,16 @@ export function useSlotById(slotId) {
     queryKey: ["slot", slotId],
     queryFn: () => getSlotById(slotId),
     enabled: !!slotId,
+    retry: false, // Don't retry on 404 - fallback to offering lookup is expected
   });
 }
 
 export function useAllUpcomingSlots(options = {}) {
+  const { category, limit } = options;
   return useQuery({
-    queryKey: ["upcomingSlots", options],
+    queryKey: ["upcomingSlots", category, limit],
     queryFn: () => getAllUpcomingSlots(options),
+    staleTime: 1000 * 60 * 2,
   });
 }
 

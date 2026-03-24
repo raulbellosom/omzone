@@ -61,12 +61,12 @@ export default function BookingPage() {
   const requiresSchedule = offering?.requires_schedule === true;
   const supportsDateRange = offering?.supports_date_range === true;
 
+  // Memoize fromDate to prevent infinite refetch loop
+  const fromDate = useMemo(() => new Date().toISOString(), []);
+
   const { data: slots = [], isLoading: loadingSlots } = useOfferingSlots(
     offering?.$id,
-    {
-      fromDate: new Date().toISOString(),
-      status: "open",
-    },
+    { fromDate, status: "open" },
   );
 
   useEffect(() => {
@@ -121,7 +121,10 @@ export default function BookingPage() {
     );
   }
 
-  const maxGuests = Math.max(offering.max_guests ?? 1, offering.min_guests ?? 1);
+  const maxGuests = Math.max(
+    offering.max_guests ?? 1,
+    offering.min_guests ?? 1,
+  );
   const minGuests = Math.max(1, offering.min_guests ?? 1);
   const isReviewStep = step === stepLabels.length;
   const isInfoStep = step === (hasScheduleStep ? 2 : 1);
@@ -129,7 +132,11 @@ export default function BookingPage() {
   function goNext() {
     if (hasScheduleStep && step === 1 && !selectedSlotId) return;
     if (isInfoStep) {
-      if (!customerInfo.firstName || !customerInfo.lastName || !customerInfo.email) {
+      if (
+        !customerInfo.firstName ||
+        !customerInfo.lastName ||
+        !customerInfo.email
+      ) {
         return;
       }
       if (!user) {
@@ -167,7 +174,9 @@ export default function BookingPage() {
             id: selectedSlot?.$id ?? offering.$id,
             item_type: "offering",
             title,
-            subtitle: selectedSlot ? formatDateTime(selectedSlot.start_at) : null,
+            subtitle: selectedSlot
+              ? formatDateTime(selectedSlot.start_at)
+              : null,
             price: unitPrice,
             quantity: guestCount,
           },
@@ -201,7 +210,11 @@ export default function BookingPage() {
           </h1>
         </div>
 
-        <StepIndicator steps={stepLabels} current={step} className="mb-8 md:mb-12" />
+        <StepIndicator
+          steps={stepLabels}
+          current={step}
+          className="mb-8 md:mb-12"
+        />
 
         <div className="grid lg:grid-cols-[1fr_340px] gap-8 items-start">
           <div className="space-y-6">
@@ -235,7 +248,9 @@ export default function BookingPage() {
                             {formatDateTime(slot.start_at)}
                           </p>
                           <p className="text-xs text-charcoal-muted mt-1">
-                            {slot.location_label || offering.location_label || "-"}
+                            {slot.location_label ||
+                              offering.location_label ||
+                              "-"}
                           </p>
                         </button>
                       ))}
@@ -251,21 +266,54 @@ export default function BookingPage() {
                   <div className="grid gap-4 md:grid-cols-2">
                     <div className="space-y-1.5">
                       <Label>{t("step3.firstName")}</Label>
-                      <Input value={customerInfo.firstName} onChange={(e) => setCustomerInfo((prev) => ({ ...prev, firstName: e.target.value }))} />
+                      <Input
+                        value={customerInfo.firstName}
+                        onChange={(e) =>
+                          setCustomerInfo((prev) => ({
+                            ...prev,
+                            firstName: e.target.value,
+                          }))
+                        }
+                      />
                     </div>
                     <div className="space-y-1.5">
                       <Label>{t("step3.lastName")}</Label>
-                      <Input value={customerInfo.lastName} onChange={(e) => setCustomerInfo((prev) => ({ ...prev, lastName: e.target.value }))} />
+                      <Input
+                        value={customerInfo.lastName}
+                        onChange={(e) =>
+                          setCustomerInfo((prev) => ({
+                            ...prev,
+                            lastName: e.target.value,
+                          }))
+                        }
+                      />
                     </div>
                   </div>
                   <div className="grid gap-4 md:grid-cols-2">
                     <div className="space-y-1.5">
                       <Label>{t("step3.email")}</Label>
-                      <Input type="email" value={customerInfo.email} onChange={(e) => setCustomerInfo((prev) => ({ ...prev, email: e.target.value }))} />
+                      <Input
+                        type="email"
+                        value={customerInfo.email}
+                        onChange={(e) =>
+                          setCustomerInfo((prev) => ({
+                            ...prev,
+                            email: e.target.value,
+                          }))
+                        }
+                      />
                     </div>
                     <div className="space-y-1.5">
                       <Label>{t("step3.phone")}</Label>
-                      <Input value={customerInfo.phone} onChange={(e) => setCustomerInfo((prev) => ({ ...prev, phone: e.target.value }))} />
+                      <Input
+                        value={customerInfo.phone}
+                        onChange={(e) =>
+                          setCustomerInfo((prev) => ({
+                            ...prev,
+                            phone: e.target.value,
+                          }))
+                        }
+                      />
                     </div>
                   </div>
 
@@ -281,7 +329,13 @@ export default function BookingPage() {
                       value={guestCount}
                       onChange={(e) =>
                         setGuestCount(
-                          Math.min(maxGuests, Math.max(minGuests, Number(e.target.value) || minGuests)),
+                          Math.min(
+                            maxGuests,
+                            Math.max(
+                              minGuests,
+                              Number(e.target.value) || minGuests,
+                            ),
+                          ),
                         )
                       }
                     />
@@ -291,11 +345,29 @@ export default function BookingPage() {
                     <div className="grid gap-4 md:grid-cols-2">
                       <div className="space-y-1.5">
                         <Label>{t("fields.checkIn")}</Label>
-                        <Input type="date" value={dateRange.checkin} onChange={(e) => setDateRange((prev) => ({ ...prev, checkin: e.target.value }))} />
+                        <Input
+                          type="date"
+                          value={dateRange.checkin}
+                          onChange={(e) =>
+                            setDateRange((prev) => ({
+                              ...prev,
+                              checkin: e.target.value,
+                            }))
+                          }
+                        />
                       </div>
                       <div className="space-y-1.5">
                         <Label>{t("fields.checkOut")}</Label>
-                        <Input type="date" value={dateRange.checkout} onChange={(e) => setDateRange((prev) => ({ ...prev, checkout: e.target.value }))} />
+                        <Input
+                          type="date"
+                          value={dateRange.checkout}
+                          onChange={(e) =>
+                            setDateRange((prev) => ({
+                              ...prev,
+                              checkout: e.target.value,
+                            }))
+                          }
+                        />
                       </div>
                     </div>
                   )}
@@ -304,11 +376,20 @@ export default function BookingPage() {
                     <div className="space-y-3">
                       {questions.map((question, index) => {
                         const key = question.key || `q_${index}`;
-                        const label = question.label_es || question.label_en || key;
+                        const label =
+                          question.label_es || question.label_en || key;
                         return (
                           <div key={key} className="space-y-1.5">
                             <Label>{label}</Label>
-                            <Input value={customAnswers[key] ?? ""} onChange={(e) => setCustomAnswers((prev) => ({ ...prev, [key]: e.target.value }))} />
+                            <Input
+                              value={customAnswers[key] ?? ""}
+                              onChange={(e) =>
+                                setCustomAnswers((prev) => ({
+                                  ...prev,
+                                  [key]: e.target.value,
+                                }))
+                              }
+                            />
                           </div>
                         );
                       })}
@@ -317,7 +398,15 @@ export default function BookingPage() {
 
                   <div className="space-y-1.5">
                     <Label>{t("fields.notes")}</Label>
-                    <Textarea value={customerInfo.notes} onChange={(e) => setCustomerInfo((prev) => ({ ...prev, notes: e.target.value }))} />
+                    <Textarea
+                      value={customerInfo.notes}
+                      onChange={(e) =>
+                        setCustomerInfo((prev) => ({
+                          ...prev,
+                          notes: e.target.value,
+                        }))
+                      }
+                    />
                   </div>
                 </CardContent>
               </Card>
@@ -326,7 +415,9 @@ export default function BookingPage() {
             {isReviewStep && (
               <Card className="border-warm-gray-dark/40">
                 <CardContent className="p-6 space-y-3">
-                  <h2 className="text-lg font-semibold text-charcoal">{t("step4.title")}</h2>
+                  <h2 className="text-lg font-semibold text-charcoal">
+                    {t("step4.title")}
+                  </h2>
                   <p className="text-sm text-charcoal-muted">{title}</p>
                   {selectedSlot && (
                     <p className="text-sm text-charcoal-muted">
@@ -349,7 +440,9 @@ export default function BookingPage() {
                 {t("common:actions.back")}
               </Button>
               <Button onClick={goNext}>
-                {isReviewStep ? t("step4.proceedToPayment") : t("common:actions.next")}
+                {isReviewStep
+                  ? t("step4.proceedToPayment")
+                  : t("common:actions.next")}
                 {!isReviewStep && <ArrowRight className="w-4 h-4" />}
               </Button>
             </div>
