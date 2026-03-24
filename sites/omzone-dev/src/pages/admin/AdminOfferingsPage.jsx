@@ -23,6 +23,7 @@ import {
 } from "@/hooks/useAdmin";
 import { useCurrency } from "@/hooks/useCurrency";
 import { resolveField } from "@/lib/i18n-data";
+import { fromNow } from "@/lib/dates";
 import { cn } from "@/lib/utils";
 import ROUTES from "@/constants/routes";
 
@@ -182,6 +183,18 @@ export default function AdminOfferingsPage() {
                   <span className="rounded-full bg-white/80 px-3 py-1.5">
                     {tOff(`pricingMode.${item.pricing_mode}`)}
                   </span>
+                </div>
+                {/* Timestamps */}
+                <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-charcoal-subtle">
+                  <span>
+                    {t("common:timestamps.created")} {fromNow(item.$createdAt)}
+                  </span>
+                  {item.$updatedAt !== item.$createdAt && (
+                    <span>
+                      · {t("common:timestamps.updated")}{" "}
+                      {fromNow(item.$updatedAt)}
+                    </span>
+                  )}
                 </div>
               </div>
               {/* Actions */}

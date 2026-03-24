@@ -26,7 +26,10 @@ export default function TopbarUserMenu({ context = "client" }) {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
-  const currentLang = (i18n.resolvedLanguage ?? i18n.language ?? "es").slice(0, 2);
+  const currentLang = (i18n.resolvedLanguage ?? i18n.language ?? "es").slice(
+    0,
+    2,
+  );
   const nextLang = currentLang === "es" ? "en" : "es";
   const langLabel = currentLang === "es" ? "English" : "Español";
 
@@ -36,10 +39,13 @@ export default function TopbarUserMenu({ context = "client" }) {
 
   const avatarUrl = user?.avatar_id ? getAvatarUrl(user.avatar_id, 64) : null;
 
-  const isAdminOrRoot = user?.role_key === "admin" || user?.role_key === "root";
+  const isRoot = user?.role_key === "root";
+  const isAdminOrRoot = user?.role_key === "admin" || isRoot;
 
+  // Panel de control: show in client context for admin/root users
   const showAdminLink = context === "client" && isAdminOrRoot;
-  const showClientLink = context === "admin";
+  // Mi área de cliente: show in admin context only for root (admin-only users don't have client area)
+  const showClientLink = context === "admin" && isRoot;
 
   async function handleLogout() {
     await logout();
@@ -57,7 +63,9 @@ export default function TopbarUserMenu({ context = "client" }) {
             {user?.first_name ?? ""}
           </p>
           <Avatar className="h-8 w-8 hover:ring-2 hover:ring-sage/40 transition-all">
-            {avatarUrl && <AvatarImage src={avatarUrl} alt={user?.first_name} />}
+            {avatarUrl && (
+              <AvatarImage src={avatarUrl} alt={user?.first_name} />
+            )}
             <AvatarFallback className="text-xs bg-sage-muted text-sage-darker font-semibold">
               {initials}
             </AvatarFallback>
@@ -68,7 +76,8 @@ export default function TopbarUserMenu({ context = "client" }) {
       <DropdownMenuContent align="end">
         <DropdownMenuLabel className="leading-tight">
           <span className="block font-semibold text-charcoal">
-            {user?.full_name || `${user?.first_name ?? ""} ${user?.last_name ?? ""}`}
+            {user?.full_name ||
+              `${user?.first_name ?? ""} ${user?.last_name ?? ""}`}
           </span>
           <span className="block text-charcoal-subtle font-normal truncate max-w-45">
             {user?.email}
@@ -78,10 +87,7 @@ export default function TopbarUserMenu({ context = "client" }) {
         <DropdownMenuSeparator />
 
         <DropdownMenuItem asChild>
-          <Link
-            to={context === "admin" ? ROUTES.ZONE_PROFILE : ROUTES.ZONE_PROFILE}
-            className="flex items-center gap-2"
-          >
+          <Link to={ROUTES.ACCOUNT_PROFILE} className="flex items-center gap-2">
             <User className="w-4 h-4 text-charcoal-muted" />
             {t("nav.myProfile")}
           </Link>
@@ -89,16 +95,19 @@ export default function TopbarUserMenu({ context = "client" }) {
 
         {showClientLink && (
           <DropdownMenuItem asChild>
-            <Link to={ROUTES.ZONE} className="flex items-center gap-2">
+            <Link to={ROUTES.HOME} className="flex items-center gap-2">
               <LayoutDashboard className="w-4 h-4 text-charcoal-muted" />
-              Mi área de cliente
+              {t("nav.customerArea", { defaultValue: "Mi área de cliente" })}
             </Link>
           </DropdownMenuItem>
         )}
 
         {showAdminLink && (
           <DropdownMenuItem asChild>
-            <Link to={ROUTES.ADMIN_DASHBOARD} className="flex items-center gap-2">
+            <Link
+              to={ROUTES.ADMIN_DASHBOARD}
+              className="flex items-center gap-2"
+            >
               <LayoutDashboard className="w-4 h-4 text-charcoal-muted" />
               {t("nav.adminPanel", { defaultValue: "Panel de administración" })}
             </Link>

@@ -63,8 +63,6 @@ export async function updateMyUserProfile(userId, data) {
     update.fullName = [fn, ln].filter(Boolean).join(" ") || "Usuario";
   }
 
-  update.updatedAt = new Date().toISOString();
-
   const updated = await databases.updateDocument(
     DB_ID,
     COLLECTION_ID,

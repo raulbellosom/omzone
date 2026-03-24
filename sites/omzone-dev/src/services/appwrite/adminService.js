@@ -161,6 +161,7 @@ function normalizeAdminOffering(doc, defaultLocation = null) {
   return {
     $id: doc.$id,
     $createdAt: doc.$createdAt,
+    $updatedAt: doc.$updatedAt,
     slug: doc.slug,
     title_es: doc.titleEs,
     title_en: doc.titleEn,
@@ -212,6 +213,7 @@ function normalizeAdminSlot(doc, locationProfile = null) {
   return {
     $id: doc.$id,
     $createdAt: doc.$createdAt,
+    $updatedAt: doc.$updatedAt,
     offering_id: doc.offeringId,
     start_at: doc.startAt,
     end_at: doc.endAt ?? null,
@@ -246,6 +248,8 @@ function normalizeAdminContentSection(doc) {
   if (!doc) return null;
   return {
     $id: doc.$id,
+    $createdAt: doc.$createdAt,
+    $updatedAt: doc.$updatedAt,
     section_key: doc.sectionKey,
     title_es: doc.titleEs ?? null,
     title_en: doc.titleEn ?? null,

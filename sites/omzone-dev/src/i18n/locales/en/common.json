@@ -105,6 +105,10 @@
     "completed": "Completed",
     "expired": "Expired"
   },
+  "timestamps": {
+    "created": "Created",
+    "updated": "Updated"
+  },
   "difficulty": {
     "beginner": "Beginner",
     "intermediate": "Intermediate",
