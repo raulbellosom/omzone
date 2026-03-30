@@ -530,7 +530,7 @@
                     "required": false,
                     "array": false,
                     "default": null,
-                    "min": -9223372036854775808,
+                    "min": -9223372036854775807,
                     "max": 9223372036854775807
                 },
                 {
@@ -695,7 +695,7 @@
                     "required": false,
                     "array": false,
                     "default": 1,
-                    "min": -9223372036854775808,
+                    "min": -9223372036854775807,
                     "max": 9223372036854775807
                 },
                 {
@@ -737,7 +737,7 @@
                     "required": false,
                     "array": false,
                     "default": 1,
-                    "min": -9223372036854775808,
+                    "min": -9223372036854775807,
                     "max": 9223372036854775807
                 },
                 {
@@ -774,6 +774,55 @@
                     "size": 4000,
                     "default": null,
                     "encrypt": false
+                },
+                {
+                    "key": "eventId",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 64,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "checkInDate",
+                    "type": "datetime",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "format": ""
+                },
+                {
+                    "key": "checkOutDate",
+                    "type": "datetime",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "format": ""
+                },
+                {
+                    "key": "nights",
+                    "type": "integer",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "min": -9223372036854775807,
+                    "max": 9223372036854775807
+                },
+                {
+                    "key": "bookingEngine",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "format": "enum",
+                    "elements": [
+                        "events",
+                        "daily_range",
+                        "hybrid",
+                        "request_only",
+                        "date_range"
+                    ]
                 }
             ],
             "indexes": [
@@ -860,6 +909,39 @@
                     "status": "available",
                     "columns": [
                         "bookingType"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                },
+                {
+                    "key": "idx_bookings_event",
+                    "type": "key",
+                    "status": "available",
+                    "columns": [
+                        "eventId"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                },
+                {
+                    "key": "idx_bookings_engine",
+                    "type": "key",
+                    "status": "available",
+                    "columns": [
+                        "bookingEngine"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                },
+                {
+                    "key": "idx_bookings_checkin",
+                    "type": "key",
+                    "status": "available",
+                    "columns": [
+                        "checkInDate"
                     ],
                     "orders": [
                         "ASC"
@@ -1485,7 +1567,7 @@
                     "required": false,
                     "array": false,
                     "default": 0,
-                    "min": -9223372036854775808,
+                    "min": -9223372036854775807,
                     "max": 9223372036854775807
                 },
                 {
@@ -1892,7 +1974,7 @@
                     "required": false,
                     "array": false,
                     "default": 0,
-                    "min": -9223372036854775808,
+                    "min": -9223372036854775807,
                     "max": 9223372036854775807
                 },
                 {
@@ -1930,7 +2012,7 @@
                     "required": false,
                     "array": false,
                     "default": 1,
-                    "min": -9223372036854775808,
+                    "min": -9223372036854775807,
                     "max": 9223372036854775807
                 },
                 {
@@ -2130,7 +2212,7 @@
                     "required": false,
                     "array": false,
                     "default": 0,
-                    "min": -9223372036854775808,
+                    "min": -9223372036854775807,
                     "max": 9223372036854775807
                 },
                 {
@@ -2139,7 +2221,7 @@
                     "required": false,
                     "array": false,
                     "default": 0,
-                    "min": -9223372036854775808,
+                    "min": -9223372036854775807,
                     "max": 9223372036854775807
                 },
                 {
@@ -2242,6 +2324,638 @@
                     "status": "available",
                     "columns": [
                         "locationProfileId"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                }
+            ]
+        },
+        {
+            "$id": "schedule_events",
+            "$permissions": [
+                "read(\"any\")",
+                "create(\"label:admin\")",
+                "update(\"label:admin\")",
+                "delete(\"label:admin\")",
+                "create(\"label:root\")",
+                "update(\"label:root\")",
+                "delete(\"label:root\")"
+            ],
+            "databaseId": "main",
+            "name": "schedule_events",
+            "enabled": true,
+            "rowSecurity": false,
+            "columns": [
+                {
+                    "key": "offeringId",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 64,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "title",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 200,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "instructorName",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 160,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "startAt",
+                    "type": "datetime",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "format": ""
+                },
+                {
+                    "key": "endAt",
+                    "type": "datetime",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "format": ""
+                },
+                {
+                    "key": "dateLabel",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 100,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "capacityTotal",
+                    "type": "integer",
+                    "required": false,
+                    "array": false,
+                    "default": 0,
+                    "min": -9223372036854775807,
+                    "max": 9223372036854775807
+                },
+                {
+                    "key": "capacityTaken",
+                    "type": "integer",
+                    "required": false,
+                    "array": false,
+                    "default": 0,
+                    "min": -9223372036854775807,
+                    "max": 9223372036854775807
+                },
+                {
+                    "key": "pricingMode",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "default": "fixed_price",
+                    "format": "enum",
+                    "elements": [
+                        "fixed_price",
+                        "from_price",
+                        "request_quote"
+                    ]
+                },
+                {
+                    "key": "unitPrice",
+                    "type": "double",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "min": -1.7976931348623157e+308,
+                    "max": 1.7976931348623157e+308
+                },
+                {
+                    "key": "currency",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 3,
+                    "default": "MXN",
+                    "encrypt": false
+                },
+                {
+                    "key": "durationMin",
+                    "type": "integer",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "min": -9223372036854775807,
+                    "max": 9223372036854775807
+                },
+                {
+                    "key": "minGuests",
+                    "type": "integer",
+                    "required": false,
+                    "array": false,
+                    "default": 1,
+                    "min": -9223372036854775807,
+                    "max": 9223372036854775807
+                },
+                {
+                    "key": "maxGuests",
+                    "type": "integer",
+                    "required": false,
+                    "array": false,
+                    "default": 1,
+                    "min": -9223372036854775807,
+                    "max": 9223372036854775807
+                },
+                {
+                    "key": "status",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "default": "open",
+                    "format": "enum",
+                    "elements": [
+                        "open",
+                        "full",
+                        "cancelled",
+                        "completed"
+                    ]
+                },
+                {
+                    "key": "notes",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 500,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "enabled",
+                    "type": "boolean",
+                    "required": false,
+                    "array": false,
+                    "default": true
+                },
+                {
+                    "key": "locationProfileId",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 64,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "locationFallbackLabel",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 200,
+                    "default": null,
+                    "encrypt": false
+                }
+            ],
+            "indexes": [
+                {
+                    "key": "idx_event_offering",
+                    "type": "key",
+                    "status": "available",
+                    "columns": [
+                        "offeringId"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                },
+                {
+                    "key": "idx_event_start",
+                    "type": "key",
+                    "status": "available",
+                    "columns": [
+                        "startAt"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                },
+                {
+                    "key": "idx_event_status",
+                    "type": "key",
+                    "status": "available",
+                    "columns": [
+                        "status"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                },
+                {
+                    "key": "idx_event_enabled",
+                    "type": "key",
+                    "status": "available",
+                    "columns": [
+                        "enabled"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                },
+                {
+                    "key": "idx_event_location_profile",
+                    "type": "key",
+                    "status": "available",
+                    "columns": [
+                        "locationProfileId"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                }
+            ]
+        },
+        {
+            "$id": "offering_availability_rules",
+            "$permissions": [
+                "create(\"label:admin\")",
+                "read(\"label:admin\")",
+                "update(\"label:admin\")",
+                "delete(\"label:admin\")",
+                "create(\"label:root\")",
+                "read(\"label:root\")",
+                "update(\"label:root\")",
+                "delete(\"label:root\")"
+            ],
+            "databaseId": "main",
+            "name": "offering_availability_rules",
+            "enabled": true,
+            "rowSecurity": false,
+            "columns": [
+                {
+                    "key": "offeringId",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 64,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "name",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 120,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "ruleType",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "default": "weekly",
+                    "format": "enum",
+                    "elements": [
+                        "weekly",
+                        "seasonal",
+                        "override"
+                    ]
+                },
+                {
+                    "key": "weekdaysJson",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 200,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "startDate",
+                    "type": "datetime",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "format": ""
+                },
+                {
+                    "key": "endDate",
+                    "type": "datetime",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "format": ""
+                },
+                {
+                    "key": "capacityTotal",
+                    "type": "integer",
+                    "required": false,
+                    "array": false,
+                    "default": 0,
+                    "min": -9223372036854775807,
+                    "max": 9223372036854775807
+                },
+                {
+                    "key": "unitPrice",
+                    "type": "double",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "min": -1.7976931348623157e+308,
+                    "max": 1.7976931348623157e+308
+                },
+                {
+                    "key": "currency",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 3,
+                    "default": "MXN",
+                    "encrypt": false
+                },
+                {
+                    "key": "minGuests",
+                    "type": "integer",
+                    "required": false,
+                    "array": false,
+                    "default": 1,
+                    "min": -9223372036854775807,
+                    "max": 9223372036854775807
+                },
+                {
+                    "key": "maxGuests",
+                    "type": "integer",
+                    "required": false,
+                    "array": false,
+                    "default": 1,
+                    "min": -9223372036854775807,
+                    "max": 9223372036854775807
+                },
+                {
+                    "key": "minNights",
+                    "type": "integer",
+                    "required": false,
+                    "array": false,
+                    "default": 1,
+                    "min": -9223372036854775807,
+                    "max": 9223372036854775807
+                },
+                {
+                    "key": "enabled",
+                    "type": "boolean",
+                    "required": false,
+                    "array": false,
+                    "default": true
+                }
+            ],
+            "indexes": [
+                {
+                    "key": "idx_rule_offering",
+                    "type": "key",
+                    "status": "available",
+                    "columns": [
+                        "offeringId"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                },
+                {
+                    "key": "idx_rule_type",
+                    "type": "key",
+                    "status": "available",
+                    "columns": [
+                        "ruleType"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                },
+                {
+                    "key": "idx_rule_start",
+                    "type": "key",
+                    "status": "available",
+                    "columns": [
+                        "startDate"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                },
+                {
+                    "key": "idx_rule_end",
+                    "type": "key",
+                    "status": "available",
+                    "columns": [
+                        "endDate"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                },
+                {
+                    "key": "idx_rule_enabled",
+                    "type": "key",
+                    "status": "available",
+                    "columns": [
+                        "enabled"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                }
+            ]
+        },
+        {
+            "$id": "offering_daily_inventory",
+            "$permissions": [
+                "create(\"label:admin\")",
+                "read(\"label:admin\")",
+                "update(\"label:admin\")",
+                "delete(\"label:admin\")",
+                "create(\"label:root\")",
+                "read(\"label:root\")",
+                "update(\"label:root\")",
+                "delete(\"label:root\")"
+            ],
+            "databaseId": "main",
+            "name": "offering_daily_inventory",
+            "enabled": true,
+            "rowSecurity": false,
+            "columns": [
+                {
+                    "key": "offeringId",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 64,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "date",
+                    "type": "datetime",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "format": ""
+                },
+                {
+                    "key": "status",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "default": "open",
+                    "format": "enum",
+                    "elements": [
+                        "open",
+                        "full",
+                        "blocked",
+                        "closed"
+                    ]
+                },
+                {
+                    "key": "capacityTotal",
+                    "type": "integer",
+                    "required": false,
+                    "array": false,
+                    "default": 0,
+                    "min": -9223372036854775807,
+                    "max": 9223372036854775807
+                },
+                {
+                    "key": "capacityTaken",
+                    "type": "integer",
+                    "required": false,
+                    "array": false,
+                    "default": 0,
+                    "min": -9223372036854775807,
+                    "max": 9223372036854775807
+                },
+                {
+                    "key": "unitPrice",
+                    "type": "double",
+                    "required": false,
+                    "array": false,
+                    "default": null,
+                    "min": -1.7976931348623157e+308,
+                    "max": 1.7976931348623157e+308
+                },
+                {
+                    "key": "currency",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 3,
+                    "default": "MXN",
+                    "encrypt": false
+                },
+                {
+                    "key": "minGuests",
+                    "type": "integer",
+                    "required": false,
+                    "array": false,
+                    "default": 1,
+                    "min": -9223372036854775807,
+                    "max": 9223372036854775807
+                },
+                {
+                    "key": "maxGuests",
+                    "type": "integer",
+                    "required": false,
+                    "array": false,
+                    "default": 1,
+                    "min": -9223372036854775807,
+                    "max": 9223372036854775807
+                },
+                {
+                    "key": "sourceRuleId",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 64,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "notes",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "size": 300,
+                    "default": null,
+                    "encrypt": false
+                },
+                {
+                    "key": "enabled",
+                    "type": "boolean",
+                    "required": false,
+                    "array": false,
+                    "default": true
+                }
+            ],
+            "indexes": [
+                {
+                    "key": "uq_inventory_offering_date",
+                    "type": "unique",
+                    "status": "available",
+                    "columns": [
+                        "offeringId",
+                        "date"
+                    ],
+                    "orders": [
+                        "ASC",
+                        "ASC"
+                    ]
+                },
+                {
+                    "key": "idx_inventory_offering",
+                    "type": "key",
+                    "status": "available",
+                    "columns": [
+                        "offeringId"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                },
+                {
+                    "key": "idx_inventory_date",
+                    "type": "key",
+                    "status": "available",
+                    "columns": [
+                        "date"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                },
+                {
+                    "key": "idx_inventory_status",
+                    "type": "key",
+                    "status": "available",
+                    "columns": [
+                        "status"
+                    ],
+                    "orders": [
+                        "ASC"
+                    ]
+                },
+                {
+                    "key": "idx_inventory_enabled",
+                    "type": "key",
+                    "status": "available",
+                    "columns": [
+                        "enabled"
                     ],
                     "orders": [
                         "ASC"
@@ -2453,3 +3167,4 @@
     "teams": [],
     "topics": []
 }
+

@@ -2,6 +2,13 @@ import { Client, Databases, ID, Query, Users } from "node-appwrite";
 
 const FLOW_CONFIG_MAX_LENGTH = 3000;
 const TERMS_CONFIG_MAX_LENGTH = 1700;
+const BOOKING_ENGINES = new Set([
+  "events",
+  "daily_range",
+  "hybrid",
+  "request_only",
+  "date_range",
+]);
 
 function parseBody(raw) {
   if (!raw) return {};
@@ -35,6 +42,12 @@ function toNullableString(value) {
   if (value === null || value === undefined) return null;
   const str = String(value).trim();
   return str.length > 0 ? str : null;
+}
+
+function toBookingEngine(value, fallback = null) {
+  if (value === null || value === undefined || value === "") return fallback;
+  const normalized = String(value).trim();
+  return BOOKING_ENGINES.has(normalized) ? normalized : fallback;
 }
 
 function toJsonString(value, fallback = null) {
@@ -116,6 +129,7 @@ function defaultFlowTemplate(category, type) {
       flow_key: "wellness_studio.session",
       booking: {
         mode: "scheduled",
+        engine: "events",
         requires_schedule: true,
         supports_date_range: false,
       },
@@ -127,6 +141,7 @@ function defaultFlowTemplate(category, type) {
       flow_key: "wellness_studio.program",
       booking: {
         mode: "scheduled",
+        engine: "events",
         requires_schedule: true,
         supports_date_range: true,
       },
@@ -138,6 +153,7 @@ function defaultFlowTemplate(category, type) {
       flow_key: "immersion.immersion",
       booking: {
         mode: "scheduled",
+        engine: "events",
         requires_schedule: true,
         supports_date_range: true,
       },
@@ -149,6 +165,7 @@ function defaultFlowTemplate(category, type) {
       flow_key: "service.service",
       booking: {
         mode: "request_only",
+        engine: "daily_range",
         requires_schedule: false,
         supports_date_range: true,
       },
@@ -160,6 +177,7 @@ function defaultFlowTemplate(category, type) {
       flow_key: "stay.stay",
       booking: {
         mode: "date_range",
+        engine: "daily_range",
         requires_schedule: false,
         supports_date_range: true,
       },
@@ -170,9 +188,10 @@ function defaultFlowTemplate(category, type) {
     "experience:experience": {
       flow_key: "experience.experience",
       booking: {
-        mode: "request_only",
-        requires_schedule: false,
-        supports_date_range: true,
+        mode: "scheduled",
+        engine: "events",
+        requires_schedule: true,
+        supports_date_range: false,
       },
       pricing: { mode: "from_price", base_price: 0 },
       schedule: { duration_min: null },
@@ -231,6 +250,11 @@ function normalizeFlowPayload(payload, currentDoc = null) {
     {};
 
   const legacyBookingMode = core.booking_mode ?? currentDoc?.bookingMode;
+  const legacyBookingEngine =
+    core.booking_engine ??
+    core.bookingEngine ??
+    currentFlowConfig?.booking?.engine ??
+    null;
   const legacyPricingMode = core.pricing_mode ?? currentDoc?.pricingMode;
   const legacyBasePrice =
     core.base_price ?? core.basePrice ?? currentDoc?.basePrice ?? null;
@@ -282,6 +306,23 @@ function normalizeFlowPayload(payload, currentDoc = null) {
 
   if (legacyBookingMode !== undefined && legacyBookingMode !== null) {
     normalizedFlowConfig.booking.mode = legacyBookingMode;
+  }
+  if (legacyBookingEngine !== undefined) {
+    const inferredEngine =
+      toBookingEngine(legacyBookingEngine) ??
+      (normalizedFlowConfig.booking.mode === "scheduled"
+        ? "events"
+        : normalizedFlowConfig.booking.mode === "date_range"
+          ? "daily_range"
+          : "request_only");
+    normalizedFlowConfig.booking.engine = inferredEngine;
+  } else if (!normalizedFlowConfig.booking.engine) {
+    normalizedFlowConfig.booking.engine =
+      normalizedFlowConfig.booking.mode === "scheduled"
+        ? "events"
+        : normalizedFlowConfig.booking.mode === "date_range"
+          ? "daily_range"
+          : "request_only";
   }
   if (legacyPricingMode !== undefined && legacyPricingMode !== null) {
     normalizedFlowConfig.pricing.mode = legacyPricingMode;
@@ -369,11 +410,18 @@ function readEnv() {
     databaseId: process.env.APPWRITE_DATABASE_ID,
     collections: {
       offerings: process.env.APPWRITE_COLLECTION_OFFERINGS_ID,
+      events:
+        process.env.APPWRITE_COLLECTION_SCHEDULE_EVENTS_ID ||
+        process.env.APPWRITE_COLLECTION_OFFERING_SLOTS_ID,
       slots: process.env.APPWRITE_COLLECTION_OFFERING_SLOTS_ID,
       locations: process.env.APPWRITE_COLLECTION_LOCATION_PROFILES_ID,
       blocks: process.env.APPWRITE_COLLECTION_AVAILABILITY_BLOCKS_ID,
       sections: process.env.APPWRITE_COLLECTION_CONTENT_SECTIONS_ID,
       bookings: process.env.APPWRITE_COLLECTION_BOOKINGS_ID,
+      availabilityRules:
+        process.env.APPWRITE_COLLECTION_OFFERING_AVAILABILITY_RULES_ID || null,
+      dailyInventory:
+        process.env.APPWRITE_COLLECTION_OFFERING_DAILY_INVENTORY_ID || null,
     },
   };
 
@@ -383,8 +431,10 @@ function readEnv() {
   if (!env.databaseId) missing.push("APPWRITE_DATABASE_ID");
   if (!env.collections.offerings)
     missing.push("APPWRITE_COLLECTION_OFFERINGS_ID");
-  if (!env.collections.slots)
-    missing.push("APPWRITE_COLLECTION_OFFERING_SLOTS_ID");
+  if (!env.collections.events)
+    missing.push(
+      "APPWRITE_COLLECTION_SCHEDULE_EVENTS_ID or APPWRITE_COLLECTION_OFFERING_SLOTS_ID",
+    );
   if (!env.collections.locations)
     missing.push("APPWRITE_COLLECTION_LOCATION_PROFILES_ID");
   if (!env.collections.blocks)
@@ -402,6 +452,81 @@ function readEnv() {
   }
 
   return env;
+}
+
+function requireCollection(cfg, key, envHint) {
+  const value = cfg.collections?.[key];
+  if (!value) {
+    throw Object.assign(
+      new Error(`Missing environment variable: ${envHint}`),
+      { status: 500 },
+    );
+  }
+  return value;
+}
+
+function toUTCDateStart(value) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return null;
+  return new Date(
+    Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()),
+  );
+}
+
+function enumerateRangeDays(checkInValue, checkOutValue) {
+  const checkIn = toUTCDateStart(checkInValue);
+  const checkOut = toUTCDateStart(checkOutValue);
+
+  if (!checkIn || !checkOut) {
+    throw Object.assign(new Error("Invalid check-in/check-out range"), {
+      status: 400,
+    });
+  }
+  if (checkOut <= checkIn) {
+    throw Object.assign(
+      new Error("check_out_date must be greater than check_in_date"),
+      { status: 400 },
+    );
+  }
+
+  const dates = [];
+  const cursor = new Date(checkIn);
+  while (cursor < checkOut) {
+    dates.push(cursor.toISOString());
+    cursor.setUTCDate(cursor.getUTCDate() + 1);
+  }
+
+  return {
+    checkInIso: checkIn.toISOString(),
+    checkOutIso: checkOut.toISOString(),
+    dates,
+    nights: dates.length,
+  };
+}
+
+async function listActiveBlocksInRange(db, cfg, startIso, endIso, offeringId) {
+  const res = await db.listDocuments(cfg.databaseId, cfg.collections.blocks, [
+    Query.equal("enabled", true),
+    Query.lessThan("startAt", endIso),
+    Query.greaterThan("endAt", startIso),
+    Query.limit(200),
+  ]);
+
+  return res.documents.filter((block) => {
+    const blockOffering = block.offeringId ?? null;
+    return blockOffering === null || blockOffering === offeringId;
+  });
+}
+
+function parseJsonArray(value, fallback = []) {
+  if (!value) return fallback;
+  if (Array.isArray(value)) return value;
+  try {
+    const parsed = JSON.parse(value);
+    return Array.isArray(parsed) ? parsed : fallback;
+  } catch {
+    return fallback;
+  }
 }
 
 // -- Offerings ----------------------------------------------------------------
@@ -520,6 +645,8 @@ async function offeringUpdate(db, cfg, p) {
     core.terms_config !== undefined ||
     core.termsConfig !== undefined ||
     core.booking_mode !== undefined ||
+    core.booking_engine !== undefined ||
+    core.bookingEngine !== undefined ||
     core.pricing_mode !== undefined ||
     core.base_price !== undefined ||
     core.duration_min !== undefined ||
@@ -573,19 +700,37 @@ async function offeringDelete(db, cfg, p) {
   if (!core.offering_id)
     throw Object.assign(new Error("offering_id is required"), { status: 400 });
 
-  const slotsCount = await countDocuments(
+  const eventsCollection = cfg.collections.events;
+  const eventsCount = await countDocuments(
     db,
     cfg.databaseId,
-    cfg.collections.slots,
+    eventsCollection,
     [Query.equal("offeringId", core.offering_id)],
   );
-  if (slotsCount > 0)
+  if (eventsCount > 0)
     throw Object.assign(
       new Error(
-        "No se puede eliminar el offering porque tiene slots asociados.",
+        "No se puede eliminar el offering porque tiene eventos asociados.",
       ),
       { status: 409 },
     );
+
+  if (cfg.collections.slots && cfg.collections.slots !== eventsCollection) {
+    const legacySlotsCount = await countDocuments(
+      db,
+      cfg.databaseId,
+      cfg.collections.slots,
+      [Query.equal("offeringId", core.offering_id)],
+    );
+    if (legacySlotsCount > 0) {
+      throw Object.assign(
+        new Error(
+          "No se puede eliminar el offering porque tiene slots legacy asociados.",
+        ),
+        { status: 409 },
+      );
+    }
+  }
 
   const bookingsCount = await countDocuments(
     db,
@@ -609,37 +754,54 @@ async function offeringDelete(db, cfg, p) {
   return { $id: core.offering_id };
 }
 
-// -- Offering Slots -----------------------------------------------------------
+// -- Schedule Events ----------------------------------------------------------
 
-async function slotCreate(db, cfg, p) {
+async function eventCreate(db, cfg, p) {
   const core = p.core ?? p;
   if (!core.offering_id)
     throw Object.assign(new Error("offering_id is required"), { status: 400 });
   if (!core.start_at)
     throw Object.assign(new Error("start_at is required"), { status: 400 });
 
-  return db.createDocument(cfg.databaseId, cfg.collections.slots, ID.unique(), {
+  const minGuests = Math.max(1, toNumber(core.min_guests, 1));
+  const maxGuests = Math.max(
+    minGuests,
+    toNumber(core.max_guests, minGuests),
+  );
+
+  return db.createDocument(cfg.databaseId, cfg.collections.events, ID.unique(), {
     offeringId: core.offering_id,
+    title: toNullableString(core.title),
+    instructorName: toNullableString(core.instructor_name),
     startAt: core.start_at,
     endAt: core.end_at || null,
     dateLabel: toNullableString(core.date_label),
     capacityTotal: toNumber(core.capacity_total, 0),
     capacityTaken: toNumber(core.capacity_taken, 0),
-    priceOverride: toNullableNumber(core.price_override),
+    pricingMode: core.pricing_mode || "fixed_price",
+    unitPrice: toNullableNumber(core.unit_price ?? core.price_override),
+    currency: toNullableString(core.currency) ?? "MXN",
+    durationMin: toNullableNumber(core.duration_min),
+    minGuests,
+    maxGuests,
     status: core.status || "open",
     locationProfileId: toNullableString(core.location_profile_id),
+    locationFallbackLabel: toNullableString(core.location_fallback_label),
     notes: toNullableString(core.notes),
     enabled: toBoolean(core.enabled, true),
   });
 }
 
-async function slotUpdate(db, cfg, p) {
+async function eventUpdate(db, cfg, p) {
   const core = p.core ?? p;
-  if (!core.slot_id)
-    throw Object.assign(new Error("slot_id is required"), { status: 400 });
+  if (!core.event_id)
+    throw Object.assign(new Error("event_id is required"), { status: 400 });
 
   const u = {};
   if (core.offering_id !== undefined) u.offeringId = core.offering_id;
+  if (core.title !== undefined) u.title = toNullableString(core.title);
+  if (core.instructor_name !== undefined)
+    u.instructorName = toNullableString(core.instructor_name);
   if (core.start_at !== undefined) u.startAt = core.start_at;
   if (core.end_at !== undefined) u.endAt = core.end_at || null;
   if (core.date_label !== undefined)
@@ -648,73 +810,140 @@ async function slotUpdate(db, cfg, p) {
     u.capacityTotal = toNumber(core.capacity_total, 0);
   if (core.capacity_taken !== undefined)
     u.capacityTaken = toNumber(core.capacity_taken, 0);
-  if (core.price_override !== undefined)
-    u.priceOverride = toNullableNumber(core.price_override);
+  if (core.pricing_mode !== undefined)
+    u.pricingMode = core.pricing_mode || "fixed_price";
+  if (core.unit_price !== undefined || core.price_override !== undefined)
+    u.unitPrice = toNullableNumber(core.unit_price ?? core.price_override);
+  if (core.currency !== undefined) u.currency = toNullableString(core.currency);
+  if (core.duration_min !== undefined)
+    u.durationMin = toNullableNumber(core.duration_min);
+  if (core.min_guests !== undefined)
+    u.minGuests = Math.max(1, toNumber(core.min_guests, 1));
+  if (core.max_guests !== undefined) {
+    const nextMin = u.minGuests ?? undefined;
+    const fallbackMin = Number.isFinite(nextMin) ? nextMin : 1;
+    u.maxGuests = Math.max(fallbackMin, toNumber(core.max_guests, fallbackMin));
+  }
   if (core.status !== undefined) u.status = core.status;
   if (core.location_profile_id !== undefined)
     u.locationProfileId = toNullableString(core.location_profile_id);
+  if (core.location_fallback_label !== undefined)
+    u.locationFallbackLabel = toNullableString(core.location_fallback_label);
   if (core.notes !== undefined) u.notes = toNullableString(core.notes);
   if (core.enabled !== undefined) u.enabled = toBoolean(core.enabled, true);
 
   return db.updateDocument(
     cfg.databaseId,
-    cfg.collections.slots,
-    core.slot_id,
+    cfg.collections.events,
+    core.event_id,
     u,
   );
 }
 
-async function slotToggle(db, cfg, p) {
+async function eventToggle(db, cfg, p) {
   const core = p.core ?? p;
-  if (!core.slot_id)
-    throw Object.assign(new Error("slot_id is required"), { status: 400 });
+  if (!core.event_id)
+    throw Object.assign(new Error("event_id is required"), { status: 400 });
 
   return db.updateDocument(
     cfg.databaseId,
-    cfg.collections.slots,
-    core.slot_id,
+    cfg.collections.events,
+    core.event_id,
     {
       enabled: toBoolean(core.enabled, true),
     },
   );
 }
 
-async function slotCancel(db, cfg, p) {
+async function eventCancel(db, cfg, p) {
   const core = p.core ?? p;
-  if (!core.slot_id)
-    throw Object.assign(new Error("slot_id is required"), { status: 400 });
+  if (!core.event_id)
+    throw Object.assign(new Error("event_id is required"), { status: 400 });
 
   return db.updateDocument(
     cfg.databaseId,
-    cfg.collections.slots,
-    core.slot_id,
+    cfg.collections.events,
+    core.event_id,
     {
       status: "cancelled",
     },
   );
 }
 
-async function slotDelete(db, cfg, p) {
+async function eventDelete(db, cfg, p) {
   const core = p.core ?? p;
-  if (!core.slot_id)
-    throw Object.assign(new Error("slot_id is required"), { status: 400 });
+  if (!core.event_id)
+    throw Object.assign(new Error("event_id is required"), { status: 400 });
 
-  const bookingsCount = await countDocuments(
+  const bookingsByEventCount = await countDocuments(
     db,
     cfg.databaseId,
     cfg.collections.bookings,
-    [Query.equal("slotId", core.slot_id)],
+    [Query.equal("eventId", core.event_id)],
   );
-  if (bookingsCount > 0)
+  const bookingsByLegacySlotCount = await countDocuments(
+    db,
+    cfg.databaseId,
+    cfg.collections.bookings,
+    [Query.equal("slotId", core.event_id)],
+  );
+
+  if (bookingsByEventCount + bookingsByLegacySlotCount > 0)
     throw Object.assign(
       new Error(
-        "No se puede eliminar el slot porque tiene reservas asociadas.",
+        "No se puede eliminar el evento porque tiene reservas asociadas.",
       ),
       { status: 409 },
     );
 
-  await db.deleteDocument(cfg.databaseId, cfg.collections.slots, core.slot_id);
-  return { $id: core.slot_id };
+  await db.deleteDocument(cfg.databaseId, cfg.collections.events, core.event_id);
+  return { $id: core.event_id };
+}
+
+// -- Legacy Slot aliases (Phase 1 compatibility) -----------------------------
+
+async function slotCreate(db, cfg, p) {
+  return eventCreate(db, cfg, p);
+}
+
+async function slotUpdate(db, cfg, p) {
+  const core = p.core ?? p;
+  return eventUpdate(db, cfg, {
+    core: {
+      ...core,
+      event_id: core.slot_id,
+    },
+  });
+}
+
+async function slotToggle(db, cfg, p) {
+  const core = p.core ?? p;
+  return eventToggle(db, cfg, {
+    core: {
+      ...core,
+      event_id: core.slot_id,
+    },
+  });
+}
+
+async function slotCancel(db, cfg, p) {
+  const core = p.core ?? p;
+  return eventCancel(db, cfg, {
+    core: {
+      ...core,
+      event_id: core.slot_id,
+    },
+  });
+}
+
+async function slotDelete(db, cfg, p) {
+  const core = p.core ?? p;
+  return eventDelete(db, cfg, {
+    core: {
+      ...core,
+      event_id: core.slot_id,
+    },
+  });
 }
 
 // -- Location Profiles -------------------------------------------------------
@@ -779,17 +1008,26 @@ async function locationDelete(db, cfg, p) {
     [Query.equal("defaultLocationProfileId", core.location_profile_id)],
   );
 
-  const slotCount = await countDocuments(
+  const eventCount = await countDocuments(
     db,
     cfg.databaseId,
-    cfg.collections.slots,
+    cfg.collections.events,
     [Query.equal("locationProfileId", core.location_profile_id)],
   );
+  let legacySlotCount = 0;
+  if (cfg.collections.slots && cfg.collections.slots !== cfg.collections.events) {
+    legacySlotCount = await countDocuments(
+      db,
+      cfg.databaseId,
+      cfg.collections.slots,
+      [Query.equal("locationProfileId", core.location_profile_id)],
+    );
+  }
 
-  if (offeringCount > 0 || slotCount > 0) {
+  if (offeringCount > 0 || eventCount > 0 || legacySlotCount > 0) {
     throw Object.assign(
       new Error(
-        "No se puede eliminar la ubicacion porque esta asociada a offerings o slots.",
+        "No se puede eliminar la ubicacion porque esta asociada a offerings o eventos.",
       ),
       { status: 409 },
     );
@@ -860,6 +1098,266 @@ async function blockDelete(db, cfg, p) {
     core.block_id,
   );
   return { $id: core.block_id };
+}
+
+// -- Daily Availability Rules / Inventory ------------------------------------
+
+async function availabilityRuleCreate(db, cfg, p) {
+  const core = p.core ?? p;
+  if (!core.offering_id) {
+    throw Object.assign(new Error("offering_id is required"), { status: 400 });
+  }
+  const rulesCollection = requireCollection(
+    cfg,
+    "availabilityRules",
+    "APPWRITE_COLLECTION_OFFERING_AVAILABILITY_RULES_ID",
+  );
+
+  return db.createDocument(cfg.databaseId, rulesCollection, ID.unique(), {
+    offeringId: core.offering_id,
+    name: toNullableString(core.name),
+    ruleType: core.rule_type || "weekly",
+    weekdaysJson: toJsonString(core.weekdays_json ?? core.weekdays ?? null),
+    startDate: core.start_date || null,
+    endDate: core.end_date || null,
+    capacityTotal: toNumber(core.capacity_total, 0),
+    unitPrice: toNullableNumber(core.unit_price),
+    currency: toNullableString(core.currency) ?? "MXN",
+    minGuests: Math.max(1, toNumber(core.min_guests, 1)),
+    maxGuests: Math.max(1, toNumber(core.max_guests, 1)),
+    minNights: Math.max(1, toNumber(core.min_nights, 1)),
+    enabled: toBoolean(core.enabled, true),
+  });
+}
+
+async function availabilityRuleUpdate(db, cfg, p) {
+  const core = p.core ?? p;
+  if (!core.rule_id) {
+    throw Object.assign(new Error("rule_id is required"), { status: 400 });
+  }
+  const rulesCollection = requireCollection(
+    cfg,
+    "availabilityRules",
+    "APPWRITE_COLLECTION_OFFERING_AVAILABILITY_RULES_ID",
+  );
+
+  const u = {};
+  if (core.offering_id !== undefined) u.offeringId = core.offering_id;
+  if (core.name !== undefined) u.name = toNullableString(core.name);
+  if (core.rule_type !== undefined) u.ruleType = core.rule_type;
+  if (core.weekdays_json !== undefined || core.weekdays !== undefined) {
+    u.weekdaysJson = toJsonString(core.weekdays_json ?? core.weekdays ?? null);
+  }
+  if (core.start_date !== undefined) u.startDate = core.start_date || null;
+  if (core.end_date !== undefined) u.endDate = core.end_date || null;
+  if (core.capacity_total !== undefined)
+    u.capacityTotal = toNumber(core.capacity_total, 0);
+  if (core.unit_price !== undefined)
+    u.unitPrice = toNullableNumber(core.unit_price);
+  if (core.currency !== undefined) u.currency = toNullableString(core.currency);
+  if (core.min_guests !== undefined)
+    u.minGuests = Math.max(1, toNumber(core.min_guests, 1));
+  if (core.max_guests !== undefined)
+    u.maxGuests = Math.max(1, toNumber(core.max_guests, 1));
+  if (core.min_nights !== undefined)
+    u.minNights = Math.max(1, toNumber(core.min_nights, 1));
+  if (core.enabled !== undefined) u.enabled = toBoolean(core.enabled, true);
+
+  return db.updateDocument(cfg.databaseId, rulesCollection, core.rule_id, u);
+}
+
+async function availabilityRuleDelete(db, cfg, p) {
+  const core = p.core ?? p;
+  if (!core.rule_id) {
+    throw Object.assign(new Error("rule_id is required"), { status: 400 });
+  }
+  const rulesCollection = requireCollection(
+    cfg,
+    "availabilityRules",
+    "APPWRITE_COLLECTION_OFFERING_AVAILABILITY_RULES_ID",
+  );
+
+  await db.deleteDocument(cfg.databaseId, rulesCollection, core.rule_id);
+  return { $id: core.rule_id };
+}
+
+async function upsertDailyInventoryRow(db, cfg, row) {
+  const inventoryCollection = requireCollection(
+    cfg,
+    "dailyInventory",
+    "APPWRITE_COLLECTION_OFFERING_DAILY_INVENTORY_ID",
+  );
+
+  if (!row.offering_id) {
+    throw Object.assign(new Error("offering_id is required"), { status: 400 });
+  }
+  if (!row.date) {
+    throw Object.assign(new Error("date is required"), { status: 400 });
+  }
+
+  const dateStart = toUTCDateStart(row.date);
+  if (!dateStart) {
+    throw Object.assign(new Error("date is invalid"), { status: 400 });
+  }
+  const dateIso = dateStart.toISOString();
+
+  const existing = await db.listDocuments(cfg.databaseId, inventoryCollection, [
+    Query.equal("offeringId", row.offering_id),
+    Query.equal("date", dateIso),
+    Query.limit(1),
+  ]);
+
+  const payload = {
+    offeringId: row.offering_id,
+    date: dateIso,
+    status: row.status || "open",
+    capacityTotal: toNumber(row.capacity_total, 0),
+    capacityTaken: toNumber(row.capacity_taken, 0),
+    unitPrice: toNullableNumber(row.unit_price),
+    currency: toNullableString(row.currency) ?? "MXN",
+    minGuests: Math.max(1, toNumber(row.min_guests, 1)),
+    maxGuests: Math.max(1, toNumber(row.max_guests, 1)),
+    sourceRuleId: toNullableString(row.source_rule_id),
+    notes: toNullableString(row.notes),
+    enabled: toBoolean(row.enabled, true),
+  };
+
+  if (existing.documents.length > 0) {
+    return db.updateDocument(
+      cfg.databaseId,
+      inventoryCollection,
+      existing.documents[0].$id,
+      payload,
+    );
+  }
+  return db.createDocument(cfg.databaseId, inventoryCollection, ID.unique(), payload);
+}
+
+async function availabilityInventoryUpsert(db, cfg, p) {
+  const core = p.core ?? p;
+  return upsertDailyInventoryRow(db, cfg, core);
+}
+
+async function availabilityInventoryBulkUpsert(db, cfg, p) {
+  const core = p.core ?? p;
+  const items = Array.isArray(core.items) ? core.items : [];
+  if (items.length === 0) {
+    return [];
+  }
+  const results = [];
+  for (const item of items) {
+    results.push(await upsertDailyInventoryRow(db, cfg, item));
+  }
+  return results;
+}
+
+function matchesRuleForDate(rule, date) {
+  const start = rule.startDate ? toUTCDateStart(rule.startDate) : null;
+  const end = rule.endDate ? toUTCDateStart(rule.endDate) : null;
+  if (start && date < start) return false;
+  if (end && date > end) return false;
+
+  const weekdays = parseJsonArray(rule.weekdaysJson, null);
+  if (Array.isArray(weekdays) && weekdays.length > 0) {
+    const weekday = date.getUTCDay();
+    return weekdays.includes(weekday);
+  }
+  return true;
+}
+
+function pickRuleForDate(rules, date) {
+  const weighted = rules
+    .filter((rule) => matchesRuleForDate(rule, date))
+    .map((rule) => {
+      const priority =
+        rule.ruleType === "override"
+          ? 3
+          : rule.ruleType === "seasonal"
+            ? 2
+            : 1;
+      return { rule, priority };
+    })
+    .sort((a, b) => b.priority - a.priority);
+  return weighted[0]?.rule ?? null;
+}
+
+async function availabilityInventoryMaterialize(db, cfg, p) {
+  const core = p.core ?? p;
+  if (!core.offering_id) {
+    throw Object.assign(new Error("offering_id is required"), { status: 400 });
+  }
+  if (!core.from_date || !core.to_date) {
+    throw Object.assign(new Error("from_date and to_date are required"), {
+      status: 400,
+    });
+  }
+
+  const rulesCollection = requireCollection(
+    cfg,
+    "availabilityRules",
+    "APPWRITE_COLLECTION_OFFERING_AVAILABILITY_RULES_ID",
+  );
+
+  const { dates } = enumerateRangeDays(core.from_date, core.to_date);
+
+  const rulesRes = await db.listDocuments(cfg.databaseId, rulesCollection, [
+    Query.equal("offeringId", core.offering_id),
+    Query.equal("enabled", true),
+    Query.limit(500),
+  ]);
+
+  const rules = rulesRes.documents;
+  const results = [];
+  for (const isoDay of dates) {
+    const day = toUTCDateStart(isoDay);
+    const matchedRule = pickRuleForDate(rules, day);
+    const row = matchedRule
+      ? {
+          offering_id: core.offering_id,
+          date: isoDay,
+          status: "open",
+          capacity_total: matchedRule.capacityTotal ?? 0,
+          capacity_taken: 0,
+          unit_price: matchedRule.unitPrice ?? null,
+          currency: matchedRule.currency ?? "MXN",
+          min_guests: matchedRule.minGuests ?? 1,
+          max_guests: matchedRule.maxGuests ?? 1,
+          source_rule_id: matchedRule.$id,
+          enabled: true,
+        }
+      : {
+          offering_id: core.offering_id,
+          date: isoDay,
+          status: "closed",
+          capacity_total: 0,
+          capacity_taken: 0,
+          unit_price: null,
+          currency: core.currency || "MXN",
+          min_guests: 1,
+          max_guests: 1,
+          source_rule_id: null,
+          enabled: true,
+        };
+    results.push(await upsertDailyInventoryRow(db, cfg, row));
+  }
+
+  return results;
+}
+
+async function availabilityInventoryDelete(db, cfg, p) {
+  const core = p.core ?? p;
+  if (!core.inventory_id) {
+    throw Object.assign(new Error("inventory_id is required"), { status: 400 });
+  }
+
+  const inventoryCollection = requireCollection(
+    cfg,
+    "dailyInventory",
+    "APPWRITE_COLLECTION_OFFERING_DAILY_INVENTORY_ID",
+  );
+
+  await db.deleteDocument(cfg.databaseId, inventoryCollection, core.inventory_id);
+  return { $id: core.inventory_id };
 }
 
 // -- Content Sections ---------------------------------------------------------
@@ -982,77 +1480,208 @@ async function bookingCreate(db, cfg, p, callerUserId) {
 
   const flowConfig = parseJsonMaybe(offering.flowConfig, {});
   const bookingMode = flowConfig?.booking?.mode ?? "request_only";
-  const requiresSchedule = flowConfig?.booking?.requires_schedule === true;
+  const flowBookingEngine =
+    toBookingEngine(flowConfig?.booking?.engine) ??
+    (bookingMode === "scheduled"
+      ? "events"
+      : bookingMode === "date_range"
+        ? "daily_range"
+        : "request_only");
 
-  let slot = null;
-  if (core.slot_id) {
-    slot = await db.getDocument(
-      cfg.databaseId,
-      cfg.collections.slots,
-      core.slot_id,
-    );
-    if (slot.offeringId !== core.offering_id) {
-      throw Object.assign(new Error("slot_id does not belong to offering_id"), {
+  const requestedBookingEngine =
+    toBookingEngine(core.booking_engine ?? core.bookingEngine) ??
+    flowBookingEngine;
+
+  const eventId = toNullableString(core.event_id ?? core.slot_id);
+  const checkInDateRaw = core.check_in_date ?? core.checkInDate ?? null;
+  const checkOutDateRaw = core.check_out_date ?? core.checkOutDate ?? null;
+
+  let bookingEngine = requestedBookingEngine;
+  if (bookingEngine === "hybrid") {
+    bookingEngine = eventId ? "events" : "daily_range";
+  }
+
+  const requiresSchedule =
+    flowConfig?.booking?.requires_schedule === true || bookingMode === "scheduled";
+
+  let eventDoc = null;
+  let inventoryDocsToReserve = [];
+  let checkInDate = null;
+  let checkOutDate = null;
+  let nights = null;
+
+  const guestCount = Math.max(1, toNumber(core.guest_count, 1));
+  const flowBasePrice = toNullableNumber(flowConfig?.pricing?.base_price);
+  let unitPrice = toNullableNumber(core.unit_price) ?? null;
+
+  if (bookingEngine === "events") {
+    if (!eventId) {
+      throw Object.assign(new Error("event_id is required for this offering"), {
         status: 400,
       });
     }
-    if (slot.status !== "open" || slot.enabled === false) {
-      throw Object.assign(new Error("The selected slot is not available"), {
+
+    eventDoc = await db.getDocument(cfg.databaseId, cfg.collections.events, eventId);
+    if (eventDoc.offeringId !== core.offering_id) {
+      throw Object.assign(
+        new Error("event_id does not belong to offering_id"),
+        { status: 400 },
+      );
+    }
+    if (eventDoc.status !== "open" || eventDoc.enabled === false) {
+      throw Object.assign(new Error("The selected event is not available"), {
         status: 409,
       });
     }
-  }
 
-  if (requiresSchedule && !slot) {
-    throw Object.assign(new Error("slot_id is required for this offering"), {
-      status: 400,
-    });
-  }
-
-  const guestCount = Math.max(1, toNumber(core.guest_count, 1));
-  if (slot && slot.capacityTotal > 0) {
-    const available = Math.max(
-      0,
-      slot.capacityTotal - (slot.capacityTaken ?? 0),
+    const conflictingBlocks = await listActiveBlocksInRange(
+      db,
+      cfg,
+      eventDoc.startAt,
+      eventDoc.endAt ?? eventDoc.startAt,
+      core.offering_id,
     );
-    if (guestCount > available) {
+    if (conflictingBlocks.length > 0) {
       throw Object.assign(
-        new Error("No hay cupo suficiente en el slot seleccionado."),
-        {
-          status: 409,
-        },
+        new Error("No se puede reservar: el evento esta bloqueado en agenda."),
+        { status: 409 },
       );
     }
-  }
 
-  const slotPrice = slot?.priceOverride ?? null;
-  const flowBasePrice = toNullableNumber(flowConfig?.pricing?.base_price);
-  const unitPrice =
-    toNullableNumber(core.unit_price) ?? slotPrice ?? flowBasePrice ?? 0;
+    if (eventDoc.capacityTotal > 0) {
+      const available = Math.max(
+        0,
+        eventDoc.capacityTotal - (eventDoc.capacityTaken ?? 0),
+      );
+      if (guestCount > available) {
+        throw Object.assign(
+          new Error("No hay cupo suficiente en el evento seleccionado."),
+          { status: 409 },
+        );
+      }
+    }
+
+    const eventPrice = toNullableNumber(
+      eventDoc.unitPrice ?? eventDoc.priceOverride ?? null,
+    );
+    unitPrice = unitPrice ?? eventPrice ?? flowBasePrice ?? 0;
+  } else if (bookingEngine === "daily_range") {
+    const inventoryCollection = requireCollection(
+      cfg,
+      "dailyInventory",
+      "APPWRITE_COLLECTION_OFFERING_DAILY_INVENTORY_ID",
+    );
+
+    if (!checkInDateRaw || !checkOutDateRaw) {
+      throw Object.assign(
+        new Error(
+          "check_in_date and check_out_date are required for daily range bookings",
+        ),
+        { status: 400 },
+      );
+    }
+
+    const range = enumerateRangeDays(checkInDateRaw, checkOutDateRaw);
+    checkInDate = range.checkInIso;
+    checkOutDate = range.checkOutIso;
+    nights = range.nights;
+
+    const conflictingBlocks = await listActiveBlocksInRange(
+      db,
+      cfg,
+      checkInDate,
+      checkOutDate,
+      core.offering_id,
+    );
+    if (conflictingBlocks.length > 0) {
+      throw Object.assign(
+        new Error("No se puede reservar: hay dias bloqueados en el rango."),
+        { status: 409 },
+      );
+    }
+
+    const inventoryRes = await db.listDocuments(cfg.databaseId, inventoryCollection, [
+      Query.equal("offeringId", core.offering_id),
+      Query.equal("date", range.dates),
+      Query.limit(Math.max(100, range.dates.length + 10)),
+    ]);
+    const inventoryByDate = Object.fromEntries(
+      inventoryRes.documents.map((doc) => [toUTCDateStart(doc.date)?.toISOString(), doc]),
+    );
+
+    for (const dayIso of range.dates) {
+      const row = inventoryByDate[dayIso];
+      if (!row) {
+        throw Object.assign(
+          new Error("No hay inventario configurado para todas las fechas del rango."),
+          { status: 409 },
+        );
+      }
+      if (row.enabled === false || row.status === "blocked" || row.status === "closed") {
+        throw Object.assign(
+          new Error("Una o mas fechas del rango no estan disponibles."),
+          { status: 409 },
+        );
+      }
+      if (row.capacityTotal > 0) {
+        const available = Math.max(0, row.capacityTotal - (row.capacityTaken ?? 0));
+        if (guestCount > available) {
+          throw Object.assign(
+            new Error("No hay cupo suficiente para una o mas fechas del rango."),
+            { status: 409 },
+          );
+        }
+      }
+      inventoryDocsToReserve.push(row);
+    }
+
+    if (unitPrice === null) {
+      unitPrice = inventoryDocsToReserve.reduce(
+        (sum, row) => sum + Number(row.unitPrice ?? 0),
+        0,
+      );
+    }
+  } else {
+    if (requiresSchedule && !eventId) {
+      throw Object.assign(new Error("event_id is required for this offering"), {
+        status: 400,
+      });
+    }
+    unitPrice = unitPrice ?? flowBasePrice ?? 0;
+  }
 
   const now = nowISO();
   const status =
     core.status ||
-    (bookingMode === "request_only" || bookingMode === "date_range"
-      ? "pending"
-      : "confirmed");
+    (bookingEngine === "daily_range"
+      ? "confirmed"
+      : bookingMode === "request_only" || bookingMode === "date_range"
+        ? "pending"
+        : "confirmed");
 
   const pricingSnapshot = {
     booking_mode: bookingMode,
-    pricing_mode: flowConfig?.pricing?.mode ?? null,
+    booking_engine: bookingEngine,
+    pricing_mode:
+      eventDoc?.pricingMode ?? flowConfig?.pricing?.mode ?? core.pricing_mode ?? null,
     flow_base_price: flowBasePrice,
-    slot_price_override: slotPrice,
+    event_unit_price: eventDoc?.unitPrice ?? null,
     unit_price: unitPrice,
-    currency: offering.currency ?? "MXN",
+    currency:
+      eventDoc?.currency ??
+      inventoryDocsToReserve[0]?.currency ??
+      offering.currency ??
+      "MXN",
     guest_count: guestCount,
+    nights,
+    check_in_date: checkInDate,
+    check_out_date: checkOutDate,
     created_at: now,
     ...parseJsonMaybe(core.pricing_snapshot, {}),
   };
 
   const customAnswers =
-    core.custom_answers ??
-    parseJsonMaybe(core.custom_answers_json, null) ??
-    null;
+    core.custom_answers ?? parseJsonMaybe(core.custom_answers_json, null) ?? null;
 
   const requestData = {
     ...parseJsonMaybe(core.request_data, {}),
@@ -1074,9 +1703,14 @@ async function bookingCreate(db, cfg, p, callerUserId) {
       extrasJson: toJsonString(core.extras_json ?? null, null),
       reservedAt: now,
       offeringId: core.offering_id,
-      slotId: slot?.$id ?? null,
+      slotId: eventDoc?.$id ?? toNullableString(core.slot_id),
+      eventId: eventDoc?.$id ?? null,
       bookingType: core.booking_type || offering.type || "service",
+      bookingEngine: bookingEngine,
       guestCount,
+      checkInDate: checkInDate,
+      checkOutDate: checkOutDate,
+      nights: nights,
       requestDataJson: toJsonString(requestData, null),
       confirmedAt: status === "confirmed" ? now : null,
       pricingSnapshotJson: toJsonString(pricingSnapshot, null),
@@ -1093,17 +1727,34 @@ async function bookingCreate(db, cfg, p, callerUserId) {
     ],
   );
 
-  if (slot && status === "confirmed") {
-    const nextTaken = (slot.capacityTaken ?? 0) + guestCount;
+  if (status === "confirmed" && eventDoc) {
+    const nextTaken = (eventDoc.capacityTaken ?? 0) + guestCount;
     const nextStatus =
-      slot.capacityTotal > 0 && nextTaken >= slot.capacityTotal
+      eventDoc.capacityTotal > 0 && nextTaken >= eventDoc.capacityTotal
         ? "full"
-        : slot.status;
+        : eventDoc.status;
 
-    await db.updateDocument(cfg.databaseId, cfg.collections.slots, slot.$id, {
+    await db.updateDocument(cfg.databaseId, cfg.collections.events, eventDoc.$id, {
       capacityTaken: nextTaken,
       status: nextStatus,
     });
+  }
+
+  if (status === "confirmed" && inventoryDocsToReserve.length > 0) {
+    const inventoryCollection = requireCollection(
+      cfg,
+      "dailyInventory",
+      "APPWRITE_COLLECTION_OFFERING_DAILY_INVENTORY_ID",
+    );
+    for (const row of inventoryDocsToReserve) {
+      const nextTaken = (row.capacityTaken ?? 0) + guestCount;
+      const nextStatus =
+        row.capacityTotal > 0 && nextTaken >= row.capacityTotal ? "full" : row.status;
+      await db.updateDocument(cfg.databaseId, inventoryCollection, row.$id, {
+        capacityTaken: nextTaken,
+        status: nextStatus,
+      });
+    }
   }
 
   return bookingDoc;
@@ -1116,6 +1767,11 @@ const operationHandlers = {
   "offering.update": offeringUpdate,
   "offering.toggle": offeringToggle,
   "offering.delete": offeringDelete,
+  "event.create": eventCreate,
+  "event.update": eventUpdate,
+  "event.toggle": eventToggle,
+  "event.cancel": eventCancel,
+  "event.delete": eventDelete,
   "slot.create": slotCreate,
   "slot.update": slotUpdate,
   "slot.toggle": slotToggle,
@@ -1127,6 +1783,13 @@ const operationHandlers = {
   "block.create": blockCreate,
   "block.update": blockUpdate,
   "block.delete": blockDelete,
+  "availability.rule.create": availabilityRuleCreate,
+  "availability.rule.update": availabilityRuleUpdate,
+  "availability.rule.delete": availabilityRuleDelete,
+  "availability.inventory.upsert": availabilityInventoryUpsert,
+  "availability.inventory.bulk_upsert": availabilityInventoryBulkUpsert,
+  "availability.inventory.materialize": availabilityInventoryMaterialize,
+  "availability.inventory.delete": availabilityInventoryDelete,
   "content.create": contentCreate,
   "content.update": contentUpdate,
   "content.toggle": contentToggle,
