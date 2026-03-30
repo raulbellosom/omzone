@@ -439,7 +439,11 @@
     },
     "guestCount_one": "{{count}} persona",
     "guestCount_other": "{{count}} personas",
-    "guestCount": "{{count}} personas"
+    "guestCount": "{{count}} personas",
+    "noDate": "-",
+    "range": "{{from}} -> {{to}}",
+    "nights_one": "{{count}} noche",
+    "nights_other": "{{count}} noches"
   },
   "passes": {
     "title": "Pases de Acceso",
@@ -562,7 +566,8 @@
       "featured": "Destacado",
       "images": "Imágenes (hasta 3)",
       "showOnHome": "Mostrar en home",
-      "displayOrder": "Orden",
+      "displayOrder": "Posición en listados",
+      "displayOrderHint": "Número menor = aparece primero en todas las páginas de catálogo",
       "status": "Estado",
       "enabled": "Habilitado",
       "locationProfile": "Perfil de ubicacion",
@@ -574,7 +579,9 @@
       "locationMapUrl": "URL de mapa",
       "locationNotes": "Notas",
       "cancellationEs": "Cancelacion ES",
-      "cancellationEn": "Cancelacion EN"
+      "cancellationEn": "Cancelacion EN",
+      "bookingEngine": "Motor de reserva",
+      "catalogOnlyHint": "Precio, cupo, duracion, instructor y ubicacion operativa se configuran en Agenda/Eventos o Disponibilidad diaria."
     },
     "searchPlaceholder": "Buscar por título, categoría o slug",
     "feedback": {
@@ -602,12 +609,15 @@
       "identity": "Identidad",
       "flow": "Flujo",
       "terms": "Terminos",
+      "summary": "Resumen",
+      "description": "Descripción",
       "cta": "CTA",
       "images": "Imágenes",
       "quickCreateLocation": "Crear ubicacion rapida"
     },
     "validation": {
-      "locationNameRequired": "El nombre de la ubicacion es obligatorio"
+      "locationNameRequired": "El nombre de la ubicacion es obligatorio",
+      "titleEsRequired": "El titulo en espanol es obligatorio"
     },
     "fallbackLabel": "Oferta"
   },
@@ -635,7 +645,19 @@
       "location": "Ubicación",
       "status": "Estado",
       "notes": "Notas",
-      "enabled": "Habilitado"
+      "enabled": "Habilitado",
+      "title": "Nombre del evento",
+      "titlePlaceholder": "Ej. Sesion amanecer",
+      "instructorName": "Instructor (texto libre)",
+      "instructorPlaceholder": "Ej. Raul Bernal",
+      "unitPrice": "Precio unitario del evento",
+      "currency": "Moneda",
+      "duration": "Duracion (min)",
+      "durationPlaceholder": "Opcional",
+      "minGuests": "Min. personas",
+      "maxGuests": "Max. personas",
+      "locationFallback": "Etiqueta de ubicacion (respaldo)",
+      "locationFallbackPlaceholder": "Se usa cuando no hay perfil de ubicacion"
     },
     "feedback": {
       "created": "Horario creado",
@@ -648,6 +670,12 @@
     "empty": {
       "title": "Sin horarios programados",
       "description": "Crea un horario para que los clientes puedan reservar."
+    },
+    "validation": {
+      "offeringRequired": "Selecciona un offering",
+      "startRequired": "El inicio es obligatorio",
+      "startInvalid": "La fecha de inicio no es valida",
+      "endInvalid": "La fecha de fin no es valida"
     }
   },
   "blocks": {
@@ -668,7 +696,13 @@
     "feedback": {
       "created": "Bloqueo creado",
       "updated": "Bloqueo actualizado",
-      "deleted": "Bloqueo eliminado"
+      "deleted": "Bloqueo eliminado",
+      "saveError": "No se pudo guardar el bloqueo",
+      "deleteError": "No se pudo eliminar el bloqueo"
+    },
+    "validation": {
+      "startEndRequired": "Inicio y fin son obligatorios",
+      "startEndInvalid": "Inicio o fin no son validos"
     }
   },
   "contentSections": {
@@ -751,5 +785,52 @@
     "cancelConfirm": "¿Confirmas la cancelación?",
     "yes": "Sí",
     "no": "No"
+  },
+  "agendaWorkspace": {
+    "subtitle": "Calendario responsivo de mes/semana/dia + eventos, bloqueos y ubicaciones.",
+    "tabs": {
+      "calendar": "Calendario",
+      "events": "Eventos",
+      "blocks": "Bloqueos",
+      "locations": "Ubicaciones",
+      "inventory": "Disponibilidad diaria"
+    },
+    "loadingAgenda": "Cargando agenda...",
+    "calendar": {
+      "views": {
+        "month": "Mes",
+        "week": "Semana",
+        "day": "Dia"
+      },
+      "aria": {
+        "previous": "Anterior",
+        "next": "Siguiente"
+      },
+      "today": "Hoy",
+      "eventFallback": "Evento",
+      "blocked": "Bloqueado",
+      "allDay": "Todo el dia",
+      "moreEvents": "+{{count}} mas",
+      "dayEventsTitle": "Eventos del dia",
+      "noEvents": "Sin eventos programados",
+      "locationPrefix": "Ubicacion: {{location}}"
+    },
+    "inventory": {
+      "currency": "Moneda",
+      "fromDate": "Desde",
+      "toDate": "Hasta",
+      "materializeFromRules": "Materializar desde reglas",
+      "validationMissingRange": "Selecciona offering y rango de fechas.",
+      "materialized": "Disponibilidad diaria materializada.",
+      "materializeError": "No se pudo materializar la disponibilidad diaria.",
+      "loading": "Cargando disponibilidad diaria...",
+      "empty": "Sin disponibilidad diaria para este filtro.",
+      "rowSummary": "{{date}} | {{status}} | {{taken}}/{{total}}",
+      "status": {
+        "open": "Abierto",
+        "closed": "Cerrado",
+        "blocked": "Bloqueado"
+      }
+    }
   }
 }

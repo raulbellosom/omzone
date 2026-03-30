@@ -1,5 +1,5 @@
-/**
- * AdminBookingsPage — reservas de todos los clientes.
+﻿/**
+ * AdminBookingsPage â€” reservas de todos los clientes.
  * Ruta: /app/bookings
  */
 import { useTranslation } from "react-i18next";
@@ -26,6 +26,7 @@ export default function AdminBookingsPage() {
   const { formatPrice } = useCurrency();
   const dateFnsLocale = i18n.language === "es" ? es : enUS;
   const { data: bookings, isLoading } = useAdminBookings();
+  const noDate = t("bookings.noDate");
 
   return (
     <div className="max-w-5xl mx-auto px-4 md:px-8 py-8 animate-fade-in-up">
@@ -64,16 +65,22 @@ export default function AdminBookingsPage() {
                         {b.booking_code}
                       </p>
                       <p className="text-xs text-charcoal-muted">
-                        {b.slot?.start_at
-                          ? format(
-                              new Date(b.slot.start_at),
-                              "d MMM yyyy · HH:mm",
-                              { locale: dateFnsLocale },
-                            )
-                          : "—"}
-                        {(b.slot?.location_label || b.offering?.location_label) &&
-                          ` · ${b.slot?.location_label || b.offering?.location_label}`}
-                        {b.guest_count > 1 && ` � ${t("bookings.guestCount", { count: b.guest_count })}`}
+                        {b.booking_engine === "daily_range"
+                          ? `${t("bookings.range", {
+                              from: b.check_in_date ?? noDate,
+                              to: b.check_out_date ?? noDate,
+                            })}${b.nights ? ` · ${t("bookings.nights", { count: b.nights })}` : ""}`
+                          : b.event?.start_at
+                            ? format(
+                                new Date(b.event.start_at),
+                                "d MMM yyyy · HH:mm",
+                                { locale: dateFnsLocale },
+                              )
+                            : noDate}
+                        {b.booking_engine !== "daily_range" &&
+                          (b.event?.location_label || b.offering?.location_label) &&
+                          ` · ${b.event?.location_label || b.offering?.location_label}`}
+                        {b.guest_count > 1 && ` · ${t("bookings.guestCount", { count: b.guest_count })}`}
                       </p>
                     </div>
                   </div>
@@ -85,7 +92,11 @@ export default function AdminBookingsPage() {
                       {t(`bookings.status.${b.status}`)}
                     </Badge>
                     <span className="font-semibold text-charcoal text-sm hidden sm:inline">
-                      {formatPrice((b.unit_price ?? 0) * (b.guest_count ?? 1))}
+                      {formatPrice(
+                        b.booking_engine === "daily_range"
+                          ? (b.unit_price ?? 0)
+                          : (b.unit_price ?? 0) * (b.guest_count ?? 1),
+                      )}
                     </span>
                   </div>
                 </li>
@@ -104,4 +115,5 @@ export default function AdminBookingsPage() {
     </div>
   );
 }
+
 

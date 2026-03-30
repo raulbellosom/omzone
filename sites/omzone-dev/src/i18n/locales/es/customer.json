@@ -69,7 +69,12 @@
       "completed": "Completada",
       "cancelled": "Cancelada",
       "pending": "Pendiente"
-    }
+    },
+    "fallbackTitle": "Reserva",
+    "keep": "No",
+    "range": "{{from}} -> {{to}}",
+    "nights_one": "{{count}} noche",
+    "nights_other": "{{count}} noches"
   },
   "orders": {
     "title": "Mis pedidos",

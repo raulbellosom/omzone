@@ -16,9 +16,11 @@ import {
   COL_ACCESS_PASSES,
   COL_APP_SETTINGS,
   COL_OFFERINGS,
-  COL_OFFERING_SLOTS,
+  COL_SCHEDULE_EVENTS,
   COL_LOCATION_PROFILES,
   COL_AVAILABILITY_BLOCKS,
+  COL_OFFERING_AVAILABILITY_RULES,
+  COL_OFFERING_DAILY_INVENTORY,
   COL_CONTENT_SECTIONS,
   FN_ADMIN_WRITE_OFFERINGS,
 } from "@/env";
@@ -177,6 +179,7 @@ function normalizeAdminOffering(doc, defaultLocation = null) {
     flow_config: flow.flow_config,
     terms_config: flow.terms_config,
     booking_mode: derived.booking_mode,
+    booking_engine: derived.booking_engine ?? "events",
     pricing_mode: derived.pricing_mode,
     base_price: derived.base_price,
     currency: doc.currency ?? "MXN",
@@ -210,19 +213,29 @@ function normalizeAdminOffering(doc, defaultLocation = null) {
 
 function normalizeAdminSlot(doc, locationProfile = null) {
   if (!doc) return null;
+  const unitPrice = doc.unitPrice ?? doc.priceOverride ?? null;
   return {
     $id: doc.$id,
     $createdAt: doc.$createdAt,
     $updatedAt: doc.$updatedAt,
     offering_id: doc.offeringId,
+    title: doc.title ?? null,
+    instructor_name: doc.instructorName ?? null,
     start_at: doc.startAt,
     end_at: doc.endAt ?? null,
     date_label: doc.dateLabel ?? null,
     capacity_total: doc.capacityTotal ?? 0,
     capacity_taken: doc.capacityTaken ?? 0,
-    price_override: doc.priceOverride ?? null,
+    pricing_mode: doc.pricingMode ?? "fixed_price",
+    unit_price: unitPrice,
+    price_override: unitPrice,
+    currency: doc.currency ?? "MXN",
+    duration_min: doc.durationMin ?? null,
+    min_guests: doc.minGuests ?? 1,
+    max_guests: doc.maxGuests ?? 1,
     status: doc.status ?? "open",
     location_profile_id: doc.locationProfileId ?? null,
+    location_fallback_label: doc.locationFallbackLabel ?? null,
     location_label: locationProfile?.name ?? locationProfile?.address ?? null,
     location_profile: normalizeAdminLocationProfile(locationProfile),
     notes: doc.notes ?? null,
@@ -240,6 +253,49 @@ function normalizeAdminBlock(doc) {
     end_at: doc.endAt,
     reason: doc.reason ?? null,
     block_type: doc.blockType,
+    enabled: doc.enabled ?? true,
+  };
+}
+
+function normalizeAdminAvailabilityRule(doc) {
+  if (!doc) return null;
+  return {
+    $id: doc.$id,
+    $createdAt: doc.$createdAt,
+    $updatedAt: doc.$updatedAt,
+    offering_id: doc.offeringId,
+    name: doc.name ?? null,
+    rule_type: doc.ruleType ?? "weekly",
+    weekdays_json: parseJsonSafe(doc.weekdaysJson) ?? null,
+    start_date: doc.startDate ?? null,
+    end_date: doc.endDate ?? null,
+    capacity_total: doc.capacityTotal ?? 0,
+    unit_price: doc.unitPrice ?? null,
+    currency: doc.currency ?? "MXN",
+    min_guests: doc.minGuests ?? 1,
+    max_guests: doc.maxGuests ?? 1,
+    min_nights: doc.minNights ?? 1,
+    enabled: doc.enabled ?? true,
+  };
+}
+
+function normalizeAdminDailyInventory(doc) {
+  if (!doc) return null;
+  return {
+    $id: doc.$id,
+    $createdAt: doc.$createdAt,
+    $updatedAt: doc.$updatedAt,
+    offering_id: doc.offeringId,
+    date: doc.date,
+    status: doc.status ?? "open",
+    capacity_total: doc.capacityTotal ?? 0,
+    capacity_taken: doc.capacityTaken ?? 0,
+    unit_price: doc.unitPrice ?? null,
+    currency: doc.currency ?? "MXN",
+    min_guests: doc.minGuests ?? 1,
+    max_guests: doc.maxGuests ?? 1,
+    source_rule_id: doc.sourceRuleId ?? null,
+    notes: doc.notes ?? null,
     enabled: doc.enabled ?? true,
   };
 }
@@ -271,13 +327,14 @@ function normalizeAdminContentSection(doc) {
 
 function normalizeBooking(
   doc,
-  { offeringDoc, slotDoc, slotLocation, defaultLocation } = {},
+  { offeringDoc, eventDoc, eventLocation, defaultLocation } = {},
 ) {
   if (!doc) return null;
   const offering = offeringDoc
     ? normalizeAdminOffering(offeringDoc, defaultLocation)
     : null;
-  const slot = slotDoc ? normalizeAdminSlot(slotDoc, slotLocation) : null;
+  const event = eventDoc ? normalizeAdminSlot(eventDoc, eventLocation) : null;
+  const bookingEngine = doc.bookingEngine ?? "events";
 
   return {
     $id: doc.$id,
@@ -291,15 +348,21 @@ function normalizeBooking(
     reserved_at: doc.reservedAt,
     confirmed_at: doc.confirmedAt ?? null,
     offering_id: doc.offeringId ?? null,
+    event_id: doc.eventId ?? doc.slotId ?? null,
     slot_id: doc.slotId ?? null,
     booking_type: doc.bookingType ?? null,
+    booking_engine: bookingEngine,
+    check_in_date: doc.checkInDate ?? null,
+    check_out_date: doc.checkOutDate ?? null,
+    nights: doc.nights ?? null,
     guest_count: doc.guestCount ?? doc.quantity ?? 1,
     extras_json: parseJsonSafe(doc.extrasJson),
     request_data_json: parseJsonSafe(doc.requestDataJson),
     pricing_snapshot_json: parseJsonSafe(doc.pricingSnapshotJson),
     custom_answers_json: parseJsonSafe(doc.customAnswersJson),
     offering,
-    slot,
+    event,
+    slot: event,
   };
 }
 
@@ -489,21 +552,25 @@ export async function listBookings() {
   const offeringIds = [
     ...new Set(bookings.map((b) => b.offeringId).filter(Boolean)),
   ];
-  const slotIds = [...new Set(bookings.map((b) => b.slotId).filter(Boolean))];
+  const eventIds = [
+    ...new Set(
+      bookings.map((b) => b.eventId ?? b.slotId).filter(Boolean),
+    ),
+  ];
 
-  const [offeringDocs, slotDocs] = await Promise.all([
+  const [offeringDocs, eventDocs] = await Promise.all([
     listByIds(COL_OFFERINGS, offeringIds),
-    listByIds(COL_OFFERING_SLOTS, slotIds),
+    listByIds(COL_SCHEDULE_EVENTS, eventIds),
   ]);
 
   const offeringMap = Object.fromEntries(offeringDocs.map((d) => [d.$id, d]));
-  const slotMap = Object.fromEntries(slotDocs.map((d) => [d.$id, d]));
+  const eventMap = Object.fromEntries(eventDocs.map((d) => [d.$id, d]));
 
   const locationIds = [
     ...new Set(
       [
         ...offeringDocs.map((d) => d.defaultLocationProfileId),
-        ...slotDocs.map((d) => d.locationProfileId),
+        ...eventDocs.map((d) => d.locationProfileId),
       ].filter(Boolean),
     ),
   ];
@@ -512,9 +579,9 @@ export async function listBookings() {
 
   return bookings.map((booking) => {
     const offeringDoc = offeringMap[booking.offeringId] ?? null;
-    const slotDoc = slotMap[booking.slotId] ?? null;
-    const slotLocation = slotDoc?.locationProfileId
-      ? (locationMap[slotDoc.locationProfileId] ?? null)
+    const eventDoc = eventMap[booking.eventId ?? booking.slotId] ?? null;
+    const eventLocation = eventDoc?.locationProfileId
+      ? (locationMap[eventDoc.locationProfileId] ?? null)
       : null;
     const defaultLocation = offeringDoc?.defaultLocationProfileId
       ? (locationMap[offeringDoc.defaultLocationProfileId] ?? null)
@@ -522,8 +589,8 @@ export async function listBookings() {
 
     return normalizeBooking(booking, {
       offeringDoc,
-      slotDoc,
-      slotLocation,
+      eventDoc,
+      eventLocation,
       defaultLocation,
     });
   });
@@ -675,7 +742,7 @@ export async function listSlots({ offeringId, status } = {}) {
   if (offeringId) queries.push(Query.equal("offeringId", offeringId));
   if (status) queries.push(Query.equal("status", status));
 
-  const res = await databases.listDocuments(DB, COL_OFFERING_SLOTS, queries);
+  const res = await databases.listDocuments(DB, COL_SCHEDULE_EVENTS, queries);
   const locationIds = [
     ...new Set(
       res.documents.map((doc) => doc.locationProfileId).filter(Boolean),
@@ -689,6 +756,10 @@ export async function listSlots({ offeringId, status } = {}) {
   return res.documents.map((doc) =>
     normalizeAdminSlot(doc, locationMap[doc.locationProfileId] ?? null),
   );
+}
+
+export async function listEvents(options = {}) {
+  return listSlots(options);
 }
 
 export async function listLocationProfiles({ enabled } = {}) {
@@ -722,39 +793,59 @@ export async function deleteLocationProfile(locationProfileId) {
 }
 
 export async function createSlot(data) {
-  const doc = await invokeAdminOfferingsWrite("slot.create", {
+  const doc = await invokeAdminOfferingsWrite("event.create", {
     core: data,
   });
   return normalizeAdminSlot(doc);
 }
 
 export async function updateSlot(slotId, data) {
-  const doc = await invokeAdminOfferingsWrite("slot.update", {
+  const doc = await invokeAdminOfferingsWrite("event.update", {
     core: {
       ...data,
-      slot_id: slotId,
+      event_id: slotId,
     },
   });
   return normalizeAdminSlot(doc);
 }
 
 export async function toggleSlot(slotId, enabled) {
-  const doc = await invokeAdminOfferingsWrite("slot.toggle", {
-    slot_id: slotId,
+  const doc = await invokeAdminOfferingsWrite("event.toggle", {
+    event_id: slotId,
     enabled,
   });
   return normalizeAdminSlot(doc);
 }
 
 export async function cancelSlot(slotId) {
-  const doc = await invokeAdminOfferingsWrite("slot.cancel", {
-    slot_id: slotId,
+  const doc = await invokeAdminOfferingsWrite("event.cancel", {
+    event_id: slotId,
   });
   return normalizeAdminSlot(doc);
 }
 
 export async function deleteSlot(slotId) {
-  return invokeAdminOfferingsWrite("slot.delete", { slot_id: slotId });
+  return invokeAdminOfferingsWrite("event.delete", { event_id: slotId });
+}
+
+export async function createEvent(data) {
+  return createSlot(data);
+}
+
+export async function updateEvent(eventId, data) {
+  return updateSlot(eventId, data);
+}
+
+export async function toggleEvent(eventId, enabled) {
+  return toggleSlot(eventId, enabled);
+}
+
+export async function cancelEvent(eventId) {
+  return cancelSlot(eventId);
+}
+
+export async function deleteEvent(eventId) {
+  return deleteSlot(eventId);
 }
 
 export async function listBlocks({ offeringId } = {}) {
@@ -787,6 +878,81 @@ export async function updateBlock(blockId, data) {
 
 export async function deleteBlock(blockId) {
   return invokeAdminOfferingsWrite("block.delete", { block_id: blockId });
+}
+
+export async function listAvailabilityRules({ offeringId, enabled } = {}) {
+  if (!COL_OFFERING_AVAILABILITY_RULES) return [];
+  const queries = [Query.orderAsc("startDate"), Query.limit(400)];
+  if (offeringId) queries.push(Query.equal("offeringId", offeringId));
+  if (enabled !== undefined) queries.push(Query.equal("enabled", !!enabled));
+  const res = await databases.listDocuments(
+    DB,
+    COL_OFFERING_AVAILABILITY_RULES,
+    queries,
+  );
+  return res.documents.map(normalizeAdminAvailabilityRule);
+}
+
+export async function createAvailabilityRule(data) {
+  const doc = await invokeAdminOfferingsWrite("availability.rule.create", {
+    core: data,
+  });
+  return normalizeAdminAvailabilityRule(doc);
+}
+
+export async function updateAvailabilityRule(ruleId, data) {
+  const doc = await invokeAdminOfferingsWrite("availability.rule.update", {
+    core: {
+      ...data,
+      rule_id: ruleId,
+    },
+  });
+  return normalizeAdminAvailabilityRule(doc);
+}
+
+export async function deleteAvailabilityRule(ruleId) {
+  return invokeAdminOfferingsWrite("availability.rule.delete", {
+    rule_id: ruleId,
+  });
+}
+
+export async function listDailyInventory({ offeringId, fromDate, toDate } = {}) {
+  if (!COL_OFFERING_DAILY_INVENTORY) return [];
+  const queries = [Query.orderAsc("date"), Query.limit(1000)];
+  if (offeringId) queries.push(Query.equal("offeringId", offeringId));
+  if (fromDate) queries.push(Query.greaterThanEqual("date", fromDate));
+  if (toDate) queries.push(Query.lessThan("date", toDate));
+  const res = await databases.listDocuments(DB, COL_OFFERING_DAILY_INVENTORY, queries);
+  return res.documents.map(normalizeAdminDailyInventory);
+}
+
+export async function upsertDailyInventory(data) {
+  const doc = await invokeAdminOfferingsWrite("availability.inventory.upsert", {
+    core: data,
+  });
+  return normalizeAdminDailyInventory(doc);
+}
+
+export async function bulkUpsertDailyInventory(items = []) {
+  const docs = await invokeAdminOfferingsWrite(
+    "availability.inventory.bulk_upsert",
+    { core: { items } },
+  );
+  return Array.isArray(docs) ? docs.map(normalizeAdminDailyInventory) : [];
+}
+
+export async function materializeDailyInventory(data) {
+  const docs = await invokeAdminOfferingsWrite(
+    "availability.inventory.materialize",
+    { core: data },
+  );
+  return Array.isArray(docs) ? docs.map(normalizeAdminDailyInventory) : [];
+}
+
+export async function deleteDailyInventory(inventoryId) {
+  return invokeAdminOfferingsWrite("availability.inventory.delete", {
+    inventory_id: inventoryId,
+  });
 }
 
 export async function listContentSections({ scope, offeringId } = {}) {

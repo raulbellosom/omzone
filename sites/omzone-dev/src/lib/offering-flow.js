@@ -17,6 +17,7 @@ const DEFAULT_TERMS = {
 const DEFAULT_FLOW = {
   booking: {
     mode: "request_only",
+    engine: "events",
     requires_schedule: false,
     supports_date_range: false,
   },
@@ -44,6 +45,7 @@ const FLOW_TEMPLATES = {
     flow_version: 1,
     booking: {
       mode: "scheduled",
+      engine: "events",
       requires_schedule: true,
       supports_date_range: false,
     },
@@ -62,6 +64,7 @@ const FLOW_TEMPLATES = {
     flow_version: 1,
     booking: {
       mode: "scheduled",
+      engine: "events",
       requires_schedule: true,
       supports_date_range: true,
     },
@@ -80,6 +83,7 @@ const FLOW_TEMPLATES = {
     flow_version: 1,
     booking: {
       mode: "scheduled",
+      engine: "events",
       requires_schedule: true,
       supports_date_range: true,
     },
@@ -98,6 +102,7 @@ const FLOW_TEMPLATES = {
     flow_version: 1,
     booking: {
       mode: "request_only",
+      engine: "daily_range",
       requires_schedule: false,
       supports_date_range: true,
     },
@@ -116,6 +121,7 @@ const FLOW_TEMPLATES = {
     flow_version: 1,
     booking: {
       mode: "date_range",
+      engine: "daily_range",
       requires_schedule: false,
       supports_date_range: true,
     },
@@ -133,9 +139,10 @@ const FLOW_TEMPLATES = {
     flow_key: "experience.experience",
     flow_version: 1,
     booking: {
-      mode: "request_only",
-      requires_schedule: false,
-      supports_date_range: true,
+      mode: "scheduled",
+      engine: "events",
+      requires_schedule: true,
+      supports_date_range: false,
     },
     pricing: { mode: "from_price", base_price: 0 },
     schedule: { duration_min: null },
@@ -239,6 +246,7 @@ export function offeringDerivedFields(offering) {
   });
 
   const bookingMode = ensured.flow_config.booking?.mode ?? "request_only";
+  const bookingEngine = ensured.flow_config.booking?.engine ?? "events";
   const pricingMode = ensured.flow_config.pricing?.mode ?? "request_quote";
 
   const basePriceRaw = ensured.flow_config.pricing?.base_price;
@@ -269,6 +277,7 @@ export function offeringDerivedFields(offering) {
     flow_config: ensured.flow_config,
     terms_config: ensured.terms_config,
     booking_mode: bookingMode,
+    booking_engine: bookingEngine,
     pricing_mode: pricingMode,
     base_price: Number.isFinite(basePrice) ? basePrice : null,
     duration_min: Number.isFinite(durationMin) ? durationMin : null,
@@ -303,12 +312,23 @@ export function getFlowOptions(category, type) {
       ? ["request_quote", "fixed_price", "from_price"]
       : ["fixed_price", "from_price", "request_quote"];
 
+  const bookingEngines = template.flow_key.startsWith("wellness_studio")
+    ? ["events", "hybrid"]
+    : template.flow_key.startsWith("immersion")
+      ? ["events", "hybrid"]
+      : template.flow_key.startsWith("stay")
+        ? ["daily_range", "hybrid", "events"]
+        : template.flow_key.startsWith("service")
+          ? ["daily_range", "hybrid", "events"]
+          : ["events", "daily_range", "hybrid"];
+
   return {
     supports_duration: supports.supports_duration === true,
     supports_guest_policy: supports.supports_guest_policy !== false,
     supports_location: supports.supports_location !== false,
     supports_custom_answers: supports.supports_custom_answers === true,
     booking_modes: bookingModes,
+    booking_engines: bookingEngines,
     pricing_modes: pricingModes,
     requires_schedule: template.flow_config.booking.requires_schedule === true,
   };

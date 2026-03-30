@@ -1,14 +1,16 @@
 /**
  * offeringService.js - Public queries for offerings model.
  *
- * Covers: offerings, offering_slots, location_profiles, content_sections, search.
+ * Covers: offerings, schedule_events, daily inventory, location_profiles,
+ * content_sections, and search.
  */
 import { Query } from "appwrite";
 import { databases } from "./client";
 import {
   APPWRITE_DATABASE_ID,
   COL_OFFERINGS,
-  COL_OFFERING_SLOTS,
+  COL_SCHEDULE_EVENTS,
+  COL_OFFERING_DAILY_INVENTORY,
   COL_LOCATION_PROFILES,
   COL_CONTENT_SECTIONS,
 } from "@/env";
@@ -81,6 +83,7 @@ export function normalizeOffering(doc, locationProfile = null) {
     default_location_profile_id:
       doc.defaultLocationProfileId ?? derived.location_profile_id ?? null,
     booking_mode: derived.booking_mode,
+    booking_engine: derived.booking_engine ?? "events",
     pricing_mode: derived.pricing_mode,
     base_price: derived.base_price,
     duration_min: derived.duration_min,
@@ -112,18 +115,28 @@ export function normalizeOffering(doc, locationProfile = null) {
 
 export function normalizeSlot(doc, offering = null, locationProfile = null) {
   if (!doc) return null;
+  const unitPrice = doc.unitPrice ?? doc.priceOverride ?? null;
   return {
     $id: doc.$id,
     $createdAt: doc.$createdAt,
     offering_id: doc.offeringId,
+    title: doc.title ?? null,
+    instructor_name: doc.instructorName ?? null,
     start_at: doc.startAt,
     end_at: doc.endAt ?? null,
     date_label: doc.dateLabel ?? null,
     capacity_total: doc.capacityTotal ?? 0,
     capacity_taken: doc.capacityTaken ?? 0,
-    price_override: doc.priceOverride ?? null,
+    pricing_mode: doc.pricingMode ?? "fixed_price",
+    unit_price: unitPrice,
+    price_override: unitPrice,
+    currency: doc.currency ?? offering?.currency ?? "MXN",
+    duration_min: doc.durationMin ?? null,
+    min_guests: doc.minGuests ?? offering?.min_guests ?? 1,
+    max_guests: doc.maxGuests ?? offering?.max_guests ?? 1,
     status: doc.status ?? "open",
     location_profile_id: doc.locationProfileId ?? null,
+    location_fallback_label: doc.locationFallbackLabel ?? null,
     location_label: locationProfile?.name ?? locationProfile?.address ?? null,
     location_profile: normalizeLocationProfile(locationProfile),
     notes: doc.notes ?? null,
@@ -151,6 +164,25 @@ export function normalizeContentSection(doc) {
     scope: doc.scope ?? "global",
     offering_id: doc.offeringId ?? null,
     display_order: doc.displayOrder ?? 0,
+    enabled: doc.enabled ?? true,
+  };
+}
+
+export function normalizeDailyInventory(doc) {
+  if (!doc) return null;
+  return {
+    $id: doc.$id,
+    offering_id: doc.offeringId,
+    date: doc.date,
+    status: doc.status ?? "open",
+    capacity_total: doc.capacityTotal ?? 0,
+    capacity_taken: doc.capacityTaken ?? 0,
+    unit_price: doc.unitPrice ?? null,
+    currency: doc.currency ?? "MXN",
+    min_guests: doc.minGuests ?? 1,
+    max_guests: doc.maxGuests ?? 1,
+    source_rule_id: doc.sourceRuleId ?? null,
+    notes: doc.notes ?? null,
     enabled: doc.enabled ?? true,
   };
 }
@@ -232,7 +264,7 @@ export async function getOfferingSlots(
   if (status) q.push(Query.equal("status", status));
 
   const [res, offeringDoc] = await Promise.all([
-    databases.listDocuments(DB, COL_OFFERING_SLOTS, q),
+    databases.listDocuments(DB, COL_SCHEDULE_EVENTS, q),
     databases.getDocument(DB, COL_OFFERINGS, offeringId),
   ]);
 
@@ -253,7 +285,7 @@ export async function getOfferingSlots(
 export async function getSlotById(slotId) {
   let doc = null;
   try {
-    doc = await databases.getDocument(DB, COL_OFFERING_SLOTS, slotId);
+    doc = await databases.getDocument(DB, COL_SCHEDULE_EVENTS, slotId);
   } catch {
     return null;
   }
@@ -284,7 +316,7 @@ export async function getAllUpcomingSlots({ category, limit = 50 } = {}) {
     Query.limit(limit),
   ];
 
-  const res = await databases.listDocuments(DB, COL_OFFERING_SLOTS, q);
+  const res = await databases.listDocuments(DB, COL_SCHEDULE_EVENTS, q);
   const offeringIds = [
     ...new Set(res.documents.map((d) => d.offeringId).filter(Boolean)),
   ];
@@ -320,6 +352,28 @@ export async function getAllUpcomingSlots({ category, limit = 50 } = {}) {
     slots = slots.filter((slot) => slot.offering?.category === category);
   }
   return slots;
+}
+
+export async function getOfferingDailyInventory(
+  offeringId,
+  { fromDate, toDate, onlyOpen = false, limit = 400 } = {},
+) {
+  if (!COL_OFFERING_DAILY_INVENTORY || !offeringId) return [];
+  const q = [
+    Query.equal("offeringId", offeringId),
+    Query.orderAsc("date"),
+    Query.limit(limit),
+  ];
+  if (fromDate) q.push(Query.greaterThanEqual("date", fromDate));
+  if (toDate) q.push(Query.lessThan("date", toDate));
+  if (onlyOpen) {
+    q.push(Query.equal("enabled", true));
+    q.push(Query.notEqual("status", "closed"));
+    q.push(Query.notEqual("status", "blocked"));
+  }
+
+  const res = await databases.listDocuments(DB, COL_OFFERING_DAILY_INVENTORY, q);
+  return res.documents.map(normalizeDailyInventory);
 }
 
 export async function getContentSections({

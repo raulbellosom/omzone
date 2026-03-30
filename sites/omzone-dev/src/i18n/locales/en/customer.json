@@ -69,7 +69,12 @@
       "completed": "Completed",
       "cancelled": "Cancelled",
       "pending": "Pending"
-    }
+    },
+    "fallbackTitle": "Booking",
+    "keep": "No",
+    "range": "{{from}} -> {{to}}",
+    "nights_one": "{{count}} night",
+    "nights_other": "{{count}} nights"
   },
   "orders": {
     "title": "My orders",

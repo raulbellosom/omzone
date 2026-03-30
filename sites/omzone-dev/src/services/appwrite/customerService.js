@@ -11,7 +11,7 @@ import {
   COL_ORDER_ITEMS,
   COL_BOOKINGS,
   COL_OFFERINGS,
-  COL_OFFERING_SLOTS,
+  COL_SCHEDULE_EVENTS,
   COL_LOCATION_PROFILES,
   FN_ADMIN_WRITE_OFFERINGS,
 } from "@/env";
@@ -77,6 +77,7 @@ function normalizeOfferingForBooking(doc, locationProfile = null) {
     currency: doc.currency ?? "MXN",
     flow_key: doc.flowKey ?? null,
     flow_config: flowConfig,
+    booking_engine: flowConfig?.booking?.engine ?? "events",
     terms_config: parseJsonSafe(doc.termsConfig),
     duration_min: flowConfig?.schedule?.duration_min ?? null,
     location_label: locationProfile?.name ?? locationProfile?.address ?? null,
@@ -87,22 +88,32 @@ function normalizeOfferingForBooking(doc, locationProfile = null) {
 
 function normalizeSlotForBooking(doc, locationProfile = null) {
   if (!doc) return null;
+  const unitPrice = doc.unitPrice ?? doc.priceOverride ?? null;
   return {
     $id: doc.$id,
+    title: doc.title ?? null,
+    instructor_name: doc.instructorName ?? null,
     start_at: doc.startAt,
     end_at: doc.endAt ?? null,
     location_profile_id: doc.locationProfileId ?? null,
     location_label: locationProfile?.name ?? locationProfile?.address ?? null,
     capacity_total: doc.capacityTotal ?? 0,
     capacity_taken: doc.capacityTaken ?? 0,
+    pricing_mode: doc.pricingMode ?? "fixed_price",
+    unit_price: unitPrice,
+    currency: doc.currency ?? "MXN",
     status: doc.status ?? "open",
   };
 }
 
-function normalizeBooking(doc, { offeringDoc, slotDoc, slotLocation, defaultLocation } = {}) {
+function normalizeBooking(
+  doc,
+  { offeringDoc, eventDoc, eventLocation, defaultLocation } = {},
+) {
   if (!doc) return null;
   const offering = normalizeOfferingForBooking(offeringDoc, defaultLocation);
-  const slot = normalizeSlotForBooking(slotDoc, slotLocation);
+  const event = normalizeSlotForBooking(eventDoc, eventLocation);
+  const bookingEngine = doc.bookingEngine ?? "events";
 
   return {
     $id: doc.$id,
@@ -114,8 +125,13 @@ function normalizeBooking(doc, { offeringDoc, slotDoc, slotLocation, defaultLoca
     unit_price: doc.unitPrice ?? 0,
     quantity: doc.quantity ?? 1,
     offering_id: doc.offeringId ?? null,
+    event_id: doc.eventId ?? doc.slotId ?? null,
     slot_id: doc.slotId ?? null,
     booking_type: doc.bookingType ?? null,
+    booking_engine: bookingEngine,
+    check_in_date: doc.checkInDate ?? null,
+    check_out_date: doc.checkOutDate ?? null,
+    nights: doc.nights ?? null,
     guest_count: doc.guestCount ?? doc.quantity ?? 1,
     extras_json: parseJsonSafe(doc.extrasJson),
     request_data_json: parseJsonSafe(doc.requestDataJson),
@@ -124,7 +140,8 @@ function normalizeBooking(doc, { offeringDoc, slotDoc, slotLocation, defaultLoca
     reserved_at: doc.reservedAt,
     confirmed_at: doc.confirmedAt ?? null,
     offering,
-    slot,
+    event,
+    slot: event,
   };
 }
 
@@ -179,20 +196,22 @@ export async function getMyBookings(userId) {
   if (bookings.length === 0) return [];
 
   const offeringIds = [...new Set(bookings.map((b) => b.offeringId).filter(Boolean))];
-  const slotIds = [...new Set(bookings.map((b) => b.slotId).filter(Boolean))];
+  const eventIds = [
+    ...new Set(bookings.map((b) => b.eventId ?? b.slotId).filter(Boolean)),
+  ];
 
-  const [offeringDocs, slotDocs] = await Promise.all([
+  const [offeringDocs, eventDocs] = await Promise.all([
     listByIds(COL_OFFERINGS, offeringIds),
-    listByIds(COL_OFFERING_SLOTS, slotIds),
+    listByIds(COL_SCHEDULE_EVENTS, eventIds),
   ]);
 
   const offeringMap = Object.fromEntries(offeringDocs.map((d) => [d.$id, d]));
-  const slotMap = Object.fromEntries(slotDocs.map((d) => [d.$id, d]));
+  const eventMap = Object.fromEntries(eventDocs.map((d) => [d.$id, d]));
 
   const locationIds = [
     ...new Set([
       ...offeringDocs.map((d) => d.defaultLocationProfileId),
-      ...slotDocs.map((d) => d.locationProfileId),
+      ...eventDocs.map((d) => d.locationProfileId),
     ].filter(Boolean)),
   ];
 
@@ -201,9 +220,9 @@ export async function getMyBookings(userId) {
 
   return bookings.map((booking) => {
     const offeringDoc = offeringMap[booking.offeringId] ?? null;
-    const slotDoc = slotMap[booking.slotId] ?? null;
-    const slotLocation = slotDoc?.locationProfileId
-      ? locationMap[slotDoc.locationProfileId] ?? null
+    const eventDoc = eventMap[booking.eventId ?? booking.slotId] ?? null;
+    const eventLocation = eventDoc?.locationProfileId
+      ? locationMap[eventDoc.locationProfileId] ?? null
       : null;
     const defaultLocation = offeringDoc?.defaultLocationProfileId
       ? locationMap[offeringDoc.defaultLocationProfileId] ?? null
@@ -211,8 +230,8 @@ export async function getMyBookings(userId) {
 
     return normalizeBooking(booking, {
       offeringDoc,
-      slotDoc,
-      slotLocation,
+      eventDoc,
+      eventLocation,
       defaultLocation,
     });
   });
@@ -287,7 +306,12 @@ export async function createOfferingBooking(data) {
       operation: "booking.create",
       payload: {
         offering_id: data.offering_id,
-        slot_id: data.slot_id ?? null,
+        event_id: data.event_id ?? data.slot_id ?? null,
+        slot_id: data.slot_id ?? data.event_id ?? null,
+        booking_engine: data.booking_engine ?? null,
+        check_in_date: data.check_in_date ?? null,
+        check_out_date: data.check_out_date ?? null,
+        nights: data.nights ?? null,
         order_id: data.order_id ?? null,
         booking_type: data.booking_type ?? null,
         guest_count: data.guest_count ?? 1,

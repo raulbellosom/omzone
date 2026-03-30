@@ -1,5 +1,5 @@
-/**
- * AdminSlotFormPage — página dedicada para crear/editar un offering_slot.
+﻿/**
+ * AdminSlotFormPage â€” pÃ¡gina dedicada para crear/editar un offering_slot.
  * Rutas: /app/agenda/slots/new  |  /app/agenda/slots/:id/edit
  */
 import { useState, useEffect } from "react";
@@ -22,25 +22,48 @@ import {
   useCreateSlot,
   useUpdateSlot,
 } from "@/hooks/useAdmin";
-import { useCurrency } from "@/hooks/useCurrency";
 import { resolveField } from "@/lib/i18n-data";
+import { CURRENCY_OPTIONS } from "@/lib/currency";
 import ROUTES from "@/constants/routes";
 
 const EMPTY_FORM = {
   offering_id: "",
+  title: "",
+  instructor_name: "",
   start_at: "",
   end_at: "",
   date_label: "",
   capacity_total: 0,
   capacity_taken: 0,
-  price_override: "",
+  pricing_mode: "fixed_price",
+  unit_price: "",
+  currency: "MXN",
+  duration_min: "",
+  min_guests: 1,
+  max_guests: 1,
   location_profile_id: "",
+  location_fallback_label: "",
   status: "open",
   notes: "",
   enabled: true,
 };
 
 const SLOT_STATUS_OPTIONS = ["open", "full", "cancelled", "completed"];
+const PRICING_MODE_OPTIONS = ["fixed_price", "from_price", "request_quote"];
+
+function toLocalDateTimeInput(value) {
+  if (!value) return "";
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) return "";
+  const offsetMs = parsed.getTimezoneOffset() * 60 * 1000;
+  return new Date(parsed.getTime() - offsetMs).toISOString().slice(0, 16);
+}
+
+function localDateTimeToIso(value) {
+  if (!value) return null;
+  const parsed = new Date(value);
+  return Number.isNaN(parsed.getTime()) ? null : parsed.toISOString();
+}
 
 function SettingRow({ label, checked, onCheckedChange }) {
   return (
@@ -56,7 +79,6 @@ export default function AdminSlotFormPage() {
   const navigate = useNavigate();
   const { t } = useTranslation("admin");
   const { t: tOff } = useTranslation("offerings");
-  const { currency } = useCurrency();
   const isEditing = !!id;
 
   const { data: offerings = [] } = useAdminOfferings();
@@ -69,18 +91,27 @@ export default function AdminSlotFormPage() {
   const [initialized, setInitialized] = useState(false);
 
   const existing = isEditing ? slots.find((s) => s.$id === id) : null;
+  const selectedOffering = offerings.find((item) => item.$id === form.offering_id);
 
   useEffect(() => {
     if (isEditing && existing && !initialized) {
       setForm({
         offering_id: existing.offering_id ?? "",
-        start_at: existing.start_at ? existing.start_at.slice(0, 16) : "",
-        end_at: existing.end_at ? existing.end_at.slice(0, 16) : "",
+        title: existing.title ?? "",
+        instructor_name: existing.instructor_name ?? "",
+        start_at: toLocalDateTimeInput(existing.start_at),
+        end_at: toLocalDateTimeInput(existing.end_at),
         date_label: existing.date_label ?? "",
         capacity_total: existing.capacity_total ?? 0,
         capacity_taken: existing.capacity_taken ?? 0,
-        price_override: existing.price_override ?? "",
+        pricing_mode: existing.pricing_mode ?? "fixed_price",
+        unit_price: existing.unit_price ?? "",
+        currency: existing.currency ?? "MXN",
+        duration_min: existing.duration_min ?? "",
+        min_guests: existing.min_guests ?? 1,
+        max_guests: existing.max_guests ?? 1,
         location_profile_id: existing.location_profile_id ?? "",
+        location_fallback_label: existing.location_fallback_label ?? "",
         status: existing.status ?? "open",
         notes: existing.notes ?? "",
         enabled: existing.enabled ?? true,
@@ -88,6 +119,14 @@ export default function AdminSlotFormPage() {
       setInitialized(true);
     }
   }, [isEditing, existing, initialized]);
+
+  useEffect(() => {
+    if (isEditing || !selectedOffering) return;
+    setForm((prev) => ({
+      ...prev,
+      currency: prev.currency || selectedOffering.currency || "MXN",
+    }));
+  }, [isEditing, selectedOffering]);
 
   function setField(key, value) {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -97,21 +136,48 @@ export default function AdminSlotFormPage() {
     e.preventDefault();
 
     if (!form.offering_id) {
-      toast.error(t("offeringSlots.fields.offering") + " es obligatorio");
+      toast.error(t("offeringSlots.validation.offeringRequired"));
       return;
     }
     if (!form.start_at) {
-      toast.error(t("offeringSlots.fields.startAt") + " es obligatorio");
+      toast.error(t("offeringSlots.validation.startRequired"));
+      return;
+    }
+    const startAtIso = localDateTimeToIso(form.start_at);
+    const endAtIso = localDateTimeToIso(form.end_at);
+    if (!startAtIso) {
+      toast.error(t("offeringSlots.validation.startInvalid"));
+      return;
+    }
+    if (form.end_at && !endAtIso) {
+      toast.error(t("offeringSlots.validation.endInvalid"));
       return;
     }
 
+    const minGuests = Math.max(1, Number(form.min_guests) || 1);
+    const maxGuests = Math.max(minGuests, Number(form.max_guests) || minGuests);
+
     const payload = {
-      ...form,
+      offering_id: form.offering_id,
+      title: form.title?.trim() || null,
+      instructor_name: form.instructor_name?.trim() || null,
+      start_at: startAtIso,
+      end_at: endAtIso,
+      date_label: form.date_label?.trim() || null,
       capacity_total: Number(form.capacity_total) || 0,
       capacity_taken: Number(form.capacity_taken) || 0,
-      price_override: form.price_override
-        ? Number(form.price_override)
-        : null,
+      pricing_mode: form.pricing_mode || "fixed_price",
+      unit_price: form.unit_price === "" ? null : Number(form.unit_price),
+      currency: form.currency || selectedOffering?.currency || "MXN",
+      duration_min:
+        form.duration_min === "" ? null : Math.max(0, Number(form.duration_min)),
+      min_guests: minGuests,
+      max_guests: maxGuests,
+      location_profile_id: form.location_profile_id || null,
+      location_fallback_label: form.location_fallback_label?.trim() || null,
+      status: form.status,
+      notes: form.notes?.trim() || null,
+      enabled: form.enabled,
     };
 
     const mutation = isEditing ? updateMutation : createMutation;
@@ -148,6 +214,10 @@ export default function AdminSlotFormPage() {
   const statusOptions = SLOT_STATUS_OPTIONS.map((s) => ({
     value: s,
     label: tOff(`slotStatus.${s}`),
+  }));
+  const pricingModeOptions = PRICING_MODE_OPTIONS.map((mode) => ({
+    value: mode,
+    label: tOff(`pricingMode.${mode}`),
   }));
 
   const locationOptions = locationProfiles.map((item) => ({
@@ -201,6 +271,25 @@ export default function AdminSlotFormPage() {
 
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-1.5">
+                <Label>{t("offeringSlots.fields.title")}</Label>
+                <Input
+                  value={form.title}
+                  onChange={(e) => setField("title", e.target.value)}
+                  placeholder={t("offeringSlots.fields.titlePlaceholder")}
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label>{t("offeringSlots.fields.instructorName")}</Label>
+                <Input
+                  value={form.instructor_name}
+                  onChange={(e) => setField("instructor_name", e.target.value)}
+                  placeholder={t("offeringSlots.fields.instructorPlaceholder")}
+                />
+              </div>
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="space-y-1.5">
                 <Label>{t("offeringSlots.fields.startAt")}</Label>
                 <Input
                   type="datetime-local"
@@ -250,23 +339,82 @@ export default function AdminSlotFormPage() {
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-1.5">
                 <Label>{t("offeringSlots.fields.priceOverride")}</Label>
+                <SearchCombobox
+                  value={form.pricing_mode}
+                  onValueChange={(v) => setField("pricing_mode", v)}
+                  options={pricingModeOptions}
+                  placeholder={t("offeringSlots.fields.priceOverride")}
+                  searchPlaceholder={t("common.search")}
+                  emptyMessage={t("common.noData")}
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label>{t("offeringSlots.fields.unitPrice")}</Label>
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-medium text-charcoal-muted select-none pointer-events-none z-10">
-                    {currency}
+                    {form.currency || selectedOffering?.currency || "MXN"}
                   </span>
                   <Input
                     type="number"
                     min="0"
                     step="10"
                     className="pl-12"
-                    value={form.price_override}
-                    onChange={(e) => setField("price_override", e.target.value)}
+                    value={form.unit_price}
+                    onChange={(e) => setField("unit_price", e.target.value)}
                     placeholder={t(
                       "offeringSlots.fields.priceOverridePlaceholder",
                     )}
                   />
                 </div>
               </div>
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="space-y-1.5">
+                <Label>{t("offeringSlots.fields.currency")}</Label>
+                <SearchCombobox
+                  value={form.currency}
+                  onValueChange={(v) => setField("currency", v)}
+                  options={CURRENCY_OPTIONS}
+                  placeholder={t("offeringSlots.fields.currency")}
+                  searchPlaceholder={t("common.search")}
+                  emptyMessage={t("common.noData")}
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label>{t("offeringSlots.fields.duration")}</Label>
+                <Input
+                  type="number"
+                  min="0"
+                  value={form.duration_min}
+                  onChange={(e) => setField("duration_min", e.target.value)}
+                  placeholder={t("offeringSlots.fields.durationPlaceholder")}
+                />
+              </div>
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="space-y-1.5">
+                <Label>{t("offeringSlots.fields.minGuests")}</Label>
+                <Input
+                  type="number"
+                  min="1"
+                  value={form.min_guests}
+                  onChange={(e) => setField("min_guests", e.target.value)}
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label>{t("offeringSlots.fields.maxGuests")}</Label>
+                <Input
+                  type="number"
+                  min="1"
+                  value={form.max_guests}
+                  onChange={(e) => setField("max_guests", e.target.value)}
+                />
+              </div>
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-1.5">
                 <Label>{t("offeringSlots.fields.location")}</Label>
                 <SearchCombobox
@@ -276,6 +424,16 @@ export default function AdminSlotFormPage() {
                   placeholder={t("offeringSlots.fields.location")}
                   searchPlaceholder={t("common.search")}
                   emptyMessage={t("common.noData")}
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label>{t("offeringSlots.fields.locationFallback")}</Label>
+                <Input
+                  value={form.location_fallback_label}
+                  onChange={(e) =>
+                    setField("location_fallback_label", e.target.value)
+                  }
+                  placeholder={t("offeringSlots.fields.locationFallbackPlaceholder")}
                 />
               </div>
             </div>
@@ -324,3 +482,4 @@ export default function AdminSlotFormPage() {
     </div>
   );
 }
+

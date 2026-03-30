@@ -203,7 +203,12 @@ export default function CheckoutPage() {
 
       await createOfferingBooking({
         offering_id: state.offeringId,
+        event_id: state.eventId ?? state.slotId ?? null,
         slot_id: state.slotId ?? null,
+        booking_engine: state.bookingEngine ?? null,
+        check_in_date: state.checkInDate ?? null,
+        check_out_date: state.checkOutDate ?? null,
+        nights: state.nights ?? null,
         order_id: order.$id,
         booking_type: state.bookingType ?? null,
         guest_count: state.guestCount ?? 1,
@@ -446,3 +451,4 @@ export default function CheckoutPage() {
     </>
   );
 }
+

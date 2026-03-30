@@ -53,7 +53,11 @@
     "discount": "Discount",
     "tax": "Tax",
     "total": "Total",
-    "currency": "MXN"
+    "currency": "MXN",
+    "range": "{{from}} -> {{to}}",
+    "nights_one": "{{count}} night",
+    "nights_other": "{{count}} nights",
+    "pricePerGuests": "{{price}} x {{count}}"
   },
   "actions": {
     "backToOfferings": "Back"
@@ -64,9 +68,18 @@
   "fields": {
     "checkIn": "Check-in",
     "checkOut": "Check-out",
-    "notes": "Notes"
+    "notes": "Notes",
+    "datePlaceholder": "--",
+    "notAvailable": "Not available"
   },
   "review": {
     "guests": "Guests: {{count}}"
+  },
+  "availability": {
+    "noFutureEvents": "No availability: there are no future events.",
+    "validating": "Validating availability...",
+    "rangeAvailable_one": "Range available ({{count}} night).",
+    "rangeAvailable_other": "Range available ({{count}} nights).",
+    "rangeUnavailable": "There is no full availability for that range."
   }
 }

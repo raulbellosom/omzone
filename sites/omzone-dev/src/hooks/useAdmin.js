@@ -140,6 +140,13 @@ export function useAdminSlots(options = {}) {
   });
 }
 
+export function useAdminEvents(options = {}) {
+  return useQuery({
+    queryKey: ["adminEvents", options],
+    queryFn: () => admin.listEvents(options),
+  });
+}
+
 export function useAdminLocationProfiles(options = {}) {
   return useQuery({
     queryKey: ["adminLocationProfiles", options],
@@ -151,9 +158,18 @@ export function useCreateLocationProfile() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (data) => admin.createLocationProfile(data),
-    onSuccess: () => {
+    onSuccess: (location) => {
+      qc.setQueriesData({ queryKey: ["adminLocationProfiles"] }, (prev) => {
+        if (!Array.isArray(prev)) return prev;
+        if (prev.some((item) => item.$id === location.$id)) return prev;
+        return [...prev, location].sort((a, b) =>
+          (a.name || "").localeCompare(b.name || ""),
+        );
+      });
       qc.invalidateQueries({ queryKey: ["adminLocationProfiles"] });
       qc.invalidateQueries({ queryKey: ["adminOfferings"] });
+      qc.invalidateQueries({ queryKey: ["adminSlots"] });
+      qc.invalidateQueries({ queryKey: ["adminEvents"] });
     },
   });
 }
@@ -167,6 +183,7 @@ export function useUpdateLocationProfile() {
       qc.invalidateQueries({ queryKey: ["adminLocationProfiles"] });
       qc.invalidateQueries({ queryKey: ["adminOfferings"] });
       qc.invalidateQueries({ queryKey: ["adminSlots"] });
+      qc.invalidateQueries({ queryKey: ["adminEvents"] });
     },
   });
 }
@@ -180,6 +197,7 @@ export function useDeleteLocationProfile() {
       qc.invalidateQueries({ queryKey: ["adminLocationProfiles"] });
       qc.invalidateQueries({ queryKey: ["adminOfferings"] });
       qc.invalidateQueries({ queryKey: ["adminSlots"] });
+      qc.invalidateQueries({ queryKey: ["adminEvents"] });
     },
   });
 }
@@ -188,7 +206,10 @@ export function useCreateSlot() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (data) => admin.createSlot(data),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["adminSlots"] }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["adminSlots"] });
+      qc.invalidateQueries({ queryKey: ["adminEvents"] });
+    },
   });
 }
 
@@ -196,7 +217,10 @@ export function useUpdateSlot() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ slotId, data }) => admin.updateSlot(slotId, data),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["adminSlots"] }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["adminSlots"] });
+      qc.invalidateQueries({ queryKey: ["adminEvents"] });
+    },
   });
 }
 
@@ -204,7 +228,10 @@ export function useToggleSlot() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ slotId, enabled }) => admin.toggleSlot(slotId, enabled),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["adminSlots"] }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["adminSlots"] });
+      qc.invalidateQueries({ queryKey: ["adminEvents"] });
+    },
   });
 }
 
@@ -212,7 +239,10 @@ export function useCancelSlot() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (slotId) => admin.cancelSlot(slotId),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["adminSlots"] }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["adminSlots"] });
+      qc.invalidateQueries({ queryKey: ["adminEvents"] });
+    },
   });
 }
 
@@ -220,8 +250,31 @@ export function useDeleteSlot() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (slotId) => admin.deleteSlot(slotId),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["adminSlots"] }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["adminSlots"] });
+      qc.invalidateQueries({ queryKey: ["adminEvents"] });
+    },
   });
+}
+
+export function useCreateEvent() {
+  return useCreateSlot();
+}
+
+export function useUpdateEvent() {
+  return useUpdateSlot();
+}
+
+export function useToggleEvent() {
+  return useToggleSlot();
+}
+
+export function useCancelEvent() {
+  return useCancelSlot();
+}
+
+export function useDeleteEvent() {
+  return useDeleteSlot();
 }
 
 export function useAdminBlocks(options = {}) {
@@ -252,6 +305,76 @@ export function useDeleteBlock() {
   return useMutation({
     mutationFn: (blockId) => admin.deleteBlock(blockId),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["adminBlocks"] }),
+  });
+}
+
+export function useAdminAvailabilityRules(options = {}) {
+  return useQuery({
+    queryKey: ["adminAvailabilityRules", options],
+    queryFn: () => admin.listAvailabilityRules(options),
+  });
+}
+
+export function useCreateAvailabilityRule() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (data) => admin.createAvailabilityRule(data),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["adminAvailabilityRules"] }),
+  });
+}
+
+export function useUpdateAvailabilityRule() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ ruleId, data }) => admin.updateAvailabilityRule(ruleId, data),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["adminAvailabilityRules"] }),
+  });
+}
+
+export function useDeleteAvailabilityRule() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (ruleId) => admin.deleteAvailabilityRule(ruleId),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["adminAvailabilityRules"] }),
+  });
+}
+
+export function useAdminDailyInventory(options = {}) {
+  return useQuery({
+    queryKey: ["adminDailyInventory", options],
+    queryFn: () => admin.listDailyInventory(options),
+  });
+}
+
+export function useUpsertDailyInventory() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (data) => admin.upsertDailyInventory(data),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["adminDailyInventory"] }),
+  });
+}
+
+export function useBulkUpsertDailyInventory() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (items) => admin.bulkUpsertDailyInventory(items),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["adminDailyInventory"] }),
+  });
+}
+
+export function useMaterializeDailyInventory() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (data) => admin.materializeDailyInventory(data),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["adminDailyInventory"] }),
+  });
+}
+
+export function useDeleteDailyInventory() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (inventoryId) => admin.deleteDailyInventory(inventoryId),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["adminDailyInventory"] }),
   });
 }
 

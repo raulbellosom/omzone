@@ -416,7 +416,11 @@
       "completed": "Completed",
       "cancelled": "Cancelled"
     },
-    "guestCount": "{{count}} guests"
+    "guestCount": "{{count}} guests",
+    "noDate": "-",
+    "range": "{{from}} -> {{to}}",
+    "nights_one": "{{count}} night",
+    "nights_other": "{{count}} nights"
   },
   "orders": {
     "title": "Orders",
@@ -537,6 +541,8 @@
       "identity": "Identity",
       "flow": "Flow",
       "terms": "Terms",
+      "summary": "Summary",
+      "description": "Description",
       "cta": "CTA",
       "images": "Images",
       "quickCreateLocation": "Quick create location"
@@ -580,9 +586,12 @@
       "ctaLabelEn": "CTA EN",
       "featured": "Featured",
       "showOnHome": "Show on home",
-      "displayOrder": "Order",
+      "displayOrder": "Position in listings",
+      "displayOrderHint": "Lower number = appears first across all catalog pages",
       "status": "Status",
-      "enabled": "Enabled"
+      "enabled": "Enabled",
+      "bookingEngine": "Booking engine",
+      "catalogOnlyHint": "Price, capacity, duration, instructor and operational location are configured in Schedule/Events or Daily availability."
     },
     "searchPlaceholder": "Search by title, category or slug",
     "feedback": {
@@ -598,7 +607,8 @@
       "toggleError": "Could not update status"
     },
     "validation": {
-      "locationNameRequired": "Location name is required"
+      "locationNameRequired": "Location name is required",
+      "titleEsRequired": "The Spanish title is required"
     },
     "fallbackLabel": "Offering",
     "empty": {
@@ -635,7 +645,19 @@
       "location": "Location",
       "status": "Status",
       "notes": "Notes",
-      "enabled": "Enabled"
+      "enabled": "Enabled",
+      "title": "Event name",
+      "titlePlaceholder": "Ex. Sunrise session",
+      "instructorName": "Instructor (free text)",
+      "instructorPlaceholder": "Ex. Raul Bernal",
+      "unitPrice": "Event unit price",
+      "currency": "Currency",
+      "duration": "Duration (min)",
+      "durationPlaceholder": "Optional",
+      "minGuests": "Min guests",
+      "maxGuests": "Max guests",
+      "locationFallback": "Fallback location label",
+      "locationFallbackPlaceholder": "Used when there is no location profile"
     },
     "feedback": {
       "created": "Slot created",
@@ -648,6 +670,12 @@
     "empty": {
       "title": "No slots scheduled",
       "description": "Create a slot so customers can book."
+    },
+    "validation": {
+      "offeringRequired": "Select an offering",
+      "startRequired": "Start date is required",
+      "startInvalid": "Start date is invalid",
+      "endInvalid": "End date is invalid"
     }
   },
   "blocks": {
@@ -668,7 +696,13 @@
     "feedback": {
       "created": "Block created",
       "updated": "Block updated",
-      "deleted": "Block deleted"
+      "deleted": "Block deleted",
+      "saveError": "Could not save block",
+      "deleteError": "Could not delete block"
+    },
+    "validation": {
+      "startEndRequired": "Start and end are required",
+      "startEndInvalid": "Start or end is invalid"
     }
   },
   "contentSections": {
@@ -751,5 +785,52 @@
     "cancelConfirm": "Confirm cancellation?",
     "yes": "Yes",
     "no": "No"
+  },
+  "agendaWorkspace": {
+    "subtitle": "Responsive month/week/day calendar + events, blocks, and locations.",
+    "tabs": {
+      "calendar": "Calendar",
+      "events": "Events",
+      "blocks": "Blocks",
+      "locations": "Locations",
+      "inventory": "Daily availability"
+    },
+    "loadingAgenda": "Loading schedule...",
+    "calendar": {
+      "views": {
+        "month": "Month",
+        "week": "Week",
+        "day": "Day"
+      },
+      "aria": {
+        "previous": "Previous",
+        "next": "Next"
+      },
+      "today": "Today",
+      "eventFallback": "Event",
+      "blocked": "Blocked",
+      "allDay": "All day",
+      "moreEvents": "+{{count}} more",
+      "dayEventsTitle": "Day events",
+      "noEvents": "No scheduled events",
+      "locationPrefix": "Location: {{location}}"
+    },
+    "inventory": {
+      "currency": "Currency",
+      "fromDate": "From",
+      "toDate": "To",
+      "materializeFromRules": "Materialize from rules",
+      "validationMissingRange": "Select an offering and a date range.",
+      "materialized": "Daily availability materialized.",
+      "materializeError": "Could not materialize daily availability.",
+      "loading": "Loading daily availability...",
+      "empty": "No daily availability for this filter.",
+      "rowSummary": "{{date}} | {{status}} | {{taken}}/{{total}}",
+      "status": {
+        "open": "Open",
+        "closed": "Closed",
+        "blocked": "Blocked"
+      }
+    }
   }
 }

@@ -10,6 +10,7 @@ import {
   getOfferingSlots,
   getSlotById,
   getAllUpcomingSlots,
+  getOfferingDailyInventory,
   getContentSections,
   searchOfferings,
 } from "@/services/appwrite/offeringService";
@@ -64,6 +65,29 @@ export function useAllUpcomingSlots(options = {}) {
     queryKey: ["upcomingSlots", category, limit],
     queryFn: () => getAllUpcomingSlots(options),
     staleTime: 1000 * 60 * 2,
+  });
+}
+
+export function useOfferingDailyInventory(offeringId, options = {}) {
+  const { fromDate, toDate, onlyOpen = false, limit } = options;
+  return useQuery({
+    queryKey: [
+      "offeringDailyInventory",
+      offeringId,
+      fromDate,
+      toDate,
+      onlyOpen,
+      limit,
+    ],
+    queryFn: () =>
+      getOfferingDailyInventory(offeringId, {
+        fromDate,
+        toDate,
+        onlyOpen,
+        limit,
+      }),
+    enabled: !!offeringId,
+    staleTime: 1000 * 60,
   });
 }
 

@@ -53,7 +53,11 @@
     "discount": "Descuento",
     "tax": "IVA",
     "total": "Total",
-    "currency": "MXN"
+    "currency": "MXN",
+    "range": "{{from}} -> {{to}}",
+    "nights_one": "{{count}} noche",
+    "nights_other": "{{count}} noches",
+    "pricePerGuests": "{{price}} x {{count}}"
   },
   "actions": {
     "backToOfferings": "Volver"
@@ -64,9 +68,18 @@
   "fields": {
     "checkIn": "Check-in",
     "checkOut": "Check-out",
-    "notes": "Notas"
+    "notes": "Notas",
+    "datePlaceholder": "--",
+    "notAvailable": "No disponible"
   },
   "review": {
     "guests": "Personas: {{count}}"
+  },
+  "availability": {
+    "noFutureEvents": "Sin disponibilidad: no hay eventos futuros.",
+    "validating": "Validando disponibilidad...",
+    "rangeAvailable_one": "Rango disponible ({{count}} noche).",
+    "rangeAvailable_other": "Rango disponible ({{count}} noches).",
+    "rangeUnavailable": "No hay disponibilidad completa para ese rango."
   }
 }

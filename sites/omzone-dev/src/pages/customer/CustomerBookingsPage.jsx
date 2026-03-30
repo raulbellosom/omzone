@@ -1,5 +1,5 @@
-/**
- * CustomerBookingsPage — historial de reservas del cliente.
+﻿/**
+ * CustomerBookingsPage â€” historial de reservas del cliente.
  * Ruta: /account/bookings
  */
 import { useState } from "react";
@@ -46,13 +46,18 @@ function BookingCard({ booking, t, dateFnsLocale, onCancel, cancelling }) {
   const { formatPrice } = useCurrency();
   const offering = booking.offering ?? null;
   const title = resolveField(offering, "title");
-  const startsAt = booking.slot?.start_at || booking.reserved_at || null;
+  const isDailyRange = booking.booking_engine === "daily_range";
+  const startsAt = isDailyRange
+    ? booking.check_in_date || booking.reserved_at || null
+    : booking.event?.start_at || booking.reserved_at || null;
   const locationLabel =
-    booking.slot?.location_label ||
+    booking.event?.location_label ||
     offering?.location_label ||
     "-";
   const guestCount = booking.guest_count ?? booking.quantity ?? 1;
-  const totalPrice = (booking.unit_price ?? 0) * guestCount;
+  const totalPrice = isDailyRange
+    ? (booking.unit_price ?? 0)
+    : (booking.unit_price ?? 0) * guestCount;
   const isUpcoming = booking.status === "confirmed";
   const StatusIcon = STATUS_ICON[booking.status] ?? CheckCircle;
 
@@ -86,7 +91,7 @@ function BookingCard({ booking, t, dateFnsLocale, onCancel, cancelling }) {
             <div className="flex items-start justify-between gap-3 mb-3">
               <div>
                 <h3 className="font-semibold text-charcoal leading-tight">
-                  {title || "Booking"}
+                  {title || t("bookings.fallbackTitle")}
                 </h3>
                 <p className="text-[10px] font-mono text-charcoal-subtle mt-0.5 uppercase tracking-wider">
                   {t("bookings.code")}: {booking.booking_code}
@@ -107,9 +112,14 @@ function BookingCard({ booking, t, dateFnsLocale, onCancel, cancelling }) {
                 <div className="flex items-center gap-2 text-charcoal-muted">
                   <CalendarCheck className="w-3.5 h-3.5 text-sage shrink-0" />
                   <span>
-                    {format(new Date(startsAt), "d MMM, HH:mm", {
-                      locale: dateFnsLocale,
-                    })}
+                    {isDailyRange
+                      ? `${t("bookings.range", {
+                          from: booking.check_in_date ?? "-",
+                          to: booking.check_out_date ?? "-",
+                        })}${booking.nights ? ` (${t("bookings.nights", { count: booking.nights })})` : ""}`
+                      : format(new Date(startsAt), "d MMM, HH:mm", {
+                          locale: dateFnsLocale,
+                        })}
                   </span>
                 </div>
               )}
@@ -117,7 +127,7 @@ function BookingCard({ booking, t, dateFnsLocale, onCancel, cancelling }) {
                 <MapPin className="w-3.5 h-3.5 text-sage shrink-0" />
                 <span>{locationLabel}</span>
               </div>
-              {offering?.duration_min && (
+              {!isDailyRange && offering?.duration_min && (
                 <div className="flex items-center gap-2 text-charcoal-muted">
                   <Clock className="w-3.5 h-3.5 text-sage shrink-0" />
                   <span>
@@ -135,7 +145,7 @@ function BookingCard({ booking, t, dateFnsLocale, onCancel, cancelling }) {
                     key={ex.product_id}
                     className="text-[10px] bg-sand/60 text-charcoal-muted px-2 py-0.5 rounded-full"
                   >
-                    {ex.name} · {formatPrice(ex.price)}
+                    {ex.name} Â· {formatPrice(ex.price)}
                   </span>
                 ))}
               </div>
@@ -178,7 +188,7 @@ function BookingCard({ booking, t, dateFnsLocale, onCancel, cancelling }) {
                         className="text-xs h-7"
                         onClick={() => setConfirmingCancel(false)}
                       >
-                        No
+                        {t("bookings.keep")}
                       </Button>
                     </>
                   ) : (
@@ -291,3 +301,4 @@ export default function CustomerBookingsPage() {
     </CustomerPageLayout>
   );
 }
+

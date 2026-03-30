@@ -1,5 +1,5 @@
-/**
- * AdminBlockFormPage — página dedicada para crear/editar un availability_block.
+﻿/**
+ * AdminBlockFormPage â€” pÃ¡gina dedicada para crear/editar un availability_block.
  * Rutas: /app/agenda/blocks/new  |  /app/agenda/blocks/:id/edit
  */
 import { useState, useEffect } from "react";
@@ -35,6 +35,20 @@ const EMPTY_FORM = {
 
 const BLOCK_TYPE_OPTIONS = ["holiday", "maintenance", "private_event", "custom"];
 
+function toLocalDateTimeInput(value) {
+  if (!value) return "";
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) return "";
+  const offsetMs = parsed.getTimezoneOffset() * 60 * 1000;
+  return new Date(parsed.getTime() - offsetMs).toISOString().slice(0, 16);
+}
+
+function localDateTimeToIso(value) {
+  if (!value) return null;
+  const parsed = new Date(value);
+  return Number.isNaN(parsed.getTime()) ? null : parsed.toISOString();
+}
+
 function SettingRow({ label, checked, onCheckedChange }) {
   return (
     <div className="flex items-center justify-between gap-4 rounded-2xl border border-warm-gray-dark/40 bg-warm-gray/20 px-4 py-3">
@@ -65,8 +79,8 @@ export default function AdminBlockFormPage() {
     if (isEditing && existing && !initialized) {
       setForm({
         offering_id: existing.offering_id ?? "",
-        start_at: existing.start_at ? existing.start_at.slice(0, 16) : "",
-        end_at: existing.end_at ? existing.end_at.slice(0, 16) : "",
+        start_at: toLocalDateTimeInput(existing.start_at),
+        end_at: toLocalDateTimeInput(existing.end_at),
         reason: existing.reason ?? "",
         block_type: existing.block_type ?? "holiday",
         enabled: existing.enabled ?? true,
@@ -83,17 +97,20 @@ export default function AdminBlockFormPage() {
     e.preventDefault();
 
     if (!form.start_at || !form.end_at) {
-      toast.error(
-        t("blocks.fields.startAt") +
-          " / " +
-          t("blocks.fields.endAt") +
-          " obligatorios",
-      );
+      toast.error(t("blocks.validation.startEndRequired"));
+      return;
+    }
+    const startAtIso = localDateTimeToIso(form.start_at);
+    const endAtIso = localDateTimeToIso(form.end_at);
+    if (!startAtIso || !endAtIso) {
+      toast.error(t("blocks.validation.startEndInvalid"));
       return;
     }
 
     const payload = {
       ...form,
+      start_at: startAtIso,
+      end_at: endAtIso,
       offering_id: form.offering_id || null,
     };
 
@@ -115,7 +132,7 @@ export default function AdminBlockFormPage() {
         const msg =
           error instanceof Error && error.message
             ? error.message
-            : t("blocks.feedback.created");
+            : t("blocks.feedback.saveError");
         toast.error(msg);
       },
     });
@@ -236,3 +253,4 @@ export default function AdminBlockFormPage() {
     </div>
   );
 }
+

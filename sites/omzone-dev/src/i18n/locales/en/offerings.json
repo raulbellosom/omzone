@@ -21,6 +21,11 @@
     "always_available": "Always available",
     "date_range": "Date range"
   },
+  "bookingEngine": {
+    "events": "Events",
+    "daily_range": "Daily range",
+    "hybrid": "Hybrid"
+  },
   "pricingMode": {
     "fixed_price": "Fixed price",
     "from_price": "From",
