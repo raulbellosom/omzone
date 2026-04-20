@@ -95,7 +95,26 @@
     "type": "Type",
     "yogaStyle": "Style",
     "priceRange": "Price range",
-    "allStyles": "All styles"
+    "allStyles": "All styles",
+    "allTypes": "All types",
+    "yogaStyles": {
+      "vinyasa": "Vinyasa",
+      "hatha": "Hatha",
+      "yin": "Yin Yoga",
+      "restorative": "Restorative",
+      "power": "Power Yoga",
+      "breathwork": "Breathwork",
+      "meditation": "Meditation"
+    },
+    "experienceTags": {
+      "yoga": "Yoga",
+      "meditation": "Meditation",
+      "breathwork": "Breathwork",
+      "nature": "Nature",
+      "sound_healing": "Sound Healing",
+      "spa_wellness": "Spa & Wellness",
+      "beginner": "Beginner Friendly"
+    }
   },
   "agenda": {
     "title": "Schedule",

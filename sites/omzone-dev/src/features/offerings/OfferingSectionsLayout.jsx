@@ -9,6 +9,7 @@
  *
  * Best for: creating immersive category pages that feel like a magazine.
  */
+import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { ArrowRight, Loader2, Clock, MapPin } from "lucide-react";
@@ -36,10 +37,18 @@ export default function OfferingSectionsLayout({
   category,
   pageKey,
   heroVariant = "dark",
+  filterTags = null,
 }) {
   const { t } = useTranslation("offerings");
   const locale = getActiveLang();
+  const [activeTag, setActiveTag] = useState(null);
   const { data: offerings, isLoading } = useOfferings({ category });
+
+  const filtered = useMemo(() => {
+    if (!offerings) return [];
+    if (!activeTag) return offerings;
+    return offerings.filter((o) => o.yoga_style === activeTag);
+  }, [offerings, activeTag]);
 
   return (
     <>
@@ -92,12 +101,53 @@ export default function OfferingSectionsLayout({
         </div>
       </section>
 
+      {/* Tag filter bar — shown when filterTags prop is provided */}
+      {filterTags && filterTags.length > 0 && (
+        <div className="bg-cream border-b border-warm-gray-dark/10">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-wrap items-center gap-3">
+            <button
+              onClick={() => setActiveTag(null)}
+              className={cn(
+                "px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 flex items-center gap-1.5",
+                !activeTag
+                  ? "bg-charcoal text-white shadow-sm"
+                  : "bg-warm-gray text-charcoal-muted hover:bg-warm-gray-dark/20 hover:text-charcoal border border-warm-gray-dark/20",
+              )}
+            >
+              {t("filters.allTypes")}
+              <span className="text-xs opacity-60">▾</span>
+            </button>
+            <div className="w-px h-5 bg-warm-gray-dark/20 hidden sm:block" />
+            <div className="flex flex-wrap gap-2">
+              {filterTags.map((tag) => (
+                <button
+                  key={tag}
+                  onClick={() => setActiveTag(activeTag === tag ? null : tag)}
+                  className={cn(
+                    "px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 border",
+                    activeTag === tag
+                      ? "bg-sage text-white border-sage shadow-sm"
+                      : "bg-transparent text-charcoal-muted border-warm-gray-dark/30 hover:border-sage/50 hover:text-charcoal",
+                  )}
+                >
+                  {t(`filters.experienceTags.${tag}`, {
+                    defaultValue:
+                      tag.charAt(0).toUpperCase() +
+                      tag.slice(1).replace(/_/g, " "),
+                  })}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Offerings as full sections */}
       {isLoading ? (
         <div className="flex items-center justify-center py-32 bg-cream">
           <Loader2 className="w-10 h-10 text-sage animate-spin" />
         </div>
-      ) : !offerings || offerings.length === 0 ? (
+      ) : !filtered || filtered.length === 0 ? (
         <div className="text-center py-32 bg-cream">
           <p className="text-charcoal-muted text-lg">
             {t("agenda.noUpcoming")}
@@ -105,7 +155,7 @@ export default function OfferingSectionsLayout({
         </div>
       ) : (
         <div>
-          {offerings.map((offering, index) => (
+          {filtered.map((offering, index) => (
             <OfferingSection
               key={offering.$id}
               offering={offering}

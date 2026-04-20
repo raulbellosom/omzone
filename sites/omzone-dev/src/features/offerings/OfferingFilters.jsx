@@ -37,10 +37,10 @@ export default function OfferingFilters({
         <FilterPill
           key={style}
           active={yogaStyle === style}
-          onClick={() =>
-            onYogaStyleChange(yogaStyle === style ? null : style)
-          }
-          label={style.charAt(0).toUpperCase() + style.slice(1)}
+          onClick={() => onYogaStyleChange(yogaStyle === style ? null : style)}
+          label={t(`filters.yogaStyles.${style}`, {
+            defaultValue: style.charAt(0).toUpperCase() + style.slice(1),
+          })}
         />
       ))}
     </div>
